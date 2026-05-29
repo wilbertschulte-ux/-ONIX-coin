@@ -1,0 +1,11 @@
+{
+  "name": "onix-coin-full",
+  "private": true,
+  "scripts": {
+    "frontend:dev": "cd frontend && npm run dev",
+    "frontend:build": "cd frontend && npm run build",
+    "backend:dev": "cd backend/backendnode-server && npm start",
+    "backend:install": "cd backend/backendnode-server && npm install",
+    "frontend:install": "cd frontend && npm install"
+  }
+}
