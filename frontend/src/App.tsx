@@ -2147,7 +2147,7 @@ body,
   }
 }
 
-/* === REFERENCE HOME SCREEN PATCH v13 === */
+/* === REFERENCE HOME SCREEN PATCH v14 === */
 /* Clean isolated home screen based on reference */
 html,
 body,
@@ -2539,7 +2539,7 @@ body,
 }
 
 
-/* === REFERENCE HOME SCREEN PATCH v13 === */
+/* === REFERENCE HOME SCREEN PATCH v14 === */
 /* Hard final override: massive TAP button and lower button block above bottom menu */
 .onix-home-reference-mode .onix-ref-v5-coin {
   width: min(77vw, 300px) !important;
@@ -2607,7 +2607,7 @@ body,
 
 
 
-/* === REFERENCE HOME SCREEN PATCH v13 === */
+/* === REFERENCE HOME SCREEN PATCH v14 === */
 /* Bottom navigation polish only */
 .onix-home-reference-mode .onix-nav {
   height: 64px !important;
@@ -2691,7 +2691,7 @@ body,
 
 
 
-/* === REFERENCE HOME SCREEN PATCH v13 === */
+/* === REFERENCE HOME SCREEN PATCH v14 === */
 /* Upgrade screen redesign based on reference */
 .onix-upgrades-ref-screen {
   padding: 14px 16px calc(88px + env(safe-area-inset-bottom)) !important;
@@ -2915,7 +2915,7 @@ body,
 }
 
 
-/* === REFERENCE HOME SCREEN PATCH v13 === */
+/* === REFERENCE HOME SCREEN PATCH v14 === */
 /* Remove old rank/balance blocks from Upgrades screen */
 .onix-boosts-screen > .rounded-3xl,
 .onix-boosts-screen > .onix-rank-card,
@@ -2962,6 +2962,10 @@ body,
   }
 }
 
+
+
+/* === REFERENCE HOME SCREEN PATCH v14 === */
+/* Old global rank/balance header is disabled on Upgrades tab in JSX */
 
 `;
 
@@ -8211,7 +8215,7 @@ body:has(.onix-home-reference-mode),
         </div>
       )}
 
-      {activeTab !== 'home' && (
+      {activeTab !== 'home' && activeTab !== 'boosts' && (
         <>
       <div className="onix-rank-panel px-5 pt-4">
         <div className="flex justify-between mb-2">
