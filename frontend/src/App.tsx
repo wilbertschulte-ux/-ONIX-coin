@@ -2147,7 +2147,7 @@ body,
   }
 }
 
-/* === REFERENCE HOME SCREEN PATCH v20 === */
+/* === REFERENCE HOME SCREEN PATCH v21 === */
 /* Clean isolated home screen based on reference */
 html,
 body,
@@ -2539,7 +2539,7 @@ body,
 }
 
 
-/* === REFERENCE HOME SCREEN PATCH v20 === */
+/* === REFERENCE HOME SCREEN PATCH v21 === */
 /* Hard final override: massive TAP button and lower button block above bottom menu */
 .onix-home-reference-mode .onix-ref-v5-coin {
   width: min(77vw, 300px) !important;
@@ -2607,7 +2607,7 @@ body,
 
 
 
-/* === REFERENCE HOME SCREEN PATCH v20 === */
+/* === REFERENCE HOME SCREEN PATCH v21 === */
 /* Bottom navigation polish only */
 .onix-home-reference-mode .onix-nav {
   height: 64px !important;
@@ -2691,7 +2691,7 @@ body,
 
 
 
-/* === REFERENCE HOME SCREEN PATCH v20 === */
+/* === REFERENCE HOME SCREEN PATCH v21 === */
 /* Upgrade screen redesign based on reference */
 .onix-upgrades-ref-screen {
   padding: 14px 16px calc(88px + env(safe-area-inset-bottom)) !important;
@@ -2915,7 +2915,7 @@ body,
 }
 
 
-/* === REFERENCE HOME SCREEN PATCH v20 === */
+/* === REFERENCE HOME SCREEN PATCH v21 === */
 /* Remove old rank/balance blocks from Upgrades screen */
 .onix-boosts-screen > .rounded-3xl,
 .onix-boosts-screen > .onix-rank-card,
@@ -2964,11 +2964,11 @@ body,
 
 
 
-/* === REFERENCE HOME SCREEN PATCH v20 === */
+/* === REFERENCE HOME SCREEN PATCH v21 === */
 /* Old global rank/balance header is disabled on Upgrades tab in JSX */
 
 
-/* === REFERENCE HOME SCREEN PATCH v20 === */
+/* === REFERENCE HOME SCREEN PATCH v21 === */
 /* Profile screen redesign based on reference */
 .onix-social-screen {
   margin-top: 0 !important;
@@ -3177,7 +3177,7 @@ body,
 
 
 
-/* === REFERENCE HOME SCREEN PATCH v20 === */
+/* === REFERENCE HOME SCREEN PATCH v21 === */
 /* Rank icons: Novice / Bronze / Silver / Gold / Platinum / Diamond / Grandmaster */
 .onix-rank-icon {
   --rank-main: #8ea0c9;
@@ -3317,7 +3317,7 @@ body,
 
 
 
-/* === REFERENCE HOME SCREEN PATCH v20 === */
+/* === REFERENCE HOME SCREEN PATCH v21 === */
 /* Rank icons now use exact cropped reference images */
 .onix-rank-icon {
   background: transparent !important;
@@ -3355,7 +3355,7 @@ body,
 }
 
 
-/* === REFERENCE HOME SCREEN PATCH v20 === */
+/* === REFERENCE HOME SCREEN PATCH v21 === */
 /* Clean reference rank icon rendering */
 .onix-ref-v5-rank-badge {
   width: 58px !important;
@@ -3420,7 +3420,7 @@ body,
 
 
 
-/* === REFERENCE HOME SCREEN PATCH v20 === */
+/* === REFERENCE HOME SCREEN PATCH v21 === */
 /* Generated ONIX rank icons inserted into project */
 .onix-rank-icon {
   display: grid !important;
@@ -3483,6 +3483,92 @@ body,
   filter:
     drop-shadow(0 0 9px rgba(168, 85, 247, 0.42))
     drop-shadow(0 0 18px rgba(88, 45, 180, 0.25)) !important;
+}
+
+
+
+/* === REFERENCE HOME SCREEN PATCH v21 === */
+/* Bottom nav active state like Upgrades tabs: purple underline instead of filled tile */
+.onix-home-reference-mode .onix-nav {
+  height: 62px !important;
+  padding: 5px 7px !important;
+  border-radius: 20px !important;
+}
+
+.onix-home-reference-mode .onix-nav button {
+  position: relative !important;
+  height: 52px !important;
+  padding: 5px 2px 9px !important;
+  border-radius: 14px !important;
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+  color: rgba(220, 224, 244, 0.70) !important;
+}
+
+.onix-home-reference-mode .onix-nav button svg {
+  color: rgba(220, 224, 244, 0.78) !important;
+  filter: drop-shadow(0 0 5px rgba(168, 85, 247, 0.24)) !important;
+}
+
+.onix-home-reference-mode .onix-nav button.onix-nav-active {
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+  color: #ffffff !important;
+}
+
+.onix-home-reference-mode .onix-nav button.onix-nav-active::after {
+  content: '' !important;
+  position: absolute !important;
+  left: 18% !important;
+  right: 18% !important;
+  bottom: 3px !important;
+  height: 3px !important;
+  border-radius: 999px !important;
+  background: linear-gradient(90deg, #8a2cff 0%, #d04cff 100%) !important;
+  box-shadow:
+    0 0 8px rgba(168, 85, 247, 0.90),
+    0 0 16px rgba(168, 85, 247, 0.52) !important;
+}
+
+.onix-home-reference-mode .onix-nav button.onix-nav-active svg {
+  color: #ffffff !important;
+  filter:
+    drop-shadow(0 0 7px rgba(208, 76, 255, 0.52))
+    drop-shadow(0 0 13px rgba(138, 44, 255, 0.32)) !important;
+}
+
+.onix-home-reference-mode .onix-nav button.onix-nav-active span,
+.onix-home-reference-mode .onix-nav button.onix-nav-active p,
+.onix-home-reference-mode .onix-nav button.onix-nav-active div {
+  color: #ffffff !important;
+}
+
+/* Remove old blue filled active tile from every screen */
+.onix-nav-active {
+  background: transparent !important;
+  box-shadow: none !important;
+  border: 0 !important;
+}
+
+@media (max-width: 380px) {
+  .onix-home-reference-mode .onix-nav {
+    height: 60px !important;
+    padding: 5px 5px !important;
+  }
+
+  .onix-home-reference-mode .onix-nav button {
+    height: 50px !important;
+    padding-bottom: 8px !important;
+    font-size: 9px !important;
+  }
+
+  .onix-home-reference-mode .onix-nav button.onix-nav-active::after {
+    left: 20% !important;
+    right: 20% !important;
+    bottom: 2px !important;
+  }
 }
 
 
