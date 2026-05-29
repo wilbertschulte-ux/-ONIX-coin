@@ -1865,7 +1865,7 @@ body,
 @media (max-width: 380px) {
   .onix-nav {
     width: min(calc(100vw - 14px), 410px) !important;
-    bottom: calc(7px + env(safe-area-inset-bottom)) !important;
+    bottom: calc(5px + env(safe-area-inset-bottom)) !important;
     padding: 5px !important;
   }
 
@@ -2147,7 +2147,7 @@ body,
   }
 }
 
-/* === REFERENCE HOME SCREEN PATCH v7 === */
+/* === REFERENCE HOME SCREEN PATCH v8 === */
 /* Clean isolated home screen based on reference */
 html,
 body,
@@ -2229,7 +2229,7 @@ body,
   max-width: 430px !important;
   height: calc(100dvh - 54px) !important;
   margin: 0 auto !important;
-  padding: 18px 22px calc(70px + env(safe-area-inset-bottom)) !important;
+  padding: 17px 22px calc(54px + env(safe-area-inset-bottom)) !important;
   display: flex !important;
   flex-direction: column !important;
   align-items: center !important;
@@ -2359,11 +2359,11 @@ body,
 .onix-ref-v5-coin {
   position: relative !important;
   flex: 0 0 auto !important;
-  width: min(81vw, 322px) !important;
-  height: min(81vw, 322px) !important;
-  max-width: 322px !important;
-  max-height: 322px !important;
-  margin-top: 16px !important;
+  width: min(78vw, 306px) !important;
+  height: min(78vw, 306px) !important;
+  max-width: 306px !important;
+  max-height: 306px !important;
+  margin-top: 14px !important;
   padding: 0 !important;
   display: grid !important;
   place-items: center !important;
@@ -2444,7 +2444,7 @@ body,
   width: 100% !important;
   height: 50px !important;
   min-height: 50px !important;
-  margin-top: 12px !important;
+  margin-top: 16px !important;
   border-radius: 10px !important;
   border: 1px solid rgba(168, 85, 247, 0.60) !important;
   background: linear-gradient(180deg, #8f35ff 0%, #6519d7 100%) !important;
@@ -2462,7 +2462,7 @@ body,
   position: fixed !important;
   left: 50% !important;
   right: auto !important;
-  bottom: calc(7px + env(safe-area-inset-bottom)) !important;
+  bottom: calc(5px + env(safe-area-inset-bottom)) !important;
   transform: translateX(-50%) !important;
   z-index: 900 !important;
   width: min(calc(100vw - 16px), 414px) !important;
@@ -2498,7 +2498,7 @@ body,
 @media (max-height: 760px) {
   .onix-ref-v5-screen {
     padding-top: 12px !important;
-    padding-bottom: calc(66px + env(safe-area-inset-bottom)) !important;
+    padding-bottom: calc(50px + env(safe-area-inset-bottom)) !important;
   }
 
   .onix-ref-v5-balance {
@@ -2510,15 +2510,15 @@ body,
   }
 
   .onix-ref-v5-coin {
-    width: min(71vw, 274px) !important;
-    height: min(71vw, 274px) !important;
+    width: min(68vw, 264px) !important;
+    height: min(68vw, 264px) !important;
     margin-top: 8px !important;
   }
 
   .onix-ref-v5-tap-button {
     height: 46px !important;
     min-height: 46px !important;
-    margin-top: 10px !important;
+    margin-top: 14px !important;
   }
 
   .onix-home-reference-mode .onix-nav {
@@ -2526,6 +2526,17 @@ body,
   }
 }
 
+
+/* v8 bottom spacing refinement */
+.onix-home-reference-mode .onix-ref-v5-energy {
+  flex: 0 0 auto !important;
+}
+
+@media (max-height: 760px) {
+  .onix-home-reference-mode .onix-ref-v5-energy {
+    margin-top: -4px !important;
+  }
+}
 
 `;
 
@@ -5067,7 +5078,7 @@ body {
 }
 
 .onix-home-locked .onix-nav {
-  bottom: calc(7px + env(safe-area-inset-bottom)) !important;
+  bottom: calc(5px + env(safe-area-inset-bottom)) !important;
   z-index: 220 !important;
 }
 
@@ -5283,7 +5294,7 @@ body.onix-body-home-lock {
 }
 
 .onix-home-locked .onix-nav {
-  bottom: calc(7px + env(safe-area-inset-bottom)) !important;
+  bottom: calc(5px + env(safe-area-inset-bottom)) !important;
   z-index: 500 !important;
 }
 
@@ -5987,7 +5998,7 @@ body.onix-body-home-lock {
   position: absolute !important;
   left: 10px !important;
   right: 10px !important;
-  bottom: calc(7px + env(safe-area-inset-bottom)) !important;
+  bottom: calc(5px + env(safe-area-inset-bottom)) !important;
   z-index: 500 !important;
   max-width: 430px !important;
   margin-left: auto !important;
@@ -6401,7 +6412,7 @@ body.onix-body-home-lock {
   position: fixed !important;
   left: 50% !important;
   right: auto !important;
-  bottom: calc(7px + env(safe-area-inset-bottom)) !important;
+  bottom: calc(5px + env(safe-area-inset-bottom)) !important;
   transform: translateX(-50%) !important;
   width: min(calc(100vw - 20px), 410px) !important;
   max-width: 410px !important;
