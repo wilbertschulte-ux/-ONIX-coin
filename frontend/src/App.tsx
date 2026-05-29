@@ -6306,6 +6306,93 @@ body.onix-body-home-lock {
 .onix-home-reference-mode .onix-nav {
   border-color: rgba(136, 92, 246, 0.34) !important;
 }
+
+
+/* Step 40: real seamless Tap canvas - remove player card box completely */
+.onix-home-reference-mode {
+  background:
+    radial-gradient(circle at 18% 12%, rgba(136, 92, 246, 0.20), transparent 28%),
+    radial-gradient(circle at 82% 18%, rgba(6, 182, 212, 0.13), transparent 30%),
+    radial-gradient(circle at 50% 62%, rgba(136, 92, 246, 0.18), transparent 36%),
+    linear-gradient(180deg, #050913 0%, #07101D 48%, #040812 100%) !important;
+}
+
+.onix-home-reference-mode .onix-ref-home-screen {
+  padding-left: 14px !important;
+  padding-right: 14px !important;
+  background: transparent !important;
+}
+
+.onix-home-reference-mode .oc-seamless-player-block {
+  width: 100% !important;
+  position: relative !important;
+  z-index: 5 !important;
+  padding: 12px 8px 0 !important;
+  margin: 0 !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  outline: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  overflow: visible !important;
+}
+
+.onix-home-reference-mode .oc-seamless-player-block::before,
+.onix-home-reference-mode .oc-seamless-player-block::after {
+  display: none !important;
+  content: none !important;
+}
+
+.onix-home-reference-mode .oc-seamless-player-block * {
+  box-sizing: border-box !important;
+}
+
+.onix-home-reference-mode .oc-seamless-player-block .onix-home-user-row,
+.onix-home-reference-mode .oc-seamless-player-block .onix-ref-user-row {
+  padding: 0 4px !important;
+  margin: 0 !important;
+}
+
+.onix-home-reference-mode .oc-seamless-player-block .onix-home-avatar,
+.onix-home-reference-mode .oc-seamless-player-block .onix-ref-avatar,
+.onix-home-reference-mode .oc-seamless-player-block .onix-home-rank-mark,
+.onix-home-reference-mode .oc-seamless-player-block .onix-ref-rank-mark {
+  border-radius: 16px !important;
+  border: 1px solid rgba(136, 92, 246, 0.34) !important;
+  background: rgba(8, 15, 23, 0.46) !important;
+  box-shadow:
+    0 0 26px rgba(136, 92, 246, 0.30),
+    inset 0 0 18px rgba(6, 182, 212, 0.09) !important;
+}
+
+.onix-home-reference-mode .oc-seamless-player-block .onix-home-balance-row,
+.onix-home-reference-mode .oc-seamless-player-block .onix-ref-balance-row {
+  margin-top: 12px !important;
+  padding: 0 !important;
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+}
+
+.onix-home-reference-mode .oc-seamless-player-block .onix-home-level-row,
+.onix-home-reference-mode .oc-seamless-player-block .onix-ref-level-row {
+  margin-top: 10px !important;
+  padding: 0 4px !important;
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+}
+
+.onix-home-reference-mode .oc-seamless-player-block .onix-home-level-track,
+.onix-home-reference-mode .oc-seamless-player-block .onix-ref-level-track {
+  height: 7px !important;
+  background: rgba(15, 23, 42, 0.82) !important;
+  border: 1px solid rgba(136, 92, 246, 0.10) !important;
+}
+
+.onix-home-reference-mode .onix-ref-tap-orb {
+  margin-top: 18px !important;
+}
 `;
 
     window.open(url, '_blank');
@@ -7170,7 +7257,7 @@ body.onix-body-home-lock {
 
       {activeTab === 'home' && (
         <div className="onix-home-screen onix-ref-home-screen flex flex-col items-center relative">
-          <div className="onix-home-hero-card onix-ref-player-card">
+          <div className="oc-seamless-player-block">
             <div className="onix-home-user-row onix-ref-user-row flex items-center justify-between gap-3">
               <div className="flex min-w-0 items-center gap-3">
                 <div className="onix-home-avatar onix-ref-avatar">
