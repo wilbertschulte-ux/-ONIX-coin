@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Zap, Trophy, Home, Star, Wallet, UserCircle, Rocket } from 'lucide-react';
+import { Zap, Trophy, Home, Star, Wallet, UserCircle, Rocket, Menu, Bell } from 'lucide-react';
 import WebApp from '@twa-dev/sdk';
 import axios from 'axios';
 import onixLogoCrystal from './assets/onix-logo-crystal.webp';
@@ -5724,6 +5724,377 @@ body.onix-body-home-lock {
     height: min(62vw, 258px) !important;
   }
 }
+
+/* Step 36: reset Tap page to original reference layout */
+.onix-home-reference-mode {
+  min-height: var(--oc-app-height, 100vh);
+  height: var(--oc-app-height, 100vh);
+  max-height: var(--oc-app-height, 100vh);
+  overflow: hidden;
+  padding-bottom: 0 !important;
+}
+
+.onix-home-reference-mode .onix-toast-layer {
+  top: 14px !important;
+  z-index: 10000 !important;
+}
+
+.onix-home-reference-mode .onix-ref-topbar {
+  position: relative;
+  z-index: 180;
+  width: min(100%, 430px);
+  margin: 0 auto;
+  min-height: 54px;
+  padding: 12px 18px 8px;
+  display: grid;
+  grid-template-columns: 42px 1fr 42px;
+  align-items: center;
+  color: #fff;
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+}
+
+.onix-ref-icon-button {
+  width: 38px;
+  height: 38px;
+  border-radius: 14px;
+  display: grid;
+  place-items: center;
+  color: #E5E7EB;
+  background: rgba(8, 15, 23, 0.35);
+  border: 1px solid rgba(148, 163, 184, 0.08);
+}
+
+.onix-ref-topbar-title {
+  text-align: center;
+  font-family: 'Orbitron', 'Exo 2', system-ui, sans-serif;
+  font-size: 15px;
+  line-height: 1;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  text-shadow: 0 0 18px rgba(136, 92, 246, 0.44);
+}
+
+.onix-home-reference-mode .onix-home-screen,
+.onix-home-reference-mode .onix-ref-home-screen {
+  position: relative !important;
+  z-index: 4 !important;
+  width: min(100%, 430px) !important;
+  max-width: 430px !important;
+  height: calc(var(--oc-app-height, 100vh) - 54px) !important;
+  min-height: 0 !important;
+  margin: 0 auto !important;
+  padding: 0 14px calc(104px + env(safe-area-inset-bottom)) !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  overflow: hidden !important;
+  gap: 0 !important;
+}
+
+.onix-home-reference-mode .onix-home-hero-card,
+.onix-home-reference-mode .onix-ref-player-card {
+  width: 100% !important;
+  flex: 0 0 auto !important;
+  padding: 14px !important;
+  border-radius: 18px !important;
+  border: 1px solid rgba(136, 92, 246, 0.34) !important;
+  background:
+    radial-gradient(circle at 88% 10%, rgba(136, 92, 246, 0.34), transparent 34%),
+    radial-gradient(circle at 12% 18%, rgba(6, 182, 212, 0.14), transparent 34%),
+    linear-gradient(145deg, rgba(11, 18, 32, 0.94), rgba(8, 15, 23, 0.98)) !important;
+  box-shadow:
+    0 20px 50px rgba(0,0,0,0.38),
+    0 0 32px rgba(136, 92, 246, 0.14),
+    inset 0 0 28px rgba(136, 92, 246, 0.06) !important;
+}
+
+.onix-home-reference-mode .onix-ref-user-row {
+  position: relative !important;
+  z-index: 2 !important;
+}
+
+.onix-home-reference-mode .onix-home-avatar,
+.onix-home-reference-mode .onix-ref-avatar {
+  width: 50px !important;
+  height: 50px !important;
+  border-radius: 16px !important;
+  display: grid !important;
+  place-items: center !important;
+}
+
+.onix-home-reference-mode .onix-home-avatar img,
+.onix-home-reference-mode .onix-home-rank-mark img {
+  width: 76% !important;
+  height: 76% !important;
+  object-fit: contain !important;
+}
+
+.onix-home-reference-mode .onix-home-username,
+.onix-home-reference-mode .onix-ref-username {
+  font-size: 14px !important;
+  line-height: 1.1 !important;
+  font-weight: 900 !important;
+  color: #fff !important;
+}
+
+.onix-home-reference-mode .onix-home-title,
+.onix-home-reference-mode .onix-ref-title {
+  display: block !important;
+  margin-top: 3px !important;
+  font-size: 10px !important;
+  color: #A855F7 !important;
+  font-weight: 700 !important;
+}
+
+.onix-home-reference-mode .onix-home-rank-mark,
+.onix-home-reference-mode .onix-ref-rank-mark {
+  display: grid !important;
+  width: 46px !important;
+  height: 46px !important;
+  border-radius: 15px !important;
+  place-items: center !important;
+}
+
+.onix-home-reference-mode .onix-home-balance-row,
+.onix-home-reference-mode .onix-ref-balance-row {
+  margin-top: 12px !important;
+  position: relative !important;
+  z-index: 2 !important;
+}
+
+.onix-home-reference-mode .onix-home-balance-label,
+.onix-home-reference-mode .onix-ref-balance-label {
+  display: block !important;
+  margin: 0 !important;
+  text-align: center !important;
+  font-size: 10px !important;
+  line-height: 1 !important;
+  letter-spacing: 0.22em !important;
+  text-transform: uppercase !important;
+  color: #94A3B8 !important;
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+}
+
+.onix-home-reference-mode .onix-home-balance-value,
+.onix-home-reference-mode .onix-ref-balance-value {
+  margin-top: 6px !important;
+  text-align: center !important;
+  font-family: 'Orbitron', 'Exo 2', system-ui, sans-serif !important;
+  font-size: clamp(2.05rem, 9vw, 3.1rem) !important;
+  line-height: 0.96 !important;
+  font-weight: 900 !important;
+  letter-spacing: -0.06em !important;
+  background: linear-gradient(90deg, #FFFFFF 0%, #B7F9FF 36%, #A855F7 76%, #FACC15 100%) !important;
+  -webkit-background-clip: text !important;
+  background-clip: text !important;
+  color: transparent !important;
+  text-shadow: 0 0 28px rgba(136, 92, 246, 0.20) !important;
+}
+
+.onix-home-reference-mode .onix-home-balance-symbol,
+.onix-home-reference-mode .onix-ref-balance-symbol {
+  display: block !important;
+  margin-top: 5px !important;
+  text-align: center !important;
+  font-size: 11px !important;
+  line-height: 1 !important;
+  font-weight: 900 !important;
+  color: #FACC15 !important;
+  letter-spacing: 0.09em !important;
+}
+
+.onix-home-reference-mode .onix-home-level-row,
+.onix-home-reference-mode .onix-ref-level-row {
+  display: block !important;
+  margin-top: 12px !important;
+  position: relative !important;
+  z-index: 2 !important;
+}
+
+.onix-home-reference-mode .onix-home-level-meta,
+.onix-home-reference-mode .onix-ref-level-meta {
+  display: flex !important;
+  justify-content: space-between !important;
+  gap: 10px !important;
+  font-size: 10px !important;
+  line-height: 1.2 !important;
+  color: #CBD5E1 !important;
+  font-weight: 700 !important;
+}
+
+.onix-home-reference-mode .onix-home-level-track,
+.onix-home-reference-mode .onix-ref-level-track {
+  margin-top: 6px !important;
+  height: 6px !important;
+  overflow: hidden !important;
+  border-radius: 999px !important;
+  background: rgba(15, 23, 42, 0.94) !important;
+  border: 1px solid rgba(136, 92, 246, 0.12) !important;
+}
+
+.onix-home-reference-mode .onix-home-level-fill,
+.onix-home-reference-mode .onix-ref-level-fill {
+  height: 100% !important;
+  border-radius: 999px !important;
+  background: linear-gradient(90deg, #885CF6, #A855F7, #06B6D4) !important;
+  box-shadow: 0 0 18px rgba(136, 92, 246, 0.55) !important;
+}
+
+.onix-home-reference-mode .onix-home-mini-rank-row,
+.onix-home-reference-mode .onix-home-balance-pill-wrap,
+.onix-home-reference-mode .onix-home-balance-label-pill,
+.onix-home-reference-mode .onix-home-rank-simple-row,
+.onix-home-reference-mode .onix-home-inline-badge {
+  display: none !important;
+}
+
+.onix-home-reference-mode .onix-tap-orb,
+.onix-home-reference-mode .onix-ref-tap-orb {
+  flex: 0 0 auto !important;
+  margin-top: 16px !important;
+  width: min(62vw, 246px) !important;
+  height: min(62vw, 246px) !important;
+  min-width: 0 !important;
+  min-height: 0 !important;
+  max-width: 246px !important;
+  max-height: 246px !important;
+}
+
+.onix-home-reference-mode .onix-home-energy-block,
+.onix-home-reference-mode .onix-ref-energy-block {
+  position: relative !important;
+  left: auto !important;
+  right: auto !important;
+  bottom: auto !important;
+  transform: none !important;
+  width: 100% !important;
+  max-width: none !important;
+  margin-top: 8px !important;
+  padding: 0 2px !important;
+  z-index: 5 !important;
+}
+
+.onix-home-reference-mode .onix-home-energy-text,
+.onix-home-reference-mode .onix-ref-energy-text {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 6px !important;
+  font-size: 11px !important;
+  line-height: 1 !important;
+  font-weight: 900 !important;
+  color: #DDEBFF !important;
+}
+
+.onix-home-reference-mode .onix-home-energy-track,
+.onix-home-reference-mode .onix-ref-energy-track {
+  margin-top: 7px !important;
+  height: 8px !important;
+  border-radius: 999px !important;
+}
+
+.onix-home-reference-mode .onix-home-tap-button,
+.onix-home-reference-mode .onix-ref-tap-button {
+  display: block !important;
+  width: 100% !important;
+  min-height: 44px !important;
+  height: 44px !important;
+  margin-top: 10px !important;
+  border-radius: 14px !important;
+  font-size: 15px !important;
+  line-height: 1 !important;
+}
+
+.onix-home-reference-mode .onix-clean-home-note,
+.onix-home-reference-mode .onix-launch-card {
+  display: none !important;
+}
+
+.onix-home-reference-mode .onix-nav {
+  position: fixed !important;
+  left: 50% !important;
+  right: auto !important;
+  bottom: calc(8px + env(safe-area-inset-bottom)) !important;
+  transform: translateX(-50%) !important;
+  width: min(calc(100vw - 20px), 410px) !important;
+  max-width: 410px !important;
+  z-index: 900 !important;
+  border-radius: 20px !important;
+  padding: 6px !important;
+}
+
+.onix-home-reference-mode .onix-nav button {
+  min-width: 56px !important;
+  padding-top: 9px !important;
+  padding-bottom: 9px !important;
+}
+
+.onix-home-reference-mode .onix-nav button span {
+  font-size: 9px !important;
+}
+
+@media (max-height: 760px) {
+  .onix-home-reference-mode .onix-ref-topbar {
+    min-height: 48px;
+    padding-top: 9px;
+    padding-bottom: 5px;
+  }
+
+  .onix-home-reference-mode .onix-ref-home-screen {
+    height: calc(var(--oc-app-height, 100vh) - 48px) !important;
+    padding-left: 12px !important;
+    padding-right: 12px !important;
+  }
+
+  .onix-home-reference-mode .onix-ref-player-card {
+    padding: 12px !important;
+  }
+
+  .onix-home-reference-mode .onix-ref-avatar {
+    width: 44px !important;
+    height: 44px !important;
+  }
+
+  .onix-home-reference-mode .onix-ref-rank-mark {
+    width: 42px !important;
+    height: 42px !important;
+  }
+
+  .onix-home-reference-mode .onix-ref-balance-row {
+    margin-top: 9px !important;
+  }
+
+  .onix-home-reference-mode .onix-ref-balance-value {
+    font-size: clamp(1.9rem, 8.4vw, 2.65rem) !important;
+  }
+
+  .onix-home-reference-mode .onix-ref-level-row {
+    margin-top: 9px !important;
+  }
+
+  .onix-home-reference-mode .onix-ref-tap-orb {
+    margin-top: 12px !important;
+    width: min(57vw, 224px) !important;
+    height: min(57vw, 224px) !important;
+  }
+
+  .onix-home-reference-mode .onix-ref-energy-block {
+    margin-top: 5px !important;
+  }
+
+  .onix-home-reference-mode .onix-ref-tap-button {
+    height: 42px !important;
+    min-height: 42px !important;
+    margin-top: 8px !important;
+  }
+}
+
 `;
 
     window.open(url, '_blank');
@@ -6422,7 +6793,7 @@ body.onix-body-home-lock {
   }
 
   return (
-    <div className={`onix-app-bg min-h-screen text-white ${activeTab === 'home' ? 'onix-home-locked' : ''}`}>
+    <div className={`onix-app-bg min-h-screen text-white ${activeTab === 'home' ? 'onix-home-reference-mode' : ''}`}>
       <style>{ONIX_THEME_STYLE}</style>
       <div className="onix-toast-layer fixed left-0 right-0 top-[78px] z-[10000] flex flex-col items-center gap-2 px-4">
         {toastMessages.map((toast) => (
@@ -6440,73 +6811,17 @@ body.onix-body-home-lock {
           </div>
         ))}
       </div>
-      {activeTab === 'home' ? (
-        <div
-          style={{
-            position: 'relative',
-            zIndex: 500,
-            width: '100%',
-            height: 64,
-            minHeight: 64,
-            marginTop: -10,
-            display: 'flex',
-            alignItems: 'flex-start',
-            justifyContent: 'center',
-            pointerEvents: 'none',
-            overflow: 'visible',
-          }}
-        >
-          <div
-            style={{
-              width: 'min(72vw, 292px)',
-              height: 58,
-              minHeight: 58,
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              gap: 10,
-              padding: '12px 18px 8px',
-              borderRadius: '0 0 26px 26px',
-              borderLeft: '1px solid rgba(136, 92, 246, 0.34)',
-              borderRight: '1px solid rgba(136, 92, 246, 0.34)',
-              borderBottom: '1px solid rgba(136, 92, 246, 0.34)',
-              background: 'linear-gradient(180deg, rgba(8, 15, 23, 0.99), rgba(17, 18, 40, 0.96))',
-              boxShadow: '0 14px 28px rgba(0,0,0,0.28), inset 0 0 22px rgba(136,92,246,0.08)',
-              overflow: 'hidden',
-            }}
-          >
-            <span
-              aria-hidden="true"
-              style={{
-                width: 20,
-                height: 20,
-                flex: '0 0 20px',
-                display: 'block',
-                transform: 'rotate(45deg)',
-                border: '1px solid rgba(181,122,255,0.95)',
-                background: 'radial-gradient(circle at 62% 62%, #06B6D4 0 24%, #885CF6 25% 58%, rgba(8,15,23,0.96) 59% 100%)',
-                boxShadow: '0 0 10px rgba(136,92,246,0.7)',
-              }}
-            />
-            <span
-              style={{
-                display: 'inline-block',
-                fontFamily: "'Orbitron', 'Exo 2', system-ui, sans-serif",
-                fontSize: 'clamp(1.45rem, 5.4vw, 1.8rem)',
-                lineHeight: 1,
-                fontWeight: 900,
-                letterSpacing: '0.045em',
-                color: '#fff',
-                whiteSpace: 'nowrap',
-                textAlign: 'center',
-                textShadow: '0 0 18px rgba(136,92,246,0.42)',
-              }}
-            >
-              $ONIX COIN
-            </span>
-          </div>
+      {activeTab === 'home' && (
+        <div className="onix-ref-topbar" aria-label="ONIX top navigation">
+          <button type="button" className="onix-ref-icon-button" aria-label="Меню">
+            <Menu className="h-5 w-5" />
+          </button>
+          <div className="onix-ref-topbar-title">ONIX COIN</div>
+          <button type="button" className="onix-ref-icon-button" aria-label="Уведомления">
+            <Bell className="h-5 w-5" />
+          </button>
         </div>
-      ) : null}
+      )}
 
       {activeTab !== 'home' && (
         <>
@@ -6572,34 +6887,51 @@ body.onix-body-home-lock {
       </div>
 
       {activeTab === 'home' && (
-        <div className="onix-home-screen flex flex-col items-center mt-8 relative">
-          <div className="onix-home-hero-card">
-            <div className="onix-home-user-row flex items-start gap-3">
-              <div className="onix-home-avatar shrink-0">
-                <img src={onixLogoCrystal} alt="$ONIX user badge" draggable={false} />
+        <div className="onix-home-screen onix-ref-home-screen flex flex-col items-center relative">
+          <div className="onix-home-hero-card onix-ref-player-card">
+            <div className="onix-home-user-row onix-ref-user-row flex items-center justify-between gap-3">
+              <div className="flex min-w-0 items-center gap-3">
+                <div className="onix-home-avatar onix-ref-avatar">
+                  <img src={onixLogoCrystal} alt="$ONIX user badge" draggable={false} />
+                </div>
+                <div className="min-w-0">
+                  <p className="onix-home-username onix-ref-username truncate">{username}</p>
+                  <p className="onix-home-title onix-ref-title truncate">{selectedTitle || rankInfo.currentRank.name}</p>
+                </div>
               </div>
-              <div className="min-w-0 flex-1">
-                <div className="onix-home-name-badge-row">
-                  <p className="onix-home-username truncate">{username}</p>
-                  <span className="onix-home-inline-badge">{selectedTitle || rankInfo.currentRank.name}</span>
-                </div>
-                <div className="onix-home-rank-simple-row">
-                  <img src={onixLogoCrystal} alt="$ONIX rank emblem" className="onix-home-rank-inline-icon" draggable={false} />
-                  <span className="onix-home-rank-simple-text">{rankInfo.currentRank.name}</span>
-                </div>
+
+              <div className="onix-home-rank-mark onix-ref-rank-mark">
+                <img src={onixLogoCrystal} alt="$ONIX rank" draggable={false} />
               </div>
             </div>
 
-            <div className="onix-home-balance-row">
-              <div className="onix-home-balance-pill-wrap">
-                <p className="onix-home-balance-label-pill">БАЛАНС $ONIX</p>
+            <div className="onix-home-balance-row onix-ref-balance-row">
+              <p className="onix-home-balance-label onix-ref-balance-label">Баланс $ONIX</p>
+              <p className="onix-home-balance-value onix-ref-balance-value">{balance.toLocaleString('ru-RU')}</p>
+              <p className="onix-home-balance-symbol onix-ref-balance-symbol">ONIX</p>
+            </div>
+
+            <div className="onix-home-level-row onix-ref-level-row">
+              <div className="onix-home-level-meta onix-ref-level-meta">
+                <span>Ранг {rankInfo.currentRank.name}</span>
+                <span>
+                  {rankInfo.nextRank
+                    ? `${rankProgressText} до ${rankInfo.nextRank.name}`
+                    : 'Максимальный ранг'}
+                </span>
               </div>
-              <p className="onix-home-balance-value">{balance.toLocaleString('ru-RU')}</p>
+              <div className="onix-home-level-track onix-ref-level-track">
+                <div
+                  className="onix-home-level-fill onix-ref-level-fill"
+                  style={{ width: `${Math.min(rankProgress, 100)}%` }}
+                />
+              </div>
             </div>
           </div>
+
           <div
             onClick={handleTap}
-            className={`onix-tap-orb h-64 w-64 sm:w-80 sm:h-80 rounded-full flex items-center justify-center cursor-pointer shadow-2xl transition-transform relative ${
+            className={`onix-tap-orb onix-ref-tap-orb rounded-full flex items-center justify-center cursor-pointer shadow-2xl transition-transform relative ${
               isTapped ? 'scale-90' : ''
             }`}
           >
@@ -6618,62 +6950,25 @@ body.onix-body-home-lock {
             ))}
           </div>
 
-          <div className="onix-home-energy-block">
-            <div className="onix-home-energy-text">
+          <div className="onix-home-energy-block onix-ref-energy-block">
+            <div className="onix-home-energy-text onix-ref-energy-text">
               <Zap className="h-4 w-4 text-yellow-400" />
               <span><strong>{Math.floor(energy).toLocaleString('ru-RU')}</strong> / {maxEnergy.toLocaleString('ru-RU')}</span>
               <span className="text-slate-400">{energy >= maxEnergy ? 'Энергия полная' : 'Восстановление'}</span>
             </div>
-            <div className="onix-home-energy-track">
+            <div className="onix-home-energy-track onix-ref-energy-track">
               <div
-                className="onix-home-energy-fill"
+                className="onix-home-energy-fill onix-ref-energy-fill"
                 style={{ width: `${Math.min((energy / Math.max(maxEnergy, 1)) * 100, 100)}%` }}
               />
             </div>
             <button
               type="button"
               onClick={handleTap}
-              className="onix-home-tap-button"
+              className="onix-home-tap-button onix-ref-tap-button"
             >
               ⚡ ТАП!
             </button>
-          </div>
-
-          <p className="onix-clean-home-note mt-8 text-center text-sm font-black text-cyan-200">
-            {energy > 0 ? 'ТАПАЙ КРИСТАЛЛ' : 'ЭНЕРГИЯ ВОССТАНАВЛИВАЕТСЯ'}
-          </p>
-
-          <div className="mt-8 w-full px-5">
-            <div className="onix-launch-card rounded-3xl border border-yellow-400/20 bg-[#111827] p-5 text-left shadow-xl">
-              <div className="mb-4 flex items-center gap-3">
-                <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-yellow-400 text-2xl">
-                  🚀
-                </div>
-
-                <div>
-                  <h2 className="text-xl font-bold text-white">$ONIX coin launch</h2>
-                  <p className="text-sm text-gray-400">
-                    Web3 tap economy, команды, сезоны и выводы
-                  </p>
-                </div>
-              </div>
-
-              <div className="grid grid-cols-2 gap-3">
-                <button
-                  onClick={() => setActiveTab('launch')}
-                  className="rounded-2xl bg-[#0a0f1c] py-4 font-bold text-yellow-400 active:scale-95"
-                >
-                  FAQ / Roadmap
-                </button>
-
-                <button
-                  onClick={shareReferralLink}
-                  className="rounded-2xl bg-[#0a0f1c] py-4 font-bold text-sky-400 active:scale-95"
-                >
-                  Поделиться
-                </button>
-              </div>
-            </div>
           </div>
         </div>
       )}
