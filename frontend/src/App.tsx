@@ -573,7 +573,7 @@ body,
 }
 
 .onix-home-screen {
-  margin-top: 24px !important;
+  margin-top: 20px !important;
   padding-left: 14px;
   padding-right: 14px;
 }
@@ -1984,7 +1984,7 @@ body,
 }
 
 .onix-home-locked .onix-home-tap-button {
-  margin-top: 4px !important;
+  margin-top: 0 !important;
   min-height: 48px;
 }
 
@@ -2147,7 +2147,7 @@ body,
   }
 }
 
-/* === REFERENCE HOME SCREEN PATCH v6 === */
+/* === REFERENCE HOME SCREEN PATCH v7 === */
 /* Clean isolated home screen based on reference */
 html,
 body,
@@ -2229,7 +2229,7 @@ body,
   max-width: 430px !important;
   height: calc(100dvh - 54px) !important;
   margin: 0 auto !important;
-  padding: 20px 22px calc(70px + env(safe-area-inset-bottom)) !important;
+  padding: 18px 22px calc(70px + env(safe-area-inset-bottom)) !important;
   display: flex !important;
   flex-direction: column !important;
   align-items: center !important;
@@ -2334,7 +2334,7 @@ body,
   background: none !important;
   -webkit-text-fill-color: #f6c833 !important;
   font-family: 'Exo 2', system-ui, sans-serif !important;
-  font-size: clamp(3.3rem, 14vw, 4.8rem) !important;
+  font-size: clamp(3.05rem, 12.9vw, 4.45rem) !important;
   line-height: 0.84 !important;
   font-weight: 900 !important;
   letter-spacing: -0.058em !important;
@@ -2343,7 +2343,7 @@ body,
 }
 
 .onix-ref-v5-balance-label {
-  margin: 7px 0 0 !important;
+  margin: 5px 0 0 !important;
   padding: 0 !important;
   color: #f6c833 !important;
   font-family: 'Exo 2', system-ui, sans-serif !important;
@@ -2359,11 +2359,11 @@ body,
 .onix-ref-v5-coin {
   position: relative !important;
   flex: 0 0 auto !important;
-  width: min(84vw, 336px) !important;
-  height: min(84vw, 336px) !important;
-  max-width: 336px !important;
-  max-height: 336px !important;
-  margin-top: 24px !important;
+  width: min(81vw, 322px) !important;
+  height: min(81vw, 322px) !important;
+  max-width: 322px !important;
+  max-height: 322px !important;
+  margin-top: 16px !important;
   padding: 0 !important;
   display: grid !important;
   place-items: center !important;
@@ -2425,7 +2425,7 @@ body,
 .onix-ref-v5-energy-track {
   width: 100% !important;
   height: 7px !important;
-  margin-top: 11px !important;
+  margin-top: 8px !important;
   border-radius: 999px !important;
   overflow: hidden !important;
   background: rgba(12, 17, 37, 0.94) !important;
@@ -2442,8 +2442,8 @@ body,
 
 .onix-ref-v5-tap-button {
   width: 100% !important;
-  height: 60px !important;
-  min-height: 58px !important;
+  height: 50px !important;
+  min-height: 50px !important;
   margin-top: 12px !important;
   border-radius: 10px !important;
   border: 1px solid rgba(168, 85, 247, 0.60) !important;
@@ -2462,7 +2462,7 @@ body,
   position: fixed !important;
   left: 50% !important;
   right: auto !important;
-  bottom: calc(6px + env(safe-area-inset-bottom)) !important;
+  bottom: calc(7px + env(safe-area-inset-bottom)) !important;
   transform: translateX(-50%) !important;
   z-index: 900 !important;
   width: min(calc(100vw - 16px), 414px) !important;
@@ -2497,7 +2497,7 @@ body,
 
 @media (max-height: 760px) {
   .onix-ref-v5-screen {
-    padding-top: 14px !important;
+    padding-top: 12px !important;
     padding-bottom: calc(66px + env(safe-area-inset-bottom)) !important;
   }
 
@@ -2506,18 +2506,18 @@ body,
   }
 
   .onix-ref-v5-balance-value {
-    font-size: clamp(2.9rem, 12vw, 3.9rem) !important;
+    font-size: clamp(2.72rem, 11.3vw, 3.65rem) !important;
   }
 
   .onix-ref-v5-coin {
-    width: min(74vw, 286px) !important;
-    height: min(74vw, 286px) !important;
-    margin-top: 15px !important;
+    width: min(71vw, 274px) !important;
+    height: min(71vw, 274px) !important;
+    margin-top: 8px !important;
   }
 
   .onix-ref-v5-tap-button {
-    height: 52px !important;
-    min-height: 52px !important;
+    height: 46px !important;
+    min-height: 46px !important;
     margin-top: 10px !important;
   }
 
@@ -5067,7 +5067,7 @@ body {
 }
 
 .onix-home-locked .onix-nav {
-  bottom: calc(6px + env(safe-area-inset-bottom)) !important;
+  bottom: calc(7px + env(safe-area-inset-bottom)) !important;
   z-index: 220 !important;
 }
 
@@ -5283,7 +5283,7 @@ body.onix-body-home-lock {
 }
 
 .onix-home-locked .onix-nav {
-  bottom: calc(6px + env(safe-area-inset-bottom)) !important;
+  bottom: calc(7px + env(safe-area-inset-bottom)) !important;
   z-index: 500 !important;
 }
 
@@ -5911,9 +5911,9 @@ body.oc-lock-home-scroll {
   }
 
   .onix-home-locked .onix-home-tap-button {
-    height: 52px !important;
-    min-height: 52px !important;
-    margin-top: 10px !important;
+    height: 48px !important;
+    min-height: 48px !important;
+    margin-top: 12px !important;
   }
 
   .onix-home-locked .onix-home-screen .onix-tap-orb {
@@ -5987,7 +5987,7 @@ body.onix-body-home-lock {
   position: absolute !important;
   left: 10px !important;
   right: 10px !important;
-  bottom: calc(6px + env(safe-area-inset-bottom)) !important;
+  bottom: calc(7px + env(safe-area-inset-bottom)) !important;
   z-index: 500 !important;
   max-width: 430px !important;
   margin-left: auto !important;
@@ -6401,7 +6401,7 @@ body.onix-body-home-lock {
   position: fixed !important;
   left: 50% !important;
   right: auto !important;
-  bottom: calc(6px + env(safe-area-inset-bottom)) !important;
+  bottom: calc(7px + env(safe-area-inset-bottom)) !important;
   transform: translateX(-50%) !important;
   width: min(calc(100vw - 20px), 410px) !important;
   max-width: 410px !important;
