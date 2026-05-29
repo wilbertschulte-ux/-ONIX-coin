@@ -2147,7 +2147,7 @@ body,
   }
 }
 
-/* === REFERENCE HOME SCREEN PATCH v23 === */
+/* === REFERENCE HOME SCREEN PATCH v24 === */
 /* Clean isolated home screen based on reference */
 html,
 body,
@@ -2539,7 +2539,7 @@ body,
 }
 
 
-/* === REFERENCE HOME SCREEN PATCH v23 === */
+/* === REFERENCE HOME SCREEN PATCH v24 === */
 /* Hard final override: massive TAP button and lower button block above bottom menu */
 .onix-home-reference-mode .onix-ref-v5-coin {
   width: min(77vw, 300px) !important;
@@ -2607,7 +2607,7 @@ body,
 
 
 
-/* === REFERENCE HOME SCREEN PATCH v23 === */
+/* === REFERENCE HOME SCREEN PATCH v24 === */
 /* Bottom navigation polish only */
 .onix-home-reference-mode .onix-nav {
   height: 64px !important;
@@ -2691,7 +2691,7 @@ body,
 
 
 
-/* === REFERENCE HOME SCREEN PATCH v23 === */
+/* === REFERENCE HOME SCREEN PATCH v24 === */
 /* Upgrade screen redesign based on reference */
 .onix-upgrades-ref-screen {
   padding: 14px 16px calc(88px + env(safe-area-inset-bottom)) !important;
@@ -2915,7 +2915,7 @@ body,
 }
 
 
-/* === REFERENCE HOME SCREEN PATCH v23 === */
+/* === REFERENCE HOME SCREEN PATCH v24 === */
 /* Remove old rank/balance blocks from Upgrades screen */
 .onix-boosts-screen > .rounded-3xl,
 .onix-boosts-screen > .onix-rank-card,
@@ -2964,11 +2964,11 @@ body,
 
 
 
-/* === REFERENCE HOME SCREEN PATCH v23 === */
+/* === REFERENCE HOME SCREEN PATCH v24 === */
 /* Old global rank/balance header is disabled on Upgrades tab in JSX */
 
 
-/* === REFERENCE HOME SCREEN PATCH v23 === */
+/* === REFERENCE HOME SCREEN PATCH v24 === */
 /* Profile screen redesign based on reference */
 .onix-social-screen {
   margin-top: 0 !important;
@@ -3177,7 +3177,7 @@ body,
 
 
 
-/* === REFERENCE HOME SCREEN PATCH v23 === */
+/* === REFERENCE HOME SCREEN PATCH v24 === */
 /* Rank icons: Novice / Bronze / Silver / Gold / Platinum / Diamond / Grandmaster */
 .onix-rank-icon {
   --rank-main: #8ea0c9;
@@ -3317,7 +3317,7 @@ body,
 
 
 
-/* === REFERENCE HOME SCREEN PATCH v23 === */
+/* === REFERENCE HOME SCREEN PATCH v24 === */
 /* Rank icons now use exact cropped reference images */
 .onix-rank-icon {
   background: transparent !important;
@@ -3355,7 +3355,7 @@ body,
 }
 
 
-/* === REFERENCE HOME SCREEN PATCH v23 === */
+/* === REFERENCE HOME SCREEN PATCH v24 === */
 /* Clean reference rank icon rendering */
 .onix-ref-v5-rank-badge {
   width: 58px !important;
@@ -3420,7 +3420,7 @@ body,
 
 
 
-/* === REFERENCE HOME SCREEN PATCH v23 === */
+/* === REFERENCE HOME SCREEN PATCH v24 === */
 /* Generated ONIX rank icons inserted into project */
 .onix-rank-icon {
   display: grid !important;
@@ -3487,7 +3487,7 @@ body,
 
 
 
-/* === REFERENCE HOME SCREEN PATCH v23 === */
+/* === REFERENCE HOME SCREEN PATCH v24 === */
 /* Bottom nav active state like Upgrades tabs: purple underline instead of filled tile */
 .onix-home-reference-mode .onix-nav {
   height: 62px !important;
@@ -3573,7 +3573,7 @@ body,
 
 
 
-/* === REFERENCE HOME SCREEN PATCH v23 === */
+/* === REFERENCE HOME SCREEN PATCH v24 === */
 /* Force underline active nav style globally on every tab */
 .onix-nav {
   height: 62px !important;
@@ -3689,7 +3689,7 @@ body,
 
 
 
-/* === REFERENCE HOME SCREEN PATCH v23 === */
+/* === REFERENCE HOME SCREEN PATCH v24 === */
 /* One identical bottom nav on every screen */
 .onix-nav,
 .onix-home-reference-mode .onix-nav,
@@ -3892,6 +3892,101 @@ body .onix-nav button.onix-nav-active *,
     right: 18% !important;
     bottom: 2px !important;
     height: 4px !important;
+  }
+}
+
+
+
+/* === REFERENCE HOME SCREEN PATCH v24 === */
+/* Home player avatar and rank emblem: same size, same horizontal line */
+.onix-home-reference-mode .onix-ref-v5-player {
+  align-items: center !important;
+  min-height: 64px !important;
+}
+
+.onix-home-reference-mode .onix-ref-v5-player-left {
+  display: flex !important;
+  align-items: center !important;
+  gap: 12px !important;
+  min-height: 64px !important;
+}
+
+.onix-home-reference-mode .onix-ref-v5-avatar,
+.onix-home-reference-mode .onix-ref-v5-rank-badge {
+  width: 58px !important;
+  height: 58px !important;
+  min-width: 58px !important;
+  min-height: 58px !important;
+  max-width: 58px !important;
+  max-height: 58px !important;
+  flex: 0 0 58px !important;
+  display: grid !important;
+  place-items: center !important;
+  margin: 0 !important;
+  transform: none !important;
+  align-self: center !important;
+}
+
+.onix-home-reference-mode .onix-ref-v5-avatar {
+  border-radius: 18px !important;
+  overflow: hidden !important;
+}
+
+.onix-home-reference-mode .onix-ref-v5-avatar img {
+  width: 54px !important;
+  height: 54px !important;
+  max-width: 54px !important;
+  max-height: 54px !important;
+  object-fit: contain !important;
+  display: block !important;
+}
+
+.onix-home-reference-mode .onix-ref-v5-rank-badge .onix-rank-icon,
+.onix-home-reference-mode .onix-ref-v5-rank-badge .onix-rank-icon-md {
+  width: 58px !important;
+  height: 58px !important;
+  max-width: 58px !important;
+  max-height: 58px !important;
+  margin: 0 !important;
+  transform: none !important;
+}
+
+.onix-home-reference-mode .onix-ref-v5-rank-badge .onix-rank-icon-image,
+.onix-home-reference-mode .onix-ref-v5-rank-badge img {
+  width: 58px !important;
+  height: 58px !important;
+  max-width: 58px !important;
+  max-height: 58px !important;
+  object-fit: contain !important;
+  display: block !important;
+}
+
+@media (max-width: 380px) {
+  .onix-home-reference-mode .onix-ref-v5-player,
+  .onix-home-reference-mode .onix-ref-v5-player-left {
+    min-height: 60px !important;
+  }
+
+  .onix-home-reference-mode .onix-ref-v5-avatar,
+  .onix-home-reference-mode .onix-ref-v5-rank-badge {
+    width: 54px !important;
+    height: 54px !important;
+    min-width: 54px !important;
+    min-height: 54px !important;
+    max-width: 54px !important;
+    max-height: 54px !important;
+    flex-basis: 54px !important;
+  }
+
+  .onix-home-reference-mode .onix-ref-v5-avatar img,
+  .onix-home-reference-mode .onix-ref-v5-rank-badge .onix-rank-icon,
+  .onix-home-reference-mode .onix-ref-v5-rank-badge .onix-rank-icon-md,
+  .onix-home-reference-mode .onix-ref-v5-rank-badge .onix-rank-icon-image,
+  .onix-home-reference-mode .onix-ref-v5-rank-badge img {
+    width: 54px !important;
+    height: 54px !important;
+    max-width: 54px !important;
+    max-height: 54px !important;
   }
 }
 
