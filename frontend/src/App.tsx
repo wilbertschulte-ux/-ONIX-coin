@@ -6095,6 +6095,101 @@ body.onix-body-home-lock {
   }
 }
 
+
+
+/* Step 37: exact reference top bar placeholders */
+.onix-home-reference-mode .onix-ref-topbar {
+  position: relative !important;
+  z-index: 180 !important;
+  width: min(100%, 430px) !important;
+  max-width: 430px !important;
+  height: 44px !important;
+  min-height: 44px !important;
+  max-height: 44px !important;
+  margin: 0 auto !important;
+  padding: 0 14px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+  overflow: visible !important;
+}
+
+.onix-home-reference-mode .onix-ref-topbar::before,
+.onix-home-reference-mode .onix-ref-topbar::after {
+  display: none !important;
+  content: none !important;
+}
+
+.onix-home-reference-mode .onix-ref-icon-button {
+  position: relative !important;
+  z-index: 2 !important;
+  width: 32px !important;
+  height: 32px !important;
+  min-width: 32px !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  border: 0 !important;
+  border-radius: 10px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  color: #F8FAFC !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  outline: none !important;
+}
+
+.onix-home-reference-mode .onix-ref-icon-button svg {
+  width: 19px !important;
+  height: 19px !important;
+  stroke-width: 2 !important;
+  filter: drop-shadow(0 0 8px rgba(136, 92, 246, 0.28));
+}
+
+.onix-home-reference-mode .onix-ref-topbar-title {
+  position: absolute !important;
+  left: 50% !important;
+  top: 50% !important;
+  transform: translate(-50%, -50%) !important;
+  width: max-content !important;
+  max-width: calc(100% - 104px) !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  text-align: center !important;
+  white-space: nowrap !important;
+  color: #FFFFFF !important;
+  font-family: 'Orbitron', 'Exo 2', system-ui, sans-serif !important;
+  font-size: 14px !important;
+  line-height: 1 !important;
+  font-weight: 900 !important;
+  letter-spacing: 0.045em !important;
+  text-transform: uppercase !important;
+  text-shadow: 0 0 16px rgba(136, 92, 246, 0.42) !important;
+}
+
+.onix-home-reference-mode .onix-ref-home-screen {
+  height: calc(var(--oc-app-height, 100vh) - 44px) !important;
+}
+
+@media (max-height: 760px) {
+  .onix-home-reference-mode .onix-ref-topbar {
+    height: 42px !important;
+    min-height: 42px !important;
+    max-height: 42px !important;
+    padding: 0 12px !important;
+  }
+
+  .onix-home-reference-mode .onix-ref-topbar-title {
+    font-size: 13px !important;
+  }
+
+  .onix-home-reference-mode .onix-ref-home-screen {
+    height: calc(var(--oc-app-height, 100vh) - 42px) !important;
+  }
+}
 `;
 
     window.open(url, '_blank');
@@ -6816,7 +6911,7 @@ body.onix-body-home-lock {
           <button type="button" className="onix-ref-icon-button" aria-label="Меню">
             <Menu className="h-5 w-5" />
           </button>
-          <div className="onix-ref-topbar-title">ONIX COIN</div>
+          <div className="onix-ref-topbar-title">$ONIX COIN</div>
           <button type="button" className="onix-ref-icon-button" aria-label="Уведомления">
             <Bell className="h-5 w-5" />
           </button>
