@@ -563,7 +563,7 @@ body,
   color: #98f7ff !important;
   text-transform: uppercase;
   letter-spacing: 0.16em;
-  font-size: 10px !important;
+  font-size: 11px !important;
 }
 
 .onix-balance-number {
@@ -573,7 +573,7 @@ body,
 }
 
 .onix-home-screen {
-  margin-top: 18px !important;
+  margin-top: 24px !important;
   padding-left: 14px;
   padding-right: 14px;
 }
@@ -1984,7 +1984,7 @@ body,
 }
 
 .onix-home-locked .onix-home-tap-button {
-  margin-top: 8px !important;
+  margin-top: 4px !important;
   min-height: 48px;
 }
 
@@ -2147,7 +2147,7 @@ body,
   }
 }
 
-/* === REFERENCE HOME SCREEN PATCH v5 === */
+/* === REFERENCE HOME SCREEN PATCH v6 === */
 /* Clean isolated home screen based on reference */
 html,
 body,
@@ -2229,7 +2229,7 @@ body,
   max-width: 430px !important;
   height: calc(100dvh - 54px) !important;
   margin: 0 auto !important;
-  padding: 18px 22px calc(88px + env(safe-area-inset-bottom)) !important;
+  padding: 20px 22px calc(70px + env(safe-area-inset-bottom)) !important;
   display: flex !important;
   flex-direction: column !important;
   align-items: center !important;
@@ -2239,11 +2239,12 @@ body,
 
 .onix-ref-v5-player {
   width: 100% !important;
-  min-height: 58px !important;
+  min-height: 60px !important;
   display: flex !important;
   align-items: center !important;
   justify-content: space-between !important;
   gap: 12px !important;
+  margin-top: 2px !important;
 }
 
 .onix-ref-v5-player-left {
@@ -2254,9 +2255,9 @@ body,
 }
 
 .onix-ref-v5-avatar {
-  width: 50px !important;
-  height: 50px !important;
-  flex: 0 0 50px !important;
+  width: 54px !important;
+  height: 54px !important;
+  flex: 0 0 54px !important;
   border-radius: 999px !important;
   display: grid !important;
   place-items: center !important;
@@ -2284,7 +2285,7 @@ body,
   max-width: 180px !important;
   color: #ffffff !important;
   font-family: 'Exo 2', system-ui, sans-serif !important;
-  font-size: 13px !important;
+  font-size: 14px !important;
   line-height: 1.1 !important;
   font-weight: 900 !important;
   white-space: nowrap !important;
@@ -2306,12 +2307,12 @@ body,
 }
 
 .onix-ref-v5-rank-badge {
-  width: 54px !important;
-  height: 54px !important;
-  flex: 0 0 54px !important;
+  width: 56px !important;
+  height: 58px !important;
+  flex: 0 0 56px !important;
   display: grid !important;
   place-items: center !important;
-  filter: drop-shadow(0 0 10px rgba(133, 76, 255, 0.90)) drop-shadow(0 0 20px rgba(107, 50, 236, 0.50)) !important;
+  filter: drop-shadow(0 0 10px rgba(133, 76, 255, 0.95)) drop-shadow(0 0 24px rgba(107, 50, 236, 0.55)) !important;
 }
 
 .onix-ref-v5-rank-badge img {
@@ -2333,7 +2334,7 @@ body,
   background: none !important;
   -webkit-text-fill-color: #f6c833 !important;
   font-family: 'Exo 2', system-ui, sans-serif !important;
-  font-size: clamp(3.15rem, 13.5vw, 4.5rem) !important;
+  font-size: clamp(3.3rem, 14vw, 4.8rem) !important;
   line-height: 0.84 !important;
   font-weight: 900 !important;
   letter-spacing: -0.058em !important;
@@ -2342,7 +2343,7 @@ body,
 }
 
 .onix-ref-v5-balance-label {
-  margin: 9px 0 0 !important;
+  margin: 7px 0 0 !important;
   padding: 0 !important;
   color: #f6c833 !important;
   font-family: 'Exo 2', system-ui, sans-serif !important;
@@ -2358,11 +2359,11 @@ body,
 .onix-ref-v5-coin {
   position: relative !important;
   flex: 0 0 auto !important;
-  width: min(78vw, 304px) !important;
-  height: min(78vw, 304px) !important;
-  max-width: 304px !important;
-  max-height: 304px !important;
-  margin-top: 30px !important;
+  width: min(84vw, 336px) !important;
+  height: min(84vw, 336px) !important;
+  max-width: 336px !important;
+  max-height: 336px !important;
+  margin-top: 24px !important;
   padding: 0 !important;
   display: grid !important;
   place-items: center !important;
@@ -2441,9 +2442,9 @@ body,
 
 .onix-ref-v5-tap-button {
   width: 100% !important;
-  height: 52px !important;
-  min-height: 52px !important;
-  margin-top: 13px !important;
+  height: 60px !important;
+  min-height: 58px !important;
+  margin-top: 12px !important;
   border-radius: 10px !important;
   border: 1px solid rgba(168, 85, 247, 0.60) !important;
   background: linear-gradient(180deg, #8f35ff 0%, #6519d7 100%) !important;
@@ -2461,7 +2462,7 @@ body,
   position: fixed !important;
   left: 50% !important;
   right: auto !important;
-  bottom: calc(8px + env(safe-area-inset-bottom)) !important;
+  bottom: calc(6px + env(safe-area-inset-bottom)) !important;
   transform: translateX(-50%) !important;
   z-index: 900 !important;
   width: min(calc(100vw - 16px), 414px) !important;
@@ -2496,8 +2497,8 @@ body,
 
 @media (max-height: 760px) {
   .onix-ref-v5-screen {
-    padding-top: 12px !important;
-    padding-bottom: calc(75px + env(safe-area-inset-bottom)) !important;
+    padding-top: 14px !important;
+    padding-bottom: calc(66px + env(safe-area-inset-bottom)) !important;
   }
 
   .onix-ref-v5-balance {
@@ -2505,18 +2506,18 @@ body,
   }
 
   .onix-ref-v5-balance-value {
-    font-size: clamp(2.6rem, 11vw, 3.55rem) !important;
+    font-size: clamp(2.9rem, 12vw, 3.9rem) !important;
   }
 
   .onix-ref-v5-coin {
-    width: min(68vw, 258px) !important;
-    height: min(68vw, 258px) !important;
-    margin-top: 18px !important;
+    width: min(74vw, 286px) !important;
+    height: min(74vw, 286px) !important;
+    margin-top: 15px !important;
   }
 
   .onix-ref-v5-tap-button {
-    height: 46px !important;
-    min-height: 46px !important;
+    height: 52px !important;
+    min-height: 52px !important;
     margin-top: 10px !important;
   }
 
@@ -5066,7 +5067,7 @@ body {
 }
 
 .onix-home-locked .onix-nav {
-  bottom: calc(8px + env(safe-area-inset-bottom)) !important;
+  bottom: calc(6px + env(safe-area-inset-bottom)) !important;
   z-index: 220 !important;
 }
 
@@ -5282,7 +5283,7 @@ body.onix-body-home-lock {
 }
 
 .onix-home-locked .onix-nav {
-  bottom: calc(8px + env(safe-area-inset-bottom)) !important;
+  bottom: calc(6px + env(safe-area-inset-bottom)) !important;
   z-index: 500 !important;
 }
 
@@ -5311,7 +5312,7 @@ body.onix-body-home-lock {
 
   .onix-clean-island {
     height: 58px !important;
-    min-height: 58px !important;
+    min-height: 60px !important;
     max-height: 58px !important;
     padding-top: 11px !important;
   }
@@ -5497,7 +5498,7 @@ body.onix-body-home-lock {
   .onix-mini-top,
   .onix-home-locked .onix-mini-top {
     height: 58px !important;
-    min-height: 58px !important;
+    min-height: 60px !important;
     max-height: 58px !important;
   }
 
@@ -5558,7 +5559,7 @@ body.oc-lock-home-scroll {
   z-index: 500 !important;
   width: 100% !important;
   height: 58px !important;
-  min-height: 58px !important;
+  min-height: 60px !important;
   max-height: 58px !important;
   margin: -8px 0 0 !important;
   padding: 0 !important;
@@ -5589,7 +5590,7 @@ body.oc-lock-home-scroll {
   position: relative !important;
   width: min(72vw, 292px) !important;
   height: 58px !important;
-  min-height: 58px !important;
+  min-height: 60px !important;
   max-height: 58px !important;
   display: flex !important;
   align-items: center !important;
@@ -5910,8 +5911,8 @@ body.oc-lock-home-scroll {
   }
 
   .onix-home-locked .onix-home-tap-button {
-    height: 46px !important;
-    min-height: 46px !important;
+    height: 52px !important;
+    min-height: 52px !important;
     margin-top: 10px !important;
   }
 
@@ -5986,7 +5987,7 @@ body.onix-body-home-lock {
   position: absolute !important;
   left: 10px !important;
   right: 10px !important;
-  bottom: calc(8px + env(safe-area-inset-bottom)) !important;
+  bottom: calc(6px + env(safe-area-inset-bottom)) !important;
   z-index: 500 !important;
   max-width: 430px !important;
   margin-left: auto !important;
@@ -6400,7 +6401,7 @@ body.onix-body-home-lock {
   position: fixed !important;
   left: 50% !important;
   right: auto !important;
-  bottom: calc(8px + env(safe-area-inset-bottom)) !important;
+  bottom: calc(6px + env(safe-area-inset-bottom)) !important;
   transform: translateX(-50%) !important;
   width: min(calc(100vw - 20px), 410px) !important;
   max-width: 410px !important;
