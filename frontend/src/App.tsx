@@ -6201,6 +6201,111 @@ body.onix-body-home-lock {
 .onix-home-reference-mode .onix-home-screen {
   height: calc(var(--oc-app-height, 100vh) - 44px) !important;
 }
+
+
+/* Step 39: seamless Tap background like reference */
+.onix-home-reference-mode {
+  background:
+    radial-gradient(circle at 50% 13%, rgba(136, 92, 246, 0.22), transparent 28%),
+    radial-gradient(circle at 82% 30%, rgba(6, 182, 212, 0.10), transparent 30%),
+    radial-gradient(circle at 50% 70%, rgba(136, 92, 246, 0.16), transparent 34%),
+    linear-gradient(180deg, #050914 0%, #070D18 48%, #040813 100%) !important;
+}
+
+.onix-home-reference-mode::before {
+  content: '' !important;
+  position: fixed !important;
+  inset: 0 !important;
+  pointer-events: none !important;
+  z-index: 0 !important;
+  opacity: 0.35 !important;
+  background-image:
+    radial-gradient(circle at 11% 17%, rgba(255,255,255,0.16) 0 1px, transparent 1px),
+    radial-gradient(circle at 68% 18%, rgba(0,229,255,0.18) 0 1px, transparent 1px),
+    radial-gradient(circle at 88% 66%, rgba(168,85,247,0.14) 0 1px, transparent 1px),
+    linear-gradient(90deg, rgba(136,92,246,0.08) 1px, transparent 1px),
+    linear-gradient(180deg, rgba(6,182,212,0.045) 1px, transparent 1px) !important;
+  background-size: 160px 160px, 220px 220px, 180px 180px, 64px 64px, 64px 64px !important;
+}
+
+.onix-home-reference-mode::after {
+  content: '' !important;
+  position: fixed !important;
+  inset: 54px 0 0 !important;
+  pointer-events: none !important;
+  z-index: 1 !important;
+  background:
+    radial-gradient(ellipse at 50% 15%, rgba(136, 92, 246, 0.18), transparent 42%),
+    radial-gradient(ellipse at 50% 58%, rgba(6, 182, 212, 0.10), transparent 35%),
+    linear-gradient(180deg, rgba(8,15,23,0.00) 0%, rgba(8,15,23,0.18) 100%) !important;
+}
+
+.onix-home-reference-mode [aria-label="ONIX top navigation"] {
+  background: rgba(4, 8, 19, 0.74) !important;
+  border-bottom: 1px solid rgba(136, 92, 246, 0.18) !important;
+  box-shadow: 0 14px 42px rgba(0,0,0,0.22) !important;
+  backdrop-filter: blur(10px) !important;
+}
+
+.onix-home-reference-mode .onix-home-screen,
+.onix-home-reference-mode .onix-ref-home-screen {
+  z-index: 4 !important;
+  padding-left: 14px !important;
+  padding-right: 14px !important;
+  background: transparent !important;
+}
+
+.onix-home-reference-mode .onix-home-hero-card,
+.onix-home-reference-mode .onix-ref-player-card {
+  width: 100% !important;
+  padding: 12px 8px 4px !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  outline: 0 !important;
+}
+
+.onix-home-reference-mode .onix-home-hero-card::before,
+.onix-home-reference-mode .onix-home-hero-card::after,
+.onix-home-reference-mode .onix-ref-player-card::before,
+.onix-home-reference-mode .onix-ref-player-card::after {
+  display: none !important;
+  content: none !important;
+}
+
+.onix-home-reference-mode .onix-ref-user-row,
+.onix-home-reference-mode .onix-home-user-row {
+  padding: 0 4px !important;
+}
+
+.onix-home-reference-mode .onix-home-avatar,
+.onix-home-reference-mode .onix-ref-avatar,
+.onix-home-reference-mode .onix-home-rank-mark,
+.onix-home-reference-mode .onix-ref-rank-mark {
+  background: rgba(8, 15, 23, 0.50) !important;
+  border: 1px solid rgba(136, 92, 246, 0.32) !important;
+  box-shadow: 0 0 24px rgba(136, 92, 246, 0.26), inset 0 0 18px rgba(6, 182, 212, 0.08) !important;
+}
+
+.onix-home-reference-mode .onix-home-balance-row,
+.onix-home-reference-mode .onix-ref-balance-row {
+  margin-top: 14px !important;
+}
+
+.onix-home-reference-mode .onix-home-level-row,
+.onix-home-reference-mode .onix-ref-level-row {
+  margin-top: 10px !important;
+  padding: 0 4px !important;
+}
+
+.onix-home-reference-mode .onix-ref-tap-orb {
+  margin-top: 18px !important;
+}
+
+.onix-home-reference-mode .onix-nav {
+  border-color: rgba(136, 92, 246, 0.34) !important;
+}
 `;
 
     window.open(url, '_blank');
