@@ -1865,7 +1865,7 @@ body,
 @media (max-width: 380px) {
   .onix-nav {
     width: min(calc(100vw - 14px), 410px) !important;
-    bottom: calc(5px + env(safe-area-inset-bottom)) !important;
+    bottom: calc(4px + env(safe-area-inset-bottom)) !important;
     padding: 5px !important;
   }
 
@@ -2147,7 +2147,7 @@ body,
   }
 }
 
-/* === REFERENCE HOME SCREEN PATCH v8 === */
+/* === REFERENCE HOME SCREEN PATCH v9 === */
 /* Clean isolated home screen based on reference */
 html,
 body,
@@ -2229,7 +2229,7 @@ body,
   max-width: 430px !important;
   height: calc(100dvh - 54px) !important;
   margin: 0 auto !important;
-  padding: 17px 22px calc(54px + env(safe-area-inset-bottom)) !important;
+  padding: 17px 22px calc(26px + env(safe-area-inset-bottom)) !important;
   display: flex !important;
   flex-direction: column !important;
   align-items: center !important;
@@ -2442,20 +2442,20 @@ body,
 
 .onix-ref-v5-tap-button {
   width: 100% !important;
-  height: 50px !important;
-  min-height: 50px !important;
+  height: 60px !important;
+  min-height: 60px !important;
   margin-top: 16px !important;
-  border-radius: 10px !important;
+  border-radius: 12px !important;
   border: 1px solid rgba(168, 85, 247, 0.60) !important;
   background: linear-gradient(180deg, #8f35ff 0%, #6519d7 100%) !important;
   color: #ffffff !important;
   font-family: 'Exo 2', system-ui, sans-serif !important;
-  font-size: 16px !important;
+  font-size: 18px !important;
   line-height: 1 !important;
   font-weight: 900 !important;
   letter-spacing: 0.045em !important;
   text-transform: uppercase !important;
-  box-shadow: 0 0 22px rgba(129, 55, 245, 0.52), inset 0 1px 0 rgba(255,255,255,0.18) !important;
+  box-shadow: 0 0 26px rgba(129, 55, 245, 0.58), inset 0 1px 0 rgba(255,255,255,0.20) !important;
 }
 
 .onix-home-reference-mode .onix-nav {
@@ -2498,7 +2498,7 @@ body,
 @media (max-height: 760px) {
   .onix-ref-v5-screen {
     padding-top: 12px !important;
-    padding-bottom: calc(50px + env(safe-area-inset-bottom)) !important;
+    padding-bottom: calc(24px + env(safe-area-inset-bottom)) !important;
   }
 
   .onix-ref-v5-balance {
@@ -2516,8 +2516,8 @@ body,
   }
 
   .onix-ref-v5-tap-button {
-    height: 46px !important;
-    min-height: 46px !important;
+    height: 56px !important;
+    min-height: 56px !important;
     margin-top: 14px !important;
   }
 
