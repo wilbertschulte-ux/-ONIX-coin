@@ -40,18 +40,24 @@ const ONIX_THEME_STYLE = `
 }
 
 body {
-  background: #080F17;
+  background: #060714;
 }
 
+/* Main screen background: reference dark purple sci-fi grid */
 .onix-app-bg {
   font-family: 'Exo 2', 'Inter', system-ui, sans-serif;
-  background:
-    radial-gradient(circle at 12% -8%, rgba(136, 92, 246, 0.22), transparent 28%),
-    radial-gradient(circle at 88% 6%, rgba(6, 182, 212, 0.14), transparent 26%),
-    radial-gradient(circle at 50% 100%, rgba(91, 33, 246, 0.18), transparent 38%),
-    linear-gradient(180deg, #080F17 0%, #0A0F1C 45%, #050914 100%);
+  background-color: #060714;
+  background-image:
+    radial-gradient(ellipse at 18% 7%, rgba(98, 42, 190, 0.42) 0%, rgba(98, 42, 190, 0.18) 23%, transparent 47%),
+    radial-gradient(ellipse at 92% 18%, rgba(0, 119, 160, 0.25) 0%, rgba(0, 119, 160, 0.12) 23%, transparent 48%),
+    radial-gradient(ellipse at 47% 48%, rgba(72, 26, 155, 0.19) 0%, rgba(72, 26, 155, 0.08) 27%, transparent 58%),
+    radial-gradient(ellipse at 50% 88%, rgba(96, 32, 160, 0.28) 0%, rgba(96, 32, 160, 0.10) 25%, transparent 55%),
+    linear-gradient(180deg, #0a0b18 0%, #080a17 32%, #050713 68%, #040611 100%);
+  background-repeat: no-repeat;
+  background-size: 100% 100%;
   color: var(--onix-text-main);
   position: relative;
+  isolation: isolate;
   overflow-x: hidden;
 }
 
@@ -59,13 +65,55 @@ body {
   content: '';
   position: fixed;
   inset: 0;
+  z-index: 0;
   pointer-events: none;
-  opacity: 0.38;
+  opacity: 0.95;
   background-image:
-    radial-gradient(circle at 20% 30%, rgba(255,255,255,0.16) 0 1px, transparent 1px),
-    radial-gradient(circle at 76% 18%, rgba(0,229,255,0.22) 0 1px, transparent 1px),
-    radial-gradient(circle at 62% 76%, rgba(168,85,247,0.18) 0 1px, transparent 1px);
-  background-size: 140px 140px, 220px 220px, 180px 180px;
+    linear-gradient(90deg, rgba(132, 96, 255, 0.050) 1px, transparent 1px),
+    linear-gradient(180deg, rgba(132, 96, 255, 0.033) 1px, transparent 1px),
+    radial-gradient(circle at 8% 13%, rgba(255, 255, 255, 0.36) 0 1px, transparent 1.6px),
+    radial-gradient(circle at 22% 29%, rgba(154, 94, 255, 0.30) 0 1px, transparent 1.6px),
+    radial-gradient(circle at 84% 16%, rgba(72, 205, 255, 0.32) 0 1px, transparent 1.6px),
+    radial-gradient(circle at 68% 40%, rgba(255, 255, 255, 0.18) 0 1px, transparent 1.5px),
+    radial-gradient(circle at 14% 58%, rgba(178, 111, 255, 0.22) 0 1px, transparent 1.5px),
+    radial-gradient(circle at 88% 72%, rgba(72, 205, 255, 0.16) 0 1px, transparent 1.5px);
+  background-size:
+    52px 52px,
+    52px 52px,
+    120px 120px,
+    160px 160px,
+    180px 180px,
+    140px 140px,
+    170px 170px,
+    190px 190px;
+  background-position:
+    0 0,
+    0 0,
+    0 0,
+    12px 18px,
+    36px 10px,
+    14px 62px,
+    26px 40px,
+    48px 22px;
+  mask-image: linear-gradient(180deg, transparent 0%, #000 8%, #000 94%, transparent 100%);
+}
+
+.onix-app-bg::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  background:
+    radial-gradient(ellipse at 25% 12%, rgba(137, 74, 255, 0.17) 0%, transparent 29%),
+    radial-gradient(ellipse at 96% 28%, rgba(0, 195, 255, 0.10) 0%, transparent 24%),
+    radial-gradient(ellipse at 50% 78%, rgba(124, 49, 232, 0.18) 0%, transparent 30%),
+    linear-gradient(180deg, rgba(6, 7, 20, 0.00) 0%, rgba(6, 7, 20, 0.07) 55%, rgba(6, 7, 20, 0.28) 100%);
+}
+
+.onix-app-bg > * {
+  position: relative;
+  z-index: 2;
 }
 
 .onix-header {
