@@ -2147,7 +2147,7 @@ body,
   }
 }
 
-/* === REFERENCE HOME SCREEN PATCH v17 === */
+/* === REFERENCE HOME SCREEN PATCH v18 === */
 /* Clean isolated home screen based on reference */
 html,
 body,
@@ -2539,7 +2539,7 @@ body,
 }
 
 
-/* === REFERENCE HOME SCREEN PATCH v17 === */
+/* === REFERENCE HOME SCREEN PATCH v18 === */
 /* Hard final override: massive TAP button and lower button block above bottom menu */
 .onix-home-reference-mode .onix-ref-v5-coin {
   width: min(77vw, 300px) !important;
@@ -2607,7 +2607,7 @@ body,
 
 
 
-/* === REFERENCE HOME SCREEN PATCH v17 === */
+/* === REFERENCE HOME SCREEN PATCH v18 === */
 /* Bottom navigation polish only */
 .onix-home-reference-mode .onix-nav {
   height: 64px !important;
@@ -2691,7 +2691,7 @@ body,
 
 
 
-/* === REFERENCE HOME SCREEN PATCH v17 === */
+/* === REFERENCE HOME SCREEN PATCH v18 === */
 /* Upgrade screen redesign based on reference */
 .onix-upgrades-ref-screen {
   padding: 14px 16px calc(88px + env(safe-area-inset-bottom)) !important;
@@ -2915,7 +2915,7 @@ body,
 }
 
 
-/* === REFERENCE HOME SCREEN PATCH v17 === */
+/* === REFERENCE HOME SCREEN PATCH v18 === */
 /* Remove old rank/balance blocks from Upgrades screen */
 .onix-boosts-screen > .rounded-3xl,
 .onix-boosts-screen > .onix-rank-card,
@@ -2964,11 +2964,11 @@ body,
 
 
 
-/* === REFERENCE HOME SCREEN PATCH v17 === */
+/* === REFERENCE HOME SCREEN PATCH v18 === */
 /* Old global rank/balance header is disabled on Upgrades tab in JSX */
 
 
-/* === REFERENCE HOME SCREEN PATCH v17 === */
+/* === REFERENCE HOME SCREEN PATCH v18 === */
 /* Profile screen redesign based on reference */
 .onix-social-screen {
   margin-top: 0 !important;
@@ -3177,7 +3177,7 @@ body,
 
 
 
-/* === REFERENCE HOME SCREEN PATCH v17 === */
+/* === REFERENCE HOME SCREEN PATCH v18 === */
 /* Rank icons: Novice / Bronze / Silver / Gold / Platinum / Diamond / Grandmaster */
 .onix-rank-icon {
   --rank-main: #8ea0c9;
@@ -3317,7 +3317,7 @@ body,
 
 
 
-/* === REFERENCE HOME SCREEN PATCH v17 === */
+/* === REFERENCE HOME SCREEN PATCH v18 === */
 /* Rank icons now use exact cropped reference images */
 .onix-rank-icon {
   background: transparent !important;
@@ -3353,6 +3353,71 @@ body,
   box-shadow: none !important;
   overflow: visible !important;
 }
+
+
+/* === REFERENCE HOME SCREEN PATCH v18 === */
+/* Clean reference rank icon rendering */
+.onix-ref-v5-rank-badge {
+  width: 58px !important;
+  height: 58px !important;
+  flex: 0 0 58px !important;
+  display: grid !important;
+  place-items: center !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  filter: drop-shadow(0 0 10px rgba(168, 85, 247, 0.42)) !important;
+}
+
+.onix-ref-v5-rank-badge img,
+.onix-ref-v5-rank-badge .onix-rank-ref-img,
+.onix-ref-v5-rank-badge picture,
+.onix-ref-v5-rank-badge svg {
+  width: 50px !important;
+  height: 50px !important;
+  max-width: 50px !important;
+  max-height: 50px !important;
+  object-fit: contain !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  filter: none !important;
+}
+
+.onix-profile-ref-avatar {
+  width: 88px !important;
+  height: 88px !important;
+  flex: 0 0 88px !important;
+  border-radius: 26px !important;
+  background:
+    radial-gradient(circle at 50% 50%, rgba(103, 43, 210, 0.34), rgba(7, 10, 25, 0.96) 68%) !important;
+  border: 1px solid rgba(139, 92, 246, 0.42) !important;
+  box-shadow: 0 0 18px rgba(139, 92, 246, 0.34), inset 0 0 18px rgba(0, 229, 255, 0.06) !important;
+}
+
+.onix-profile-ref-avatar img,
+.onix-profile-ref-avatar .onix-rank-ref-img,
+.onix-profile-ref-avatar picture,
+.onix-profile-ref-avatar svg {
+  width: 76px !important;
+  height: 76px !important;
+  max-width: 76px !important;
+  max-height: 76px !important;
+  object-fit: contain !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  filter: drop-shadow(0 0 8px rgba(168, 85, 247, 0.28)) !important;
+}
+
+/* If the embedded reference crop has empty/dark pixels around it, crop it visually */
+.onix-rank-ref-img {
+  transform: scale(1.18) !important;
+  transform-origin: center !important;
+}
+
+.onix-ref-v5-rank-badge .onix-rank-ref-img {
+  transform: scale(1.25) !important;
+}
+
 
 `;
 
