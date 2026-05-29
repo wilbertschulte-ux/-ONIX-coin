@@ -2147,7 +2147,7 @@ body,
   }
 }
 
-/* === REFERENCE HOME SCREEN PATCH v11 === */
+/* === REFERENCE HOME SCREEN PATCH v12 === */
 /* Clean isolated home screen based on reference */
 html,
 body,
@@ -2539,7 +2539,7 @@ body,
 }
 
 
-/* === REFERENCE HOME SCREEN PATCH v11 === */
+/* === REFERENCE HOME SCREEN PATCH v12 === */
 /* Hard final override: massive TAP button and lower button block above bottom menu */
 .onix-home-reference-mode .onix-ref-v5-coin {
   width: min(77vw, 300px) !important;
@@ -2607,7 +2607,7 @@ body,
 
 
 
-/* === REFERENCE HOME SCREEN PATCH v11 === */
+/* === REFERENCE HOME SCREEN PATCH v12 === */
 /* Bottom navigation polish only */
 .onix-home-reference-mode .onix-nav {
   height: 64px !important;
@@ -2690,12 +2690,236 @@ body,
 }
 
 
+
+/* === REFERENCE HOME SCREEN PATCH v12 === */
+/* Upgrade screen redesign based on reference */
+.onix-upgrades-ref-screen {
+  padding: 14px 16px calc(88px + env(safe-area-inset-bottom)) !important;
+}
+
+.onix-upgrades-ref-wallets {
+  display: grid !important;
+  grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  gap: 12px !important;
+  margin-bottom: 18px !important;
+}
+
+.onix-upgrades-ref-wallet {
+  display: flex !important;
+  align-items: center !important;
+  gap: 10px !important;
+  padding: 14px 14px !important;
+  border-radius: 18px !important;
+  border: 1px solid rgba(138, 92, 246, 0.28) !important;
+  background: linear-gradient(180deg, rgba(10, 15, 33, 0.98), rgba(7, 10, 25, 0.98)) !important;
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.28), inset 0 0 20px rgba(132, 86, 255, 0.08) !important;
+}
+
+.onix-upgrades-ref-wallet-onix .onix-upgrades-ref-wallet-icon {
+  background: radial-gradient(circle at 30% 30%, rgba(255, 214, 79, 0.55), rgba(219, 150, 22, 0.32) 55%, rgba(23, 19, 17, 0.95) 100%) !important;
+  color: #ffd552 !important;
+}
+
+.onix-upgrades-ref-wallet-gems .onix-upgrades-ref-wallet-icon {
+  background: radial-gradient(circle at 30% 30%, rgba(97, 217, 255, 0.48), rgba(20, 87, 255, 0.26) 55%, rgba(13, 17, 34, 0.95) 100%) !important;
+  color: #64dcff !important;
+}
+
+.onix-upgrades-ref-wallet-icon {
+  width: 42px !important;
+  height: 42px !important;
+  flex: 0 0 42px !important;
+  display: grid !important;
+  place-items: center !important;
+  border-radius: 14px !important;
+  border: 1px solid rgba(255,255,255,0.08) !important;
+  font-size: 20px !important;
+  box-shadow: 0 0 16px rgba(130, 96, 255, 0.24) !important;
+}
+
+.onix-upgrades-ref-wallet-value {
+  color: #ffffff !important;
+  font-family: 'Exo 2', system-ui, sans-serif !important;
+  font-size: 24px !important;
+  line-height: 1 !important;
+  font-weight: 800 !important;
+}
+
+.onix-upgrades-ref-wallet-label {
+  margin-top: 3px !important;
+  color: rgba(255,255,255,0.72) !important;
+  font-size: 10px !important;
+  font-weight: 800 !important;
+  letter-spacing: 0.08em !important;
+  text-transform: uppercase !important;
+}
+
+.onix-upgrades-ref-tabs {
+  display: grid !important;
+  grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+  gap: 8px !important;
+  margin-bottom: 14px !important;
+  border-bottom: 1px solid rgba(132, 96, 255, 0.24) !important;
+  padding-bottom: 10px !important;
+}
+
+.onix-upgrades-ref-tab {
+  position: relative !important;
+  padding: 8px 2px 10px !important;
+  background: transparent !important;
+  border: 0 !important;
+  color: rgba(205, 210, 231, 0.72) !important;
+  font-size: 12px !important;
+  line-height: 1.1 !important;
+  font-weight: 700 !important;
+}
+
+.onix-upgrades-ref-tab-active {
+  color: #ffffff !important;
+}
+
+.onix-upgrades-ref-tab-active::after {
+  content: '' !important;
+  position: absolute !important;
+  left: 14% !important;
+  right: 14% !important;
+  bottom: 0 !important;
+  height: 2px !important;
+  border-radius: 999px !important;
+  background: linear-gradient(90deg, #932bff 0%, #d04cff 100%) !important;
+  box-shadow: 0 0 12px rgba(175, 70, 255, 0.75) !important;
+}
+
+.onix-upgrades-ref-list {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 12px !important;
+}
+
+.onix-upgrade-ref-card {
+  display: flex !important;
+  align-items: center !important;
+  gap: 12px !important;
+  padding: 13px 12px !important;
+  border-radius: 18px !important;
+  border: 1px solid rgba(108, 67, 212, 0.34) !important;
+  background: linear-gradient(180deg, rgba(13, 18, 36, 0.98), rgba(8, 11, 24, 0.98)) !important;
+  box-shadow: 0 12px 26px rgba(0, 0, 0, 0.26), inset 0 0 18px rgba(141, 90, 255, 0.08) !important;
+}
+
+.onix-upgrade-ref-icon {
+  width: 48px !important;
+  height: 48px !important;
+  flex: 0 0 48px !important;
+  display: grid !important;
+  place-items: center !important;
+  border-radius: 14px !important;
+  border: 1px solid rgba(255,255,255,0.08) !important;
+  font-size: 24px !important;
+}
+
+.onix-upgrade-ref-icon-violet { background: radial-gradient(circle at 30% 30%, rgba(195, 95, 255, 0.46), rgba(84, 18, 192, 0.26) 58%, rgba(14, 11, 35, 0.96) 100%) !important; box-shadow: 0 0 20px rgba(168, 85, 247, 0.28) !important; }
+.onix-upgrade-ref-icon-gold { background: radial-gradient(circle at 30% 30%, rgba(255, 210, 71, 0.48), rgba(193, 120, 20, 0.24) 58%, rgba(25, 16, 8, 0.96) 100%) !important; box-shadow: 0 0 20px rgba(251, 191, 36, 0.22) !important; }
+.onix-upgrade-ref-icon-cyan { background: radial-gradient(circle at 30% 30%, rgba(88, 243, 255, 0.42), rgba(10, 95, 203, 0.24) 58%, rgba(8, 15, 31, 0.96) 100%) !important; box-shadow: 0 0 20px rgba(34, 211, 238, 0.22) !important; }
+.onix-upgrade-ref-icon-blue { background: radial-gradient(circle at 30% 30%, rgba(92, 174, 255, 0.46), rgba(50, 90, 229, 0.26) 58%, rgba(11, 18, 35, 0.96) 100%) !important; box-shadow: 0 0 20px rgba(96, 165, 250, 0.22) !important; }
+.onix-upgrade-ref-icon-pink { background: radial-gradient(circle at 30% 30%, rgba(255, 100, 209, 0.42), rgba(141, 36, 145, 0.26) 58%, rgba(25, 8, 29, 0.96) 100%) !important; box-shadow: 0 0 20px rgba(244, 114, 182, 0.22) !important; }
+.onix-upgrade-ref-icon-emerald { background: radial-gradient(circle at 30% 30%, rgba(74, 255, 174, 0.42), rgba(16, 141, 86, 0.24) 58%, rgba(8, 28, 24, 0.96) 100%) !important; box-shadow: 0 0 20px rgba(16, 185, 129, 0.22) !important; }
+
+.onix-upgrade-ref-main {
+  min-width: 0 !important;
+  flex: 1 1 auto !important;
+}
+
+.onix-upgrade-ref-title {
+  color: #ffffff !important;
+  font-size: 15px !important;
+  line-height: 1.1 !important;
+  font-weight: 800 !important;
+}
+
+.onix-upgrade-ref-level {
+  margin-top: 4px !important;
+  color: rgba(199, 163, 255, 0.82) !important;
+  font-size: 12px !important;
+  line-height: 1 !important;
+  font-weight: 700 !important;
+}
+
+.onix-upgrade-ref-subtitle {
+  margin-top: 5px !important;
+  color: rgba(255, 209, 84, 0.88) !important;
+  font-size: 12px !important;
+  line-height: 1.15 !important;
+  font-weight: 700 !important;
+}
+
+.onix-upgrade-ref-buy {
+  align-self: center !important;
+  min-width: 90px !important;
+  height: 36px !important;
+  padding: 0 12px !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 6px !important;
+  border-radius: 11px !important;
+  border: 1px solid rgba(255, 191, 35, 0.52) !important;
+  background: linear-gradient(180deg, rgba(45, 30, 9, 0.98), rgba(22, 16, 7, 0.98)) !important;
+  color: #ffca39 !important;
+  font-size: 13px !important;
+  line-height: 1 !important;
+  font-weight: 800 !important;
+  box-shadow: inset 0 0 14px rgba(255, 188, 39, 0.08), 0 0 12px rgba(255, 188, 39, 0.08) !important;
+}
+
+.onix-upgrade-ref-buy-icon {
+  font-size: 14px !important;
+}
+
+.onix-upgrade-ref-buy-disabled {
+  opacity: 0.52 !important;
+}
+
+@media (max-width: 380px) {
+  .onix-upgrades-ref-screen {
+    padding-left: 12px !important;
+    padding-right: 12px !important;
+  }
+
+  .onix-upgrades-ref-wallet-value {
+    font-size: 21px !important;
+  }
+
+  .onix-upgrades-ref-tab {
+    font-size: 11px !important;
+  }
+
+  .onix-upgrade-ref-card {
+    gap: 10px !important;
+    padding: 12px 10px !important;
+  }
+
+  .onix-upgrade-ref-icon {
+    width: 44px !important;
+    height: 44px !important;
+    flex-basis: 44px !important;
+    font-size: 22px !important;
+  }
+
+  .onix-upgrade-ref-buy {
+    min-width: 82px !important;
+    height: 34px !important;
+    font-size: 12px !important;
+    padding: 0 10px !important;
+  }
+}
+
 `;
 
 
 type Tab = 'home' | 'boosts' | 'tasks' | 'friends' | 'wallet' | 'launch';
 
-type BoostSubTab = 'upgrades' | 'perks' | 'boosts';
+type BoostSubTab = 'tapping' | 'energy' | 'boosts' | 'other';
 
 type FloatingNumber = {
   id: number;
@@ -3546,7 +3770,7 @@ function App() {
       body.style.width = previousBodyWidth;
     };
   }, [activeTab]);
-  const [boostSubTab, setBoostSubTab] = useState<BoostSubTab>('upgrades');
+  const [boostSubTab, setBoostSubTab] = useState<BoostSubTab>('tapping');
   const [isAppLoading, setIsAppLoading] = useState(true);
   const [tutorialVisible, setTutorialVisible] = useState(false);
   const [tutorialStep, setTutorialStep] = useState(0);
@@ -7624,6 +7848,20 @@ body:has(.onix-home-reference-mode),
     },
   ];
 
+  void [
+    referralProLevel,
+    minerIncomePerHour,
+    effectiveTapEnergyCost,
+    effectiveDailyPreview,
+    maxOfflineIncome,
+    minerUpgradeProgress,
+    minerIncomeIncrease,
+    upgradeCards,
+    lastChestReward,
+    openChest,
+    streakShieldLevel,
+  ];
+
   const boostRemainingMs = Math.max(boostEndTime - Date.now(), 0);
   const boostTimeLeft = boostRemainingMs > 0 ? formatTime(boostRemainingMs) : '';
   const isAnyBoostActive = isBoostActive && activeBoost !== 'none';
@@ -8204,586 +8442,270 @@ body:has(.onix-home-reference-mode),
       )}
 
 
-      {activeTab === 'boosts' && (
-        <div className="onix-boosts-screen px-5 mt-8 space-y-8">
-          <div className="rounded-3xl border border-yellow-400/20 bg-[#111827] p-5 shadow-xl">
-            <div className="mb-4 flex items-center gap-3">
-              <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-yellow-400 text-2xl">
-                ⛏️
-              </div>
+      {activeTab === 'boosts' && (() => {
+        const displayGems = 2450;
 
-              <div>
-                <h2 className="text-xl font-bold text-white">
-                  Статистика майнера
-                </h2>
-                <p className="text-sm text-gray-400">Твой пассивный доход</p>
-              </div>
-            </div>
+        const tappingCards = [
+          {
+            id: 'tap',
+            icon: '👆',
+            accent: 'violet',
+            title: 'Сила тапа',
+            level: tapLevel,
+            subtitle: `${formatOnix(tapPower)} ONIX за тап`,
+            price: nextTapCost,
+            priceType: 'onix',
+            disabled: balance < nextTapCost,
+            action: () => buyUpgrade('tap'),
+          },
+          {
+            id: 'miner',
+            icon: '🪙',
+            accent: 'gold',
+            title: 'Множитель монеты',
+            level: minerLevel,
+            subtitle: `+${formatOnix(minerIncomePerSecond)} ONIX в сек`,
+            price: nextMinerCost,
+            priceType: 'onix',
+            disabled: balance < nextMinerCost,
+            action: () => buyUpgrade('miner'),
+          },
+          {
+            id: 'recharge',
+            icon: '⚡',
+            accent: 'cyan',
+            title: 'Восстановление энергии',
+            level: rechargeLevel,
+            subtitle: `+${formatOnix(energyRecharge)} энергии`,
+            price: nextRechargeCost,
+            priceType: 'onix',
+            disabled: balance < nextRechargeCost,
+            action: () => buyUpgrade('recharge'),
+          },
+          {
+            id: 'energy',
+            icon: '💎',
+            accent: 'blue',
+            title: 'Макс. энергия',
+            level: energyLevel,
+            subtitle: `${maxEnergy.toLocaleString('ru-RU')} max. энергии`,
+            price: nextEnergyCost,
+            priceType: 'onix',
+            disabled: balance < nextEnergyCost,
+            action: () => buyUpgrade('energy'),
+          },
+        ];
 
-            <div className="grid grid-cols-2 gap-3">
-              <div className="rounded-2xl bg-[#0a0f1c] p-4">
-                <p className="text-xs text-gray-400">Доход в секунду</p>
-                <p className="mt-1 text-lg font-bold text-yellow-400">
-                  +{formatOnix(minerIncomePerSecond)}
-                </p>
-              </div>
+        const energySaverCost = energySaverLevel >= 3 ? 0 : getPerkCost(150000, energySaverLevel + 1);
+        const energyMaxProCost = energyMaxProLevel >= 3 ? 0 : getPerkCost(175000, energyMaxProLevel + 1);
+        const boostsMasterCost = boostMasterLevel >= 3 ? 0 : getPerkCost(180000, boostMasterLevel + 1);
+        const dailyPlusCost = dailyPlusLevel >= 3 ? 0 : getPerkCost(200000, dailyPlusLevel + 1);
+        const engineerCost = engineerLevel >= 3 ? 0 : getPerkCost(250000, engineerLevel + 1);
+        const offlineProCost = offlineProLevel >= 3 ? 0 : getPerkCost(100000, offlineProLevel + 1);
 
-              <div className="rounded-2xl bg-[#0a0f1c] p-4">
-                <p className="text-xs text-gray-400">Доход в час</p>
-                <p className="mt-1 text-lg font-bold text-yellow-400">
-                  +{formatOnix(minerIncomePerHour)}
-                </p>
-              </div>
+        const energyCards = [
+          {
+            id: 'energy-main',
+            icon: '🔋',
+            accent: 'blue',
+            title: 'Энергия',
+            level: energyLevel,
+            subtitle: `${maxEnergy.toLocaleString('ru-RU')} max. энергии`,
+            price: nextEnergyCost,
+            priceType: 'onix',
+            disabled: balance < nextEnergyCost,
+            action: () => buyUpgrade('energy'),
+          },
+          {
+            id: 'recharge-main',
+            icon: '⚡',
+            accent: 'cyan',
+            title: 'Восстановление',
+            level: rechargeLevel,
+            subtitle: `+${formatOnix(energyRecharge)} энергии/сек`,
+            price: nextRechargeCost,
+            priceType: 'onix',
+            disabled: balance < nextRechargeCost,
+            action: () => buyUpgrade('recharge'),
+          },
+          {
+            id: 'energy-saver',
+            icon: '🛡️',
+            accent: 'violet',
+            title: 'Energy Saver',
+            level: energySaverLevel,
+            subtitle: `-${energySaverLevel * 10}% расхода энергии`,
+            price: energySaverCost,
+            priceType: 'onix',
+            disabled: energySaverLevel >= 3 || balance < energySaverCost,
+            priceLabel: energySaverLevel >= 3 ? 'MAX' : undefined,
+            action: () => buyPerk('energy_saver'),
+          },
+          {
+            id: 'energy-max-pro',
+            icon: '💠',
+            accent: 'pink',
+            title: 'Energy Max Pro',
+            level: energyMaxProLevel,
+            subtitle: `+${energyMaxProLevel * 500} бонус энергии`,
+            price: energyMaxProCost,
+            priceType: 'onix',
+            disabled: energyMaxProLevel >= 3 || balance < energyMaxProCost,
+            priceLabel: energyMaxProLevel >= 3 ? 'MAX' : undefined,
+            action: () => buyPerk('energy_max_pro'),
+          },
+        ];
 
-              <div className="rounded-2xl bg-[#0a0f1c] p-4">
-                <p className="text-xs text-gray-400">Макс. оффлайн</p>
-                <p className="mt-1 text-lg font-bold text-white">
-                  {maxOfflineHours} часа
-                </p>
-              </div>
+        const boostsCards = boostCards.map((boost) => ({
+          id: boost.type,
+          icon: boost.type === 'tap' ? '🚀' : '⚡',
+          accent: boost.isActive ? 'emerald' : 'gold',
+          title: boost.title,
+          level: boost.isActive ? 1 : 0,
+          subtitle: `${boost.multiplier} • ${boost.durationMinutes} мин${boost.isActive ? ` • ${boostTimeLeft}` : ''}`,
+          price: boost.cost,
+          priceType: 'onix',
+          disabled: (isAnyBoostActive && !boost.isActive) || (!boost.isActive && balance < boost.cost),
+          priceLabel: boost.isActive ? 'ACTIVE' : undefined,
+          action: () => activateBoost(boost.type, boost.durationMinutes, boost.cost),
+        }));
 
-              <div className="rounded-2xl bg-[#0a0f1c] p-4">
-                <p className="text-xs text-gray-400">Макс. доход</p>
-                <p className="mt-1 text-lg font-bold text-yellow-400">
-                  +{formatOnix(maxOfflineIncome)}
-                </p>
-              </div>
-            </div>
+        const otherCards = [
+          {
+            id: 'offline-pro',
+            icon: '🧲',
+            accent: 'violet',
+            title: 'Offline Pro',
+            level: offlineProLevel,
+            subtitle: `${maxOfflineHours} ч. оффлайн-дохода`,
+            price: offlineProCost,
+            priceType: 'onix',
+            disabled: offlineProLevel >= 3 || balance < offlineProCost,
+            priceLabel: offlineProLevel >= 3 ? 'MAX' : undefined,
+            action: () => buyPerk('offline_pro'),
+          },
+          {
+            id: 'daily-plus',
+            icon: '🎁',
+            accent: 'gold',
+            title: 'Daily Plus',
+            level: dailyPlusLevel,
+            subtitle: `+${dailyPlusLevel * 10}% к daily reward`,
+            price: dailyPlusCost,
+            priceType: 'onix',
+            disabled: dailyPlusLevel >= 3 || balance < dailyPlusCost,
+            priceLabel: dailyPlusLevel >= 3 ? 'MAX' : undefined,
+            action: () => buyPerk('daily_plus'),
+          },
+          {
+            id: 'boost-master',
+            icon: '🧪',
+            accent: 'cyan',
+            title: 'Boost Master',
+            level: boostMasterLevel,
+            subtitle: `+${boostMasterLevel * 20}% времени буста`,
+            price: boostsMasterCost,
+            priceType: 'onix',
+            disabled: boostMasterLevel >= 3 || balance < boostsMasterCost,
+            priceLabel: boostMasterLevel >= 3 ? 'MAX' : undefined,
+            action: () => buyPerk('boost_master'),
+          },
+          {
+            id: 'engineer',
+            icon: '🛠️',
+            accent: 'pink',
+            title: 'Engineer',
+            level: engineerLevel,
+            subtitle: `-${engineerLevel * 5}% к цене апгрейдов`,
+            price: engineerCost,
+            priceType: 'onix',
+            disabled: engineerLevel >= 3 || balance < engineerCost,
+            priceLabel: engineerLevel >= 3 ? 'MAX' : undefined,
+            action: () => buyPerk('engineer'),
+          },
+        ];
 
-            <div className="mt-4 rounded-2xl bg-[#0a0f1c] p-4">
-              <div className="mb-3 flex items-center justify-between gap-3">
+        const currentCards =
+          boostSubTab === 'tapping'
+            ? tappingCards
+            : boostSubTab === 'energy'
+            ? energyCards
+            : boostSubTab === 'boosts'
+            ? boostsCards
+            : otherCards;
+
+        return (
+          <div className="onix-upgrades-ref-screen">
+            <div className="onix-upgrades-ref-wallets">
+              <div className="onix-upgrades-ref-wallet onix-upgrades-ref-wallet-onix">
+                <div className="onix-upgrades-ref-wallet-icon">🪙</div>
                 <div>
-                  <p className="text-xs text-gray-400">
-                    Следующий уровень майнера
-                  </p>
-                  <p className="mt-1 text-lg font-bold text-white">
-                    Ур. {minerLevel + 1}
-                  </p>
-                </div>
-
-                <div className="text-right">
-                  <p className="text-xs text-gray-400">Цена</p>
-                  <p className="mt-1 text-lg font-bold text-yellow-400">
-                    {nextMinerCost.toLocaleString('ru-RU')} ONIX
-                  </p>
+                  <div className="onix-upgrades-ref-wallet-value">
+                    {Math.floor(balance).toLocaleString('ru-RU')}
+                  </div>
+                  <div className="onix-upgrades-ref-wallet-label">ONIX</div>
                 </div>
               </div>
 
-              <div className="h-3 overflow-hidden rounded-full bg-gray-800">
-                <div
-                  className="h-full rounded-full bg-yellow-400 transition-all"
-                  style={{ width: `${minerUpgradeProgress}%` }}
-                />
-              </div>
-
-              <div className="mt-3 flex items-center justify-between text-sm">
-                <span className="text-gray-400">
-                  {Math.min(balance, nextMinerCost).toLocaleString('ru-RU')} /{' '}
-                  {nextMinerCost.toLocaleString('ru-RU')} ONIX
-                </span>
-
-                <span className="font-bold text-emerald-400">
-                  +{formatOnix(minerIncomeIncrease)} ONIX/сек
-                </span>
+              <div className="onix-upgrades-ref-wallet onix-upgrades-ref-wallet-gems">
+                <div className="onix-upgrades-ref-wallet-icon">💎</div>
+                <div>
+                  <div className="onix-upgrades-ref-wallet-value">
+                    {displayGems.toLocaleString('ru-RU')}
+                  </div>
+                  <div className="onix-upgrades-ref-wallet-label">GEMS</div>
+                </div>
               </div>
             </div>
 
-            {isBoostActive && activeBoostValue === 'mining' && (
-              <p className="mt-4 rounded-2xl bg-emerald-500/10 px-4 py-3 text-sm font-bold text-emerald-400">
-                ⚡ Активен буст майнинга ×2
-              </p>
-            )}
-          </div>
-
-
-
-
-          <div className="onix-boost-tabs sticky top-32 z-40 rounded-2xl bg-[#111827] p-1 shadow-xl">
-            <div className="grid grid-cols-3 gap-1">
+            <div className="onix-upgrades-ref-tabs">
               {[
-                { id: 'upgrades', label: 'Апгрейды' },
-                { id: 'perks', label: 'Перки' },
+                { id: 'tapping', label: 'Таппинг' },
+                { id: 'energy', label: 'Энергия' },
                 { id: 'boosts', label: 'Бусты' },
+                { id: 'other', label: 'Другое' },
               ].map((tab) => (
                 <button
                   key={tab.id}
+                  type="button"
                   onClick={() => setBoostSubTab(tab.id as BoostSubTab)}
-                  className={`rounded-xl px-2 py-3 text-xs font-bold transition ${
-                    boostSubTab === tab.id
-                      ? 'bg-yellow-400 text-black'
-                      : 'text-gray-400'
-                  }`}
+                  className={`onix-upgrades-ref-tab ${boostSubTab === tab.id ? 'onix-upgrades-ref-tab-active' : ''}`}
                 >
                   {tab.label}
                 </button>
               ))}
             </div>
-          </div>
 
-          <div className={boostSubTab === 'perks' ? '' : 'hidden'}>
-            <h2 className="text-2xl font-bold mb-4">🧩 Перки и магазин</h2>
+            <div className="onix-upgrades-ref-list">
+              {currentCards.map((item) => (
+                <div key={item.id} className="onix-upgrade-ref-card">
+                  <div className={`onix-upgrade-ref-icon onix-upgrade-ref-icon-${item.accent}`}>
+                    <span>{item.icon}</span>
+                  </div>
 
-            <div className="mb-5 rounded-3xl border border-yellow-400/20 bg-[#111827] p-5 shadow-xl">
-              <div className="mb-4 flex items-center justify-between gap-3">
-                <div>
-                  <h3 className="text-xl font-bold text-white">🎁 ONIX сундук</h3>
-                  <p className="text-sm text-gray-400">
-                    Случайная награда: от 25 000 до 300 000 ONIX
-                  </p>
-                </div>
+                  <div className="onix-upgrade-ref-main">
+                    <div className="onix-upgrade-ref-title">{item.title}</div>
+                    <div className="onix-upgrade-ref-level">Уровень {item.level}</div>
+                    <div className="onix-upgrade-ref-subtitle">{item.subtitle}</div>
+                  </div>
 
-                <div className="rounded-2xl bg-[#0a0f1c] px-3 py-2 text-right">
-                  <p className="text-xs text-gray-400">Цена</p>
-                  <p className="font-bold text-yellow-400">50 000</p>
-                </div>
-              </div>
-
-              {lastChestReward && (
-                <p className="mb-3 rounded-2xl bg-[#0a0f1c] p-3 text-sm font-bold text-emerald-400">
-                  Последний сундук: {lastChestReward}
-                </p>
-              )}
-
-              <button
-                onClick={openChest}
-                disabled={balance < 50000}
-                className={`w-full rounded-2xl py-4 text-lg font-bold transition ${
-                  balance >= 50000
-                    ? 'bg-yellow-400 text-black active:scale-95'
-                    : 'bg-gray-700 text-gray-400 cursor-not-allowed'
-                }`}
-              >
-                {balance >= 50000
-                  ? 'Открыть сундук'
-                  : `Не хватает ${(50000 - balance).toLocaleString('ru-RU')} ONIX`}
-              </button>
-            </div>
-
-            <div className="space-y-4">
-              {[
-                {
-                  id: 'offline_pro',
-                  icon: '🧲',
-                  title: 'Offline Pro',
-                  description: '+1 час к максимуму оффлайн-дохода за уровень',
-                  baseCost: 100000,
-                  level: offlineProLevel,
-                  maxLevel: 3,
-                  current: `${maxOfflineHours} ч. оффлайн`,
-                  next: `${Math.min(maxOfflineHours + 1, 6)} ч. оффлайн`,
-                },
-                {
-                  id: 'energy_saver',
-                  icon: '🔋',
-                  title: 'Energy Saver',
-                  description: '-10% расход энергии на тап за уровень',
-                  baseCost: 150000,
-                  level: energySaverLevel,
-                  maxLevel: 3,
-                  current: `${formatOnix(effectiveTapEnergyCost)} энергии/тап`,
-                  next: `${formatOnix(Math.max(1, tapPower * Math.max(0.7, 1 - 0.1 * (energySaverLevel + 1))))} энергии/тап`,
-                },
-                {
-                  id: 'daily_plus',
-                  icon: '🎁',
-                  title: 'Daily Plus',
-                  description: '+10% к daily reward за уровень',
-                  baseCost: 200000,
-                  level: dailyPlusLevel,
-                  maxLevel: 3,
-                  current: `+${formatOnix(effectiveDailyPreview)} ONIX`,
-                  next: `+${formatOnix(Math.round(baseDailyPreview * (1 + 0.1 * (dailyPlusLevel + 1))))} ONIX`,
-                },
-                {
-                  id: 'miner_plus',
-                  icon: '⛏️',
-                  title: 'Miner Plus',
-                  description: '+5% к доходу майнера за уровень',
-                  baseCost: 250000,
-                  level: minerPlusLevel,
-                  maxLevel: 3,
-                  current: `+${formatOnix(minerIncomePerSecond)} ONIX/сек`,
-                  next: `+${formatOnix(Number((autoclickers * (1 + 0.05 * (minerPlusLevel + 1) + 0.03 * luckyMinerLevel) * miningMultiplier).toFixed(2)))} ONIX/сек`,
-                },
-                {
-                  id: 'boost_master',
-                  icon: '⚡',
-                  title: 'Boost Master',
-                  description: '+20% длительность бустов за уровень',
-                  baseCost: 180000,
-                  level: boostMasterLevel,
-                  maxLevel: 3,
-                  current: `+${boostMasterLevel * 20}% времени`,
-                  next: `+${Math.min((boostMasterLevel + 1) * 20, 60)}% времени`,
-                },
-                {
-                  id: 'streak_shield',
-                  icon: '🛡️',
-                  title: 'Streak Shield',
-                  description: 'Защищает daily streak от одного пропуска',
-                  baseCost: 220000,
-                  level: streakShieldLevel,
-                  maxLevel: 1,
-                  current: streakShieldLevel > 0 ? 'Активно' : 'Нет защиты',
-                  next: 'Защита streak',
-                },
-                {
-                  id: 'lucky_miner',
-                  icon: '🍀',
-                  title: 'Lucky Miner',
-                  description: '+3% к доходу майнера за уровень',
-                  baseCost: 300000,
-                  level: luckyMinerLevel,
-                  maxLevel: 3,
-                  current: `+${luckyMinerLevel * 3}%`,
-                  next: `+${Math.min((luckyMinerLevel + 1) * 3, 9)}%`,
-                },
-                {
-                  id: 'referral_pro',
-                  icon: '👥',
-                  title: 'Referral Pro',
-                  description: '+5% к реферальному бонусу за уровень',
-                  baseCost: 300000,
-                  level: referralProLevel,
-                  maxLevel: 3,
-                  current: `+${referralProLevel * 5}%`,
-                  next: `+${Math.min((referralProLevel + 1) * 5, 15)}%`,
-                },
-                {
-                  id: 'energy_max_pro',
-                  icon: '🔋',
-                  title: 'Energy Max Pro',
-                  description: '+500 max energy за уровень',
-                  baseCost: 175000,
-                  level: energyMaxProLevel,
-                  maxLevel: 3,
-                  current: `+${energyMaxProLevel * 500} энергии`,
-                  next: `+${Math.min((energyMaxProLevel + 1) * 500, 1500)} энергии`,
-                },
-                {
-                  id: 'engineer',
-                  icon: '🛠️',
-                  title: 'Engineer',
-                  description: '-5% стоимость апгрейдов за уровень',
-                  baseCost: 250000,
-                  level: engineerLevel,
-                  maxLevel: 3,
-                  current: `-${engineerLevel * 5}%`,
-                  next: `-${Math.min((engineerLevel + 1) * 5, 15)}%`,
-                },
-              ].map((perk) => {
-                const nextLevel = perk.level + 1;
-                const cost = getPerkCost(perk.baseCost, nextLevel);
-                const isMaxed = perk.level >= perk.maxLevel;
-
-                return (
-                  <div
-                    key={perk.id}
-                    className={`rounded-3xl border p-5 shadow-xl ${
-                      isMaxed
-                        ? 'border-emerald-400/30 bg-emerald-500/10'
-                        : perk.level > 0
-                        ? 'border-yellow-400/30 bg-[#111827]'
-                        : 'border-yellow-400/20 bg-[#111827]'
-                    }`}
+                  <button
+                    type="button"
+                    onClick={item.action}
+                    disabled={item.disabled}
+                    className={`onix-upgrade-ref-buy ${item.disabled ? 'onix-upgrade-ref-buy-disabled' : ''}`}
                   >
-                    <div className="mb-4 flex items-center justify-between gap-3">
-                      <div className="flex items-center gap-3">
-                        <div
-                          className={`flex h-12 w-12 items-center justify-center rounded-2xl text-2xl ${
-                            isMaxed ? 'bg-emerald-400' : 'bg-yellow-400'
-                          }`}
-                        >
-                          {perk.icon}
-                        </div>
-
-                        <div>
-                          <h3 className="text-xl font-bold text-white">
-                            {perk.title}
-                          </h3>
-                          <p className="text-sm text-gray-400">
-                            {perk.description}
-                          </p>
-                        </div>
-                      </div>
-
-                      <div className="rounded-2xl bg-[#0a0f1c] px-3 py-2 text-right">
-                        <p className="text-xs text-gray-400">Уровень</p>
-                        <p className="font-bold text-yellow-400">
-                          {perk.level}/{perk.maxLevel}
-                        </p>
-                      </div>
-                    </div>
-
-                    <div className="grid grid-cols-2 gap-3">
-                      <div className="rounded-2xl bg-[#0a0f1c] p-4">
-                        <p className="text-xs text-gray-400">Сейчас</p>
-                        <p className="mt-1 text-sm font-bold text-white">
-                          {perk.current}
-                        </p>
-                      </div>
-
-                      <div className="rounded-2xl bg-[#0a0f1c] p-4">
-                        <p className="text-xs text-gray-400">Следующий ур.</p>
-                        <p className="mt-1 text-sm font-bold text-emerald-400">
-                          {isMaxed ? 'Максимум' : perk.next}
-                        </p>
-                      </div>
-                    </div>
-
-                    <button
-                      onClick={() => buyPerk(perk.id)}
-                      disabled={isMaxed || balance < cost}
-                      className={`mt-4 w-full rounded-2xl py-4 text-lg font-bold transition ${
-                        isMaxed
-                          ? 'bg-emerald-500/20 text-emerald-400 cursor-not-allowed'
-                          : balance >= cost
-                          ? 'bg-yellow-400 text-black active:scale-95'
-                          : 'bg-gray-700 text-gray-400 cursor-not-allowed'
-                      }`}
-                    >
-                      {isMaxed
-                        ? 'Максимум'
-                        : balance >= cost
-                        ? `Купить ур. ${nextLevel} за ${cost.toLocaleString('ru-RU')} ONIX`
-                        : `Не хватает ${(cost - balance).toLocaleString('ru-RU')} ONIX`}
-                    </button>
-                  </div>
-                );
-              })}
-            </div>
-          </div>
-
-          <div className={boostSubTab === 'upgrades' ? '' : 'hidden'}>
-            <h2 className="text-2xl font-bold mb-4">⬆️ Апгрейды</h2>
-
-            <div className="space-y-4">
-              {upgradeCards.map((upgrade) => {
-                const canBuy = balance >= upgrade.cost;
-                const progressToBuy = Math.min((balance / upgrade.cost) * 100, 100);
-
-                return (
-                  <div
-                    key={upgrade.type}
-                    className="rounded-3xl border border-yellow-400/20 bg-[#111827] p-5 shadow-xl"
-                  >
-                    <div className="mb-4 flex items-center justify-between gap-3">
-                      <div className="flex items-center gap-3">
-                        <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-yellow-400 text-2xl">
-                          {upgrade.icon}
-                        </div>
-
-                        <div>
-                          <h3 className="text-xl font-bold text-white">
-                            {upgrade.title}
-                          </h3>
-                          <p className="text-sm text-gray-400">
-                            {upgrade.description}
-                          </p>
-                        </div>
-                      </div>
-
-                      <div className="rounded-2xl bg-[#0a0f1c] px-3 py-2 text-right">
-                        <p className="text-xs text-gray-400">Уровень</p>
-                        <p className="font-bold text-yellow-400">
-                          {upgrade.level}
-                        </p>
-                      </div>
-                    </div>
-
-                    <div className="grid grid-cols-2 gap-3">
-                      <div className="rounded-2xl bg-[#0a0f1c] p-4">
-                        <p className="text-xs text-gray-400">
-                          {upgrade.currentLabel}
-                        </p>
-                        <p className="mt-1 text-sm font-bold text-white">
-                          {upgrade.currentValue}
-                        </p>
-                      </div>
-
-                      <div className="rounded-2xl bg-[#0a0f1c] p-4">
-                        <p className="text-xs text-gray-400">
-                          {upgrade.nextLabel}
-                        </p>
-                        <p className="mt-1 text-sm font-bold text-emerald-400">
-                          {upgrade.nextValue}
-                        </p>
-                      </div>
-                    </div>
-
-                    <div className="mt-4 rounded-2xl bg-[#0a0f1c] p-4">
-                      <div className="mb-2 flex items-center justify-between text-sm">
-                        <span className="text-gray-400">
-                          Цена: {upgrade.cost.toLocaleString('ru-RU')} ONIX
-                        </span>
-
-                        <span
-                          className={
-                            canBuy
-                              ? 'font-bold text-emerald-400'
-                              : 'font-bold text-gray-400'
-                          }
-                        >
-                          {canBuy
-                            ? 'Можно купить'
-                            : `Не хватает ${(upgrade.cost - balance).toLocaleString(
-                                'ru-RU'
-                              )}`}
-                        </span>
-                      </div>
-
-                      <div className="h-3 overflow-hidden rounded-full bg-gray-800">
-                        <div
-                          className="h-full rounded-full bg-yellow-400 transition-all"
-                          style={{ width: `${progressToBuy}%` }}
-                        />
-                      </div>
-                    </div>
-
-                    <button
-                      onClick={() => buyUpgrade(upgrade.type)}
-                      disabled={!canBuy}
-                      className={`mt-4 w-full rounded-2xl py-4 text-lg font-bold transition ${
-                        canBuy
-                          ? 'bg-yellow-400 text-black active:scale-95'
-                          : 'bg-gray-700 text-gray-400 cursor-not-allowed'
-                      }`}
-                    >
-                      {canBuy ? 'Купить улучшение' : 'Недостаточно ONIX'}
-                    </button>
-                  </div>
-                );
-              })}
-            </div>
-          </div>
-
-          <div className={boostSubTab === 'boosts' ? '' : 'hidden'}>
-            <h2 className="text-2xl font-bold mb-4">⚡ Временные бусты</h2>
-
-            {isAnyBoostActive && (
-              <div className="mb-4 rounded-3xl border border-emerald-400/20 bg-emerald-500/10 p-5">
-                <div className="flex items-center justify-between gap-3">
-                  <div>
-                    <p className="text-sm text-emerald-300">Активный буст</p>
-                    <h3 className="mt-1 text-xl font-bold text-white">
-                      {activeBoostValue === 'tap' ? '🎯 Тап ×2' : '⛏️ Майнинг ×2'}
-                    </h3>
-                  </div>
-
-                  <div className="rounded-2xl bg-[#0a0f1c] px-4 py-3 text-right">
-                    <p className="text-xs text-gray-400">Осталось</p>
-                    <p className="font-bold text-emerald-400">
-                      {boostTimeLeft}
-                    </p>
-                  </div>
+                    <span className="onix-upgrade-ref-buy-icon">🪙</span>
+                    <span>
+                      {(item as any).priceLabel ? (item as any).priceLabel : item.price.toLocaleString('ru-RU')}
+                    </span>
+                  </button>
                 </div>
-              </div>
-            )}
-
-            <div className="space-y-4">
-              {boostCards.map((boost) => {
-                const canBuyBoost = balance >= boost.cost && !isAnyBoostActive;
-                const isLockedByOtherBoost =
-                  isAnyBoostActive && !boost.isActive;
-
-                return (
-                  <div
-                    key={boost.type}
-                    className={`rounded-3xl border p-5 shadow-xl transition ${
-                      boost.isActive
-                        ? 'border-emerald-400/40 bg-emerald-500/10'
-                        : 'border-yellow-400/20 bg-[#111827]'
-                    }`}
-                  >
-                    <div className="mb-4 flex items-center justify-between gap-3">
-                      <div className="flex items-center gap-3">
-                        <div
-                          className={`flex h-12 w-12 items-center justify-center rounded-2xl text-2xl ${
-                            boost.isActive ? 'bg-emerald-400' : 'bg-yellow-400'
-                          }`}
-                        >
-                          {boost.icon}
-                        </div>
-
-                        <div>
-                          <h3 className="text-xl font-bold text-white">
-                            {boost.title}
-                          </h3>
-                          <p className="text-sm text-gray-400">
-                            {boost.description}
-                          </p>
-                        </div>
-                      </div>
-
-                      <div className="rounded-2xl bg-[#0a0f1c] px-4 py-3 text-right">
-                        <p className="text-xs text-gray-400">Множитель</p>
-                        <p className="text-xl font-bold text-yellow-400">
-                          {boost.multiplier}
-                        </p>
-                      </div>
-                    </div>
-
-                    <div className="grid grid-cols-2 gap-3">
-                      <div className="rounded-2xl bg-[#0a0f1c] p-4">
-                        <p className="text-xs text-gray-400">Длительность</p>
-                        <p className="mt-1 text-lg font-bold text-white">
-                          {boost.durationMinutes} мин
-                        </p>
-                      </div>
-
-                      <div className="rounded-2xl bg-[#0a0f1c] p-4">
-                        <p className="text-xs text-gray-400">Цена</p>
-                        <p className="mt-1 text-lg font-bold text-yellow-400">
-                          {boost.cost.toLocaleString('ru-RU')} ONIX
-                        </p>
-                      </div>
-                    </div>
-
-                    {boost.isActive && (
-                      <div className="mt-4 rounded-2xl bg-[#0a0f1c] p-4">
-                        <div className="mb-2 flex items-center justify-between text-sm">
-                          <span className="text-gray-400">Статус</span>
-                          <span className="font-bold text-emerald-400">
-                            Активен: {boostTimeLeft}
-                          </span>
-                        </div>
-
-                        <div className="h-3 overflow-hidden rounded-full bg-gray-800">
-                          <div className="h-full rounded-full bg-emerald-400 transition-all" />
-                        </div>
-                      </div>
-                    )}
-
-                    <button
-                      onClick={() =>
-                        activateBoost(boost.type, boost.durationMinutes, boost.cost)
-                      }
-                      disabled={!canBuyBoost}
-                      className={`mt-4 w-full rounded-2xl py-4 text-lg font-bold transition ${
-                        canBuyBoost
-                          ? 'bg-yellow-400 text-black active:scale-95'
-                          : boost.isActive
-                          ? 'bg-emerald-500/20 text-emerald-400 cursor-not-allowed'
-                          : 'bg-gray-700 text-gray-400 cursor-not-allowed'
-                      }`}
-                    >
-                      {boost.isActive
-                        ? `Активен ${boostTimeLeft}`
-                        : isLockedByOtherBoost
-                        ? 'Сначала дождитесь окончания буста'
-                        : balance >= boost.cost
-                        ? 'Активировать буст'
-                        : `Не хватает ${(boost.cost - balance).toLocaleString(
-                            'ru-RU'
-                          )} ONIX`}
-                    </button>
-                  </div>
-                );
-              })}
+              ))}
             </div>
           </div>
-        </div>
-      )}
+        );
+      })()}
 
       {activeTab === 'tasks' && (
         <div className="onix-tasks-screen px-5 mt-8 space-y-4">
