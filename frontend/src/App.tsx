@@ -6490,6 +6490,97 @@ body:has(.onix-home-reference-mode) {
 .onix-home-reference-mode .onix-tap-orb {
   background: radial-gradient(circle, rgba(136, 92, 246, 0.17) 0%, rgba(6, 182, 212, 0.06) 34%, transparent 66%) !important;
 }
+
+/* Step 42: REAL visible reference cosmic background override */
+html:has(.onix-home-reference-mode),
+body:has(.onix-home-reference-mode),
+#root:has(.onix-home-reference-mode) {
+  background: #02040b !important;
+  overflow-x: hidden !important;
+}
+
+.onix-home-reference-mode.onix-app-bg,
+.onix-home-reference-mode {
+  background-color: #02040b !important;
+  background-image:
+    radial-gradient(ellipse at 50% 2%, rgba(136, 92, 246, 0.42) 0%, rgba(78, 25, 130, 0.20) 22%, transparent 48%),
+    radial-gradient(ellipse at 92% 20%, rgba(6, 182, 212, 0.22) 0%, rgba(6, 182, 212, 0.09) 22%, transparent 48%),
+    radial-gradient(ellipse at 8% 38%, rgba(139, 92, 246, 0.26) 0%, rgba(88, 28, 135, 0.12) 28%, transparent 54%),
+    radial-gradient(ellipse at 50% 76%, rgba(76, 29, 149, 0.33) 0%, rgba(76, 29, 149, 0.10) 34%, transparent 62%),
+    linear-gradient(180deg, #050711 0%, #070a16 22%, #030712 56%, #02040b 100%) !important;
+  background-size: 100% 100% !important;
+  background-repeat: no-repeat !important;
+  position: relative !important;
+  isolation: isolate !important;
+}
+
+.onix-home-reference-mode.onix-app-bg::before {
+  content: '' !important;
+  position: fixed !important;
+  inset: 44px 0 0 0 !important;
+  z-index: 0 !important;
+  pointer-events: none !important;
+  opacity: 1 !important;
+  background-image:
+    radial-gradient(circle at 7% 8%, rgba(255,255,255,0.36) 0 1px, transparent 1.6px),
+    radial-gradient(circle at 21% 22%, rgba(6, 182, 212, 0.34) 0 1px, transparent 1.5px),
+    radial-gradient(circle at 82% 18%, rgba(168, 85, 247, 0.38) 0 1px, transparent 1.5px),
+    radial-gradient(circle at 62% 35%, rgba(255,255,255,0.22) 0 1px, transparent 1.4px),
+    radial-gradient(circle at 13% 58%, rgba(136, 92, 246, 0.32) 0 1px, transparent 1.5px),
+    radial-gradient(circle at 88% 68%, rgba(6, 182, 212, 0.20) 0 1px, transparent 1.5px),
+    linear-gradient(90deg, rgba(136, 92, 246, 0.070) 1px, transparent 1px),
+    linear-gradient(180deg, rgba(6, 182, 212, 0.055) 1px, transparent 1px) !important;
+  background-size:
+    94px 94px,
+    138px 138px,
+    166px 166px,
+    118px 118px,
+    176px 176px,
+    150px 150px,
+    64px 64px,
+    64px 64px !important;
+  background-position: 0 0, 22px 36px, 44px 8px, 12px 88px, 38px 52px, 70px 16px, 0 0, 0 0 !important;
+  mask-image: linear-gradient(180deg, transparent 0%, #000 9%, #000 92%, transparent 100%);
+}
+
+.onix-home-reference-mode.onix-app-bg::after {
+  content: '' !important;
+  position: fixed !important;
+  inset: 44px 0 0 0 !important;
+  z-index: 1 !important;
+  pointer-events: none !important;
+  opacity: 1 !important;
+  background:
+    radial-gradient(ellipse at 48% 18%, rgba(136, 92, 246, 0.30) 0%, transparent 33%),
+    radial-gradient(ellipse at 54% 48%, rgba(0, 229, 255, 0.12) 0%, transparent 34%),
+    radial-gradient(ellipse at 50% 88%, rgba(88, 28, 135, 0.38) 0%, transparent 44%),
+    linear-gradient(180deg, rgba(2, 4, 11, 0.04) 0%, transparent 38%, rgba(2, 4, 11, 0.42) 100%) !important;
+}
+
+.onix-home-reference-mode [aria-label="ONIX top navigation"] {
+  background: linear-gradient(90deg, rgba(9, 12, 24, 0.92), rgba(22, 16, 43, 0.80), rgba(9, 12, 24, 0.92)) !important;
+  border-bottom: 1px solid rgba(136, 92, 246, 0.18) !important;
+}
+
+.onix-home-reference-mode .onix-ref-home-screen,
+.onix-home-reference-mode .onix-home-screen {
+  background: transparent !important;
+  position: relative !important;
+  z-index: 5 !important;
+}
+
+.onix-home-reference-mode .onix-ref-home-screen::before,
+.onix-home-reference-mode .onix-home-screen::before {
+  content: '' !important;
+  position: absolute !important;
+  inset: 0 -14px !important;
+  z-index: -1 !important;
+  pointer-events: none !important;
+  background:
+    radial-gradient(ellipse at 50% 20%, rgba(136, 92, 246, 0.20), transparent 42%),
+    radial-gradient(ellipse at 50% 58%, rgba(6, 182, 212, 0.08), transparent 36%) !important;
+}
+
 `;
 
     window.open(url, '_blank');
