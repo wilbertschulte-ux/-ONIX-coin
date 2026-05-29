@@ -2147,7 +2147,7 @@ body,
   }
 }
 
-/* === REFERENCE HOME SCREEN PATCH v9 === */
+/* === REFERENCE HOME SCREEN PATCH v10 === */
 /* Clean isolated home screen based on reference */
 html,
 body,
@@ -2537,6 +2537,74 @@ body,
     margin-top: -4px !important;
   }
 }
+
+
+/* === REFERENCE HOME SCREEN PATCH v10 === */
+/* Hard final override: massive TAP button and lower button block above bottom menu */
+.onix-home-reference-mode .onix-ref-v5-coin {
+  width: min(77vw, 300px) !important;
+  height: min(77vw, 300px) !important;
+  max-width: 300px !important;
+  max-height: 300px !important;
+  margin-top: 12px !important;
+  transform: translateY(42px) !important;
+}
+
+.onix-home-reference-mode .onix-ref-v5-coin-tapped {
+  transform: translateY(42px) scale(0.94) !important;
+}
+
+.onix-home-reference-mode .onix-ref-v5-energy {
+  transform: translateY(42px) !important;
+  margin-top: 0 !important;
+}
+
+.onix-home-reference-mode .onix-ref-v5-tap-button {
+  height: 68px !important;
+  min-height: 68px !important;
+  margin-top: 16px !important;
+  border-radius: 15px !important;
+  font-size: 21px !important;
+  letter-spacing: 0.055em !important;
+  background: linear-gradient(180deg, #a647ff 0%, #7d1ff0 48%, #6519d7 100%) !important;
+  box-shadow:
+    0 0 30px rgba(129, 55, 245, 0.68),
+    0 14px 34px rgba(75, 20, 180, 0.36),
+    inset 0 1px 0 rgba(255,255,255,0.24) !important;
+}
+
+.onix-home-reference-mode .onix-nav {
+  bottom: calc(5px + env(safe-area-inset-bottom)) !important;
+}
+
+@media (max-height: 760px) {
+  .onix-home-reference-mode .onix-ref-v5-coin {
+    width: min(66vw, 255px) !important;
+    height: min(66vw, 255px) !important;
+    max-width: 255px !important;
+    max-height: 255px !important;
+    margin-top: 6px !important;
+    transform: translateY(48px) !important;
+  }
+
+  .onix-home-reference-mode .onix-ref-v5-coin-tapped {
+    transform: translateY(48px) scale(0.94) !important;
+  }
+
+  .onix-home-reference-mode .onix-ref-v5-energy {
+    transform: translateY(48px) !important;
+    margin-top: -2px !important;
+  }
+
+  .onix-home-reference-mode .onix-ref-v5-tap-button {
+    height: 64px !important;
+    min-height: 64px !important;
+    margin-top: 14px !important;
+    border-radius: 14px !important;
+    font-size: 20px !important;
+  }
+}
+
 
 `;
 
