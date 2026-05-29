@@ -2147,7 +2147,7 @@ body,
   }
 }
 
-/* === REFERENCE HOME SCREEN PATCH v14 === */
+/* === REFERENCE HOME SCREEN PATCH v15 === */
 /* Clean isolated home screen based on reference */
 html,
 body,
@@ -2539,7 +2539,7 @@ body,
 }
 
 
-/* === REFERENCE HOME SCREEN PATCH v14 === */
+/* === REFERENCE HOME SCREEN PATCH v15 === */
 /* Hard final override: massive TAP button and lower button block above bottom menu */
 .onix-home-reference-mode .onix-ref-v5-coin {
   width: min(77vw, 300px) !important;
@@ -2607,7 +2607,7 @@ body,
 
 
 
-/* === REFERENCE HOME SCREEN PATCH v14 === */
+/* === REFERENCE HOME SCREEN PATCH v15 === */
 /* Bottom navigation polish only */
 .onix-home-reference-mode .onix-nav {
   height: 64px !important;
@@ -2691,7 +2691,7 @@ body,
 
 
 
-/* === REFERENCE HOME SCREEN PATCH v14 === */
+/* === REFERENCE HOME SCREEN PATCH v15 === */
 /* Upgrade screen redesign based on reference */
 .onix-upgrades-ref-screen {
   padding: 14px 16px calc(88px + env(safe-area-inset-bottom)) !important;
@@ -2915,7 +2915,7 @@ body,
 }
 
 
-/* === REFERENCE HOME SCREEN PATCH v14 === */
+/* === REFERENCE HOME SCREEN PATCH v15 === */
 /* Remove old rank/balance blocks from Upgrades screen */
 .onix-boosts-screen > .rounded-3xl,
 .onix-boosts-screen > .onix-rank-card,
@@ -2964,8 +2964,217 @@ body,
 
 
 
-/* === REFERENCE HOME SCREEN PATCH v14 === */
+/* === REFERENCE HOME SCREEN PATCH v15 === */
 /* Old global rank/balance header is disabled on Upgrades tab in JSX */
+
+
+/* === REFERENCE HOME SCREEN PATCH v15 === */
+/* Profile screen redesign based on reference */
+.onix-social-screen {
+  margin-top: 0 !important;
+  padding: 18px 18px calc(88px + env(safe-area-inset-bottom)) !important;
+  background: transparent !important;
+}
+
+/* Hide old profile content, keep it in JSX so existing logic stays intact */
+.onix-social-screen > :not(.onix-profile-ref-screen) {
+  display: none !important;
+}
+
+.onix-profile-ref-screen {
+  position: relative !important;
+  z-index: 5 !important;
+  width: 100% !important;
+  max-width: 430px !important;
+  margin: 0 auto !important;
+  color: #ffffff !important;
+}
+
+.onix-profile-ref-head {
+  display: flex !important;
+  align-items: center !important;
+  gap: 14px !important;
+  padding: 8px 4px 14px !important;
+}
+
+.onix-profile-ref-avatar {
+  width: 86px !important;
+  height: 86px !important;
+  flex: 0 0 86px !important;
+  display: grid !important;
+  place-items: center !important;
+  border-radius: 24px !important;
+  background:
+    radial-gradient(circle at 50% 45%, rgba(137, 74, 255, 0.42), rgba(17, 11, 37, 0.98) 64%),
+    linear-gradient(180deg, rgba(25, 17, 55, 0.96), rgba(8, 10, 24, 0.96)) !important;
+  border: 1px solid rgba(172, 102, 255, 0.44) !important;
+  box-shadow:
+    0 0 22px rgba(145, 74, 255, 0.48),
+    inset 0 0 24px rgba(0, 229, 255, 0.08) !important;
+  overflow: hidden !important;
+}
+
+.onix-profile-ref-avatar img {
+  width: 78% !important;
+  height: 78% !important;
+  object-fit: contain !important;
+  filter: drop-shadow(0 0 12px rgba(168, 85, 247, 0.62)) !important;
+}
+
+.onix-profile-ref-user {
+  min-width: 0 !important;
+}
+
+.onix-profile-ref-name {
+  color: #ffffff !important;
+  font-family: 'Exo 2', system-ui, sans-serif !important;
+  font-size: 20px !important;
+  line-height: 1.05 !important;
+  font-weight: 900 !important;
+  letter-spacing: -0.015em !important;
+}
+
+.onix-profile-ref-rank {
+  margin-top: 5px !important;
+  color: #a855f7 !important;
+  font-size: 13px !important;
+  line-height: 1 !important;
+  font-weight: 800 !important;
+}
+
+.onix-profile-ref-level {
+  padding: 0 4px 18px !important;
+}
+
+.onix-profile-ref-level-row {
+  display: flex !important;
+  justify-content: space-between !important;
+  gap: 12px !important;
+  color: rgba(226, 232, 255, 0.72) !important;
+  font-size: 12px !important;
+  line-height: 1 !important;
+  font-weight: 700 !important;
+}
+
+.onix-profile-ref-progress {
+  margin-top: 10px !important;
+  height: 8px !important;
+  overflow: hidden !important;
+  border-radius: 999px !important;
+  background: rgba(12, 17, 37, 0.92) !important;
+  border: 1px solid rgba(125, 83, 255, 0.20) !important;
+  box-shadow: inset 0 0 9px rgba(0,0,0,0.56) !important;
+}
+
+.onix-profile-ref-progress-fill {
+  height: 100% !important;
+  border-radius: 999px !important;
+  background: linear-gradient(90deg, #18d5ff 0%, #7a4cff 52%, #d04cff 100%) !important;
+  box-shadow: 0 0 12px rgba(168, 85, 247, 0.62) !important;
+}
+
+.onix-profile-ref-stats {
+  display: grid !important;
+  grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  gap: 10px !important;
+  margin-top: 4px !important;
+}
+
+.onix-profile-ref-stat {
+  min-height: 78px !important;
+  padding: 14px 14px !important;
+  border-radius: 16px !important;
+  background: linear-gradient(180deg, rgba(13, 18, 36, 0.96), rgba(8, 11, 24, 0.98)) !important;
+  border: 1px solid rgba(119, 80, 219, 0.22) !important;
+  box-shadow: inset 0 0 18px rgba(120, 83, 255, 0.06), 0 10px 24px rgba(0,0,0,0.24) !important;
+}
+
+.onix-profile-ref-stat span {
+  display: block !important;
+  color: rgba(202, 208, 231, 0.70) !important;
+  font-size: 11px !important;
+  line-height: 1.1 !important;
+  font-weight: 700 !important;
+}
+
+.onix-profile-ref-stat strong {
+  display: block !important;
+  margin-top: 9px !important;
+  color: #ffffff !important;
+  font-size: 18px !important;
+  line-height: 1.05 !important;
+  font-weight: 900 !important;
+  word-break: break-word !important;
+}
+
+.onix-profile-ref-menu {
+  margin-top: 14px !important;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 8px !important;
+}
+
+.onix-profile-ref-menu-item {
+  width: 100% !important;
+  min-height: 52px !important;
+  display: grid !important;
+  grid-template-columns: 28px 1fr auto 16px !important;
+  align-items: center !important;
+  gap: 8px !important;
+  padding: 0 14px !important;
+  border: 1px solid rgba(119, 80, 219, 0.22) !important;
+  border-radius: 14px !important;
+  background: linear-gradient(180deg, rgba(13, 18, 36, 0.96), rgba(8, 11, 24, 0.98)) !important;
+  color: #ffffff !important;
+  box-shadow: inset 0 0 18px rgba(120, 83, 255, 0.05) !important;
+}
+
+.onix-profile-ref-menu-item span {
+  font-size: 17px !important;
+}
+
+.onix-profile-ref-menu-item strong {
+  text-align: left !important;
+  font-size: 14px !important;
+  line-height: 1 !important;
+  font-weight: 800 !important;
+}
+
+.onix-profile-ref-menu-item em {
+  color: rgba(202, 208, 231, 0.58) !important;
+  font-style: normal !important;
+  font-size: 11px !important;
+  font-weight: 700 !important;
+}
+
+.onix-profile-ref-menu-item b {
+  color: rgba(255,255,255,0.56) !important;
+  font-size: 22px !important;
+  line-height: 1 !important;
+  font-weight: 400 !important;
+}
+
+@media (max-width: 380px) {
+  .onix-social-screen {
+    padding-left: 14px !important;
+    padding-right: 14px !important;
+  }
+
+  .onix-profile-ref-avatar {
+    width: 78px !important;
+    height: 78px !important;
+    flex-basis: 78px !important;
+  }
+
+  .onix-profile-ref-name {
+    font-size: 18px !important;
+  }
+
+  .onix-profile-ref-stat strong {
+    font-size: 16px !important;
+  }
+}
+
 
 `;
 
@@ -8215,7 +8424,7 @@ body:has(.onix-home-reference-mode),
         </div>
       )}
 
-      {activeTab !== 'home' && activeTab !== 'boosts' && (
+      {activeTab !== 'home' && activeTab !== 'boosts' && activeTab !== 'friends' && (
         <>
       <div className="onix-rank-panel px-5 pt-4">
         <div className="flex justify-between mb-2">
@@ -9210,6 +9419,78 @@ body:has(.onix-home-reference-mode),
 
       {activeTab === 'friends' && (
         <div className="onix-social-screen px-5 mt-8 space-y-5">
+          <div className="onix-profile-ref-screen">
+            <div className="onix-profile-ref-head">
+              <div className="onix-profile-ref-avatar">
+                <img src={onixLogoCrystal} alt="$ONIX profile" draggable={false} />
+              </div>
+
+              <div className="onix-profile-ref-user">
+                <div className="onix-profile-ref-name">{username}</div>
+                <div className="onix-profile-ref-rank">{selectedTitle || rankInfo.currentRank.name}</div>
+              </div>
+            </div>
+
+            <div className="onix-profile-ref-level">
+              <div className="onix-profile-ref-level-row">
+                <span>Уровень {profileLevel}</span>
+                <span>
+                  {formatOnix(totalEarned % 100000)} / 100 000 XP
+                </span>
+              </div>
+              <div className="onix-profile-ref-progress">
+                <div
+                  className="onix-profile-ref-progress-fill"
+                  style={{ width: `${profileLevelProgress}%` }}
+                />
+              </div>
+            </div>
+
+            <div className="onix-profile-ref-stats">
+              <div className="onix-profile-ref-stat">
+                <span>Баланс ONIX</span>
+                <strong>{Math.floor(balance).toLocaleString('ru-RU')}</strong>
+              </div>
+
+              <div className="onix-profile-ref-stat">
+                <span>Всего заработано</span>
+                <strong>{Math.floor(totalEarned).toLocaleString('ru-RU')}</strong>
+              </div>
+
+              <div className="onix-profile-ref-stat">
+                <span>Приглашено</span>
+                <strong>{referralsCount}</strong>
+              </div>
+
+              <div className="onix-profile-ref-stat">
+                <span>Команда</span>
+                <strong>{teamName || 'ONIX Squad'}</strong>
+              </div>
+            </div>
+
+            <div className="onix-profile-ref-menu">
+              <button type="button" className="onix-profile-ref-menu-item">
+                <span>🏆</span>
+                <strong>Достижения</strong>
+                <em>{completedAchievementsCount}/{achievements.length}</em>
+                <b>›</b>
+              </button>
+
+              <button type="button" className="onix-profile-ref-menu-item">
+                <span>🏅</span>
+                <strong>Ранги</strong>
+                <em>{rankInfo.currentRank.name}</em>
+                <b>›</b>
+              </button>
+
+              <button type="button" className="onix-profile-ref-menu-item">
+                <span>📊</span>
+                <strong>Статистика</strong>
+                <em>{formatOnix(totalTaps)} тапов</em>
+                <b>›</b>
+              </button>
+            </div>
+          </div>
           <div className="rounded-3xl border border-yellow-400/20 bg-[#111827] p-6 text-center shadow-xl">
             <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-yellow-400 text-3xl">
               👤
