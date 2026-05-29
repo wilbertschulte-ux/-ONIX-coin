@@ -2147,7 +2147,7 @@ body,
   }
 }
 
-/* === REFERENCE HOME SCREEN PATCH v10 === */
+/* === REFERENCE HOME SCREEN PATCH v11 === */
 /* Clean isolated home screen based on reference */
 html,
 body,
@@ -2539,7 +2539,7 @@ body,
 }
 
 
-/* === REFERENCE HOME SCREEN PATCH v10 === */
+/* === REFERENCE HOME SCREEN PATCH v11 === */
 /* Hard final override: massive TAP button and lower button block above bottom menu */
 .onix-home-reference-mode .onix-ref-v5-coin {
   width: min(77vw, 300px) !important;
@@ -2602,6 +2602,90 @@ body,
     margin-top: 14px !important;
     border-radius: 14px !important;
     font-size: 20px !important;
+  }
+}
+
+
+
+/* === REFERENCE HOME SCREEN PATCH v11 === */
+/* Bottom navigation polish only */
+.onix-home-reference-mode .onix-nav {
+  height: 64px !important;
+  padding: 5px 7px !important;
+  border-radius: 20px !important;
+  background:
+    radial-gradient(circle at 8% 50%, rgba(91, 123, 255, 0.12), transparent 38%),
+    linear-gradient(180deg, rgba(6, 9, 25, 0.96), rgba(4, 6, 18, 0.98)) !important;
+  border: 1px solid rgba(142, 92, 255, 0.52) !important;
+  box-shadow:
+    0 0 24px rgba(91, 33, 246, 0.34),
+    0 12px 32px rgba(0, 0, 0, 0.42),
+    inset 0 0 20px rgba(129, 69, 255, 0.10) !important;
+  backdrop-filter: blur(18px) !important;
+}
+
+.onix-home-reference-mode .onix-nav button {
+  min-width: 0 !important;
+  height: 52px !important;
+  padding: 6px 3px 5px !important;
+  border-radius: 16px !important;
+  gap: 3px !important;
+  color: rgba(220, 224, 244, 0.72) !important;
+  font-family: 'Exo 2', system-ui, sans-serif !important;
+  font-size: 10px !important;
+  font-weight: 700 !important;
+  line-height: 1 !important;
+  transition: transform 120ms ease, color 120ms ease, background 120ms ease !important;
+}
+
+.onix-home-reference-mode .onix-nav button svg {
+  width: 18px !important;
+  height: 18px !important;
+  stroke-width: 2.05 !important;
+  color: rgba(220, 224, 244, 0.78) !important;
+  filter: drop-shadow(0 0 6px rgba(168, 85, 247, 0.34)) !important;
+}
+
+.onix-home-reference-mode .onix-nav button.onix-nav-active {
+  background:
+    radial-gradient(circle at 50% 18%, rgba(132, 169, 255, 0.26), transparent 52%),
+    linear-gradient(180deg, rgba(69, 92, 166, 0.78), rgba(42, 58, 118, 0.78)) !important;
+  color: #ffffff !important;
+  border: 1px solid rgba(174, 194, 255, 0.22) !important;
+  box-shadow:
+    inset 0 0 18px rgba(124, 151, 255, 0.34),
+    0 0 18px rgba(114, 137, 255, 0.28) !important;
+}
+
+.onix-home-reference-mode .onix-nav button.onix-nav-active svg {
+  color: #ffffff !important;
+  filter:
+    drop-shadow(0 0 8px rgba(179, 197, 255, 0.58))
+    drop-shadow(0 0 14px rgba(114, 137, 255, 0.35)) !important;
+}
+
+.onix-home-reference-mode .onix-nav button:active {
+  transform: scale(0.96) !important;
+}
+
+@media (max-width: 380px) {
+  .onix-home-reference-mode .onix-nav {
+    width: min(calc(100vw - 14px), 414px) !important;
+    height: 62px !important;
+    padding: 5px !important;
+    border-radius: 18px !important;
+  }
+
+  .onix-home-reference-mode .onix-nav button {
+    height: 50px !important;
+    padding-left: 2px !important;
+    padding-right: 2px !important;
+    font-size: 9px !important;
+  }
+
+  .onix-home-reference-mode .onix-nav button svg {
+    width: 17px !important;
+    height: 17px !important;
   }
 }
 
