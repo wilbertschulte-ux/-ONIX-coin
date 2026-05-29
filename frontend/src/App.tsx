@@ -7434,6 +7434,373 @@ body:has(.onix-home-reference-mode),
 }
 
 
+
+/* === REFERENCE HOME SCREEN PATCH v4 === */
+/* Hard isolated home layout: old home classes cannot override this block */
+.onix-home-reference-mode.onix-app-bg {
+  max-width: 430px !important;
+  width: 100% !important;
+  min-height: 100dvh !important;
+  margin: 0 auto !important;
+  padding-bottom: 0 !important;
+  overflow: hidden !important;
+  background-color: #050713 !important;
+  background-image:
+    radial-gradient(ellipse at 17% 7%, rgba(119, 43, 218, 0.52) 0%, rgba(84, 27, 164, 0.23) 25%, transparent 53%),
+    radial-gradient(ellipse at 95% 18%, rgba(0, 129, 178, 0.24) 0%, rgba(0, 129, 178, 0.11) 24%, transparent 52%),
+    radial-gradient(ellipse at 49% 49%, rgba(86, 31, 170, 0.17) 0%, transparent 58%),
+    radial-gradient(ellipse at 50% 88%, rgba(78, 22, 151, 0.34) 0%, rgba(78, 22, 151, 0.10) 30%, transparent 62%),
+    linear-gradient(180deg, #080a16 0%, #070916 42%, #050713 100%) !important;
+  box-shadow: 0 0 0 1px rgba(126, 71, 255, 0.24), 0 0 70px rgba(96, 36, 210, 0.20) !important;
+}
+
+.onix-home-reference-mode.onix-app-bg::before {
+  content: '' !important;
+  position: fixed !important;
+  left: 50% !important;
+  top: 54px !important;
+  bottom: 0 !important;
+  width: min(100vw, 430px) !important;
+  transform: translateX(-50%) !important;
+  z-index: 0 !important;
+  pointer-events: none !important;
+  opacity: 1 !important;
+  background-image:
+    linear-gradient(90deg, rgba(116, 83, 210, 0.052) 1px, transparent 1px),
+    linear-gradient(180deg, rgba(116, 83, 210, 0.034) 1px, transparent 1px),
+    radial-gradient(circle at 7% 12%, rgba(255,255,255,0.34) 0 1px, transparent 1.5px),
+    radial-gradient(circle at 20% 26%, rgba(158, 94, 255,0.28) 0 1px, transparent 1.5px),
+    radial-gradient(circle at 83% 16%, rgba(68, 205, 255,0.28) 0 1px, transparent 1.5px),
+    radial-gradient(circle at 66% 40%, rgba(255,255,255,0.16) 0 1px, transparent 1.45px),
+    radial-gradient(circle at 13% 58%, rgba(179, 105, 255,0.20) 0 1px, transparent 1.45px),
+    radial-gradient(circle at 88% 72%, rgba(68, 205, 255,0.14) 0 1px, transparent 1.45px) !important;
+  background-size: 52px 52px, 52px 52px, 118px 118px, 158px 158px, 178px 178px, 138px 138px, 170px 170px, 190px 190px !important;
+}
+
+.onix-home-reference-mode.onix-app-bg::after {
+  content: '' !important;
+  position: fixed !important;
+  left: 50% !important;
+  top: 54px !important;
+  bottom: 0 !important;
+  width: min(100vw, 430px) !important;
+  transform: translateX(-50%) !important;
+  z-index: 1 !important;
+  pointer-events: none !important;
+  background:
+    radial-gradient(ellipse at 24% 13%, rgba(137, 74, 255, 0.19) 0%, transparent 31%),
+    radial-gradient(ellipse at 96% 28%, rgba(0, 195, 255, 0.10) 0%, transparent 24%),
+    radial-gradient(ellipse at 50% 78%, rgba(124, 49, 232, 0.20) 0%, transparent 32%),
+    linear-gradient(180deg, rgba(5, 7, 19, 0.00) 0%, rgba(5, 7, 19, 0.08) 55%, rgba(5, 7, 19, 0.35) 100%) !important;
+}
+
+.onix-home-reference-mode [aria-label="ONIX top navigation"] {
+  height: 54px !important;
+  min-height: 54px !important;
+  padding: 0 16px !important;
+  background: rgba(3, 6, 16, 0.78) !important;
+  border-bottom: 1px solid rgba(145, 103, 255, 0.28) !important;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.25) !important;
+  backdrop-filter: blur(12px) !important;
+}
+
+/* Isolated v4 screen */
+.onix-ref-v4-screen {
+  position: relative !important;
+  z-index: 10 !important;
+  width: 100% !important;
+  max-width: 430px !important;
+  height: calc(100dvh - 54px) !important;
+  margin: 0 auto !important;
+  padding: 18px 22px calc(88px + env(safe-area-inset-bottom)) !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  overflow: hidden !important;
+  box-sizing: border-box !important;
+}
+
+.onix-ref-v4-player {
+  width: 100% !important;
+  min-height: 58px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  gap: 12px !important;
+}
+
+.onix-ref-v4-player-left {
+  min-width: 0 !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 12px !important;
+}
+
+.onix-ref-v4-avatar {
+  width: 50px !important;
+  height: 50px !important;
+  flex: 0 0 50px !important;
+  border-radius: 999px !important;
+  display: grid !important;
+  place-items: center !important;
+  overflow: hidden !important;
+  background: radial-gradient(circle at 50% 45%, rgba(93, 42, 212, 0.35), rgba(7, 11, 26, 0.96) 64%) !important;
+  border: 2px solid rgba(120, 83, 255, 0.95) !important;
+  box-shadow: 0 0 17px rgba(120, 83, 255, 0.62), inset 0 0 17px rgba(0, 229, 255, 0.12) !important;
+}
+
+.onix-ref-v4-avatar img {
+  width: 80% !important;
+  height: 80% !important;
+  object-fit: contain !important;
+}
+
+.onix-ref-v4-player-text {
+  min-width: 0 !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: flex-start !important;
+}
+
+.onix-ref-v4-name {
+  margin: 0 !important;
+  max-width: 180px !important;
+  color: #ffffff !important;
+  font-family: 'Exo 2', system-ui, sans-serif !important;
+  font-size: 13px !important;
+  line-height: 1.1 !important;
+  font-weight: 900 !important;
+  letter-spacing: -0.01em !important;
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+}
+
+.onix-ref-v4-rank {
+  margin: 4px 0 0 !important;
+  max-width: 180px !important;
+  color: #9c55ff !important;
+  font-family: 'Exo 2', system-ui, sans-serif !important;
+  font-size: 10px !important;
+  line-height: 1 !important;
+  font-weight: 800 !important;
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+}
+
+.onix-ref-v4-rank-badge {
+  width: 54px !important;
+  height: 54px !important;
+  flex: 0 0 54px !important;
+  display: grid !important;
+  place-items: center !important;
+  filter: drop-shadow(0 0 10px rgba(133, 76, 255, 0.90)) drop-shadow(0 0 20px rgba(107, 50, 236, 0.50)) !important;
+}
+
+.onix-ref-v4-rank-badge img {
+  width: 54px !important;
+  height: 54px !important;
+  object-fit: contain !important;
+}
+
+.onix-ref-v4-balance {
+  width: 100% !important;
+  margin-top: 18px !important;
+  text-align: center !important;
+}
+
+.onix-ref-v4-balance-value {
+  margin: 0 !important;
+  padding: 0 !important;
+  color: #f6c833 !important;
+  background: none !important;
+  -webkit-text-fill-color: #f6c833 !important;
+  font-family: 'Exo 2', system-ui, sans-serif !important;
+  font-size: clamp(3.15rem, 13.5vw, 4.5rem) !important;
+  line-height: 0.84 !important;
+  font-weight: 900 !important;
+  letter-spacing: -0.058em !important;
+  text-align: center !important;
+  text-shadow: 0 0 10px rgba(250, 204, 21, 0.24), 0 0 22px rgba(250, 204, 21, 0.12) !important;
+}
+
+.onix-ref-v4-balance-label {
+  margin: 9px 0 0 !important;
+  padding: 0 !important;
+  color: #f6c833 !important;
+  font-family: 'Exo 2', system-ui, sans-serif !important;
+  font-size: 12px !important;
+  line-height: 1 !important;
+  font-weight: 800 !important;
+  letter-spacing: 0.08em !important;
+  text-align: center !important;
+  text-transform: uppercase !important;
+  text-shadow: 0 0 12px rgba(250, 204, 21, 0.30) !important;
+}
+
+.onix-ref-v4-coin {
+  position: relative !important;
+  flex: 0 0 auto !important;
+  width: min(78vw, 304px) !important;
+  height: min(78vw, 304px) !important;
+  max-width: 304px !important;
+  max-height: 304px !important;
+  margin-top: 30px !important;
+  display: grid !important;
+  place-items: center !important;
+  cursor: pointer !important;
+  transition: transform 120ms ease !important;
+}
+
+.onix-ref-v4-coin-tapped {
+  transform: scale(0.94) !important;
+}
+
+.onix-ref-v4-coin img {
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: contain !important;
+  user-select: none !important;
+  pointer-events: none !important;
+  filter: drop-shadow(0 0 16px rgba(145, 74, 255, 0.86)) drop-shadow(0 0 36px rgba(68, 205, 255, 0.24)) !important;
+}
+
+.onix-ref-v4-energy {
+  width: 100% !important;
+  margin-top: 8px !important;
+}
+
+.onix-ref-v4-energy-text {
+  width: 100% !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 5px !important;
+  color: #cfd7f2 !important;
+  font-family: 'Exo 2', system-ui, sans-serif !important;
+  font-size: 12px !important;
+  line-height: 1 !important;
+  font-weight: 900 !important;
+  white-space: nowrap !important;
+}
+
+.onix-ref-v4-energy-icon {
+  width: 14px !important;
+  height: 14px !important;
+  color: #f6c833 !important;
+  fill: #f6c833 !important;
+}
+
+.onix-ref-v4-energy-text strong {
+  color: #f6c833 !important;
+}
+
+.onix-ref-v4-energy-track {
+  width: 100% !important;
+  height: 7px !important;
+  margin-top: 11px !important;
+  border-radius: 999px !important;
+  overflow: hidden !important;
+  background: rgba(12, 17, 37, 0.94) !important;
+  border: 1px solid rgba(125, 83, 255, 0.24) !important;
+  box-shadow: inset 0 0 9px rgba(0, 0, 0, 0.55) !important;
+}
+
+.onix-ref-v4-energy-fill {
+  height: 100% !important;
+  border-radius: 999px !important;
+  background: linear-gradient(90deg, #10d6e8 0%, #47bbff 43%, #8e55ff 100%) !important;
+  box-shadow: 0 0 12px rgba(0, 229, 255, 0.45), 0 0 14px rgba(139, 92, 246, 0.42) !important;
+}
+
+.onix-ref-v4-tap-button {
+  width: 100% !important;
+  height: 52px !important;
+  min-height: 52px !important;
+  margin-top: 13px !important;
+  border-radius: 10px !important;
+  border: 1px solid rgba(168, 85, 247, 0.60) !important;
+  background: linear-gradient(180deg, #8f35ff 0%, #6519d7 100%) !important;
+  color: #ffffff !important;
+  font-family: 'Exo 2', system-ui, sans-serif !important;
+  font-size: 16px !important;
+  line-height: 1 !important;
+  font-weight: 900 !important;
+  letter-spacing: 0.045em !important;
+  text-transform: uppercase !important;
+  box-shadow: 0 0 22px rgba(129, 55, 245, 0.52), inset 0 1px 0 rgba(255,255,255,0.18) !important;
+}
+
+.onix-home-reference-mode .onix-nav {
+  position: fixed !important;
+  left: 50% !important;
+  right: auto !important;
+  bottom: calc(8px + env(safe-area-inset-bottom)) !important;
+  transform: translateX(-50%) !important;
+  z-index: 900 !important;
+  width: min(calc(100vw - 16px), 414px) !important;
+  max-width: 414px !important;
+  height: 58px !important;
+  padding: 4px 7px !important;
+  border-radius: 17px !important;
+  background: rgba(4, 7, 18, 0.94) !important;
+  border: 1px solid rgba(129, 69, 255, 0.48) !important;
+  box-shadow: 0 0 20px rgba(91, 33, 246, 0.30), inset 0 0 18px rgba(129, 69, 255, 0.08) !important;
+}
+
+.onix-home-reference-mode .onix-nav button {
+  min-width: 0 !important;
+  padding: 5px 2px !important;
+  border-radius: 12px !important;
+  gap: 2px !important;
+  font-size: 9px !important;
+  line-height: 1 !important;
+}
+
+.onix-home-reference-mode .onix-nav button svg {
+  width: 16px !important;
+  height: 16px !important;
+}
+
+.onix-home-reference-mode .onix-nav button.onix-nav-active {
+  background: rgba(71, 85, 150, 0.56) !important;
+  color: #ffffff !important;
+  box-shadow: inset 0 0 16px rgba(114, 137, 255, 0.36), 0 0 14px rgba(114, 137, 255, 0.24) !important;
+}
+
+@media (max-height: 760px) {
+  .onix-ref-v4-screen {
+    padding-top: 12px !important;
+    padding-bottom: calc(75px + env(safe-area-inset-bottom)) !important;
+  }
+
+  .onix-ref-v4-balance {
+    margin-top: 11px !important;
+  }
+
+  .onix-ref-v4-balance-value {
+    font-size: clamp(2.6rem, 11vw, 3.55rem) !important;
+  }
+
+  .onix-ref-v4-coin {
+    width: min(68vw, 258px) !important;
+    height: min(68vw, 258px) !important;
+    margin-top: 18px !important;
+  }
+
+  .onix-ref-v4-tap-button {
+    height: 46px !important;
+    min-height: 46px !important;
+    margin-top: 10px !important;
+  }
+
+  .onix-home-reference-mode .onix-nav {
+    height: 56px !important;
+  }
+}
+
+
 `;
 
     window.open(url, '_blank');
@@ -8297,56 +8664,33 @@ body:has(.onix-home-reference-mode),
       </div>
 
       {activeTab === 'home' && (
-        <div className="onix-home-screen onix-ref-home-screen flex flex-col items-center relative">
-          <div className="oc-seamless-player-block">
-            <div className="onix-home-user-row onix-ref-user-row flex items-center justify-between gap-3">
-              <div className="flex min-w-0 items-center gap-3">
-                <div className="onix-home-avatar onix-ref-avatar">
-                  <img src={onixLogoCrystal} alt="$ONIX user badge" draggable={false} />
-                </div>
-                <div className="min-w-0">
-                  <p className="onix-home-username onix-ref-username truncate">{username}</p>
-                  <p className="onix-home-title onix-ref-title truncate">{selectedTitle || rankInfo.currentRank.name}</p>
-                </div>
+        <div className="onix-ref-v4-screen">
+          <div className="onix-ref-v4-player">
+            <div className="onix-ref-v4-player-left">
+              <div className="onix-ref-v4-avatar">
+                <img src={onixLogoCrystal} alt="$ONIX user badge" draggable={false} />
               </div>
-
-              <div className="onix-home-rank-mark onix-ref-rank-mark">
-                <img src={onixLogoCrystal} alt="$ONIX rank" draggable={false} />
+              <div className="onix-ref-v4-player-text">
+                <p className="onix-ref-v4-name">{username}</p>
+                <p className="onix-ref-v4-rank">{selectedTitle || rankInfo.currentRank.name}</p>
               </div>
             </div>
 
-            <div className="onix-home-balance-row onix-ref-balance-row">
-              <p className="onix-home-balance-value onix-ref-balance-value">{balance.toLocaleString('ru-RU')}</p>
-              <p className="onix-home-balance-label onix-ref-balance-label">Баланс $ONIX</p>
+            <div className="onix-ref-v4-rank-badge">
+              <img src={onixLogoCrystal} alt="$ONIX rank" draggable={false} />
             </div>
+          </div>
 
-            <div className="onix-home-level-row onix-ref-level-row">
-              <div className="onix-home-level-meta onix-ref-level-meta">
-                <span>Ранг {rankInfo.currentRank.name}</span>
-                <span>
-                  {rankInfo.nextRank
-                    ? `${rankProgressText} до ${rankInfo.nextRank.name}`
-                    : 'Максимальный ранг'}
-                </span>
-              </div>
-              <div className="onix-home-level-track onix-ref-level-track">
-                <div
-                  className="onix-home-level-fill onix-ref-level-fill"
-                  style={{ width: `${Math.min(rankProgress, 100)}%` }}
-                />
-              </div>
-            </div>
+          <div className="onix-ref-v4-balance">
+            <p className="onix-ref-v4-balance-value">{balance.toLocaleString('ru-RU')}</p>
+            <p className="onix-ref-v4-balance-label">Баланс $ONIX</p>
           </div>
 
           <div
             onClick={handleTap}
-            className={`onix-tap-orb onix-ref-tap-orb rounded-full flex items-center justify-center cursor-pointer shadow-2xl transition-transform relative ${
-              isTapped ? 'scale-90' : ''
-            }`}
+            className={`onix-ref-v4-coin ${isTapped ? 'onix-ref-v4-coin-tapped' : ''}`}
           >
-            <div className="onix-crystal-shards" />
-            <img src={onixTapCrystal} alt="$ONIX tap crystal" className="onix-tap-img" draggable={false} />
-            <span className="sr-only">$ONIX crystal</span>
+            <img src={onixTapCrystal} alt="$ONIX tap crystal" draggable={false} />
 
             {floatingNumbers.map((num) => (
               <div
@@ -8359,22 +8703,22 @@ body:has(.onix-home-reference-mode),
             ))}
           </div>
 
-          <div className="onix-home-energy-block onix-ref-energy-block">
-            <div className="onix-home-energy-text onix-ref-energy-text">
-              <Zap className="h-4 w-4 text-yellow-400" />
+          <div className="onix-ref-v4-energy">
+            <div className="onix-ref-v4-energy-text">
+              <Zap className="onix-ref-v4-energy-icon" />
               <span><strong>{Math.floor(energy).toLocaleString('ru-RU')}</strong> / {maxEnergy.toLocaleString('ru-RU')}</span>
-              <span className="text-slate-400">{energy >= maxEnergy ? 'Энергия полная' : 'Восстановление'}</span>
+              <span>{energy >= maxEnergy ? 'Энергия полная' : 'Восстановление'}</span>
             </div>
-            <div className="onix-home-energy-track onix-ref-energy-track">
+            <div className="onix-ref-v4-energy-track">
               <div
-                className="onix-home-energy-fill onix-ref-energy-fill"
+                className="onix-ref-v4-energy-fill"
                 style={{ width: `${Math.min((energy / Math.max(maxEnergy, 1)) * 100, 100)}%` }}
               />
             </div>
             <button
               type="button"
               onClick={handleTap}
-              className="onix-home-tap-button onix-ref-tap-button"
+              className="onix-ref-v4-tap-button"
             >
               ⚡ ТАП!
             </button>
