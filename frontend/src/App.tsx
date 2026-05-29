@@ -6190,6 +6190,17 @@ body.onix-body-home-lock {
     height: calc(var(--oc-app-height, 100vh) - 42px) !important;
   }
 }
+
+/* Step 38: force inline topbar and prevent legacy broken topbar flow */
+.onix-home-reference-mode > .onix-ref-topbar,
+.onix-home-reference-mode .onix-ref-topbar {
+  display: none !important;
+}
+
+.onix-home-reference-mode .onix-ref-home-screen,
+.onix-home-reference-mode .onix-home-screen {
+  height: calc(var(--oc-app-height, 100vh) - 44px) !important;
+}
 `;
 
     window.open(url, '_blank');
@@ -6907,13 +6918,84 @@ body.onix-body-home-lock {
         ))}
       </div>
       {activeTab === 'home' && (
-        <div className="onix-ref-topbar" aria-label="ONIX top navigation">
-          <button type="button" className="onix-ref-icon-button" aria-label="Меню">
-            <Menu className="h-5 w-5" />
+        <div
+          aria-label="ONIX top navigation"
+          style={{
+            width: '100%',
+            maxWidth: 430,
+            height: 44,
+            minHeight: 44,
+            margin: '0 auto',
+            padding: '0 14px',
+            display: 'grid',
+            gridTemplateColumns: '36px 1fr 36px',
+            alignItems: 'center',
+            position: 'relative',
+            zIndex: 500,
+            background: 'transparent',
+            boxSizing: 'border-box',
+          }}
+        >
+          <button
+            type="button"
+            aria-label="Меню"
+            style={{
+              width: 34,
+              height: 34,
+              border: 0,
+              padding: 0,
+              margin: 0,
+              borderRadius: 10,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              background: 'transparent',
+              color: '#FFFFFF',
+              boxShadow: 'none',
+              outline: 'none',
+            }}
+          >
+            <Menu size={20} strokeWidth={2.2} />
           </button>
-          <div className="onix-ref-topbar-title">$ONIX COIN</div>
-          <button type="button" className="onix-ref-icon-button" aria-label="Уведомления">
-            <Bell className="h-5 w-5" />
+
+          <div
+            style={{
+              textAlign: 'center',
+              color: '#FFFFFF',
+              fontFamily: "Orbitron, 'Exo 2', system-ui, sans-serif",
+              fontSize: 14,
+              fontWeight: 900,
+              lineHeight: 1,
+              letterSpacing: '0.08em',
+              textTransform: 'uppercase',
+              whiteSpace: 'nowrap',
+              textShadow: '0 0 18px rgba(136, 92, 246, 0.42)',
+            }}
+          >
+            $ONIX COIN
+          </div>
+
+          <button
+            type="button"
+            aria-label="Уведомления"
+            style={{
+              width: 34,
+              height: 34,
+              border: 0,
+              padding: 0,
+              margin: 0,
+              borderRadius: 10,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              background: 'transparent',
+              color: '#FFFFFF',
+              boxShadow: 'none',
+              outline: 'none',
+              justifySelf: 'end',
+            }}
+          >
+            <Bell size={19} strokeWidth={2.1} />
           </button>
         </div>
       )}
