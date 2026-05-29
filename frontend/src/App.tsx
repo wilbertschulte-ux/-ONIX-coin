@@ -2146,6 +2146,386 @@ body,
     margin-top: 8px !important;
   }
 }
+
+/* === REFERENCE HOME SCREEN PATCH v5 === */
+/* Clean isolated home screen based on reference */
+html,
+body,
+#root {
+  background: #020611 !important;
+}
+
+.onix-home-reference-mode.onix-app-bg {
+  max-width: 430px !important;
+  width: 100% !important;
+  min-height: 100dvh !important;
+  margin: 0 auto !important;
+  padding-bottom: 0 !important;
+  overflow: hidden !important;
+  background-color: #050713 !important;
+  background-image:
+    radial-gradient(ellipse at 16% 7%, rgba(119, 43, 218, 0.52) 0%, rgba(84, 27, 164, 0.24) 25%, transparent 53%),
+    radial-gradient(ellipse at 96% 18%, rgba(0, 129, 178, 0.24) 0%, rgba(0, 129, 178, 0.11) 24%, transparent 52%),
+    radial-gradient(ellipse at 49% 49%, rgba(86, 31, 170, 0.17) 0%, transparent 58%),
+    radial-gradient(ellipse at 50% 88%, rgba(78, 22, 151, 0.34) 0%, rgba(78, 22, 151, 0.10) 30%, transparent 62%),
+    linear-gradient(180deg, #080a16 0%, #070916 42%, #050713 100%) !important;
+  box-shadow: 0 0 0 1px rgba(126, 71, 255, 0.24), 0 0 70px rgba(96, 36, 210, 0.20) !important;
+}
+
+.onix-home-reference-mode.onix-app-bg::before {
+  content: '' !important;
+  position: fixed !important;
+  left: 50% !important;
+  top: 54px !important;
+  bottom: 0 !important;
+  width: min(100vw, 430px) !important;
+  transform: translateX(-50%) !important;
+  z-index: 0 !important;
+  pointer-events: none !important;
+  opacity: 1 !important;
+  background-image:
+    linear-gradient(90deg, rgba(116, 83, 210, 0.052) 1px, transparent 1px),
+    linear-gradient(180deg, rgba(116, 83, 210, 0.034) 1px, transparent 1px),
+    radial-gradient(circle at 7% 12%, rgba(255,255,255,0.34) 0 1px, transparent 1.5px),
+    radial-gradient(circle at 20% 26%, rgba(158, 94, 255,0.28) 0 1px, transparent 1.5px),
+    radial-gradient(circle at 83% 16%, rgba(68, 205, 255,0.28) 0 1px, transparent 1.5px),
+    radial-gradient(circle at 66% 40%, rgba(255,255,255,0.16) 0 1px, transparent 1.45px),
+    radial-gradient(circle at 13% 58%, rgba(179, 105, 255,0.20) 0 1px, transparent 1.45px),
+    radial-gradient(circle at 88% 72%, rgba(68, 205, 255,0.14) 0 1px, transparent 1.45px) !important;
+  background-size: 52px 52px, 52px 52px, 118px 118px, 158px 158px, 178px 178px, 138px 138px, 170px 170px, 190px 190px !important;
+}
+
+.onix-home-reference-mode.onix-app-bg::after {
+  content: '' !important;
+  position: fixed !important;
+  left: 50% !important;
+  top: 54px !important;
+  bottom: 0 !important;
+  width: min(100vw, 430px) !important;
+  transform: translateX(-50%) !important;
+  z-index: 1 !important;
+  pointer-events: none !important;
+  background:
+    radial-gradient(ellipse at 24% 13%, rgba(137, 74, 255, 0.19) 0%, transparent 31%),
+    radial-gradient(ellipse at 96% 28%, rgba(0, 195, 255, 0.10) 0%, transparent 24%),
+    radial-gradient(ellipse at 50% 78%, rgba(124, 49, 232, 0.20) 0%, transparent 32%),
+    linear-gradient(180deg, rgba(5, 7, 19, 0.00) 0%, rgba(5, 7, 19, 0.08) 55%, rgba(5, 7, 19, 0.35) 100%) !important;
+}
+
+.onix-home-reference-mode [aria-label="ONIX top navigation"] {
+  height: 54px !important;
+  min-height: 54px !important;
+  padding: 0 16px !important;
+  background: rgba(3, 6, 16, 0.78) !important;
+  border-bottom: 1px solid rgba(145, 103, 255, 0.28) !important;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.25) !important;
+  backdrop-filter: blur(12px) !important;
+}
+
+.onix-ref-v5-screen {
+  position: relative !important;
+  z-index: 10 !important;
+  width: 100% !important;
+  max-width: 430px !important;
+  height: calc(100dvh - 54px) !important;
+  margin: 0 auto !important;
+  padding: 18px 22px calc(88px + env(safe-area-inset-bottom)) !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  overflow: hidden !important;
+  box-sizing: border-box !important;
+}
+
+.onix-ref-v5-player {
+  width: 100% !important;
+  min-height: 58px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  gap: 12px !important;
+}
+
+.onix-ref-v5-player-left {
+  min-width: 0 !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 12px !important;
+}
+
+.onix-ref-v5-avatar {
+  width: 50px !important;
+  height: 50px !important;
+  flex: 0 0 50px !important;
+  border-radius: 999px !important;
+  display: grid !important;
+  place-items: center !important;
+  overflow: hidden !important;
+  background: radial-gradient(circle at 50% 45%, rgba(93, 42, 212, 0.35), rgba(7, 11, 26, 0.96) 64%) !important;
+  border: 2px solid rgba(120, 83, 255, 0.95) !important;
+  box-shadow: 0 0 17px rgba(120, 83, 255, 0.62), inset 0 0 17px rgba(0, 229, 255, 0.12) !important;
+}
+
+.onix-ref-v5-avatar img {
+  width: 80% !important;
+  height: 80% !important;
+  object-fit: contain !important;
+}
+
+.onix-ref-v5-player-text {
+  min-width: 0 !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: flex-start !important;
+}
+
+.onix-ref-v5-name {
+  margin: 0 !important;
+  max-width: 180px !important;
+  color: #ffffff !important;
+  font-family: 'Exo 2', system-ui, sans-serif !important;
+  font-size: 13px !important;
+  line-height: 1.1 !important;
+  font-weight: 900 !important;
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+}
+
+.onix-ref-v5-rank {
+  margin: 4px 0 0 !important;
+  max-width: 180px !important;
+  color: #9c55ff !important;
+  font-family: 'Exo 2', system-ui, sans-serif !important;
+  font-size: 10px !important;
+  line-height: 1 !important;
+  font-weight: 800 !important;
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+}
+
+.onix-ref-v5-rank-badge {
+  width: 54px !important;
+  height: 54px !important;
+  flex: 0 0 54px !important;
+  display: grid !important;
+  place-items: center !important;
+  filter: drop-shadow(0 0 10px rgba(133, 76, 255, 0.90)) drop-shadow(0 0 20px rgba(107, 50, 236, 0.50)) !important;
+}
+
+.onix-ref-v5-rank-badge img {
+  width: 54px !important;
+  height: 54px !important;
+  object-fit: contain !important;
+}
+
+.onix-ref-v5-balance {
+  width: 100% !important;
+  margin-top: 18px !important;
+  text-align: center !important;
+}
+
+.onix-ref-v5-balance-value {
+  margin: 0 !important;
+  padding: 0 !important;
+  color: #f6c833 !important;
+  background: none !important;
+  -webkit-text-fill-color: #f6c833 !important;
+  font-family: 'Exo 2', system-ui, sans-serif !important;
+  font-size: clamp(3.15rem, 13.5vw, 4.5rem) !important;
+  line-height: 0.84 !important;
+  font-weight: 900 !important;
+  letter-spacing: -0.058em !important;
+  text-align: center !important;
+  text-shadow: 0 0 10px rgba(250, 204, 21, 0.24), 0 0 22px rgba(250, 204, 21, 0.12) !important;
+}
+
+.onix-ref-v5-balance-label {
+  margin: 9px 0 0 !important;
+  padding: 0 !important;
+  color: #f6c833 !important;
+  font-family: 'Exo 2', system-ui, sans-serif !important;
+  font-size: 12px !important;
+  line-height: 1 !important;
+  font-weight: 800 !important;
+  letter-spacing: 0.08em !important;
+  text-align: center !important;
+  text-transform: uppercase !important;
+  text-shadow: 0 0 12px rgba(250, 204, 21, 0.30) !important;
+}
+
+.onix-ref-v5-coin {
+  position: relative !important;
+  flex: 0 0 auto !important;
+  width: min(78vw, 304px) !important;
+  height: min(78vw, 304px) !important;
+  max-width: 304px !important;
+  max-height: 304px !important;
+  margin-top: 30px !important;
+  padding: 0 !important;
+  display: grid !important;
+  place-items: center !important;
+  cursor: pointer !important;
+  transition: transform 120ms ease !important;
+  border: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+.onix-ref-v5-coin-tapped {
+  transform: scale(0.94) !important;
+}
+
+.onix-ref-v5-coin img {
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: contain !important;
+  user-select: none !important;
+  pointer-events: none !important;
+  filter: drop-shadow(0 0 16px rgba(145, 74, 255, 0.86)) drop-shadow(0 0 36px rgba(68, 205, 255, 0.24)) !important;
+}
+
+.onix-ref-v5-energy {
+  width: 100% !important;
+  margin-top: 8px !important;
+}
+
+.onix-ref-v5-energy-text {
+  width: 100% !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 5px !important;
+  color: #cfd7f2 !important;
+  font-family: 'Exo 2', system-ui, sans-serif !important;
+  font-size: 12px !important;
+  line-height: 1 !important;
+  font-weight: 900 !important;
+  white-space: nowrap !important;
+}
+
+.onix-ref-v5-energy-icon {
+  width: 14px !important;
+  height: 14px !important;
+  color: #f6c833 !important;
+  fill: #f6c833 !important;
+}
+
+.onix-ref-v5-energy-text strong {
+  color: #f6c833 !important;
+}
+
+.onix-ref-v5-energy-status {
+  color: #a9aec5 !important;
+  font-weight: 800 !important;
+}
+
+.onix-ref-v5-energy-track {
+  width: 100% !important;
+  height: 7px !important;
+  margin-top: 11px !important;
+  border-radius: 999px !important;
+  overflow: hidden !important;
+  background: rgba(12, 17, 37, 0.94) !important;
+  border: 1px solid rgba(125, 83, 255, 0.24) !important;
+  box-shadow: inset 0 0 9px rgba(0, 0, 0, 0.55) !important;
+}
+
+.onix-ref-v5-energy-fill {
+  height: 100% !important;
+  border-radius: 999px !important;
+  background: linear-gradient(90deg, #10d6e8 0%, #47bbff 43%, #8e55ff 100%) !important;
+  box-shadow: 0 0 12px rgba(0, 229, 255, 0.45), 0 0 14px rgba(139, 92, 246, 0.42) !important;
+}
+
+.onix-ref-v5-tap-button {
+  width: 100% !important;
+  height: 52px !important;
+  min-height: 52px !important;
+  margin-top: 13px !important;
+  border-radius: 10px !important;
+  border: 1px solid rgba(168, 85, 247, 0.60) !important;
+  background: linear-gradient(180deg, #8f35ff 0%, #6519d7 100%) !important;
+  color: #ffffff !important;
+  font-family: 'Exo 2', system-ui, sans-serif !important;
+  font-size: 16px !important;
+  line-height: 1 !important;
+  font-weight: 900 !important;
+  letter-spacing: 0.045em !important;
+  text-transform: uppercase !important;
+  box-shadow: 0 0 22px rgba(129, 55, 245, 0.52), inset 0 1px 0 rgba(255,255,255,0.18) !important;
+}
+
+.onix-home-reference-mode .onix-nav {
+  position: fixed !important;
+  left: 50% !important;
+  right: auto !important;
+  bottom: calc(8px + env(safe-area-inset-bottom)) !important;
+  transform: translateX(-50%) !important;
+  z-index: 900 !important;
+  width: min(calc(100vw - 16px), 414px) !important;
+  max-width: 414px !important;
+  height: 58px !important;
+  padding: 4px 7px !important;
+  border-radius: 17px !important;
+  background: rgba(4, 7, 18, 0.94) !important;
+  border: 1px solid rgba(129, 69, 255, 0.48) !important;
+  box-shadow: 0 0 20px rgba(91, 33, 246, 0.30), inset 0 0 18px rgba(129, 69, 255, 0.08) !important;
+}
+
+.onix-home-reference-mode .onix-nav button {
+  min-width: 0 !important;
+  padding: 5px 2px !important;
+  border-radius: 12px !important;
+  gap: 2px !important;
+  font-size: 9px !important;
+  line-height: 1 !important;
+}
+
+.onix-home-reference-mode .onix-nav button svg {
+  width: 16px !important;
+  height: 16px !important;
+}
+
+.onix-home-reference-mode .onix-nav button.onix-nav-active {
+  background: rgba(71, 85, 150, 0.56) !important;
+  color: #ffffff !important;
+  box-shadow: inset 0 0 16px rgba(114, 137, 255, 0.36), 0 0 14px rgba(114, 137, 255, 0.24) !important;
+}
+
+@media (max-height: 760px) {
+  .onix-ref-v5-screen {
+    padding-top: 12px !important;
+    padding-bottom: calc(75px + env(safe-area-inset-bottom)) !important;
+  }
+
+  .onix-ref-v5-balance {
+    margin-top: 11px !important;
+  }
+
+  .onix-ref-v5-balance-value {
+    font-size: clamp(2.6rem, 11vw, 3.55rem) !important;
+  }
+
+  .onix-ref-v5-coin {
+    width: min(68vw, 258px) !important;
+    height: min(68vw, 258px) !important;
+    margin-top: 18px !important;
+  }
+
+  .onix-ref-v5-tap-button {
+    height: 46px !important;
+    min-height: 46px !important;
+    margin-top: 10px !important;
+  }
+
+  .onix-home-reference-mode .onix-nav {
+    height: 56px !important;
+  }
+}
+
+
 `;
 
 
@@ -6581,1226 +6961,6 @@ body:has(.onix-home-reference-mode),
     radial-gradient(ellipse at 50% 58%, rgba(6, 182, 212, 0.08), transparent 36%) !important;
 }
 
-
-/* === REFERENCE HOME SCREEN PATCH v2 === */
-html:has(.onix-home-reference-mode),
-body:has(.onix-home-reference-mode),
-#root:has(.onix-home-reference-mode) {
-  background: #050713 !important;
-  overflow-x: hidden !important;
-}
-
-.onix-home-reference-mode.onix-app-bg,
-.onix-home-reference-mode {
-  background-color: #050713 !important;
-  background-image:
-    radial-gradient(ellipse at 22% 8%, rgba(111, 44, 210, 0.48) 0%, rgba(69, 22, 142, 0.22) 24%, transparent 50%),
-    radial-gradient(ellipse at 92% 19%, rgba(0, 119, 168, 0.25) 0%, rgba(0, 119, 168, 0.11) 24%, transparent 50%),
-    radial-gradient(ellipse at 50% 50%, rgba(74, 27, 151, 0.17) 0%, rgba(74, 27, 151, 0.07) 28%, transparent 57%),
-    radial-gradient(ellipse at 50% 86%, rgba(86, 28, 150, 0.30) 0%, rgba(86, 28, 150, 0.10) 28%, transparent 58%),
-    linear-gradient(180deg, #0a0c18 0%, #070a16 38%, #050713 100%) !important;
-  background-repeat: no-repeat !important;
-  background-size: 100% 100% !important;
-  color: #fff !important;
-  position: relative !important;
-  isolation: isolate !important;
-  overflow-x: hidden !important;
-  box-shadow: none !important;
-}
-
-.onix-home-reference-mode.onix-app-bg::before {
-  content: '' !important;
-  position: fixed !important;
-  inset: 44px 0 0 0 !important;
-  z-index: 0 !important;
-  pointer-events: none !important;
-  opacity: 1 !important;
-  background-image:
-    linear-gradient(90deg, rgba(116, 83, 210, 0.050) 1px, transparent 1px),
-    linear-gradient(180deg, rgba(116, 83, 210, 0.035) 1px, transparent 1px),
-    radial-gradient(circle at 7% 12%, rgba(255,255,255,0.35) 0 1px, transparent 1.55px),
-    radial-gradient(circle at 20% 26%, rgba(158, 94, 255,0.28) 0 1px, transparent 1.55px),
-    radial-gradient(circle at 83% 16%, rgba(68, 205, 255,0.28) 0 1px, transparent 1.55px),
-    radial-gradient(circle at 66% 40%, rgba(255,255,255,0.16) 0 1px, transparent 1.45px),
-    radial-gradient(circle at 13% 58%, rgba(179, 105, 255,0.20) 0 1px, transparent 1.45px),
-    radial-gradient(circle at 88% 72%, rgba(68, 205, 255,0.14) 0 1px, transparent 1.45px) !important;
-  background-size:
-    52px 52px,
-    52px 52px,
-    118px 118px,
-    158px 158px,
-    178px 178px,
-    138px 138px,
-    170px 170px,
-    190px 190px !important;
-  background-position: 0 0, 0 0, 0 0, 12px 18px, 36px 10px, 14px 62px, 26px 40px, 48px 22px !important;
-  mask-image: linear-gradient(180deg, transparent 0%, #000 8%, #000 95%, transparent 100%) !important;
-}
-
-.onix-home-reference-mode.onix-app-bg::after {
-  content: '' !important;
-  position: fixed !important;
-  inset: 44px 0 0 0 !important;
-  z-index: 1 !important;
-  pointer-events: none !important;
-  opacity: 1 !important;
-  background:
-    radial-gradient(ellipse at 25% 12%, rgba(137, 74, 255, 0.15) 0%, transparent 30%),
-    radial-gradient(ellipse at 94% 28%, rgba(0, 195, 255, 0.10) 0%, transparent 24%),
-    radial-gradient(ellipse at 50% 78%, rgba(124, 49, 232, 0.18) 0%, transparent 31%),
-    linear-gradient(180deg, rgba(5, 7, 19, 0.00) 0%, rgba(5, 7, 19, 0.08) 55%, rgba(5, 7, 19, 0.31) 100%) !important;
-}
-
-.onix-home-reference-mode.onix-app-bg > *:not(style) {
-  position: relative !important;
-  z-index: 3 !important;
-}
-
-/* top bar: keep current elements, add reference separation line */
-.onix-home-reference-mode [aria-label="ONIX top navigation"] {
-  height: 54px !important;
-  min-height: 54px !important;
-  padding: 0 14px !important;
-  background: rgba(3, 6, 16, 0.76) !important;
-  border-bottom: 1px solid rgba(145, 103, 255, 0.26) !important;
-  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.24) !important;
-  backdrop-filter: blur(12px) !important;
-}
-
-/* layout */
-.onix-home-reference-mode .onix-home-screen,
-.onix-home-reference-mode .onix-ref-home-screen {
-  width: min(100%, 430px) !important;
-  max-width: 430px !important;
-  height: calc(var(--oc-app-height, 100vh) - 54px) !important;
-  min-height: 0 !important;
-  margin: 0 auto !important;
-  padding: 13px 20px calc(92px + env(safe-area-inset-bottom)) !important;
-  display: flex !important;
-  flex-direction: column !important;
-  align-items: center !important;
-  overflow: hidden !important;
-  gap: 0 !important;
-  background: transparent !important;
-}
-
-.onix-home-reference-mode .onix-ref-home-screen::before,
-.onix-home-reference-mode .onix-home-screen::before {
-  display: none !important;
-}
-
-.onix-home-reference-mode .oc-seamless-player-block {
-  width: 100% !important;
-  padding: 0 !important;
-  margin: 0 !important;
-  background: transparent !important;
-  border: 0 !important;
-  border-radius: 0 !important;
-  box-shadow: none !important;
-  outline: 0 !important;
-  overflow: visible !important;
-}
-
-/* player info row */
-.onix-home-reference-mode .onix-home-user-row,
-.onix-home-reference-mode .onix-ref-user-row {
-  width: 100% !important;
-  min-height: 54px !important;
-  padding: 0 !important;
-  margin: 0 !important;
-}
-
-.onix-home-reference-mode .onix-home-avatar,
-.onix-home-reference-mode .onix-ref-avatar {
-  width: 48px !important;
-  height: 48px !important;
-  border-radius: 999px !important;
-  overflow: hidden !important;
-  display: grid !important;
-  place-items: center !important;
-  background:
-    radial-gradient(circle at 50% 45%, rgba(93, 42, 212, 0.34), rgba(7, 11, 26, 0.95) 64%) !important;
-  border: 2px solid rgba(120, 83, 255, 0.95) !important;
-  box-shadow:
-    0 0 16px rgba(120, 83, 255, 0.58),
-    inset 0 0 16px rgba(0, 229, 255, 0.12) !important;
-}
-
-.onix-home-reference-mode .onix-home-avatar img,
-.onix-home-reference-mode .onix-ref-avatar img {
-  width: 78% !important;
-  height: 78% !important;
-  object-fit: contain !important;
-}
-
-.onix-home-reference-mode .onix-home-username,
-.onix-home-reference-mode .onix-ref-username {
-  font-family: 'Exo 2', system-ui, sans-serif !important;
-  font-size: 12px !important;
-  line-height: 1.1 !important;
-  font-weight: 900 !important;
-  color: #ffffff !important;
-  letter-spacing: -0.01em !important;
-  text-shadow: 0 0 12px rgba(255,255,255,0.12) !important;
-}
-
-.onix-home-reference-mode .onix-home-title,
-.onix-home-reference-mode .onix-ref-title {
-  display: block !important;
-  margin-top: 3px !important;
-  font-size: 10px !important;
-  line-height: 1 !important;
-  color: #9c55ff !important;
-  font-weight: 800 !important;
-}
-
-.onix-home-reference-mode .onix-home-rank-mark,
-.onix-home-reference-mode .onix-ref-rank-mark {
-  width: 52px !important;
-  height: 52px !important;
-  display: grid !important;
-  place-items: center !important;
-  border-radius: 0 !important;
-  background: transparent !important;
-  border: 0 !important;
-  box-shadow: none !important;
-  filter:
-    drop-shadow(0 0 10px rgba(133, 76, 255, 0.85))
-    drop-shadow(0 0 20px rgba(107, 50, 236, 0.50)) !important;
-}
-
-.onix-home-reference-mode .onix-home-rank-mark img,
-.onix-home-reference-mode .onix-ref-rank-mark img {
-  width: 52px !important;
-  height: 52px !important;
-  object-fit: contain !important;
-}
-
-/* balance */
-.onix-home-reference-mode .onix-home-balance-row,
-.onix-home-reference-mode .onix-ref-balance-row {
-  margin-top: 18px !important;
-  padding: 0 !important;
-  background: transparent !important;
-  border: 0 !important;
-  box-shadow: none !important;
-}
-
-.onix-home-reference-mode .onix-home-balance-label,
-.onix-home-reference-mode .onix-ref-balance-label {
-  display: block !important;
-  margin: 8px 0 0 !important;
-  text-align: center !important;
-  font-family: 'Exo 2', system-ui, sans-serif !important;
-  font-size: 12px !important;
-  line-height: 1 !important;
-  font-weight: 800 !important;
-  letter-spacing: 0.08em !important;
-  text-transform: uppercase !important;
-  color: #f4c437 !important;
-  text-shadow: 0 0 12px rgba(250, 204, 21, 0.30) !important;
-}
-
-.onix-home-reference-mode .onix-home-balance-value,
-.onix-home-reference-mode .onix-ref-balance-value {
-  margin: 0 !important;
-  text-align: center !important;
-  font-family: 'Exo 2', 'Orbitron', system-ui, sans-serif !important;
-  font-size: clamp(2.05rem, 9.6vw, 3rem) !important;
-  line-height: 0.92 !important;
-  font-weight: 900 !important;
-  letter-spacing: -0.035em !important;
-  background: none !important;
-  -webkit-background-clip: initial !important;
-  background-clip: initial !important;
-  color: #f8cf38 !important;
-  text-shadow:
-    0 0 9px rgba(250, 204, 21, 0.26),
-    0 0 18px rgba(250, 204, 21, 0.13) !important;
-}
-
-.onix-home-reference-mode .onix-home-balance-symbol,
-.onix-home-reference-mode .onix-ref-balance-symbol {
-  display: none !important;
-}
-
-/* hide rank progress above coin on home, energy is under coin */
-.onix-home-reference-mode .onix-home-level-row,
-.onix-home-reference-mode .onix-ref-level-row {
-  display: none !important;
-}
-
-/* tap coin */
-.onix-home-reference-mode .onix-tap-orb,
-.onix-home-reference-mode .onix-ref-tap-orb {
-  flex: 0 0 auto !important;
-  width: min(78vw, 304px) !important;
-  height: min(78vw, 304px) !important;
-  max-width: 304px !important;
-  max-height: 304px !important;
-  margin-top: 28px !important;
-  background: transparent !important;
-  border: 0 !important;
-  box-shadow: none !important;
-  overflow: visible !important;
-}
-
-.onix-home-reference-mode .onix-tap-img {
-  width: 100% !important;
-  height: 100% !important;
-  object-fit: contain !important;
-  filter:
-    drop-shadow(0 0 14px rgba(145, 74, 255, 0.82))
-    drop-shadow(0 0 32px rgba(110, 34, 229, 0.58)) !important;
-}
-
-.onix-home-reference-mode .onix-tap-orb::before,
-.onix-home-reference-mode .onix-tap-orb::after,
-.onix-home-reference-mode .onix-ref-tap-orb::before,
-.onix-home-reference-mode .onix-ref-tap-orb::after,
-.onix-home-reference-mode .onix-crystal-shards {
-  display: none !important;
-}
-
-/* energy block exactly below coin */
-.onix-home-reference-mode .onix-home-energy-block,
-.onix-home-reference-mode .onix-ref-energy-block {
-  width: 100% !important;
-  margin-top: 8px !important;
-  padding: 0 !important;
-  position: relative !important;
-  z-index: 6 !important;
-}
-
-.onix-home-reference-mode .onix-home-energy-text,
-.onix-home-reference-mode .onix-ref-energy-text {
-  display: flex !important;
-  flex-wrap: wrap !important;
-  align-items: center !important;
-  justify-content: center !important;
-  gap: 4px !important;
-  font-family: 'Exo 2', system-ui, sans-serif !important;
-  font-size: 12px !important;
-  line-height: 1 !important;
-  font-weight: 900 !important;
-  color: #cfd7f2 !important;
-}
-
-.onix-home-reference-mode .onix-home-energy-text svg,
-.onix-home-reference-mode .onix-ref-energy-text svg {
-  width: 13px !important;
-  height: 13px !important;
-  color: #f6c833 !important;
-  fill: #f6c833 !important;
-  filter: drop-shadow(0 0 7px rgba(250, 204, 21, 0.45)) !important;
-}
-
-.onix-home-reference-mode .onix-home-energy-text strong,
-.onix-home-reference-mode .onix-ref-energy-text strong {
-  color: #f8cf38 !important;
-}
-
-.onix-home-reference-mode .onix-home-energy-text .text-slate-400,
-.onix-home-reference-mode .onix-ref-energy-text .text-slate-400 {
-  flex-basis: 100% !important;
-  margin-top: 4px !important;
-  text-align: center !important;
-  font-size: 10px !important;
-  line-height: 1 !important;
-  color: rgba(156, 163, 185, 0.72) !important;
-  font-weight: 700 !important;
-}
-
-.onix-home-reference-mode .onix-home-energy-track,
-.onix-home-reference-mode .onix-ref-energy-track {
-  width: 100% !important;
-  height: 6px !important;
-  margin-top: 11px !important;
-  border-radius: 999px !important;
-  overflow: hidden !important;
-  background: rgba(12, 17, 37, 0.92) !important;
-  border: 1px solid rgba(125, 83, 255, 0.24) !important;
-  box-shadow: inset 0 0 9px rgba(0, 0, 0, 0.55) !important;
-}
-
-.onix-home-reference-mode .onix-home-energy-fill,
-.onix-home-reference-mode .onix-ref-energy-fill {
-  height: 100% !important;
-  border-radius: 999px !important;
-  background: linear-gradient(90deg, #f4c833 0%, #b35bff 53%, #4d7cff 100%) !important;
-  box-shadow:
-    0 0 10px rgba(250, 204, 21, 0.34),
-    0 0 14px rgba(139, 92, 246, 0.42) !important;
-}
-
-/* tap button */
-.onix-home-reference-mode .onix-home-tap-button,
-.onix-home-reference-mode .onix-ref-tap-button {
-  display: block !important;
-  width: 100% !important;
-  height: 48px !important;
-  min-height: 48px !important;
-  margin-top: 13px !important;
-  border-radius: 9px !important;
-  border: 1px solid rgba(168, 85, 247, 0.55) !important;
-  background: linear-gradient(180deg, #8f35ff 0%, #6519d7 100%) !important;
-  color: #ffffff !important;
-  font-family: 'Exo 2', system-ui, sans-serif !important;
-  font-size: 15px !important;
-  line-height: 1 !important;
-  font-weight: 900 !important;
-  letter-spacing: 0.045em !important;
-  text-transform: uppercase !important;
-  box-shadow:
-    0 0 20px rgba(129, 55, 245, 0.50),
-    inset 0 1px 0 rgba(255,255,255,0.18) !important;
-}
-
-/* bottom menu */
-.onix-home-reference-mode .onix-nav {
-  position: fixed !important;
-  left: 50% !important;
-  right: auto !important;
-  bottom: calc(8px + env(safe-area-inset-bottom)) !important;
-  top: auto !important;
-  transform: translateX(-50%) !important;
-  z-index: 900 !important;
-  width: min(calc(100vw - 16px), 414px) !important;
-  max-width: 414px !important;
-  height: 58px !important;
-  margin: 0 !important;
-  padding: 4px 7px !important;
-  border-radius: 17px !important;
-  background: rgba(4, 7, 18, 0.93) !important;
-  border: 1px solid rgba(129, 69, 255, 0.48) !important;
-  box-shadow:
-    0 0 20px rgba(91, 33, 246, 0.30),
-    inset 0 0 18px rgba(129, 69, 255, 0.08) !important;
-  backdrop-filter: blur(14px) !important;
-  overflow: hidden !important;
-}
-
-.onix-home-reference-mode .onix-nav button {
-  min-width: 0 !important;
-  padding: 5px 2px !important;
-  border-radius: 12px !important;
-  gap: 2px !important;
-  font-size: 9px !important;
-  line-height: 1 !important;
-}
-
-.onix-home-reference-mode .onix-nav button svg {
-  width: 16px !important;
-  height: 16px !important;
-}
-
-.onix-home-reference-mode .onix-nav button.onix-nav-active {
-  background: rgba(71, 85, 150, 0.55) !important;
-  color: #ffffff !important;
-  box-shadow:
-    inset 0 0 16px rgba(114, 137, 255, 0.36),
-    0 0 14px rgba(114, 137, 255, 0.24) !important;
-}
-
-@media (max-height: 760px) {
-  .onix-home-reference-mode .onix-home-screen,
-  .onix-home-reference-mode .onix-ref-home-screen {
-    padding-top: 9px !important;
-    padding-left: 20px !important;
-    padding-right: 20px !important;
-    padding-bottom: calc(76px + env(safe-area-inset-bottom)) !important;
-  }
-
-  .onix-home-reference-mode .onix-home-balance-row,
-  .onix-home-reference-mode .onix-ref-balance-row {
-    margin-top: 12px !important;
-  }
-
-  .onix-home-reference-mode .onix-home-balance-value,
-  .onix-home-reference-mode .onix-ref-balance-value {
-    font-size: clamp(1.95rem, 8.8vw, 2.65rem) !important;
-  }
-
-  .onix-home-reference-mode .onix-tap-orb,
-  .onix-home-reference-mode .onix-ref-tap-orb {
-    width: min(70vw, 268px) !important;
-    height: min(70vw, 268px) !important;
-    margin-top: 17px !important;
-  }
-
-  .onix-home-reference-mode .onix-home-tap-button,
-  .onix-home-reference-mode .onix-ref-tap-button {
-    height: 44px !important;
-    min-height: 44px !important;
-    margin-top: 10px !important;
-  }
-
-  .onix-home-reference-mode .onix-nav {
-    height: 56px !important;
-    bottom: calc(6px + env(safe-area-inset-bottom)) !important;
-  }
-}
-
-
-
-/* === REFERENCE HOME SCREEN PATCH v3 === */
-/* v3 fixes: real reference spacing, visible golden balance, player row, energy and mobile shell */
-.onix-home-reference-mode.onix-app-bg {
-  max-width: 430px !important;
-  width: 100% !important;
-  min-height: 100dvh !important;
-  margin: 0 auto !important;
-  background-color: #050713 !important;
-  background-image:
-    radial-gradient(ellipse at 18% 7%, rgba(122, 42, 221, 0.48) 0%, rgba(91, 29, 172, 0.20) 25%, transparent 52%),
-    radial-gradient(ellipse at 96% 18%, rgba(0, 126, 178, 0.23) 0%, rgba(0, 126, 178, 0.10) 23%, transparent 50%),
-    radial-gradient(ellipse at 50% 48%, rgba(92, 34, 178, 0.17) 0%, transparent 58%),
-    radial-gradient(ellipse at 50% 88%, rgba(80, 25, 150, 0.32) 0%, rgba(80, 25, 150, 0.10) 30%, transparent 62%),
-    linear-gradient(180deg, #080a16 0%, #070916 42%, #050713 100%) !important;
-  box-shadow: 0 0 0 1px rgba(126, 71, 255, 0.20), 0 0 70px rgba(96, 36, 210, 0.20) !important;
-}
-
-.onix-home-reference-mode.onix-app-bg::before {
-  content: '' !important;
-  position: fixed !important;
-  left: 50% !important;
-  top: 54px !important;
-  bottom: 0 !important;
-  width: min(100vw, 430px) !important;
-  transform: translateX(-50%) !important;
-  z-index: 0 !important;
-  pointer-events: none !important;
-  opacity: 1 !important;
-  background-image:
-    linear-gradient(90deg, rgba(116, 83, 210, 0.052) 1px, transparent 1px),
-    linear-gradient(180deg, rgba(116, 83, 210, 0.034) 1px, transparent 1px),
-    radial-gradient(circle at 7% 12%, rgba(255,255,255,0.34) 0 1px, transparent 1.5px),
-    radial-gradient(circle at 20% 26%, rgba(158, 94, 255,0.28) 0 1px, transparent 1.5px),
-    radial-gradient(circle at 83% 16%, rgba(68, 205, 255,0.28) 0 1px, transparent 1.5px),
-    radial-gradient(circle at 66% 40%, rgba(255,255,255,0.16) 0 1px, transparent 1.45px),
-    radial-gradient(circle at 13% 58%, rgba(179, 105, 255,0.20) 0 1px, transparent 1.45px),
-    radial-gradient(circle at 88% 72%, rgba(68, 205, 255,0.14) 0 1px, transparent 1.45px) !important;
-  background-size: 52px 52px, 52px 52px, 118px 118px, 158px 158px, 178px 178px, 138px 138px, 170px 170px, 190px 190px !important;
-  background-position: 0 0, 0 0, 0 0, 12px 18px, 36px 10px, 14px 62px, 26px 40px, 48px 22px !important;
-}
-
-.onix-home-reference-mode.onix-app-bg::after {
-  content: '' !important;
-  position: fixed !important;
-  left: 50% !important;
-  top: 54px !important;
-  bottom: 0 !important;
-  width: min(100vw, 430px) !important;
-  transform: translateX(-50%) !important;
-  z-index: 1 !important;
-  pointer-events: none !important;
-  background:
-    radial-gradient(ellipse at 25% 12%, rgba(137, 74, 255, 0.18) 0%, transparent 31%),
-    radial-gradient(ellipse at 96% 28%, rgba(0, 195, 255, 0.10) 0%, transparent 24%),
-    radial-gradient(ellipse at 50% 78%, rgba(124, 49, 232, 0.20) 0%, transparent 32%),
-    linear-gradient(180deg, rgba(5, 7, 19, 0.00) 0%, rgba(5, 7, 19, 0.08) 55%, rgba(5, 7, 19, 0.35) 100%) !important;
-}
-
-.onix-home-reference-mode [aria-label="ONIX top navigation"] {
-  height: 54px !important;
-  min-height: 54px !important;
-  padding: 0 16px !important;
-  background: rgba(3, 6, 16, 0.78) !important;
-  border-bottom: 1px solid rgba(145, 103, 255, 0.28) !important;
-  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.25) !important;
-  backdrop-filter: blur(12px) !important;
-}
-
-.onix-home-reference-mode .onix-home-screen,
-.onix-home-reference-mode .onix-ref-home-screen {
-  width: 100% !important;
-  max-width: 430px !important;
-  height: calc(100dvh - 54px) !important;
-  min-height: 0 !important;
-  margin: 0 auto !important;
-  padding: 18px 20px calc(86px + env(safe-area-inset-bottom)) !important;
-  align-items: center !important;
-  overflow: hidden !important;
-  background: transparent !important;
-}
-
-.onix-home-reference-mode .oc-seamless-player-block {
-  width: 100% !important;
-  padding: 0 !important;
-  margin: 0 !important;
-  background: transparent !important;
-  border: 0 !important;
-  box-shadow: none !important;
-}
-
-.onix-home-reference-mode .onix-home-user-row,
-.onix-home-reference-mode .onix-ref-user-row {
-  width: 100% !important;
-  min-height: 56px !important;
-  align-items: center !important;
-  padding: 0 !important;
-  margin: 0 !important;
-}
-
-.onix-home-reference-mode .onix-home-avatar,
-.onix-home-reference-mode .onix-ref-avatar {
-  width: 48px !important;
-  height: 48px !important;
-  border-radius: 999px !important;
-  overflow: hidden !important;
-  background: radial-gradient(circle at 50% 45%, rgba(93, 42, 212, 0.34), rgba(7, 11, 26, 0.96) 64%) !important;
-  border: 2px solid rgba(120, 83, 255, 0.95) !important;
-  box-shadow: 0 0 16px rgba(120, 83, 255, 0.60), inset 0 0 16px rgba(0, 229, 255, 0.12) !important;
-}
-
-.onix-home-reference-mode .onix-home-avatar img,
-.onix-home-reference-mode .onix-ref-avatar img {
-  width: 80% !important;
-  height: 80% !important;
-  object-fit: contain !important;
-}
-
-.onix-home-reference-mode .onix-home-username,
-.onix-home-reference-mode .onix-ref-username {
-  font-family: 'Exo 2', system-ui, sans-serif !important;
-  font-size: 13px !important;
-  line-height: 1.1 !important;
-  font-weight: 900 !important;
-  color: #fff !important;
-  text-align: left !important;
-  letter-spacing: -0.01em !important;
-}
-
-.onix-home-reference-mode .onix-home-title,
-.onix-home-reference-mode .onix-ref-title {
-  display: block !important;
-  margin-top: 4px !important;
-  font-size: 10px !important;
-  line-height: 1 !important;
-  color: #9c55ff !important;
-  font-weight: 800 !important;
-  text-align: left !important;
-  opacity: 1 !important;
-}
-
-.onix-home-reference-mode .onix-home-rank-mark,
-.onix-home-reference-mode .onix-ref-rank-mark {
-  width: 54px !important;
-  height: 54px !important;
-  display: grid !important;
-  place-items: center !important;
-  background: transparent !important;
-  border: 0 !important;
-  box-shadow: none !important;
-  filter: drop-shadow(0 0 10px rgba(133, 76, 255, 0.90)) drop-shadow(0 0 20px rgba(107, 50, 236, 0.50)) !important;
-}
-
-.onix-home-reference-mode .onix-home-rank-mark img,
-.onix-home-reference-mode .onix-ref-rank-mark img {
-  width: 54px !important;
-  height: 54px !important;
-  object-fit: contain !important;
-}
-
-.onix-home-reference-mode .onix-home-balance-row,
-.onix-home-reference-mode .onix-ref-balance-row {
-  margin-top: 16px !important;
-  padding: 0 !important;
-  background: transparent !important;
-  border: 0 !important;
-  box-shadow: none !important;
-}
-
-.onix-home-reference-mode .onix-home-balance-value,
-.onix-home-reference-mode .onix-ref-balance-value {
-  margin: 0 !important;
-  text-align: center !important;
-  font-family: 'Exo 2', system-ui, sans-serif !important;
-  font-size: clamp(3rem, 13vw, 4.35rem) !important;
-  line-height: 0.86 !important;
-  font-weight: 900 !important;
-  letter-spacing: -0.055em !important;
-  color: #f6c833 !important;
-  background: none !important;
-  -webkit-background-clip: initial !important;
-  background-clip: initial !important;
-  text-shadow: 0 0 10px rgba(250, 204, 21, 0.24), 0 0 22px rgba(250, 204, 21, 0.12) !important;
-}
-
-.onix-home-reference-mode .onix-home-balance-label,
-.onix-home-reference-mode .onix-ref-balance-label {
-  display: block !important;
-  margin: 8px 0 0 !important;
-  text-align: center !important;
-  font-family: 'Exo 2', system-ui, sans-serif !important;
-  font-size: 12px !important;
-  line-height: 1 !important;
-  font-weight: 800 !important;
-  letter-spacing: 0.08em !important;
-  text-transform: uppercase !important;
-  color: #f6c833 !important;
-  text-shadow: 0 0 12px rgba(250, 204, 21, 0.30) !important;
-}
-
-.onix-home-reference-mode .onix-home-balance-symbol,
-.onix-home-reference-mode .onix-ref-balance-symbol,
-.onix-home-reference-mode .onix-home-level-row,
-.onix-home-reference-mode .onix-ref-level-row {
-  display: none !important;
-}
-
-.onix-home-reference-mode .onix-tap-orb,
-.onix-home-reference-mode .onix-ref-tap-orb {
-  width: min(78vw, 304px) !important;
-  height: min(78vw, 304px) !important;
-  max-width: 304px !important;
-  max-height: 304px !important;
-  margin-top: 30px !important;
-  background: transparent !important;
-  border: 0 !important;
-  box-shadow: none !important;
-  overflow: visible !important;
-}
-
-.onix-home-reference-mode .onix-tap-img {
-  width: 100% !important;
-  height: 100% !important;
-  object-fit: contain !important;
-  filter: drop-shadow(0 0 16px rgba(145, 74, 255, 0.86)) drop-shadow(0 0 36px rgba(68, 205, 255, 0.24)) !important;
-}
-
-.onix-home-reference-mode .onix-tap-orb::before,
-.onix-home-reference-mode .onix-tap-orb::after,
-.onix-home-reference-mode .onix-ref-tap-orb::before,
-.onix-home-reference-mode .onix-ref-tap-orb::after,
-.onix-home-reference-mode .onix-crystal-shards {
-  display: none !important;
-}
-
-.onix-home-reference-mode .onix-home-energy-block,
-.onix-home-reference-mode .onix-ref-energy-block {
-  width: 100% !important;
-  margin-top: 8px !important;
-  padding: 0 !important;
-  position: relative !important;
-  z-index: 6 !important;
-}
-
-.onix-home-reference-mode .onix-home-energy-text,
-.onix-home-reference-mode .onix-ref-energy-text {
-  display: flex !important;
-  flex-wrap: wrap !important;
-  align-items: center !important;
-  justify-content: center !important;
-  gap: 5px !important;
-  font-family: 'Exo 2', system-ui, sans-serif !important;
-  font-size: 12px !important;
-  line-height: 1 !important;
-  font-weight: 900 !important;
-  color: #cfd7f2 !important;
-}
-
-.onix-home-reference-mode .onix-home-energy-text svg,
-.onix-home-reference-mode .onix-ref-energy-text svg {
-  width: 14px !important;
-  height: 14px !important;
-  color: #f6c833 !important;
-  fill: #f6c833 !important;
-}
-
-.onix-home-reference-mode .onix-home-energy-text strong,
-.onix-home-reference-mode .onix-ref-energy-text strong {
-  color: #f6c833 !important;
-}
-
-.onix-home-reference-mode .onix-home-energy-text .text-slate-400,
-.onix-home-reference-mode .onix-ref-energy-text .text-slate-400 {
-  color: #a9aec5 !important;
-  font-weight: 800 !important;
-  font-size: 11px !important;
-}
-
-.onix-home-reference-mode .onix-home-energy-track,
-.onix-home-reference-mode .onix-ref-energy-track {
-  width: 100% !important;
-  height: 7px !important;
-  margin-top: 11px !important;
-  border-radius: 999px !important;
-  background: rgba(12, 17, 37, 0.94) !important;
-  border: 1px solid rgba(125, 83, 255, 0.24) !important;
-  box-shadow: inset 0 0 9px rgba(0, 0, 0, 0.55) !important;
-  overflow: hidden !important;
-}
-
-.onix-home-reference-mode .onix-home-energy-fill,
-.onix-home-reference-mode .onix-ref-energy-fill {
-  height: 100% !important;
-  border-radius: 999px !important;
-  background: linear-gradient(90deg, #10d6e8 0%, #47bbff 43%, #8e55ff 100%) !important;
-  box-shadow: 0 0 12px rgba(0, 229, 255, 0.45), 0 0 14px rgba(139, 92, 246, 0.42) !important;
-}
-
-.onix-home-reference-mode .onix-home-tap-button,
-.onix-home-reference-mode .onix-ref-tap-button {
-  display: block !important;
-  width: 100% !important;
-  height: 52px !important;
-  min-height: 52px !important;
-  margin-top: 13px !important;
-  border-radius: 10px !important;
-  border: 1px solid rgba(168, 85, 247, 0.60) !important;
-  background: linear-gradient(180deg, #8f35ff 0%, #6519d7 100%) !important;
-  color: #ffffff !important;
-  font-family: 'Exo 2', system-ui, sans-serif !important;
-  font-size: 16px !important;
-  line-height: 1 !important;
-  font-weight: 900 !important;
-  letter-spacing: 0.045em !important;
-  text-transform: uppercase !important;
-  box-shadow: 0 0 22px rgba(129, 55, 245, 0.52), inset 0 1px 0 rgba(255,255,255,0.18) !important;
-}
-
-.onix-home-reference-mode .onix-nav {
-  position: fixed !important;
-  left: 50% !important;
-  right: auto !important;
-  bottom: calc(8px + env(safe-area-inset-bottom)) !important;
-  transform: translateX(-50%) !important;
-  z-index: 900 !important;
-  width: min(calc(100vw - 16px), 414px) !important;
-  max-width: 414px !important;
-  height: 58px !important;
-  padding: 4px 7px !important;
-  border-radius: 17px !important;
-  background: rgba(4, 7, 18, 0.94) !important;
-  border: 1px solid rgba(129, 69, 255, 0.48) !important;
-  box-shadow: 0 0 20px rgba(91, 33, 246, 0.30), inset 0 0 18px rgba(129, 69, 255, 0.08) !important;
-}
-
-.onix-home-reference-mode .onix-nav button {
-  min-width: 0 !important;
-  padding: 5px 2px !important;
-  border-radius: 12px !important;
-  gap: 2px !important;
-  font-size: 9px !important;
-  line-height: 1 !important;
-}
-
-.onix-home-reference-mode .onix-nav button svg {
-  width: 16px !important;
-  height: 16px !important;
-}
-
-.onix-home-reference-mode .onix-nav button.onix-nav-active {
-  background: rgba(71, 85, 150, 0.56) !important;
-  color: #ffffff !important;
-  box-shadow: inset 0 0 16px rgba(114, 137, 255, 0.36), 0 0 14px rgba(114, 137, 255, 0.24) !important;
-}
-
-@media (max-height: 760px) {
-  .onix-home-reference-mode .onix-home-screen,
-  .onix-home-reference-mode .onix-ref-home-screen {
-    padding-top: 12px !important;
-    padding-bottom: calc(75px + env(safe-area-inset-bottom)) !important;
-  }
-
-  .onix-home-reference-mode .onix-home-balance-row,
-  .onix-home-reference-mode .onix-ref-balance-row {
-    margin-top: 11px !important;
-  }
-
-  .onix-home-reference-mode .onix-home-balance-value,
-  .onix-home-reference-mode .onix-ref-balance-value {
-    font-size: clamp(2.6rem, 11vw, 3.55rem) !important;
-  }
-
-  .onix-home-reference-mode .onix-tap-orb,
-  .onix-home-reference-mode .onix-ref-tap-orb {
-    width: min(68vw, 258px) !important;
-    height: min(68vw, 258px) !important;
-    margin-top: 18px !important;
-  }
-
-  .onix-home-reference-mode .onix-home-tap-button,
-  .onix-home-reference-mode .onix-ref-tap-button {
-    height: 46px !important;
-    min-height: 46px !important;
-    margin-top: 10px !important;
-  }
-
-  .onix-home-reference-mode .onix-nav {
-    height: 56px !important;
-  }
-}
-
-
-
-/* === REFERENCE HOME SCREEN PATCH v4 === */
-/* Hard isolated home layout: old home classes cannot override this block */
-.onix-home-reference-mode.onix-app-bg {
-  max-width: 430px !important;
-  width: 100% !important;
-  min-height: 100dvh !important;
-  margin: 0 auto !important;
-  padding-bottom: 0 !important;
-  overflow: hidden !important;
-  background-color: #050713 !important;
-  background-image:
-    radial-gradient(ellipse at 17% 7%, rgba(119, 43, 218, 0.52) 0%, rgba(84, 27, 164, 0.23) 25%, transparent 53%),
-    radial-gradient(ellipse at 95% 18%, rgba(0, 129, 178, 0.24) 0%, rgba(0, 129, 178, 0.11) 24%, transparent 52%),
-    radial-gradient(ellipse at 49% 49%, rgba(86, 31, 170, 0.17) 0%, transparent 58%),
-    radial-gradient(ellipse at 50% 88%, rgba(78, 22, 151, 0.34) 0%, rgba(78, 22, 151, 0.10) 30%, transparent 62%),
-    linear-gradient(180deg, #080a16 0%, #070916 42%, #050713 100%) !important;
-  box-shadow: 0 0 0 1px rgba(126, 71, 255, 0.24), 0 0 70px rgba(96, 36, 210, 0.20) !important;
-}
-
-.onix-home-reference-mode.onix-app-bg::before {
-  content: '' !important;
-  position: fixed !important;
-  left: 50% !important;
-  top: 54px !important;
-  bottom: 0 !important;
-  width: min(100vw, 430px) !important;
-  transform: translateX(-50%) !important;
-  z-index: 0 !important;
-  pointer-events: none !important;
-  opacity: 1 !important;
-  background-image:
-    linear-gradient(90deg, rgba(116, 83, 210, 0.052) 1px, transparent 1px),
-    linear-gradient(180deg, rgba(116, 83, 210, 0.034) 1px, transparent 1px),
-    radial-gradient(circle at 7% 12%, rgba(255,255,255,0.34) 0 1px, transparent 1.5px),
-    radial-gradient(circle at 20% 26%, rgba(158, 94, 255,0.28) 0 1px, transparent 1.5px),
-    radial-gradient(circle at 83% 16%, rgba(68, 205, 255,0.28) 0 1px, transparent 1.5px),
-    radial-gradient(circle at 66% 40%, rgba(255,255,255,0.16) 0 1px, transparent 1.45px),
-    radial-gradient(circle at 13% 58%, rgba(179, 105, 255,0.20) 0 1px, transparent 1.45px),
-    radial-gradient(circle at 88% 72%, rgba(68, 205, 255,0.14) 0 1px, transparent 1.45px) !important;
-  background-size: 52px 52px, 52px 52px, 118px 118px, 158px 158px, 178px 178px, 138px 138px, 170px 170px, 190px 190px !important;
-}
-
-.onix-home-reference-mode.onix-app-bg::after {
-  content: '' !important;
-  position: fixed !important;
-  left: 50% !important;
-  top: 54px !important;
-  bottom: 0 !important;
-  width: min(100vw, 430px) !important;
-  transform: translateX(-50%) !important;
-  z-index: 1 !important;
-  pointer-events: none !important;
-  background:
-    radial-gradient(ellipse at 24% 13%, rgba(137, 74, 255, 0.19) 0%, transparent 31%),
-    radial-gradient(ellipse at 96% 28%, rgba(0, 195, 255, 0.10) 0%, transparent 24%),
-    radial-gradient(ellipse at 50% 78%, rgba(124, 49, 232, 0.20) 0%, transparent 32%),
-    linear-gradient(180deg, rgba(5, 7, 19, 0.00) 0%, rgba(5, 7, 19, 0.08) 55%, rgba(5, 7, 19, 0.35) 100%) !important;
-}
-
-.onix-home-reference-mode [aria-label="ONIX top navigation"] {
-  height: 54px !important;
-  min-height: 54px !important;
-  padding: 0 16px !important;
-  background: rgba(3, 6, 16, 0.78) !important;
-  border-bottom: 1px solid rgba(145, 103, 255, 0.28) !important;
-  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.25) !important;
-  backdrop-filter: blur(12px) !important;
-}
-
-/* Isolated v4 screen */
-.onix-ref-v4-screen {
-  position: relative !important;
-  z-index: 10 !important;
-  width: 100% !important;
-  max-width: 430px !important;
-  height: calc(100dvh - 54px) !important;
-  margin: 0 auto !important;
-  padding: 18px 22px calc(88px + env(safe-area-inset-bottom)) !important;
-  display: flex !important;
-  flex-direction: column !important;
-  align-items: center !important;
-  overflow: hidden !important;
-  box-sizing: border-box !important;
-}
-
-.onix-ref-v4-player {
-  width: 100% !important;
-  min-height: 58px !important;
-  display: flex !important;
-  align-items: center !important;
-  justify-content: space-between !important;
-  gap: 12px !important;
-}
-
-.onix-ref-v4-player-left {
-  min-width: 0 !important;
-  display: flex !important;
-  align-items: center !important;
-  gap: 12px !important;
-}
-
-.onix-ref-v4-avatar {
-  width: 50px !important;
-  height: 50px !important;
-  flex: 0 0 50px !important;
-  border-radius: 999px !important;
-  display: grid !important;
-  place-items: center !important;
-  overflow: hidden !important;
-  background: radial-gradient(circle at 50% 45%, rgba(93, 42, 212, 0.35), rgba(7, 11, 26, 0.96) 64%) !important;
-  border: 2px solid rgba(120, 83, 255, 0.95) !important;
-  box-shadow: 0 0 17px rgba(120, 83, 255, 0.62), inset 0 0 17px rgba(0, 229, 255, 0.12) !important;
-}
-
-.onix-ref-v4-avatar img {
-  width: 80% !important;
-  height: 80% !important;
-  object-fit: contain !important;
-}
-
-.onix-ref-v4-player-text {
-  min-width: 0 !important;
-  display: flex !important;
-  flex-direction: column !important;
-  align-items: flex-start !important;
-}
-
-.onix-ref-v4-name {
-  margin: 0 !important;
-  max-width: 180px !important;
-  color: #ffffff !important;
-  font-family: 'Exo 2', system-ui, sans-serif !important;
-  font-size: 13px !important;
-  line-height: 1.1 !important;
-  font-weight: 900 !important;
-  letter-spacing: -0.01em !important;
-  white-space: nowrap !important;
-  overflow: hidden !important;
-  text-overflow: ellipsis !important;
-}
-
-.onix-ref-v4-rank {
-  margin: 4px 0 0 !important;
-  max-width: 180px !important;
-  color: #9c55ff !important;
-  font-family: 'Exo 2', system-ui, sans-serif !important;
-  font-size: 10px !important;
-  line-height: 1 !important;
-  font-weight: 800 !important;
-  white-space: nowrap !important;
-  overflow: hidden !important;
-  text-overflow: ellipsis !important;
-}
-
-.onix-ref-v4-rank-badge {
-  width: 54px !important;
-  height: 54px !important;
-  flex: 0 0 54px !important;
-  display: grid !important;
-  place-items: center !important;
-  filter: drop-shadow(0 0 10px rgba(133, 76, 255, 0.90)) drop-shadow(0 0 20px rgba(107, 50, 236, 0.50)) !important;
-}
-
-.onix-ref-v4-rank-badge img {
-  width: 54px !important;
-  height: 54px !important;
-  object-fit: contain !important;
-}
-
-.onix-ref-v4-balance {
-  width: 100% !important;
-  margin-top: 18px !important;
-  text-align: center !important;
-}
-
-.onix-ref-v4-balance-value {
-  margin: 0 !important;
-  padding: 0 !important;
-  color: #f6c833 !important;
-  background: none !important;
-  -webkit-text-fill-color: #f6c833 !important;
-  font-family: 'Exo 2', system-ui, sans-serif !important;
-  font-size: clamp(3.15rem, 13.5vw, 4.5rem) !important;
-  line-height: 0.84 !important;
-  font-weight: 900 !important;
-  letter-spacing: -0.058em !important;
-  text-align: center !important;
-  text-shadow: 0 0 10px rgba(250, 204, 21, 0.24), 0 0 22px rgba(250, 204, 21, 0.12) !important;
-}
-
-.onix-ref-v4-balance-label {
-  margin: 9px 0 0 !important;
-  padding: 0 !important;
-  color: #f6c833 !important;
-  font-family: 'Exo 2', system-ui, sans-serif !important;
-  font-size: 12px !important;
-  line-height: 1 !important;
-  font-weight: 800 !important;
-  letter-spacing: 0.08em !important;
-  text-align: center !important;
-  text-transform: uppercase !important;
-  text-shadow: 0 0 12px rgba(250, 204, 21, 0.30) !important;
-}
-
-.onix-ref-v4-coin {
-  position: relative !important;
-  flex: 0 0 auto !important;
-  width: min(78vw, 304px) !important;
-  height: min(78vw, 304px) !important;
-  max-width: 304px !important;
-  max-height: 304px !important;
-  margin-top: 30px !important;
-  display: grid !important;
-  place-items: center !important;
-  cursor: pointer !important;
-  transition: transform 120ms ease !important;
-}
-
-.onix-ref-v4-coin-tapped {
-  transform: scale(0.94) !important;
-}
-
-.onix-ref-v4-coin img {
-  width: 100% !important;
-  height: 100% !important;
-  object-fit: contain !important;
-  user-select: none !important;
-  pointer-events: none !important;
-  filter: drop-shadow(0 0 16px rgba(145, 74, 255, 0.86)) drop-shadow(0 0 36px rgba(68, 205, 255, 0.24)) !important;
-}
-
-.onix-ref-v4-energy {
-  width: 100% !important;
-  margin-top: 8px !important;
-}
-
-.onix-ref-v4-energy-text {
-  width: 100% !important;
-  display: flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-  gap: 5px !important;
-  color: #cfd7f2 !important;
-  font-family: 'Exo 2', system-ui, sans-serif !important;
-  font-size: 12px !important;
-  line-height: 1 !important;
-  font-weight: 900 !important;
-  white-space: nowrap !important;
-}
-
-.onix-ref-v4-energy-icon {
-  width: 14px !important;
-  height: 14px !important;
-  color: #f6c833 !important;
-  fill: #f6c833 !important;
-}
-
-.onix-ref-v4-energy-text strong {
-  color: #f6c833 !important;
-}
-
-.onix-ref-v4-energy-track {
-  width: 100% !important;
-  height: 7px !important;
-  margin-top: 11px !important;
-  border-radius: 999px !important;
-  overflow: hidden !important;
-  background: rgba(12, 17, 37, 0.94) !important;
-  border: 1px solid rgba(125, 83, 255, 0.24) !important;
-  box-shadow: inset 0 0 9px rgba(0, 0, 0, 0.55) !important;
-}
-
-.onix-ref-v4-energy-fill {
-  height: 100% !important;
-  border-radius: 999px !important;
-  background: linear-gradient(90deg, #10d6e8 0%, #47bbff 43%, #8e55ff 100%) !important;
-  box-shadow: 0 0 12px rgba(0, 229, 255, 0.45), 0 0 14px rgba(139, 92, 246, 0.42) !important;
-}
-
-.onix-ref-v4-tap-button {
-  width: 100% !important;
-  height: 52px !important;
-  min-height: 52px !important;
-  margin-top: 13px !important;
-  border-radius: 10px !important;
-  border: 1px solid rgba(168, 85, 247, 0.60) !important;
-  background: linear-gradient(180deg, #8f35ff 0%, #6519d7 100%) !important;
-  color: #ffffff !important;
-  font-family: 'Exo 2', system-ui, sans-serif !important;
-  font-size: 16px !important;
-  line-height: 1 !important;
-  font-weight: 900 !important;
-  letter-spacing: 0.045em !important;
-  text-transform: uppercase !important;
-  box-shadow: 0 0 22px rgba(129, 55, 245, 0.52), inset 0 1px 0 rgba(255,255,255,0.18) !important;
-}
-
-.onix-home-reference-mode .onix-nav {
-  position: fixed !important;
-  left: 50% !important;
-  right: auto !important;
-  bottom: calc(8px + env(safe-area-inset-bottom)) !important;
-  transform: translateX(-50%) !important;
-  z-index: 900 !important;
-  width: min(calc(100vw - 16px), 414px) !important;
-  max-width: 414px !important;
-  height: 58px !important;
-  padding: 4px 7px !important;
-  border-radius: 17px !important;
-  background: rgba(4, 7, 18, 0.94) !important;
-  border: 1px solid rgba(129, 69, 255, 0.48) !important;
-  box-shadow: 0 0 20px rgba(91, 33, 246, 0.30), inset 0 0 18px rgba(129, 69, 255, 0.08) !important;
-}
-
-.onix-home-reference-mode .onix-nav button {
-  min-width: 0 !important;
-  padding: 5px 2px !important;
-  border-radius: 12px !important;
-  gap: 2px !important;
-  font-size: 9px !important;
-  line-height: 1 !important;
-}
-
-.onix-home-reference-mode .onix-nav button svg {
-  width: 16px !important;
-  height: 16px !important;
-}
-
-.onix-home-reference-mode .onix-nav button.onix-nav-active {
-  background: rgba(71, 85, 150, 0.56) !important;
-  color: #ffffff !important;
-  box-shadow: inset 0 0 16px rgba(114, 137, 255, 0.36), 0 0 14px rgba(114, 137, 255, 0.24) !important;
-}
-
-@media (max-height: 760px) {
-  .onix-ref-v4-screen {
-    padding-top: 12px !important;
-    padding-bottom: calc(75px + env(safe-area-inset-bottom)) !important;
-  }
-
-  .onix-ref-v4-balance {
-    margin-top: 11px !important;
-  }
-
-  .onix-ref-v4-balance-value {
-    font-size: clamp(2.6rem, 11vw, 3.55rem) !important;
-  }
-
-  .onix-ref-v4-coin {
-    width: min(68vw, 258px) !important;
-    height: min(68vw, 258px) !important;
-    margin-top: 18px !important;
-  }
-
-  .onix-ref-v4-tap-button {
-    height: 46px !important;
-    min-height: 46px !important;
-    margin-top: 10px !important;
-  }
-
-  .onix-home-reference-mode .onix-nav {
-    height: 56px !important;
-  }
-}
-
-
 `;
 
     window.open(url, '_blank');
@@ -8664,31 +7824,33 @@ body:has(.onix-home-reference-mode),
       </div>
 
       {activeTab === 'home' && (
-        <div className="onix-ref-v4-screen">
-          <div className="onix-ref-v4-player">
-            <div className="onix-ref-v4-player-left">
-              <div className="onix-ref-v4-avatar">
+        <div className="onix-ref-v5-screen">
+          <div className="onix-ref-v5-player">
+            <div className="onix-ref-v5-player-left">
+              <div className="onix-ref-v5-avatar">
                 <img src={onixLogoCrystal} alt="$ONIX user badge" draggable={false} />
               </div>
-              <div className="onix-ref-v4-player-text">
-                <p className="onix-ref-v4-name">{username}</p>
-                <p className="onix-ref-v4-rank">{selectedTitle || rankInfo.currentRank.name}</p>
+
+              <div className="onix-ref-v5-player-text">
+                <p className="onix-ref-v5-name">{username}</p>
+                <p className="onix-ref-v5-rank">{selectedTitle || rankInfo.currentRank.name}</p>
               </div>
             </div>
 
-            <div className="onix-ref-v4-rank-badge">
+            <div className="onix-ref-v5-rank-badge">
               <img src={onixLogoCrystal} alt="$ONIX rank" draggable={false} />
             </div>
           </div>
 
-          <div className="onix-ref-v4-balance">
-            <p className="onix-ref-v4-balance-value">{balance.toLocaleString('ru-RU')}</p>
-            <p className="onix-ref-v4-balance-label">Баланс $ONIX</p>
+          <div className="onix-ref-v5-balance">
+            <p className="onix-ref-v5-balance-value">{balance.toLocaleString('ru-RU')}</p>
+            <p className="onix-ref-v5-balance-label">Баланс $ONIX</p>
           </div>
 
-          <div
+          <button
+            type="button"
             onClick={handleTap}
-            className={`onix-ref-v4-coin ${isTapped ? 'onix-ref-v4-coin-tapped' : ''}`}
+            className={`onix-ref-v5-coin ${isTapped ? 'onix-ref-v5-coin-tapped' : ''}`}
           >
             <img src={onixTapCrystal} alt="$ONIX tap crystal" draggable={false} />
 
@@ -8701,24 +7863,26 @@ body:has(.onix-home-reference-mode),
                 +{num.value}
               </div>
             ))}
-          </div>
+          </button>
 
-          <div className="onix-ref-v4-energy">
-            <div className="onix-ref-v4-energy-text">
-              <Zap className="onix-ref-v4-energy-icon" />
+          <div className="onix-ref-v5-energy">
+            <div className="onix-ref-v5-energy-text">
+              <Zap className="onix-ref-v5-energy-icon" />
               <span><strong>{Math.floor(energy).toLocaleString('ru-RU')}</strong> / {maxEnergy.toLocaleString('ru-RU')}</span>
-              <span>{energy >= maxEnergy ? 'Энергия полная' : 'Восстановление'}</span>
+              <span className="onix-ref-v5-energy-status">{energy >= maxEnergy ? 'Энергия полная' : 'Восстановление'}</span>
             </div>
-            <div className="onix-ref-v4-energy-track">
+
+            <div className="onix-ref-v5-energy-track">
               <div
-                className="onix-ref-v4-energy-fill"
+                className="onix-ref-v5-energy-fill"
                 style={{ width: `${Math.min((energy / Math.max(maxEnergy, 1)) * 100, 100)}%` }}
               />
             </div>
+
             <button
               type="button"
               onClick={handleTap}
-              className="onix-ref-v4-tap-button"
+              className="onix-ref-v5-tap-button"
             >
               ⚡ ТАП!
             </button>
