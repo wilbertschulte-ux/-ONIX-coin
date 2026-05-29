@@ -6393,6 +6393,103 @@ body.onix-body-home-lock {
 .onix-home-reference-mode .onix-ref-tap-orb {
   margin-top: 18px !important;
 }
+
+
+/* Step 41: reference dark cosmic background - hard override */
+body:has(.onix-home-reference-mode) {
+  background: #02050d !important;
+}
+
+.onix-home-reference-mode {
+  isolation: isolate !important;
+  background:
+    radial-gradient(ellipse at 50% -8%, rgba(136, 92, 246, 0.24) 0%, rgba(136, 92, 246, 0.10) 22%, transparent 47%),
+    radial-gradient(ellipse at 105% 18%, rgba(6, 182, 212, 0.16) 0%, transparent 36%),
+    radial-gradient(ellipse at -12% 36%, rgba(88, 28, 135, 0.18) 0%, transparent 38%),
+    radial-gradient(ellipse at 50% 78%, rgba(91, 33, 246, 0.14) 0%, transparent 42%),
+    linear-gradient(180deg, #030712 0%, #050A16 34%, #030712 68%, #02040B 100%) !important;
+  background-color: #02050d !important;
+}
+
+.onix-home-reference-mode::before {
+  content: '' !important;
+  position: fixed !important;
+  inset: 0 !important;
+  z-index: 0 !important;
+  pointer-events: none !important;
+  opacity: 0.62 !important;
+  background-image:
+    radial-gradient(circle at 6% 9%, rgba(255,255,255,0.20) 0 1px, transparent 1.4px),
+    radial-gradient(circle at 22% 18%, rgba(6, 182, 212, 0.25) 0 1px, transparent 1.5px),
+    radial-gradient(circle at 82% 15%, rgba(168, 85, 247, 0.22) 0 1px, transparent 1.5px),
+    radial-gradient(circle at 72% 42%, rgba(255,255,255,0.13) 0 1px, transparent 1.4px),
+    radial-gradient(circle at 12% 74%, rgba(6, 182, 212, 0.16) 0 1px, transparent 1.4px),
+    linear-gradient(90deg, rgba(136, 92, 246, 0.035) 1px, transparent 1px),
+    linear-gradient(180deg, rgba(6, 182, 212, 0.028) 1px, transparent 1px) !important;
+  background-size:
+    128px 128px,
+    172px 172px,
+    210px 210px,
+    150px 150px,
+    190px 190px,
+    64px 64px,
+    64px 64px !important;
+  background-position: 0 0, 18px 42px, 36px 16px, 8px 96px, 46px 24px, 0 0, 0 0 !important;
+}
+
+.onix-home-reference-mode::after {
+  content: '' !important;
+  position: fixed !important;
+  inset: 44px 0 0 !important;
+  z-index: 1 !important;
+  pointer-events: none !important;
+  opacity: 1 !important;
+  background:
+    radial-gradient(ellipse at 50% 12%, rgba(136, 92, 246, 0.21), transparent 34%),
+    radial-gradient(ellipse at 50% 45%, rgba(0, 229, 255, 0.075), transparent 31%),
+    radial-gradient(ellipse at 50% 74%, rgba(136, 92, 246, 0.11), transparent 38%),
+    linear-gradient(180deg, rgba(2, 5, 13, 0.12) 0%, rgba(2, 5, 13, 0.0) 36%, rgba(2, 5, 13, 0.38) 100%) !important;
+}
+
+.onix-home-reference-mode [aria-label="ONIX top navigation"] {
+  position: relative !important;
+  z-index: 10 !important;
+  background: rgba(2, 5, 13, 0.62) !important;
+  border-bottom: 1px solid rgba(136, 92, 246, 0.16) !important;
+  box-shadow: 0 12px 36px rgba(0, 0, 0, 0.26) !important;
+  backdrop-filter: blur(12px) !important;
+}
+
+.onix-home-reference-mode .onix-ref-home-screen,
+.onix-home-reference-mode .onix-home-screen {
+  position: relative !important;
+  z-index: 5 !important;
+  background: transparent !important;
+}
+
+.onix-home-reference-mode .oc-seamless-player-block,
+.onix-home-reference-mode .onix-ref-player-card,
+.onix-home-reference-mode .onix-home-hero-card {
+  background: transparent !important;
+  background-image: none !important;
+  border: 0 !important;
+  box-shadow: none !important;
+}
+
+.onix-home-reference-mode .oc-seamless-player-block::before,
+.onix-home-reference-mode .oc-seamless-player-block::after,
+.onix-home-reference-mode .onix-ref-player-card::before,
+.onix-home-reference-mode .onix-ref-player-card::after,
+.onix-home-reference-mode .onix-home-hero-card::before,
+.onix-home-reference-mode .onix-home-hero-card::after {
+  display: none !important;
+  content: none !important;
+}
+
+.onix-home-reference-mode .onix-ref-tap-orb,
+.onix-home-reference-mode .onix-tap-orb {
+  background: radial-gradient(circle, rgba(136, 92, 246, 0.17) 0%, rgba(6, 182, 212, 0.06) 34%, transparent 66%) !important;
+}
 `;
 
     window.open(url, '_blank');
