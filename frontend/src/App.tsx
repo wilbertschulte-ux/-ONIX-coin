@@ -2147,7 +2147,7 @@ body,
   }
 }
 
-/* === REFERENCE HOME SCREEN PATCH v12 === */
+/* === REFERENCE HOME SCREEN PATCH v13 === */
 /* Clean isolated home screen based on reference */
 html,
 body,
@@ -2539,7 +2539,7 @@ body,
 }
 
 
-/* === REFERENCE HOME SCREEN PATCH v12 === */
+/* === REFERENCE HOME SCREEN PATCH v13 === */
 /* Hard final override: massive TAP button and lower button block above bottom menu */
 .onix-home-reference-mode .onix-ref-v5-coin {
   width: min(77vw, 300px) !important;
@@ -2607,7 +2607,7 @@ body,
 
 
 
-/* === REFERENCE HOME SCREEN PATCH v12 === */
+/* === REFERENCE HOME SCREEN PATCH v13 === */
 /* Bottom navigation polish only */
 .onix-home-reference-mode .onix-nav {
   height: 64px !important;
@@ -2691,7 +2691,7 @@ body,
 
 
 
-/* === REFERENCE HOME SCREEN PATCH v12 === */
+/* === REFERENCE HOME SCREEN PATCH v13 === */
 /* Upgrade screen redesign based on reference */
 .onix-upgrades-ref-screen {
   padding: 14px 16px calc(88px + env(safe-area-inset-bottom)) !important;
@@ -2913,6 +2913,55 @@ body,
     padding: 0 10px !important;
   }
 }
+
+
+/* === REFERENCE HOME SCREEN PATCH v13 === */
+/* Remove old rank/balance blocks from Upgrades screen */
+.onix-boosts-screen > .rounded-3xl,
+.onix-boosts-screen > .onix-rank-card,
+.onix-boosts-screen > .onix-balance-card,
+.onix-boosts-screen > .onix-home-balance-row,
+.onix-boosts-screen > .onix-home-level-row,
+.onix-boosts-screen > .oc-seamless-player-block {
+  display: none !important;
+}
+
+.onix-boosts-screen {
+  margin-top: 0 !important;
+  padding-top: 14px !important;
+  padding-left: 16px !important;
+  padding-right: 16px !important;
+  padding-bottom: calc(88px + env(safe-area-inset-bottom)) !important;
+  gap: 0 !important;
+  background: transparent !important;
+}
+
+.onix-boosts-screen .onix-upgrades-ref-screen {
+  padding-top: 0 !important;
+}
+
+/* Keep only reference wallet cards */
+.onix-upgrades-ref-wallets {
+  margin-top: 0 !important;
+  margin-bottom: 18px !important;
+}
+
+.onix-upgrades-ref-wallet {
+  min-height: 76px !important;
+}
+
+/* Make upgrades list start cleanly under tabs */
+.onix-upgrades-ref-tabs {
+  margin-top: 0 !important;
+}
+
+@media (max-width: 380px) {
+  .onix-boosts-screen {
+    padding-left: 12px !important;
+    padding-right: 12px !important;
+  }
+}
+
 
 `;
 
