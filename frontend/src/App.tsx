@@ -2147,7 +2147,7 @@ body,
   }
 }
 
-/* === REFERENCE HOME SCREEN PATCH v15 === */
+/* === REFERENCE HOME SCREEN PATCH v16 === */
 /* Clean isolated home screen based on reference */
 html,
 body,
@@ -2539,7 +2539,7 @@ body,
 }
 
 
-/* === REFERENCE HOME SCREEN PATCH v15 === */
+/* === REFERENCE HOME SCREEN PATCH v16 === */
 /* Hard final override: massive TAP button and lower button block above bottom menu */
 .onix-home-reference-mode .onix-ref-v5-coin {
   width: min(77vw, 300px) !important;
@@ -2607,7 +2607,7 @@ body,
 
 
 
-/* === REFERENCE HOME SCREEN PATCH v15 === */
+/* === REFERENCE HOME SCREEN PATCH v16 === */
 /* Bottom navigation polish only */
 .onix-home-reference-mode .onix-nav {
   height: 64px !important;
@@ -2691,7 +2691,7 @@ body,
 
 
 
-/* === REFERENCE HOME SCREEN PATCH v15 === */
+/* === REFERENCE HOME SCREEN PATCH v16 === */
 /* Upgrade screen redesign based on reference */
 .onix-upgrades-ref-screen {
   padding: 14px 16px calc(88px + env(safe-area-inset-bottom)) !important;
@@ -2915,7 +2915,7 @@ body,
 }
 
 
-/* === REFERENCE HOME SCREEN PATCH v15 === */
+/* === REFERENCE HOME SCREEN PATCH v16 === */
 /* Remove old rank/balance blocks from Upgrades screen */
 .onix-boosts-screen > .rounded-3xl,
 .onix-boosts-screen > .onix-rank-card,
@@ -2964,11 +2964,11 @@ body,
 
 
 
-/* === REFERENCE HOME SCREEN PATCH v15 === */
+/* === REFERENCE HOME SCREEN PATCH v16 === */
 /* Old global rank/balance header is disabled on Upgrades tab in JSX */
 
 
-/* === REFERENCE HOME SCREEN PATCH v15 === */
+/* === REFERENCE HOME SCREEN PATCH v16 === */
 /* Profile screen redesign based on reference */
 .onix-social-screen {
   margin-top: 0 !important;
@@ -3173,6 +3173,146 @@ body,
   .onix-profile-ref-stat strong {
     font-size: 16px !important;
   }
+}
+
+
+
+/* === REFERENCE HOME SCREEN PATCH v16 === */
+/* Rank icons: Novice / Bronze / Silver / Gold / Platinum / Diamond / Grandmaster */
+.onix-rank-icon {
+  --rank-main: #8ea0c9;
+  --rank-secondary: #d3d9ff;
+  --rank-core: #99a7cf;
+  --rank-glow: rgba(142, 160, 201, 0.48);
+  --rank-bg: rgba(9, 12, 28, 0.96);
+  display: grid !important;
+  place-items: center !important;
+  position: relative !important;
+  flex: 0 0 auto !important;
+  filter:
+    drop-shadow(0 0 8px var(--rank-glow))
+    drop-shadow(0 0 18px color-mix(in srgb, var(--rank-main), transparent 62%)) !important;
+}
+
+.onix-rank-icon-sm { width: 42px !important; height: 42px !important; }
+.onix-rank-icon-md { width: 56px !important; height: 56px !important; }
+.onix-rank-icon-lg { width: 88px !important; height: 88px !important; }
+
+.onix-rank-icon svg {
+  width: 100% !important;
+  height: 100% !important;
+  overflow: visible !important;
+}
+
+.onix-rank-outer {
+  fill: var(--rank-bg) !important;
+  stroke: var(--rank-main) !important;
+  stroke-width: 3.2 !important;
+}
+
+.onix-rank-frame {
+  fill: rgba(255,255,255,0.045) !important;
+  stroke: var(--rank-secondary) !important;
+  stroke-width: 3 !important;
+}
+
+.onix-rank-diamond-back {
+  fill: rgba(255,255,255,0.08) !important;
+  stroke: var(--rank-main) !important;
+  stroke-width: 2.2 !important;
+}
+
+.onix-rank-diamond-left {
+  fill: color-mix(in srgb, var(--rank-main), #050713 34%) !important;
+}
+
+.onix-rank-diamond-right {
+  fill: color-mix(in srgb, var(--rank-secondary), #050713 22%) !important;
+}
+
+.onix-rank-core {
+  fill: var(--rank-core) !important;
+  filter: drop-shadow(0 0 7px var(--rank-glow)) !important;
+}
+
+.onix-rank-wing {
+  fill: color-mix(in srgb, var(--rank-main), #050713 42%) !important;
+  opacity: 0.88 !important;
+}
+
+.onix-rank-spark {
+  fill: var(--rank-secondary) !important;
+  opacity: 0.92 !important;
+}
+
+.onix-rank-icon-novice {
+  --rank-main: #8f98b7;
+  --rank-secondary: #d9def2;
+  --rank-core: #a7b2d8;
+  --rank-glow: rgba(158, 171, 217, 0.42);
+  --rank-bg: rgba(12, 15, 33, 0.96);
+}
+
+.onix-rank-icon-bronze {
+  --rank-main: #b66a3a;
+  --rank-secondary: #ffc08a;
+  --rank-core: #e2844b;
+  --rank-glow: rgba(230, 132, 75, 0.42);
+  --rank-bg: rgba(31, 14, 11, 0.96);
+}
+
+.onix-rank-icon-silver {
+  --rank-main: #aeb7e6;
+  --rank-secondary: #f0f3ff;
+  --rank-core: #c4cbf7;
+  --rank-glow: rgba(196, 203, 247, 0.44);
+  --rank-bg: rgba(13, 16, 34, 0.96);
+}
+
+.onix-rank-icon-gold {
+  --rank-main: #f8b927;
+  --rank-secondary: #fff2a6;
+  --rank-core: #ffd34a;
+  --rank-glow: rgba(255, 211, 74, 0.52);
+  --rank-bg: rgba(34, 21, 7, 0.96);
+}
+
+.onix-rank-icon-platinum {
+  --rank-main: #8fc9ff;
+  --rank-secondary: #d9efff;
+  --rank-core: #a4d8ff;
+  --rank-glow: rgba(143, 201, 255, 0.48);
+  --rank-bg: rgba(8, 20, 35, 0.96);
+}
+
+.onix-rank-icon-diamond {
+  --rank-main: #2197ff;
+  --rank-secondary: #8fe8ff;
+  --rank-core: #36d6ff;
+  --rank-glow: rgba(54, 214, 255, 0.52);
+  --rank-bg: rgba(5, 15, 34, 0.96);
+}
+
+.onix-rank-icon-grandmaster {
+  --rank-main: #9b39ff;
+  --rank-secondary: #ff8cff;
+  --rank-core: #d85cff;
+  --rank-glow: rgba(216, 92, 255, 0.58);
+  --rank-bg: rgba(23, 8, 40, 0.96);
+}
+
+.onix-ref-v5-rank-badge .onix-rank-icon-md {
+  width: 58px !important;
+  height: 58px !important;
+}
+
+.onix-profile-ref-avatar .onix-rank-icon-lg {
+  width: 82px !important;
+  height: 82px !important;
+}
+
+.onix-profile-ref-avatar {
+  border-radius: 28px !important;
 }
 
 
@@ -3803,6 +3943,100 @@ function getRankInfo(totalEarned: number) {
     progressPercent,
   };
 }
+
+function getRankIconTier(rankId: string, rankName = '') {
+  const id = String(rankId || '').toLowerCase();
+  const name = String(rankName || '').toLowerCase();
+
+  if (id.includes('legend') || id.includes('master') || name.includes('legend') || name.includes('master') || name.includes('grand')) {
+    return 'grandmaster';
+  }
+
+  if (id.includes('diamond') || name.includes('diamond') || name.includes('алмаз')) {
+    return 'diamond';
+  }
+
+  if (id.includes('platinum') || name.includes('platinum') || name.includes('платин')) {
+    return 'platinum';
+  }
+
+  if (id.includes('gold') || name.includes('gold') || name.includes('золот')) {
+    return 'gold';
+  }
+
+  if (id.includes('silver') || name.includes('silver') || name.includes('сереб')) {
+    return 'silver';
+  }
+
+  if (id.includes('bronze_1') || name.includes('нович')) {
+    return 'novice';
+  }
+
+  if (id.includes('bronze') || name.includes('bronze') || name.includes('бронз')) {
+    return 'bronze';
+  }
+
+  return 'novice';
+}
+
+function RankIcon({
+  rank,
+  size = 'md',
+}: {
+  rank: { id?: string; name?: string };
+  size?: 'sm' | 'md' | 'lg';
+}) {
+  const tier = getRankIconTier(rank?.id || '', rank?.name || '');
+
+  return (
+    <div className={`onix-rank-icon onix-rank-icon-${tier} onix-rank-icon-${size}`}>
+      <svg viewBox="0 0 100 100" aria-hidden="true" focusable="false">
+        <path
+          className="onix-rank-wing onix-rank-wing-left"
+          d="M20 40 L4 49 L20 58 L31 50 Z"
+        />
+        <path
+          className="onix-rank-wing onix-rank-wing-right"
+          d="M80 40 L96 49 L80 58 L69 50 Z"
+        />
+        <path
+          className="onix-rank-outer"
+          d="M50 5 L84 24 L84 64 L50 95 L16 64 L16 24 Z"
+        />
+        <path
+          className="onix-rank-frame"
+          d="M50 13 L76 29 L76 60 L50 84 L24 60 L24 29 Z"
+        />
+        <path
+          className="onix-rank-diamond-back"
+          d="M50 21 L69 50 L50 79 L31 50 Z"
+        />
+        <path
+          className="onix-rank-diamond-left"
+          d="M50 21 L50 79 L31 50 Z"
+        />
+        <path
+          className="onix-rank-diamond-right"
+          d="M50 21 L69 50 L50 79 Z"
+        />
+        <path
+          className="onix-rank-core"
+          d="M50 34 L61 50 L50 66 L39 50 Z"
+        />
+        <path
+          className="onix-rank-spark onix-rank-spark-top"
+          d="M50 0 L53 8 L61 10 L53 13 L50 21 L47 13 L39 10 L47 8 Z"
+        />
+        <path
+          className="onix-rank-spark onix-rank-spark-bottom"
+          d="M50 82 L53 90 L61 92 L53 95 L50 103 L47 95 L39 92 L47 90 Z"
+        />
+      </svg>
+    </div>
+  );
+}
+
+
 
 function getTelegramId() {
   const tg = window.Telegram?.WebApp;
@@ -8502,7 +8736,7 @@ body:has(.onix-home-reference-mode),
             </div>
 
             <div className="onix-ref-v5-rank-badge">
-              <img src={onixLogoCrystal} alt="$ONIX rank" draggable={false} />
+              <RankIcon rank={rankInfo.currentRank} size="md" />
             </div>
           </div>
 
@@ -9422,7 +9656,7 @@ body:has(.onix-home-reference-mode),
           <div className="onix-profile-ref-screen">
             <div className="onix-profile-ref-head">
               <div className="onix-profile-ref-avatar">
-                <img src={onixLogoCrystal} alt="$ONIX profile" draggable={false} />
+                <RankIcon rank={rankInfo.currentRank} size="lg" />
               </div>
 
               <div className="onix-profile-ref-user">
