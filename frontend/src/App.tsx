@@ -2147,7 +2147,7 @@ body,
   }
 }
 
-/* === REFERENCE HOME SCREEN PATCH v22 === */
+/* === REFERENCE HOME SCREEN PATCH v23 === */
 /* Clean isolated home screen based on reference */
 html,
 body,
@@ -2539,7 +2539,7 @@ body,
 }
 
 
-/* === REFERENCE HOME SCREEN PATCH v22 === */
+/* === REFERENCE HOME SCREEN PATCH v23 === */
 /* Hard final override: massive TAP button and lower button block above bottom menu */
 .onix-home-reference-mode .onix-ref-v5-coin {
   width: min(77vw, 300px) !important;
@@ -2607,7 +2607,7 @@ body,
 
 
 
-/* === REFERENCE HOME SCREEN PATCH v22 === */
+/* === REFERENCE HOME SCREEN PATCH v23 === */
 /* Bottom navigation polish only */
 .onix-home-reference-mode .onix-nav {
   height: 64px !important;
@@ -2691,7 +2691,7 @@ body,
 
 
 
-/* === REFERENCE HOME SCREEN PATCH v22 === */
+/* === REFERENCE HOME SCREEN PATCH v23 === */
 /* Upgrade screen redesign based on reference */
 .onix-upgrades-ref-screen {
   padding: 14px 16px calc(88px + env(safe-area-inset-bottom)) !important;
@@ -2915,7 +2915,7 @@ body,
 }
 
 
-/* === REFERENCE HOME SCREEN PATCH v22 === */
+/* === REFERENCE HOME SCREEN PATCH v23 === */
 /* Remove old rank/balance blocks from Upgrades screen */
 .onix-boosts-screen > .rounded-3xl,
 .onix-boosts-screen > .onix-rank-card,
@@ -2964,11 +2964,11 @@ body,
 
 
 
-/* === REFERENCE HOME SCREEN PATCH v22 === */
+/* === REFERENCE HOME SCREEN PATCH v23 === */
 /* Old global rank/balance header is disabled on Upgrades tab in JSX */
 
 
-/* === REFERENCE HOME SCREEN PATCH v22 === */
+/* === REFERENCE HOME SCREEN PATCH v23 === */
 /* Profile screen redesign based on reference */
 .onix-social-screen {
   margin-top: 0 !important;
@@ -3177,7 +3177,7 @@ body,
 
 
 
-/* === REFERENCE HOME SCREEN PATCH v22 === */
+/* === REFERENCE HOME SCREEN PATCH v23 === */
 /* Rank icons: Novice / Bronze / Silver / Gold / Platinum / Diamond / Grandmaster */
 .onix-rank-icon {
   --rank-main: #8ea0c9;
@@ -3317,7 +3317,7 @@ body,
 
 
 
-/* === REFERENCE HOME SCREEN PATCH v22 === */
+/* === REFERENCE HOME SCREEN PATCH v23 === */
 /* Rank icons now use exact cropped reference images */
 .onix-rank-icon {
   background: transparent !important;
@@ -3355,7 +3355,7 @@ body,
 }
 
 
-/* === REFERENCE HOME SCREEN PATCH v22 === */
+/* === REFERENCE HOME SCREEN PATCH v23 === */
 /* Clean reference rank icon rendering */
 .onix-ref-v5-rank-badge {
   width: 58px !important;
@@ -3420,7 +3420,7 @@ body,
 
 
 
-/* === REFERENCE HOME SCREEN PATCH v22 === */
+/* === REFERENCE HOME SCREEN PATCH v23 === */
 /* Generated ONIX rank icons inserted into project */
 .onix-rank-icon {
   display: grid !important;
@@ -3487,7 +3487,7 @@ body,
 
 
 
-/* === REFERENCE HOME SCREEN PATCH v22 === */
+/* === REFERENCE HOME SCREEN PATCH v23 === */
 /* Bottom nav active state like Upgrades tabs: purple underline instead of filled tile */
 .onix-home-reference-mode .onix-nav {
   height: 62px !important;
@@ -3573,7 +3573,7 @@ body,
 
 
 
-/* === REFERENCE HOME SCREEN PATCH v22 === */
+/* === REFERENCE HOME SCREEN PATCH v23 === */
 /* Force underline active nav style globally on every tab */
 .onix-nav {
   height: 62px !important;
@@ -3684,6 +3684,214 @@ body,
     left: 20% !important;
     right: 20% !important;
     bottom: 2px !important;
+  }
+}
+
+
+
+/* === REFERENCE HOME SCREEN PATCH v23 === */
+/* One identical bottom nav on every screen */
+.onix-nav,
+.onix-home-reference-mode .onix-nav,
+body .onix-nav {
+  position: fixed !important;
+  left: 50% !important;
+  right: auto !important;
+  bottom: calc(6px + env(safe-area-inset-bottom)) !important;
+  transform: translateX(-50%) !important;
+  width: min(calc(100vw - 16px), 414px) !important;
+  max-width: 414px !important;
+  height: 66px !important;
+  min-height: 66px !important;
+  padding: 6px 8px !important;
+  display: grid !important;
+  grid-template-columns: repeat(6, minmax(0, 1fr)) !important;
+  align-items: center !important;
+  gap: 0 !important;
+  border-radius: 22px !important;
+  border: 1px solid rgba(142, 92, 255, 0.52) !important;
+  background:
+    radial-gradient(circle at 8% 50%, rgba(91, 123, 255, 0.10), transparent 38%),
+    linear-gradient(180deg, rgba(6, 9, 25, 0.96), rgba(4, 6, 18, 0.98)) !important;
+  box-shadow:
+    0 0 24px rgba(91, 33, 246, 0.34),
+    0 12px 32px rgba(0, 0, 0, 0.42),
+    inset 0 0 20px rgba(129, 69, 255, 0.10) !important;
+  backdrop-filter: blur(18px) !important;
+  -webkit-backdrop-filter: blur(18px) !important;
+  z-index: 80 !important;
+  overflow: visible !important;
+}
+
+.onix-nav button,
+.onix-home-reference-mode .onix-nav button,
+body .onix-nav button,
+.onix-nav .onix-nav-item,
+.onix-home-reference-mode .onix-nav .onix-nav-item {
+  position: relative !important;
+  width: 100% !important;
+  min-width: 0 !important;
+  height: 54px !important;
+  min-height: 54px !important;
+  padding: 5px 2px 10px !important;
+  margin: 0 !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 4px !important;
+  border-radius: 14px !important;
+  border: 0 !important;
+  background: transparent !important;
+  background-image: none !important;
+  box-shadow: none !important;
+  color: rgba(220, 224, 244, 0.70) !important;
+  font-family: 'Exo 2', system-ui, sans-serif !important;
+  font-size: 11px !important;
+  line-height: 1 !important;
+  font-weight: 700 !important;
+  letter-spacing: -0.01em !important;
+  white-space: nowrap !important;
+  overflow: visible !important;
+}
+
+.onix-nav button svg,
+.onix-home-reference-mode .onix-nav button svg,
+body .onix-nav button svg,
+.onix-nav .onix-nav-item svg {
+  width: 22px !important;
+  height: 22px !important;
+  min-width: 22px !important;
+  min-height: 22px !important;
+  stroke-width: 2 !important;
+  color: rgba(220, 224, 244, 0.78) !important;
+  filter: drop-shadow(0 0 5px rgba(168, 85, 247, 0.24)) !important;
+}
+
+.onix-nav button span,
+.onix-nav button p,
+.onix-nav button div,
+.onix-home-reference-mode .onix-nav button span,
+.onix-home-reference-mode .onix-nav button p,
+.onix-home-reference-mode .onix-nav button div {
+  font-size: 11px !important;
+  line-height: 1 !important;
+  font-weight: 700 !important;
+  color: inherit !important;
+  white-space: nowrap !important;
+}
+
+.onix-nav button.onix-nav-active,
+.onix-home-reference-mode .onix-nav button.onix-nav-active,
+body .onix-nav button.onix-nav-active,
+.onix-nav .onix-nav-active,
+.onix-nav button[aria-current="page"],
+.onix-nav button[data-active="true"] {
+  background: transparent !important;
+  background-image: none !important;
+  border: 0 !important;
+  box-shadow: none !important;
+  color: #ffffff !important;
+  font-weight: 800 !important;
+}
+
+.onix-nav button.onix-nav-active::after,
+.onix-home-reference-mode .onix-nav button.onix-nav-active::after,
+body .onix-nav button.onix-nav-active::after,
+.onix-nav .onix-nav-active::after,
+.onix-nav button[aria-current="page"]::after,
+.onix-nav button[data-active="true"]::after {
+  content: '' !important;
+  position: absolute !important;
+  left: 19% !important;
+  right: 19% !important;
+  bottom: 2px !important;
+  height: 4px !important;
+  border-radius: 999px !important;
+  background: linear-gradient(90deg, #8a2cff 0%, #d04cff 100%) !important;
+  box-shadow:
+    0 0 8px rgba(168, 85, 247, 0.90),
+    0 0 16px rgba(168, 85, 247, 0.52) !important;
+}
+
+.onix-nav button.onix-nav-active svg,
+.onix-home-reference-mode .onix-nav button.onix-nav-active svg,
+body .onix-nav button.onix-nav-active svg,
+.onix-nav .onix-nav-active svg,
+.onix-nav button[aria-current="page"] svg,
+.onix-nav button[data-active="true"] svg {
+  color: #ffffff !important;
+  filter:
+    drop-shadow(0 0 7px rgba(208, 76, 255, 0.52))
+    drop-shadow(0 0 13px rgba(138, 44, 255, 0.32)) !important;
+}
+
+.onix-nav button.onix-nav-active *,
+.onix-home-reference-mode .onix-nav button.onix-nav-active *,
+body .onix-nav button.onix-nav-active *,
+.onix-nav .onix-nav-active *,
+.onix-nav button[aria-current="page"] *,
+.onix-nav button[data-active="true"] * {
+  color: #ffffff !important;
+  font-weight: 800 !important;
+}
+
+/* Hard reset old tile classes inside nav */
+.onix-nav [class*="bg-"],
+.onix-home-reference-mode .onix-nav [class*="bg-"] {
+  background: transparent !important;
+  background-image: none !important;
+  box-shadow: none !important;
+}
+
+/* Same menu dimensions on small phones too */
+@media (max-width: 380px) {
+  .onix-nav,
+  .onix-home-reference-mode .onix-nav,
+  body .onix-nav {
+    width: min(calc(100vw - 14px), 414px) !important;
+    height: 64px !important;
+    min-height: 64px !important;
+    padding: 6px 6px !important;
+    border-radius: 20px !important;
+  }
+
+  .onix-nav button,
+  .onix-home-reference-mode .onix-nav button,
+  body .onix-nav button,
+  .onix-nav .onix-nav-item {
+    height: 52px !important;
+    min-height: 52px !important;
+    padding: 5px 1px 9px !important;
+    font-size: 10px !important;
+    gap: 4px !important;
+  }
+
+  .onix-nav button span,
+  .onix-nav button p,
+  .onix-nav button div,
+  .onix-home-reference-mode .onix-nav button span,
+  .onix-home-reference-mode .onix-nav button p,
+  .onix-home-reference-mode .onix-nav button div {
+    font-size: 10px !important;
+  }
+
+  .onix-nav button svg,
+  .onix-home-reference-mode .onix-nav button svg,
+  body .onix-nav button svg {
+    width: 21px !important;
+    height: 21px !important;
+    min-width: 21px !important;
+    min-height: 21px !important;
+  }
+
+  .onix-nav button.onix-nav-active::after,
+  .onix-home-reference-mode .onix-nav button.onix-nav-active::after,
+  body .onix-nav button.onix-nav-active::after {
+    left: 18% !important;
+    right: 18% !important;
+    bottom: 2px !important;
+    height: 4px !important;
   }
 }
 
