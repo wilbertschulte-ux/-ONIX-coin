@@ -2150,7 +2150,7 @@ body,
   }
 }
 
-/* === REFERENCE HOME SCREEN PATCH v33 === */
+/* === REFERENCE HOME SCREEN PATCH v34 === */
 /* Clean isolated home screen based on reference */
 html,
 body,
@@ -2542,7 +2542,7 @@ body,
 }
 
 
-/* === REFERENCE HOME SCREEN PATCH v33 === */
+/* === REFERENCE HOME SCREEN PATCH v34 === */
 /* Hard final override: massive TAP button and lower button block above bottom menu */
 .onix-home-reference-mode .onix-ref-v5-coin {
   width: min(77vw, 300px) !important;
@@ -2610,7 +2610,7 @@ body,
 
 
 
-/* === REFERENCE HOME SCREEN PATCH v33 === */
+/* === REFERENCE HOME SCREEN PATCH v34 === */
 /* Bottom navigation polish only */
 .onix-home-reference-mode .onix-nav {
   height: 64px !important;
@@ -2694,7 +2694,7 @@ body,
 
 
 
-/* === REFERENCE HOME SCREEN PATCH v33 === */
+/* === REFERENCE HOME SCREEN PATCH v34 === */
 /* Upgrade screen redesign based on reference */
 .onix-upgrades-ref-screen {
   padding: 14px 16px calc(88px + env(safe-area-inset-bottom)) !important;
@@ -2918,7 +2918,7 @@ body,
 }
 
 
-/* === REFERENCE HOME SCREEN PATCH v33 === */
+/* === REFERENCE HOME SCREEN PATCH v34 === */
 /* Remove old rank/balance blocks from Upgrades screen */
 .onix-boosts-screen > .rounded-3xl,
 .onix-boosts-screen > .onix-rank-card,
@@ -2967,11 +2967,11 @@ body,
 
 
 
-/* === REFERENCE HOME SCREEN PATCH v33 === */
+/* === REFERENCE HOME SCREEN PATCH v34 === */
 /* Old global rank/balance header is disabled on Upgrades tab in JSX */
 
 
-/* === REFERENCE HOME SCREEN PATCH v33 === */
+/* === REFERENCE HOME SCREEN PATCH v34 === */
 /* Profile screen redesign based on reference */
 .onix-social-screen {
   margin-top: 0 !important;
@@ -3180,7 +3180,7 @@ body,
 
 
 
-/* === REFERENCE HOME SCREEN PATCH v33 === */
+/* === REFERENCE HOME SCREEN PATCH v34 === */
 /* Rank icons: Novice / Bronze / Silver / Gold / Platinum / Diamond / Grandmaster */
 .onix-rank-icon {
   --rank-main: #8ea0c9;
@@ -3320,7 +3320,7 @@ body,
 
 
 
-/* === REFERENCE HOME SCREEN PATCH v33 === */
+/* === REFERENCE HOME SCREEN PATCH v34 === */
 /* Rank icons now use exact cropped reference images */
 .onix-rank-icon {
   background: transparent !important;
@@ -3358,7 +3358,7 @@ body,
 }
 
 
-/* === REFERENCE HOME SCREEN PATCH v33 === */
+/* === REFERENCE HOME SCREEN PATCH v34 === */
 /* Clean reference rank icon rendering */
 .onix-ref-v5-rank-badge {
   width: 58px !important;
@@ -3423,7 +3423,7 @@ body,
 
 
 
-/* === REFERENCE HOME SCREEN PATCH v33 === */
+/* === REFERENCE HOME SCREEN PATCH v34 === */
 /* Generated ONIX rank icons inserted into project */
 .onix-rank-icon {
   display: grid !important;
@@ -3490,7 +3490,7 @@ body,
 
 
 
-/* === REFERENCE HOME SCREEN PATCH v33 === */
+/* === REFERENCE HOME SCREEN PATCH v34 === */
 /* Bottom nav active state like Upgrades tabs: purple underline instead of filled tile */
 .onix-home-reference-mode .onix-nav {
   height: 62px !important;
@@ -3576,7 +3576,7 @@ body,
 
 
 
-/* === REFERENCE HOME SCREEN PATCH v33 === */
+/* === REFERENCE HOME SCREEN PATCH v34 === */
 /* Force underline active nav style globally on every tab */
 .onix-nav {
   height: 62px !important;
@@ -3692,7 +3692,7 @@ body,
 
 
 
-/* === REFERENCE HOME SCREEN PATCH v33 === */
+/* === REFERENCE HOME SCREEN PATCH v34 === */
 /* One identical bottom nav on every screen */
 .onix-nav,
 .onix-home-reference-mode .onix-nav,
@@ -3900,7 +3900,7 @@ body .onix-nav button.onix-nav-active *,
 
 
 
-/* === REFERENCE HOME SCREEN PATCH v33 === */
+/* === REFERENCE HOME SCREEN PATCH v34 === */
 /* Home player avatar and rank emblem: same size, same horizontal line */
 .onix-home-reference-mode .onix-ref-v5-player {
   align-items: center !important;
@@ -3995,7 +3995,7 @@ body .onix-nav button.onix-nav-active *,
 
 
 
-/* === REFERENCE HOME SCREEN PATCH v33 === */
+/* === REFERENCE HOME SCREEN PATCH v34 === */
 /* Generated sci-fi arena background for home screen */
 .onix-home-reference-mode.onix-app-bg::before {
   background-image:
@@ -4040,7 +4040,7 @@ body .onix-nav button.onix-nav-active *,
 
 
 
-/* === REFERENCE HOME SCREEN PATCH v33 === */
+/* === REFERENCE HOME SCREEN PATCH v34 === */
 /* Fix: keep bottom navigation fixed at the bottom on every screen, including Home */
 .onix-nav,
 .onix-home-reference-mode .onix-nav,
@@ -4169,7 +4169,7 @@ body .onix-nav button.onix-nav-active::after {
 
 
 
-/* === REFERENCE HOME SCREEN PATCH v33 === */
+/* === REFERENCE HOME SCREEN PATCH v34 === */
 /* Clean transparent tap coin inserted from user image */
 .onix-home-reference-mode .onix-ref-v5-coin img {
   width: 100% !important;
@@ -4184,7 +4184,7 @@ body .onix-nav button.onix-nav-active::after {
 
 
 
-/* === REFERENCE HOME SCREEN PATCH v33 === */
+/* === REFERENCE HOME SCREEN PATCH v34 === */
 /* Remove the extra outer glow around the tap coin */
 .onix-home-reference-mode .onix-ref-v5-coin {
   overflow: visible !important;
@@ -4202,7 +4202,7 @@ body .onix-nav button.onix-nav-active::after {
 
 
 
-/* === REFERENCE HOME SCREEN PATCH v33 === */
+/* === REFERENCE HOME SCREEN PATCH v34 === */
 /* Clean generated ONIX tap coin embedded directly into App.tsx */
 .onix-home-reference-mode .onix-ref-v5-coin,
 .onix-home-reference-mode .onix-tap-orb,
@@ -4220,7 +4220,7 @@ body .onix-nav button.onix-nav-active::after {
 
 
 
-/* === REFERENCE HOME SCREEN PATCH v33 === */
+/* === REFERENCE HOME SCREEN PATCH v34 === */
 /* Clean tap coin with black background removed */
 .onix-home-reference-mode .onix-ref-v5-coin img,
 .onix-home-reference-mode .onix-tap-img,
@@ -4232,7 +4232,7 @@ body .onix-nav button.onix-nav-active::after {
 
 
 
-/* === REFERENCE HOME SCREEN PATCH v33 === */
+/* === REFERENCE HOME SCREEN PATCH v34 === */
 /* User-provided PNG tap coin inserted as-is */
 .onix-home-reference-mode .onix-ref-v5-coin img,
 .onix-home-reference-mode .onix-tap-img,
@@ -4240,6 +4240,42 @@ body .onix-nav button.onix-nav-active::after {
   object-fit: contain !important;
   background: transparent !important;
   image-rendering: auto !important;
+}
+
+
+
+/* === REFERENCE HOME SCREEN PATCH v34 === */
+/* Hide the black square background of the PNG coin without destructive cutting */
+.onix-home-reference-mode .onix-ref-v5-coin,
+.onix-home-reference-mode .onix-tap-orb,
+.onix-tap-orb {
+  background: transparent !important;
+  overflow: visible !important;
+  isolation: auto !important;
+}
+
+.onix-home-reference-mode .onix-ref-v5-coin img,
+.onix-home-reference-mode .onix-tap-img,
+.onix-tap-img {
+  mix-blend-mode: screen !important;
+  background: transparent !important;
+  object-fit: contain !important;
+  image-rendering: auto !important;
+  filter:
+    saturate(1.12)
+    contrast(1.08)
+    brightness(1.03)
+    drop-shadow(0 0 10px rgba(168, 85, 247, 0.34)) !important;
+}
+
+/* remove any old dark backing from the coin holder */
+.onix-home-reference-mode .onix-ref-v5-coin::before,
+.onix-home-reference-mode .onix-ref-v5-coin::after,
+.onix-home-reference-mode .onix-tap-orb::before,
+.onix-home-reference-mode .onix-tap-orb::after,
+.onix-tap-orb::before,
+.onix-tap-orb::after {
+  background: transparent !important;
 }
 
 
