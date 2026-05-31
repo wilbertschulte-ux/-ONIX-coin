@@ -2149,7 +2149,7 @@ body,
   }
 }
 
-/* === REFERENCE HOME SCREEN PATCH v39 === */
+/* === REFERENCE HOME SCREEN PATCH v40 === */
 /* Clean isolated home screen based on reference */
 html,
 body,
@@ -2386,6 +2386,7 @@ body,
   object-fit: contain !important;
   user-select: none !important;
   pointer-events: none !important;
+  mix-blend-mode: screen !important;
   filter: drop-shadow(0 0 16px rgba(145, 74, 255, 0.86)) drop-shadow(0 0 36px rgba(68, 205, 255, 0.24)) !important;
 }
 
@@ -4307,7 +4308,7 @@ body .onix-nav button.onix-nav-active::after {
 
 
 
-/* === REFERENCE HOME SCREEN PATCH v39 === */
+/* === REFERENCE HOME SCREEN PATCH v40 === */
 /* Fix v37: show the embedded tap coin image, old rule was hiding all img inside coin */
 .onix-home-reference-mode .onix-ref-v5-coin .onix-ref-v5-coin-render,
 .onix-ref-v5-coin .onix-ref-v5-coin-render {
