@@ -2149,7 +2149,7 @@ body,
   }
 }
 
-/* === REFERENCE HOME SCREEN PATCH v561 === */
+/* === REFERENCE HOME SCREEN PATCH v571 === */
 /* Clean isolated home screen based on reference */
 html,
 body,
@@ -2542,7 +2542,7 @@ body,
 }
 
 
-/* === REFERENCE HOME SCREEN PATCH v5636 === */
+/* === REFERENCE HOME SCREEN PATCH v5736 === */
 /* Hard final override: massive TAP button and lower button block above bottom menu */
 .onix-home-reference-mode .onix-ref-v5-coin {
   width: min(77vw, 300px) !important;
@@ -2610,7 +2610,7 @@ body,
 
 
 
-/* === REFERENCE HOME SCREEN PATCH v5636 === */
+/* === REFERENCE HOME SCREEN PATCH v5736 === */
 /* Bottom navigation polish only */
 .onix-home-reference-mode .onix-nav {
   height: 64px !important;
@@ -2694,7 +2694,7 @@ body,
 
 
 
-/* === REFERENCE HOME SCREEN PATCH v5636 === */
+/* === REFERENCE HOME SCREEN PATCH v5736 === */
 /* Upgrade screen redesign based on reference */
 .onix-upgrades-ref-screen {
   padding: 14px 16px calc(88px + env(safe-area-inset-bottom)) !important;
@@ -2918,7 +2918,7 @@ body,
 }
 
 
-/* === REFERENCE HOME SCREEN PATCH v5636 === */
+/* === REFERENCE HOME SCREEN PATCH v5736 === */
 /* Remove old rank/balance blocks from Upgrades screen */
 .onix-boosts-screen > .rounded-3xl,
 .onix-boosts-screen > .onix-rank-card,
@@ -2967,11 +2967,11 @@ body,
 
 
 
-/* === REFERENCE HOME SCREEN PATCH v5636 === */
+/* === REFERENCE HOME SCREEN PATCH v5736 === */
 /* Old global rank/balance header is disabled on Upgrades tab in JSX */
 
 
-/* === REFERENCE HOME SCREEN PATCH v5636 === */
+/* === REFERENCE HOME SCREEN PATCH v5736 === */
 /* Profile screen redesign based on reference */
 .onix-social-screen {
   margin-top: 0 !important;
@@ -3180,7 +3180,7 @@ body,
 
 
 
-/* === REFERENCE HOME SCREEN PATCH v5636 === */
+/* === REFERENCE HOME SCREEN PATCH v5736 === */
 /* Rank icons: Novice / Bronze / Silver / Gold / Platinum / Diamond / Grandmaster */
 .onix-rank-icon {
   --rank-main: #8ea0c9;
@@ -3320,7 +3320,7 @@ body,
 
 
 
-/* === REFERENCE HOME SCREEN PATCH v5636 === */
+/* === REFERENCE HOME SCREEN PATCH v5736 === */
 /* Rank icons now use exact cropped reference images */
 .onix-rank-icon {
   background: transparent !important;
@@ -3358,7 +3358,7 @@ body,
 }
 
 
-/* === REFERENCE HOME SCREEN PATCH v5636 === */
+/* === REFERENCE HOME SCREEN PATCH v5736 === */
 /* Clean reference rank icon rendering */
 .onix-ref-v5-rank-badge {
   width: 58px !important;
@@ -3423,7 +3423,7 @@ body,
 
 
 
-/* === REFERENCE HOME SCREEN PATCH v5636 === */
+/* === REFERENCE HOME SCREEN PATCH v5736 === */
 /* Generated ONIX rank icons inserted into project */
 .onix-rank-icon {
   display: grid !important;
@@ -3490,7 +3490,7 @@ body,
 
 
 
-/* === REFERENCE HOME SCREEN PATCH v5636 === */
+/* === REFERENCE HOME SCREEN PATCH v5736 === */
 /* Bottom nav active state like Upgrades tabs: purple underline instead of filled tile */
 .onix-home-reference-mode .onix-nav {
   height: 62px !important;
@@ -3576,7 +3576,7 @@ body,
 
 
 
-/* === REFERENCE HOME SCREEN PATCH v5636 === */
+/* === REFERENCE HOME SCREEN PATCH v5736 === */
 /* Force underline active nav style globally on every tab */
 .onix-nav {
   height: 62px !important;
@@ -3692,7 +3692,7 @@ body,
 
 
 
-/* === REFERENCE HOME SCREEN PATCH v5636 === */
+/* === REFERENCE HOME SCREEN PATCH v5736 === */
 /* One identical bottom nav on every screen */
 .onix-nav,
 .onix-home-reference-mode .onix-nav,
@@ -3900,7 +3900,7 @@ body .onix-nav button.onix-nav-active *,
 
 
 
-/* === REFERENCE HOME SCREEN PATCH v5636 === */
+/* === REFERENCE HOME SCREEN PATCH v5736 === */
 /* Home player avatar and rank emblem: same size, same horizontal line */
 .onix-home-reference-mode .onix-ref-v5-player {
   align-items: center !important;
@@ -3995,7 +3995,7 @@ body .onix-nav button.onix-nav-active *,
 
 
 
-/* === REFERENCE HOME SCREEN PATCH v5636 === */
+/* === REFERENCE HOME SCREEN PATCH v5736 === */
 /* Generated sci-fi arena background for home screen */
 .onix-home-reference-mode.onix-app-bg::before {
   background-image:
@@ -4040,7 +4040,7 @@ body .onix-nav button.onix-nav-active *,
 
 
 
-/* === REFERENCE HOME SCREEN PATCH v5636 === */
+/* === REFERENCE HOME SCREEN PATCH v5736 === */
 /* Fix: keep bottom navigation fixed at the bottom on every screen, including Home */
 .onix-nav,
 .onix-home-reference-mode .onix-nav,
@@ -4169,7 +4169,7 @@ body .onix-nav button.onix-nav-active::after {
 
 
 
-/* === REFERENCE HOME SCREEN PATCH v5636 === */
+/* === REFERENCE HOME SCREEN PATCH v5736 === */
 /* Clean transparent tap coin inserted from user image */
 .onix-home-reference-mode .onix-ref-v5-coin img {
   width: 100% !important;
@@ -4184,7 +4184,7 @@ body .onix-nav button.onix-nav-active::after {
 
 
 
-/* === REFERENCE HOME SCREEN PATCH v5636 === */
+/* === REFERENCE HOME SCREEN PATCH v5736 === */
 /* Remove the extra outer glow around the tap coin */
 .onix-home-reference-mode .onix-ref-v5-coin {
   overflow: visible !important;
@@ -4202,7 +4202,7 @@ body .onix-nav button.onix-nav-active::after {
 
 
 
-/* === REFERENCE HOME SCREEN PATCH v5636 === */
+/* === REFERENCE HOME SCREEN PATCH v5736 === */
 /* Clean generated ONIX tap coin embedded directly into App.tsx */
 .onix-home-reference-mode .onix-ref-v5-coin,
 .onix-home-reference-mode .onix-tap-orb,
@@ -4220,7 +4220,7 @@ body .onix-nav button.onix-nav-active::after {
 
 
 
-/* === REFERENCE HOME SCREEN PATCH v5636 === */
+/* === REFERENCE HOME SCREEN PATCH v5736 === */
 /* Clean tap coin with black background removed */
 .onix-home-reference-mode .onix-ref-v5-coin img,
 .onix-home-reference-mode .onix-tap-img,
@@ -4232,7 +4232,7 @@ body .onix-nav button.onix-nav-active::after {
 
 
 
-/* === REFERENCE HOME SCREEN PATCH v5636 === */
+/* === REFERENCE HOME SCREEN PATCH v5736 === */
 /* User-provided PNG tap coin inserted as-is */
 .onix-home-reference-mode .onix-ref-v5-coin img,
 .onix-home-reference-mode .onix-tap-img,
@@ -4244,7 +4244,7 @@ body .onix-nav button.onix-nav-active::after {
 
 
 
-/* === REFERENCE HOME SCREEN PATCH v5636 === */
+/* === REFERENCE HOME SCREEN PATCH v5736 === */
 /* Transparent tap coin: only external black background removed, internal dark details preserved */
 .onix-home-reference-mode .onix-ref-v5-coin,
 .onix-home-reference-mode .onix-tap-orb,
@@ -4265,7 +4265,7 @@ body .onix-nav button.onix-nav-active::after {
 
 
 
-/* === REFERENCE HOME SCREEN PATCH v5636 === */
+/* === REFERENCE HOME SCREEN PATCH v5736 === */
 .onix-ref-v5-coin {
   overflow: visible !important;
 }
@@ -4308,7 +4308,7 @@ body .onix-nav button.onix-nav-active::after {
 
 
 
-/* === REFERENCE HOME SCREEN PATCH v561 === */
+/* === REFERENCE HOME SCREEN PATCH v571 === */
 /* Fix v37: show the embedded tap coin image, old rule was hiding all img inside coin */
 .onix-home-reference-mode .onix-ref-v5-coin .onix-ref-v5-coin-render,
 .onix-ref-v5-coin .onix-ref-v5-coin-render {
@@ -4334,7 +4334,7 @@ body .onix-nav button.onix-nav-active::after {
 
 
 
-/* === REFERENCE HOME SCREEN PATCH v561 === */
+/* === REFERENCE HOME SCREEN PATCH v571 === */
 /* Real alpha tap coin: external black contour removed from the image itself */
 .onix-home-reference-mode .onix-ref-v5-coin-art,
 .onix-ref-v5-coin-art {
@@ -4359,7 +4359,7 @@ body .onix-nav button.onix-nav-active::after {
 
 
 
-/* === REFERENCE HOME SCREEN PATCH v56 === */
+/* === REFERENCE HOME SCREEN PATCH v57 === */
 /* Clean no-glow coin asset + separate controllable CSS glow behind it */
 .onix-home-reference-mode .onix-ref-v5-coin,
 .onix-ref-v5-coin {
@@ -4415,7 +4415,7 @@ body .onix-nav button.onix-nav-active::after {
 
 
 
-/* === REFERENCE HOME SCREEN PATCH v56 === */
+/* === REFERENCE HOME SCREEN PATCH v57 === */
 /* CSS-only ONIX frames for player avatar and rank emblem — no image frame artifacts */
 .onix-home-reference-mode .onix-ref-v5-avatar-badge,
 .onix-home-reference-mode .onix-ref-v5-rank-badge,
@@ -4491,7 +4491,7 @@ body .onix-nav button.onix-nav-active::after {
 
 
 
-/* === REFERENCE HOME SCREEN PATCH v56 === */
+/* === REFERENCE HOME SCREEN PATCH v57 === */
 /* Revert rank emblem frame back to the previous clean look. Keep player avatar frame. */
 .onix-home-reference-mode .onix-ref-v5-rank-badge,
 .onix-home-reference-mode .onix-ref-v5-rank-icon {
@@ -4523,7 +4523,7 @@ body .onix-nav button.onix-nav-active::after {
 
 
 
-/* === REFERENCE HOME SCREEN PATCH v56 === */
+/* === REFERENCE HOME SCREEN PATCH v57 === */
 /* Telegram avatar in player card. Fallback remains ONIX emblem. */
 .onix-home-reference-mode .onix-ref-v5-avatar {
   overflow: hidden !important;
@@ -4550,7 +4550,7 @@ body .onix-nav button.onix-nav-active::after {
 
 
 
-/* === REFERENCE HOME SCREEN PATCH v56 === */
+/* === REFERENCE HOME SCREEN PATCH v57 === */
 /* ONIX-style tap floating numbers */
 .onix-home-reference-mode .onix-floating-number,
 .onix-floating-number {
@@ -4591,7 +4591,7 @@ body .onix-nav button.onix-nav-active::after {
 
 
 
-/* === REFERENCE HOME SCREEN PATCH v56 === */
+/* === REFERENCE HOME SCREEN PATCH v57 === */
 /* ONIX energy progress bar under the tap coin */
 .onix-home-reference-mode .onix-ref-v5-energy {
   width: 100% !important;
@@ -4730,7 +4730,7 @@ body .onix-nav button.onix-nav-active::after {
 
 
 
-/* === REFERENCE HOME SCREEN PATCH v56 === */
+/* === REFERENCE HOME SCREEN PATCH v57 === */
 /* Upgrades screen: 3 categories, ONIX-only wallet */
 .onix-upgrades-ref-wallets {
   grid-template-columns: 1fr !important;
@@ -4773,7 +4773,7 @@ body .onix-nav button.onix-nav-active::after {
 
 
 
-/* === REFERENCE HOME SCREEN PATCH v56 === */
+/* === REFERENCE HOME SCREEN PATCH v57 === */
 /* Upgrades ONIX wallet: home-style gold balance, adaptive text size, full-width label */
 .onix-upgrades-ref-wallet-onix {
   min-height: 128px !important;
@@ -4863,7 +4863,7 @@ body .onix-nav button.onix-nav-active::after {
 
 
 
-/* === REFERENCE HOME SCREEN PATCH v56 === */
+/* === REFERENCE HOME SCREEN PATCH v57 === */
 /* Fixed wallet frame: balance text adapts inside, card never grows or shifts */
 .onix-upgrades-ref-wallets {
   width: 100% !important;
@@ -4943,7 +4943,7 @@ body .onix-nav button.onix-nav-active::after {
 
 
 
-/* === REFERENCE HOME SCREEN PATCH v56 === */
+/* === REFERENCE HOME SCREEN PATCH v57 === */
 /* Replace home screen background with new crystal cathedral background */
 .onix-home-reference-mode,
 .onix-home-reference-mode .onix-ref-v5-screen,
@@ -4981,7 +4981,7 @@ body .onix-nav button.onix-nav-active::after {
 
 
 
-/* === REFERENCE HOME SCREEN PATCH v56 === */
+/* === REFERENCE HOME SCREEN PATCH v57 === */
 /* Unified ONIX background across all tabs + per-tab visual overlays */
 body,
 #root {
@@ -5125,7 +5125,7 @@ body,
 
 
 
-/* === REFERENCE HOME SCREEN PATCH v56 === */
+/* === REFERENCE HOME SCREEN PATCH v57 === */
 /* Upgrades wallet balance text now matches main home balance typography */
 .onix-upgrades-ref-wallet-onix .onix-upgrades-ref-wallet-value {
   font-family: 'Orbitron', 'Exo 2', system-ui, sans-serif !important;
@@ -5169,7 +5169,7 @@ body,
 
 
 
-/* === REFERENCE HOME SCREEN PATCH v56 === */
+/* === REFERENCE HOME SCREEN PATCH v57 === */
 /* HARD override: upgrades balance uses the same visual language as home balance */
 .onix-upgrades-ref-wallet-onix {
   align-items: center !important;
@@ -5228,6 +5228,88 @@ body,
 .onix-upgrades-ref-wallet-onix .onix-upgrades-ref-wallet-label {
   color: #f6c833 !important;
   -webkit-text-fill-color: #f6c833 !important;
+}
+
+
+
+/* === REFERENCE HOME SCREEN PATCH v57 === */
+/* Upgrades ONIX balance is now a real clone of the home balance block */
+.onix-upgrades-ref-wallet-onix.onix-upgrades-home-balance-card {
+  min-height: 128px !important;
+  padding: 18px 16px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  overflow: hidden !important;
+  border-radius: 26px !important;
+}
+
+.onix-upgrades-home-balance-card .onix-upgrades-home-balance-clone,
+.onix-upgrades-home-balance-clone {
+  width: 100% !important;
+  max-width: 100% !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  text-align: center !important;
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+}
+
+.onix-upgrades-home-balance-card .onix-upgrades-home-balance-value,
+.onix-upgrades-home-balance-value {
+  margin: 0 !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  display: block !important;
+  overflow: hidden !important;
+  white-space: nowrap !important;
+  text-align: center !important;
+  font-size: var(--onix-upgrades-balance-size, 46px) !important;
+  font-family: 'Orbitron', 'Exo 2', system-ui, sans-serif !important;
+  font-weight: 1000 !important;
+  line-height: 0.9 !important;
+  letter-spacing: -0.055em !important;
+  color: #f6c833 !important;
+  background: linear-gradient(180deg, #fff4a3 0%, #f6c833 48%, #b98116 100%) !important;
+  -webkit-background-clip: text !important;
+  background-clip: text !important;
+  -webkit-text-fill-color: transparent !important;
+  text-shadow:
+    0 0 7px rgba(246, 200, 51, 0.70),
+    0 0 14px rgba(246, 200, 51, 0.30),
+    0 0 22px rgba(168, 85, 247, 0.30) !important;
+  filter: drop-shadow(0 0 6px rgba(246, 200, 51, 0.22)) !important;
+}
+
+.onix-upgrades-home-balance-card .onix-upgrades-home-balance-caption,
+.onix-upgrades-home-balance-caption {
+  margin: 10px 0 0 !important;
+  text-align: center !important;
+  font-family: 'Orbitron', 'Exo 2', system-ui, sans-serif !important;
+  color: #f6c833 !important;
+  background: none !important;
+  -webkit-text-fill-color: #f6c833 !important;
+  font-size: 13px !important;
+  font-weight: 900 !important;
+  line-height: 1 !important;
+  letter-spacing: 0.11em !important;
+  text-transform: uppercase !important;
+  text-shadow:
+    0 0 6px rgba(246, 200, 51, 0.62),
+    0 0 12px rgba(168, 85, 247, 0.28) !important;
+}
+
+@media (max-width: 380px) {
+  .onix-upgrades-ref-wallet-onix.onix-upgrades-home-balance-card {
+    min-height: 116px !important;
+    padding: 16px 14px !important;
+  }
+
+  .onix-upgrades-home-balance-card .onix-upgrades-home-balance-caption {
+    font-size: 12px !important;
+    letter-spacing: 0.09em !important;
+  }
 }
 
 
@@ -11056,16 +11138,15 @@ body:has(.onix-home-reference-mode),
         return (
           <div className="onix-upgrades-ref-screen">
             <div className="onix-upgrades-ref-wallets">
-              <div className="onix-upgrades-ref-wallet onix-upgrades-ref-wallet-onix">
-                <div className="onix-upgrades-ref-wallet-icon">🪙</div>
-                <div className="onix-upgrades-ref-wallet-body">
-                  <div
-                    className="onix-upgrades-ref-wallet-value onix-upgrades-home-balance-number"
+              <div className="onix-upgrades-ref-wallet onix-upgrades-ref-wallet-onix onix-upgrades-home-balance-card">
+                <div className="onix-ref-v5-balance onix-upgrades-home-balance-clone">
+                  <p
+                    className="onix-ref-v5-balance-value onix-upgrades-home-balance-value"
                     style={{ '--onix-upgrades-balance-size': upgradesBalanceSize } as React.CSSProperties}
                   >
                     {upgradesBalanceText}
-                  </div>
-                  <div className="onix-upgrades-ref-wallet-label onix-upgrades-home-balance-label">$ONIX coin</div>
+                  </p>
+                  <p className="onix-ref-v5-balance-label onix-upgrades-home-balance-caption">$ONIX coin</p>
                 </div>
               </div>
             </div>
