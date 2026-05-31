@@ -2149,7 +2149,7 @@ body,
   }
 }
 
-/* === REFERENCE HOME SCREEN PATCH v481 === */
+/* === REFERENCE HOME SCREEN PATCH v491 === */
 /* Clean isolated home screen based on reference */
 html,
 body,
@@ -2542,7 +2542,7 @@ body,
 }
 
 
-/* === REFERENCE HOME SCREEN PATCH v4836 === */
+/* === REFERENCE HOME SCREEN PATCH v4936 === */
 /* Hard final override: massive TAP button and lower button block above bottom menu */
 .onix-home-reference-mode .onix-ref-v5-coin {
   width: min(77vw, 300px) !important;
@@ -2610,7 +2610,7 @@ body,
 
 
 
-/* === REFERENCE HOME SCREEN PATCH v4836 === */
+/* === REFERENCE HOME SCREEN PATCH v4936 === */
 /* Bottom navigation polish only */
 .onix-home-reference-mode .onix-nav {
   height: 64px !important;
@@ -2694,7 +2694,7 @@ body,
 
 
 
-/* === REFERENCE HOME SCREEN PATCH v4836 === */
+/* === REFERENCE HOME SCREEN PATCH v4936 === */
 /* Upgrade screen redesign based on reference */
 .onix-upgrades-ref-screen {
   padding: 14px 16px calc(88px + env(safe-area-inset-bottom)) !important;
@@ -2918,7 +2918,7 @@ body,
 }
 
 
-/* === REFERENCE HOME SCREEN PATCH v4836 === */
+/* === REFERENCE HOME SCREEN PATCH v4936 === */
 /* Remove old rank/balance blocks from Upgrades screen */
 .onix-boosts-screen > .rounded-3xl,
 .onix-boosts-screen > .onix-rank-card,
@@ -2967,11 +2967,11 @@ body,
 
 
 
-/* === REFERENCE HOME SCREEN PATCH v4836 === */
+/* === REFERENCE HOME SCREEN PATCH v4936 === */
 /* Old global rank/balance header is disabled on Upgrades tab in JSX */
 
 
-/* === REFERENCE HOME SCREEN PATCH v4836 === */
+/* === REFERENCE HOME SCREEN PATCH v4936 === */
 /* Profile screen redesign based on reference */
 .onix-social-screen {
   margin-top: 0 !important;
@@ -3180,7 +3180,7 @@ body,
 
 
 
-/* === REFERENCE HOME SCREEN PATCH v4836 === */
+/* === REFERENCE HOME SCREEN PATCH v4936 === */
 /* Rank icons: Novice / Bronze / Silver / Gold / Platinum / Diamond / Grandmaster */
 .onix-rank-icon {
   --rank-main: #8ea0c9;
@@ -3320,7 +3320,7 @@ body,
 
 
 
-/* === REFERENCE HOME SCREEN PATCH v4836 === */
+/* === REFERENCE HOME SCREEN PATCH v4936 === */
 /* Rank icons now use exact cropped reference images */
 .onix-rank-icon {
   background: transparent !important;
@@ -3358,7 +3358,7 @@ body,
 }
 
 
-/* === REFERENCE HOME SCREEN PATCH v4836 === */
+/* === REFERENCE HOME SCREEN PATCH v4936 === */
 /* Clean reference rank icon rendering */
 .onix-ref-v5-rank-badge {
   width: 58px !important;
@@ -3423,7 +3423,7 @@ body,
 
 
 
-/* === REFERENCE HOME SCREEN PATCH v4836 === */
+/* === REFERENCE HOME SCREEN PATCH v4936 === */
 /* Generated ONIX rank icons inserted into project */
 .onix-rank-icon {
   display: grid !important;
@@ -3490,7 +3490,7 @@ body,
 
 
 
-/* === REFERENCE HOME SCREEN PATCH v4836 === */
+/* === REFERENCE HOME SCREEN PATCH v4936 === */
 /* Bottom nav active state like Upgrades tabs: purple underline instead of filled tile */
 .onix-home-reference-mode .onix-nav {
   height: 62px !important;
@@ -3576,7 +3576,7 @@ body,
 
 
 
-/* === REFERENCE HOME SCREEN PATCH v4836 === */
+/* === REFERENCE HOME SCREEN PATCH v4936 === */
 /* Force underline active nav style globally on every tab */
 .onix-nav {
   height: 62px !important;
@@ -3692,7 +3692,7 @@ body,
 
 
 
-/* === REFERENCE HOME SCREEN PATCH v4836 === */
+/* === REFERENCE HOME SCREEN PATCH v4936 === */
 /* One identical bottom nav on every screen */
 .onix-nav,
 .onix-home-reference-mode .onix-nav,
@@ -3900,7 +3900,7 @@ body .onix-nav button.onix-nav-active *,
 
 
 
-/* === REFERENCE HOME SCREEN PATCH v4836 === */
+/* === REFERENCE HOME SCREEN PATCH v4936 === */
 /* Home player avatar and rank emblem: same size, same horizontal line */
 .onix-home-reference-mode .onix-ref-v5-player {
   align-items: center !important;
@@ -3995,7 +3995,7 @@ body .onix-nav button.onix-nav-active *,
 
 
 
-/* === REFERENCE HOME SCREEN PATCH v4836 === */
+/* === REFERENCE HOME SCREEN PATCH v4936 === */
 /* Generated sci-fi arena background for home screen */
 .onix-home-reference-mode.onix-app-bg::before {
   background-image:
@@ -4040,7 +4040,7 @@ body .onix-nav button.onix-nav-active *,
 
 
 
-/* === REFERENCE HOME SCREEN PATCH v4836 === */
+/* === REFERENCE HOME SCREEN PATCH v4936 === */
 /* Fix: keep bottom navigation fixed at the bottom on every screen, including Home */
 .onix-nav,
 .onix-home-reference-mode .onix-nav,
@@ -4169,7 +4169,7 @@ body .onix-nav button.onix-nav-active::after {
 
 
 
-/* === REFERENCE HOME SCREEN PATCH v4836 === */
+/* === REFERENCE HOME SCREEN PATCH v4936 === */
 /* Clean transparent tap coin inserted from user image */
 .onix-home-reference-mode .onix-ref-v5-coin img {
   width: 100% !important;
@@ -4184,7 +4184,7 @@ body .onix-nav button.onix-nav-active::after {
 
 
 
-/* === REFERENCE HOME SCREEN PATCH v4836 === */
+/* === REFERENCE HOME SCREEN PATCH v4936 === */
 /* Remove the extra outer glow around the tap coin */
 .onix-home-reference-mode .onix-ref-v5-coin {
   overflow: visible !important;
@@ -4202,7 +4202,7 @@ body .onix-nav button.onix-nav-active::after {
 
 
 
-/* === REFERENCE HOME SCREEN PATCH v4836 === */
+/* === REFERENCE HOME SCREEN PATCH v4936 === */
 /* Clean generated ONIX tap coin embedded directly into App.tsx */
 .onix-home-reference-mode .onix-ref-v5-coin,
 .onix-home-reference-mode .onix-tap-orb,
@@ -4220,7 +4220,7 @@ body .onix-nav button.onix-nav-active::after {
 
 
 
-/* === REFERENCE HOME SCREEN PATCH v4836 === */
+/* === REFERENCE HOME SCREEN PATCH v4936 === */
 /* Clean tap coin with black background removed */
 .onix-home-reference-mode .onix-ref-v5-coin img,
 .onix-home-reference-mode .onix-tap-img,
@@ -4232,7 +4232,7 @@ body .onix-nav button.onix-nav-active::after {
 
 
 
-/* === REFERENCE HOME SCREEN PATCH v4836 === */
+/* === REFERENCE HOME SCREEN PATCH v4936 === */
 /* User-provided PNG tap coin inserted as-is */
 .onix-home-reference-mode .onix-ref-v5-coin img,
 .onix-home-reference-mode .onix-tap-img,
@@ -4244,7 +4244,7 @@ body .onix-nav button.onix-nav-active::after {
 
 
 
-/* === REFERENCE HOME SCREEN PATCH v4836 === */
+/* === REFERENCE HOME SCREEN PATCH v4936 === */
 /* Transparent tap coin: only external black background removed, internal dark details preserved */
 .onix-home-reference-mode .onix-ref-v5-coin,
 .onix-home-reference-mode .onix-tap-orb,
@@ -4265,7 +4265,7 @@ body .onix-nav button.onix-nav-active::after {
 
 
 
-/* === REFERENCE HOME SCREEN PATCH v4836 === */
+/* === REFERENCE HOME SCREEN PATCH v4936 === */
 .onix-ref-v5-coin {
   overflow: visible !important;
 }
@@ -4308,7 +4308,7 @@ body .onix-nav button.onix-nav-active::after {
 
 
 
-/* === REFERENCE HOME SCREEN PATCH v481 === */
+/* === REFERENCE HOME SCREEN PATCH v491 === */
 /* Fix v37: show the embedded tap coin image, old rule was hiding all img inside coin */
 .onix-home-reference-mode .onix-ref-v5-coin .onix-ref-v5-coin-render,
 .onix-ref-v5-coin .onix-ref-v5-coin-render {
@@ -4334,7 +4334,7 @@ body .onix-nav button.onix-nav-active::after {
 
 
 
-/* === REFERENCE HOME SCREEN PATCH v481 === */
+/* === REFERENCE HOME SCREEN PATCH v491 === */
 /* Real alpha tap coin: external black contour removed from the image itself */
 .onix-home-reference-mode .onix-ref-v5-coin-art,
 .onix-ref-v5-coin-art {
@@ -4359,7 +4359,7 @@ body .onix-nav button.onix-nav-active::after {
 
 
 
-/* === REFERENCE HOME SCREEN PATCH v48 === */
+/* === REFERENCE HOME SCREEN PATCH v49 === */
 /* Clean no-glow coin asset + separate controllable CSS glow behind it */
 .onix-home-reference-mode .onix-ref-v5-coin,
 .onix-ref-v5-coin {
@@ -4415,7 +4415,7 @@ body .onix-nav button.onix-nav-active::after {
 
 
 
-/* === REFERENCE HOME SCREEN PATCH v48 === */
+/* === REFERENCE HOME SCREEN PATCH v49 === */
 /* CSS-only ONIX frames for player avatar and rank emblem — no image frame artifacts */
 .onix-home-reference-mode .onix-ref-v5-avatar-badge,
 .onix-home-reference-mode .onix-ref-v5-rank-badge,
@@ -4491,7 +4491,7 @@ body .onix-nav button.onix-nav-active::after {
 
 
 
-/* === REFERENCE HOME SCREEN PATCH v48 === */
+/* === REFERENCE HOME SCREEN PATCH v49 === */
 /* Revert rank emblem frame back to the previous clean look. Keep player avatar frame. */
 .onix-home-reference-mode .onix-ref-v5-rank-badge,
 .onix-home-reference-mode .onix-ref-v5-rank-icon {
@@ -4523,7 +4523,7 @@ body .onix-nav button.onix-nav-active::after {
 
 
 
-/* === REFERENCE HOME SCREEN PATCH v48 === */
+/* === REFERENCE HOME SCREEN PATCH v49 === */
 /* Telegram avatar in player card. Fallback remains ONIX emblem. */
 .onix-home-reference-mode .onix-ref-v5-avatar {
   overflow: hidden !important;
@@ -4550,7 +4550,7 @@ body .onix-nav button.onix-nav-active::after {
 
 
 
-/* === REFERENCE HOME SCREEN PATCH v48 === */
+/* === REFERENCE HOME SCREEN PATCH v49 === */
 /* ONIX-style tap floating numbers */
 .onix-home-reference-mode .onix-floating-number,
 .onix-floating-number {
@@ -4586,6 +4586,145 @@ body .onix-nav button.onix-nav-active::after {
   100% {
     opacity: 0;
     transform: translate3d(0, -74px, 0) scale(0.92) rotate(0deg);
+  }
+}
+
+
+
+/* === REFERENCE HOME SCREEN PATCH v49 === */
+/* ONIX energy progress bar under the tap coin */
+.onix-home-reference-mode .onix-ref-v5-energy {
+  width: 100% !important;
+  margin-top: 8px !important;
+  position: relative !important;
+}
+
+.onix-home-reference-mode .onix-ref-v5-energy-text {
+  color: #cfd7f2 !important;
+  text-shadow:
+    0 0 8px rgba(168, 85, 247, 0.34),
+    0 0 12px rgba(45, 212, 255, 0.10) !important;
+}
+
+.onix-home-reference-mode .onix-ref-v5-energy-icon {
+  color: #f6c833 !important;
+  fill: #f6c833 !important;
+  filter:
+    drop-shadow(0 0 5px rgba(246, 200, 51, 0.78))
+    drop-shadow(0 0 9px rgba(168, 85, 247, 0.30)) !important;
+}
+
+.onix-home-reference-mode .onix-ref-v5-energy-text strong {
+  color: #ffd739 !important;
+  text-shadow:
+    0 0 7px rgba(246, 200, 51, 0.70),
+    0 0 12px rgba(168, 85, 247, 0.38) !important;
+}
+
+.onix-home-reference-mode .onix-ref-v5-energy-status {
+  color: #b9c1df !important;
+  text-shadow: 0 0 8px rgba(168, 85, 247, 0.26) !important;
+}
+
+.onix-home-reference-mode .onix-ref-v5-energy-track {
+  position: relative !important;
+  width: 100% !important;
+  height: 10px !important;
+  margin-top: 9px !important;
+  border-radius: 999px !important;
+  overflow: hidden !important;
+  background:
+    linear-gradient(180deg, rgba(18, 17, 43, 0.98), rgba(5, 8, 22, 0.98)) !important;
+  border: 1px solid rgba(168, 85, 247, 0.40) !important;
+  box-shadow:
+    inset 0 0 8px rgba(0, 0, 0, 0.72),
+    inset 0 0 14px rgba(29, 213, 255, 0.08),
+    0 0 10px rgba(168, 85, 247, 0.24),
+    0 0 18px rgba(45, 212, 255, 0.10) !important;
+}
+
+.onix-home-reference-mode .onix-ref-v5-energy-track::before {
+  content: '' !important;
+  position: absolute !important;
+  inset: 1px !important;
+  border-radius: inherit !important;
+  border: 1px solid rgba(199, 169, 255, 0.18) !important;
+  pointer-events: none !important;
+  z-index: 3 !important;
+}
+
+.onix-home-reference-mode .onix-ref-v5-energy-track::after {
+  content: '' !important;
+  position: absolute !important;
+  inset: 0 !important;
+  border-radius: inherit !important;
+  background:
+    linear-gradient(90deg, transparent 0%, rgba(255, 255, 255, 0.16) 46%, transparent 100%) !important;
+  opacity: 0.30 !important;
+  pointer-events: none !important;
+  z-index: 4 !important;
+}
+
+.onix-home-reference-mode .onix-ref-v5-energy-fill {
+  position: relative !important;
+  height: 100% !important;
+  border-radius: 999px !important;
+  background:
+    linear-gradient(90deg,
+      #18e8ff 0%,
+      #39c9ff 22%,
+      #7d5cff 54%,
+      #a855f7 78%,
+      #f6c833 100%
+    ) !important;
+  box-shadow:
+    0 0 10px rgba(24, 232, 255, 0.55),
+    0 0 16px rgba(168, 85, 247, 0.58),
+    0 0 24px rgba(246, 200, 51, 0.16),
+    inset 0 1px 0 rgba(255, 255, 255, 0.38),
+    inset 0 -1px 0 rgba(37, 10, 72, 0.34) !important;
+  overflow: hidden !important;
+}
+
+.onix-home-reference-mode .onix-ref-v5-energy-fill::before {
+  content: '' !important;
+  position: absolute !important;
+  inset: 0 !important;
+  border-radius: inherit !important;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.42), transparent 48%, rgba(0, 0, 0, 0.16)) !important;
+  opacity: 0.68 !important;
+  pointer-events: none !important;
+}
+
+.onix-home-reference-mode .onix-ref-v5-energy-fill::after {
+  content: '' !important;
+  position: absolute !important;
+  top: -40% !important;
+  bottom: -40% !important;
+  left: -30% !important;
+  width: 38% !important;
+  transform: skewX(-24deg) !important;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.45), transparent) !important;
+  opacity: 0.42 !important;
+  animation: onixEnergyShineV49 2.7s ease-in-out infinite !important;
+  pointer-events: none !important;
+}
+
+@keyframes onixEnergyShineV49 {
+  0% {
+    left: -40%;
+    opacity: 0;
+  }
+  20% {
+    opacity: 0.42;
+  }
+  58% {
+    opacity: 0.42;
+  }
+  100% {
+    left: 112%;
+    opacity: 0;
   }
 }
 
