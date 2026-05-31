@@ -2149,7 +2149,7 @@ body,
   }
 }
 
-/* === REFERENCE HOME SCREEN PATCH v461 === */
+/* === REFERENCE HOME SCREEN PATCH v471 === */
 /* Clean isolated home screen based on reference */
 html,
 body,
@@ -2542,7 +2542,7 @@ body,
 }
 
 
-/* === REFERENCE HOME SCREEN PATCH v4636 === */
+/* === REFERENCE HOME SCREEN PATCH v4736 === */
 /* Hard final override: massive TAP button and lower button block above bottom menu */
 .onix-home-reference-mode .onix-ref-v5-coin {
   width: min(77vw, 300px) !important;
@@ -2610,7 +2610,7 @@ body,
 
 
 
-/* === REFERENCE HOME SCREEN PATCH v4636 === */
+/* === REFERENCE HOME SCREEN PATCH v4736 === */
 /* Bottom navigation polish only */
 .onix-home-reference-mode .onix-nav {
   height: 64px !important;
@@ -2694,7 +2694,7 @@ body,
 
 
 
-/* === REFERENCE HOME SCREEN PATCH v4636 === */
+/* === REFERENCE HOME SCREEN PATCH v4736 === */
 /* Upgrade screen redesign based on reference */
 .onix-upgrades-ref-screen {
   padding: 14px 16px calc(88px + env(safe-area-inset-bottom)) !important;
@@ -2918,7 +2918,7 @@ body,
 }
 
 
-/* === REFERENCE HOME SCREEN PATCH v4636 === */
+/* === REFERENCE HOME SCREEN PATCH v4736 === */
 /* Remove old rank/balance blocks from Upgrades screen */
 .onix-boosts-screen > .rounded-3xl,
 .onix-boosts-screen > .onix-rank-card,
@@ -2967,11 +2967,11 @@ body,
 
 
 
-/* === REFERENCE HOME SCREEN PATCH v4636 === */
+/* === REFERENCE HOME SCREEN PATCH v4736 === */
 /* Old global rank/balance header is disabled on Upgrades tab in JSX */
 
 
-/* === REFERENCE HOME SCREEN PATCH v4636 === */
+/* === REFERENCE HOME SCREEN PATCH v4736 === */
 /* Profile screen redesign based on reference */
 .onix-social-screen {
   margin-top: 0 !important;
@@ -3180,7 +3180,7 @@ body,
 
 
 
-/* === REFERENCE HOME SCREEN PATCH v4636 === */
+/* === REFERENCE HOME SCREEN PATCH v4736 === */
 /* Rank icons: Novice / Bronze / Silver / Gold / Platinum / Diamond / Grandmaster */
 .onix-rank-icon {
   --rank-main: #8ea0c9;
@@ -3320,7 +3320,7 @@ body,
 
 
 
-/* === REFERENCE HOME SCREEN PATCH v4636 === */
+/* === REFERENCE HOME SCREEN PATCH v4736 === */
 /* Rank icons now use exact cropped reference images */
 .onix-rank-icon {
   background: transparent !important;
@@ -3358,7 +3358,7 @@ body,
 }
 
 
-/* === REFERENCE HOME SCREEN PATCH v4636 === */
+/* === REFERENCE HOME SCREEN PATCH v4736 === */
 /* Clean reference rank icon rendering */
 .onix-ref-v5-rank-badge {
   width: 58px !important;
@@ -3423,7 +3423,7 @@ body,
 
 
 
-/* === REFERENCE HOME SCREEN PATCH v4636 === */
+/* === REFERENCE HOME SCREEN PATCH v4736 === */
 /* Generated ONIX rank icons inserted into project */
 .onix-rank-icon {
   display: grid !important;
@@ -3490,7 +3490,7 @@ body,
 
 
 
-/* === REFERENCE HOME SCREEN PATCH v4636 === */
+/* === REFERENCE HOME SCREEN PATCH v4736 === */
 /* Bottom nav active state like Upgrades tabs: purple underline instead of filled tile */
 .onix-home-reference-mode .onix-nav {
   height: 62px !important;
@@ -3576,7 +3576,7 @@ body,
 
 
 
-/* === REFERENCE HOME SCREEN PATCH v4636 === */
+/* === REFERENCE HOME SCREEN PATCH v4736 === */
 /* Force underline active nav style globally on every tab */
 .onix-nav {
   height: 62px !important;
@@ -3692,7 +3692,7 @@ body,
 
 
 
-/* === REFERENCE HOME SCREEN PATCH v4636 === */
+/* === REFERENCE HOME SCREEN PATCH v4736 === */
 /* One identical bottom nav on every screen */
 .onix-nav,
 .onix-home-reference-mode .onix-nav,
@@ -3900,7 +3900,7 @@ body .onix-nav button.onix-nav-active *,
 
 
 
-/* === REFERENCE HOME SCREEN PATCH v4636 === */
+/* === REFERENCE HOME SCREEN PATCH v4736 === */
 /* Home player avatar and rank emblem: same size, same horizontal line */
 .onix-home-reference-mode .onix-ref-v5-player {
   align-items: center !important;
@@ -3995,7 +3995,7 @@ body .onix-nav button.onix-nav-active *,
 
 
 
-/* === REFERENCE HOME SCREEN PATCH v4636 === */
+/* === REFERENCE HOME SCREEN PATCH v4736 === */
 /* Generated sci-fi arena background for home screen */
 .onix-home-reference-mode.onix-app-bg::before {
   background-image:
@@ -4040,7 +4040,7 @@ body .onix-nav button.onix-nav-active *,
 
 
 
-/* === REFERENCE HOME SCREEN PATCH v4636 === */
+/* === REFERENCE HOME SCREEN PATCH v4736 === */
 /* Fix: keep bottom navigation fixed at the bottom on every screen, including Home */
 .onix-nav,
 .onix-home-reference-mode .onix-nav,
@@ -4169,7 +4169,7 @@ body .onix-nav button.onix-nav-active::after {
 
 
 
-/* === REFERENCE HOME SCREEN PATCH v4636 === */
+/* === REFERENCE HOME SCREEN PATCH v4736 === */
 /* Clean transparent tap coin inserted from user image */
 .onix-home-reference-mode .onix-ref-v5-coin img {
   width: 100% !important;
@@ -4184,7 +4184,7 @@ body .onix-nav button.onix-nav-active::after {
 
 
 
-/* === REFERENCE HOME SCREEN PATCH v4636 === */
+/* === REFERENCE HOME SCREEN PATCH v4736 === */
 /* Remove the extra outer glow around the tap coin */
 .onix-home-reference-mode .onix-ref-v5-coin {
   overflow: visible !important;
@@ -4202,7 +4202,7 @@ body .onix-nav button.onix-nav-active::after {
 
 
 
-/* === REFERENCE HOME SCREEN PATCH v4636 === */
+/* === REFERENCE HOME SCREEN PATCH v4736 === */
 /* Clean generated ONIX tap coin embedded directly into App.tsx */
 .onix-home-reference-mode .onix-ref-v5-coin,
 .onix-home-reference-mode .onix-tap-orb,
@@ -4220,7 +4220,7 @@ body .onix-nav button.onix-nav-active::after {
 
 
 
-/* === REFERENCE HOME SCREEN PATCH v4636 === */
+/* === REFERENCE HOME SCREEN PATCH v4736 === */
 /* Clean tap coin with black background removed */
 .onix-home-reference-mode .onix-ref-v5-coin img,
 .onix-home-reference-mode .onix-tap-img,
@@ -4232,7 +4232,7 @@ body .onix-nav button.onix-nav-active::after {
 
 
 
-/* === REFERENCE HOME SCREEN PATCH v4636 === */
+/* === REFERENCE HOME SCREEN PATCH v4736 === */
 /* User-provided PNG tap coin inserted as-is */
 .onix-home-reference-mode .onix-ref-v5-coin img,
 .onix-home-reference-mode .onix-tap-img,
@@ -4244,7 +4244,7 @@ body .onix-nav button.onix-nav-active::after {
 
 
 
-/* === REFERENCE HOME SCREEN PATCH v4636 === */
+/* === REFERENCE HOME SCREEN PATCH v4736 === */
 /* Transparent tap coin: only external black background removed, internal dark details preserved */
 .onix-home-reference-mode .onix-ref-v5-coin,
 .onix-home-reference-mode .onix-tap-orb,
@@ -4265,7 +4265,7 @@ body .onix-nav button.onix-nav-active::after {
 
 
 
-/* === REFERENCE HOME SCREEN PATCH v4636 === */
+/* === REFERENCE HOME SCREEN PATCH v4736 === */
 .onix-ref-v5-coin {
   overflow: visible !important;
 }
@@ -4308,7 +4308,7 @@ body .onix-nav button.onix-nav-active::after {
 
 
 
-/* === REFERENCE HOME SCREEN PATCH v461 === */
+/* === REFERENCE HOME SCREEN PATCH v471 === */
 /* Fix v37: show the embedded tap coin image, old rule was hiding all img inside coin */
 .onix-home-reference-mode .onix-ref-v5-coin .onix-ref-v5-coin-render,
 .onix-ref-v5-coin .onix-ref-v5-coin-render {
@@ -4334,7 +4334,7 @@ body .onix-nav button.onix-nav-active::after {
 
 
 
-/* === REFERENCE HOME SCREEN PATCH v461 === */
+/* === REFERENCE HOME SCREEN PATCH v471 === */
 /* Real alpha tap coin: external black contour removed from the image itself */
 .onix-home-reference-mode .onix-ref-v5-coin-art,
 .onix-ref-v5-coin-art {
@@ -4359,7 +4359,7 @@ body .onix-nav button.onix-nav-active::after {
 
 
 
-/* === REFERENCE HOME SCREEN PATCH v46 === */
+/* === REFERENCE HOME SCREEN PATCH v47 === */
 /* Clean no-glow coin asset + separate controllable CSS glow behind it */
 .onix-home-reference-mode .onix-ref-v5-coin,
 .onix-ref-v5-coin {
@@ -4415,7 +4415,7 @@ body .onix-nav button.onix-nav-active::after {
 
 
 
-/* === REFERENCE HOME SCREEN PATCH v46 === */
+/* === REFERENCE HOME SCREEN PATCH v47 === */
 /* CSS-only ONIX frames for player avatar and rank emblem — no image frame artifacts */
 .onix-home-reference-mode .onix-ref-v5-avatar-badge,
 .onix-home-reference-mode .onix-ref-v5-rank-badge,
@@ -4491,7 +4491,7 @@ body .onix-nav button.onix-nav-active::after {
 
 
 
-/* === REFERENCE HOME SCREEN PATCH v46 === */
+/* === REFERENCE HOME SCREEN PATCH v47 === */
 /* Revert rank emblem frame back to the previous clean look. Keep player avatar frame. */
 .onix-home-reference-mode .onix-ref-v5-rank-badge,
 .onix-home-reference-mode .onix-ref-v5-rank-icon {
@@ -4519,6 +4519,33 @@ body .onix-nav button.onix-nav-active::after {
   object-fit: contain !important;
   border-radius: 0 !important;
   filter: drop-shadow(0 0 10px rgba(168, 85, 247, 0.56)) !important;
+}
+
+
+
+/* === REFERENCE HOME SCREEN PATCH v47 === */
+/* Telegram avatar in player card. Fallback remains ONIX emblem. */
+.onix-home-reference-mode .onix-ref-v5-avatar {
+  overflow: hidden !important;
+}
+
+.onix-home-reference-mode .onix-ref-v5-avatar-photo {
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: cover !important;
+  border-radius: 14px !important;
+  display: block !important;
+  position: relative !important;
+  z-index: 4 !important;
+}
+
+.onix-home-reference-mode .onix-ref-v5-avatar-fallback {
+  width: 76% !important;
+  height: 76% !important;
+  object-fit: contain !important;
+  display: block !important;
+  position: relative !important;
+  z-index: 4 !important;
 }
 
 
@@ -5237,6 +5264,12 @@ function OnixTapCoinVector() {
     </div>
   );
 }
+
+function getTelegramAvatarUrl() {
+  const tg = (window as any).Telegram?.WebApp;
+  return tg?.initDataUnsafe?.user?.photo_url || '';
+}
+
 function getTelegramId() {
   const tg = window.Telegram?.WebApp;
   if (!tg) return '';
@@ -5371,6 +5404,7 @@ class AppErrorBoundary extends React.Component<
 
 
 function App() {
+  const telegramAvatarUrl = getTelegramAvatarUrl();
   useEffect(() => {
     const updateViewportVars = () => {
       const viewportHeight = Math.floor(
@@ -9925,7 +9959,21 @@ body:has(.onix-home-reference-mode),
           <div className="onix-ref-v5-player">
             <div className="onix-ref-v5-player-left">
               <div className="onix-ref-v5-avatar">
-                <img src={onixLogoCrystal} alt="$ONIX user badge" draggable={false} />
+                {telegramAvatarUrl ? (
+                  <img
+                    className="onix-ref-v5-avatar-photo"
+                    src={telegramAvatarUrl}
+                    alt="Telegram avatar"
+                    draggable={false}
+                  />
+                ) : (
+                  <img
+                    className="onix-ref-v5-avatar-fallback"
+                    src={onixLogoCrystal}
+                    alt="$ONIX user badge"
+                    draggable={false}
+                  />
+                )}
               </div>
 
               <div className="onix-ref-v5-player-text">
