@@ -1182,12 +1182,20 @@ function getDailyRewardWithStreak(level, streakDay) {
   return Math.round(getDailyReward(level) * getDailyStreakMultiplier(streakDay));
 }
 
-function getTapBoostCost(tapPower) {
-  return Math.max(2500, Math.round(Number(tapPower || DEFAULT_TAP_POWER) * 500 * 0.7));
+const TEMP_TAP_BOOST_COST = 15000;
+const TEMP_MINING_BOOST_COST = 20000;
+const TEMP_ENERGY_REFILL_COST = 25000;
+
+function getTapBoostCost(_tapPower) {
+  return TEMP_TAP_BOOST_COST;
 }
 
-function getMiningBoostCost(autoclickers) {
-  return Math.max(2500, Math.round(Number(autoclickers || DEFAULT_MINER_INCOME) * 900 * 0.7));
+function getMiningBoostCost(_autoclickers) {
+  return TEMP_MINING_BOOST_COST;
+}
+
+function getEnergyRefillCost() {
+  return TEMP_ENERGY_REFILL_COST;
 }
 
 
@@ -4646,6 +4654,98 @@ router.post('/mine-tick', async (req, res) => {
       income,
       multiplier,
       isMiningBoostActive,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      error: error.message,
+    });
+  }
+});
+
+
+// REFILL ENERGY — TEMPORARY REUSABLE PURCHASE
+router.post('/refill-energy', async (req, res) => {
+  try {
+    const { telegramId } = req.body;
+
+    if (!telegramId) {
+      return res.status(400).json({
+        message: 'Telegram ID is required',
+      });
+    }
+
+    const user = await User.findOne({ telegramId });
+
+    if (!user) {
+      return res.status(404).json({
+        message: 'User not found',
+      });
+    }
+
+    normalizeUserFields(user);
+
+    const frozenResponse = ensureUserNotFrozen(user, res);
+    if (frozenResponse) return frozenResponse;
+
+    const maxEnergy = Number(user.maxEnergy || DEFAULT_MAX_ENERGY);
+    const currentEnergy = Number(user.energy || 0);
+
+    if (currentEnergy >= maxEnergy) {
+      return res.status(400).json({
+        message: 'Энергия уже полная',
+      });
+    }
+
+    const cost = getEnergyRefillCost();
+
+    if (Number(user.balance || 0) < cost) {
+      return res.status(400).json({
+        message: 'Недостаточно ONIX',
+      });
+    }
+
+    const now = Date.now();
+
+    user.balance = roundOnix(Number(user.balance || 0) - cost);
+    user.energy = maxEnergy;
+
+    addTransaction(
+      user,
+      'expense_boost',
+      -cost,
+      'Пополнение энергии'
+    );
+
+    user.totalBoostsUsed = Number(user.totalBoostsUsed || 0) + 1;
+    const achievementBonuses = applyAchievements(user);
+    const rankBonuses = applyRankBonuses(user);
+    user.level = calculateLevel(user.totalEarned);
+    user.updatedAt = new Date();
+    user.lastSeenAt = now;
+
+    const referralBonus = await tryPayQualifiedReferralBonus(user);
+
+    await user.save();
+
+    return res.json({
+      user: {
+        ...user.toObject({ flattenMaps: true }),
+        perkLevels: getPerkLevelsPayload(user),
+        achievements: getAchievementsPayload(user),
+        referralLimit: getReferralLimitPayload(user),
+        missions: getMissionsPayload(user),
+      },
+      achievements: getAchievementsPayload(user),
+      referralLimit: getReferralLimitPayload(user),
+      missions: getMissionsPayload(user),
+      achievementBonuses,
+      rankBonuses,
+      energyRefill: {
+        cost,
+        energy: user.energy,
+        maxEnergy,
+      },
+      referralBonusPaid: typeof referralBonus !== 'undefined' ? referralBonus : null,
     });
   } catch (error) {
     return res.status(500).json({

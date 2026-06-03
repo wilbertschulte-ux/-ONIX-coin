@@ -2149,7 +2149,7 @@ body,
   }
 }
 
-/* === REFERENCE HOME SCREEN PATCH v601 === */
+/* === REFERENCE HOME SCREEN PATCH v611 === */
 /* Clean isolated home screen based on reference */
 html,
 body,
@@ -2542,7 +2542,7 @@ body,
 }
 
 
-/* === REFERENCE HOME SCREEN PATCH v6036 === */
+/* === REFERENCE HOME SCREEN PATCH v6136 === */
 /* Hard final override: massive TAP button and lower button block above bottom menu */
 .onix-home-reference-mode .onix-ref-v5-coin {
   width: min(77vw, 300px) !important;
@@ -2610,7 +2610,7 @@ body,
 
 
 
-/* === REFERENCE HOME SCREEN PATCH v6036 === */
+/* === REFERENCE HOME SCREEN PATCH v6136 === */
 /* Bottom navigation polish only */
 .onix-home-reference-mode .onix-nav {
   height: 64px !important;
@@ -2694,7 +2694,7 @@ body,
 
 
 
-/* === REFERENCE HOME SCREEN PATCH v6036 === */
+/* === REFERENCE HOME SCREEN PATCH v6136 === */
 /* Upgrade screen redesign based on reference */
 .onix-upgrades-ref-screen {
   padding: 14px 16px calc(88px + env(safe-area-inset-bottom)) !important;
@@ -2918,7 +2918,7 @@ body,
 }
 
 
-/* === REFERENCE HOME SCREEN PATCH v6036 === */
+/* === REFERENCE HOME SCREEN PATCH v6136 === */
 /* Remove old rank/balance blocks from Upgrades screen */
 .onix-boosts-screen > .rounded-3xl,
 .onix-boosts-screen > .onix-rank-card,
@@ -2967,11 +2967,11 @@ body,
 
 
 
-/* === REFERENCE HOME SCREEN PATCH v6036 === */
+/* === REFERENCE HOME SCREEN PATCH v6136 === */
 /* Old global rank/balance header is disabled on Upgrades tab in JSX */
 
 
-/* === REFERENCE HOME SCREEN PATCH v6036 === */
+/* === REFERENCE HOME SCREEN PATCH v6136 === */
 /* Profile screen redesign based on reference */
 .onix-social-screen {
   margin-top: 0 !important;
@@ -3180,7 +3180,7 @@ body,
 
 
 
-/* === REFERENCE HOME SCREEN PATCH v6036 === */
+/* === REFERENCE HOME SCREEN PATCH v6136 === */
 /* Rank icons: Novice / Bronze / Silver / Gold / Platinum / Diamond / Grandmaster */
 .onix-rank-icon {
   --rank-main: #8ea0c9;
@@ -3320,7 +3320,7 @@ body,
 
 
 
-/* === REFERENCE HOME SCREEN PATCH v6036 === */
+/* === REFERENCE HOME SCREEN PATCH v6136 === */
 /* Rank icons now use exact cropped reference images */
 .onix-rank-icon {
   background: transparent !important;
@@ -3358,7 +3358,7 @@ body,
 }
 
 
-/* === REFERENCE HOME SCREEN PATCH v6036 === */
+/* === REFERENCE HOME SCREEN PATCH v6136 === */
 /* Clean reference rank icon rendering */
 .onix-ref-v5-rank-badge {
   width: 58px !important;
@@ -3423,7 +3423,7 @@ body,
 
 
 
-/* === REFERENCE HOME SCREEN PATCH v6036 === */
+/* === REFERENCE HOME SCREEN PATCH v6136 === */
 /* Generated ONIX rank icons inserted into project */
 .onix-rank-icon {
   display: grid !important;
@@ -3490,7 +3490,7 @@ body,
 
 
 
-/* === REFERENCE HOME SCREEN PATCH v6036 === */
+/* === REFERENCE HOME SCREEN PATCH v6136 === */
 /* Bottom nav active state like Upgrades tabs: purple underline instead of filled tile */
 .onix-home-reference-mode .onix-nav {
   height: 62px !important;
@@ -3576,7 +3576,7 @@ body,
 
 
 
-/* === REFERENCE HOME SCREEN PATCH v6036 === */
+/* === REFERENCE HOME SCREEN PATCH v6136 === */
 /* Force underline active nav style globally on every tab */
 .onix-nav {
   height: 62px !important;
@@ -3692,7 +3692,7 @@ body,
 
 
 
-/* === REFERENCE HOME SCREEN PATCH v6036 === */
+/* === REFERENCE HOME SCREEN PATCH v6136 === */
 /* One identical bottom nav on every screen */
 .onix-nav,
 .onix-home-reference-mode .onix-nav,
@@ -3900,7 +3900,7 @@ body .onix-nav button.onix-nav-active *,
 
 
 
-/* === REFERENCE HOME SCREEN PATCH v6036 === */
+/* === REFERENCE HOME SCREEN PATCH v6136 === */
 /* Home player avatar and rank emblem: same size, same horizontal line */
 .onix-home-reference-mode .onix-ref-v5-player {
   align-items: center !important;
@@ -3995,7 +3995,7 @@ body .onix-nav button.onix-nav-active *,
 
 
 
-/* === REFERENCE HOME SCREEN PATCH v6036 === */
+/* === REFERENCE HOME SCREEN PATCH v6136 === */
 /* Generated sci-fi arena background for home screen */
 .onix-home-reference-mode.onix-app-bg::before {
   background-image:
@@ -4040,7 +4040,7 @@ body .onix-nav button.onix-nav-active *,
 
 
 
-/* === REFERENCE HOME SCREEN PATCH v6036 === */
+/* === REFERENCE HOME SCREEN PATCH v6136 === */
 /* Fix: keep bottom navigation fixed at the bottom on every screen, including Home */
 .onix-nav,
 .onix-home-reference-mode .onix-nav,
@@ -4169,7 +4169,7 @@ body .onix-nav button.onix-nav-active::after {
 
 
 
-/* === REFERENCE HOME SCREEN PATCH v6036 === */
+/* === REFERENCE HOME SCREEN PATCH v6136 === */
 /* Clean transparent tap coin inserted from user image */
 .onix-home-reference-mode .onix-ref-v5-coin img {
   width: 100% !important;
@@ -4184,7 +4184,7 @@ body .onix-nav button.onix-nav-active::after {
 
 
 
-/* === REFERENCE HOME SCREEN PATCH v6036 === */
+/* === REFERENCE HOME SCREEN PATCH v6136 === */
 /* Remove the extra outer glow around the tap coin */
 .onix-home-reference-mode .onix-ref-v5-coin {
   overflow: visible !important;
@@ -4202,7 +4202,7 @@ body .onix-nav button.onix-nav-active::after {
 
 
 
-/* === REFERENCE HOME SCREEN PATCH v6036 === */
+/* === REFERENCE HOME SCREEN PATCH v6136 === */
 /* Clean generated ONIX tap coin embedded directly into App.tsx */
 .onix-home-reference-mode .onix-ref-v5-coin,
 .onix-home-reference-mode .onix-tap-orb,
@@ -4220,7 +4220,7 @@ body .onix-nav button.onix-nav-active::after {
 
 
 
-/* === REFERENCE HOME SCREEN PATCH v6036 === */
+/* === REFERENCE HOME SCREEN PATCH v6136 === */
 /* Clean tap coin with black background removed */
 .onix-home-reference-mode .onix-ref-v5-coin img,
 .onix-home-reference-mode .onix-tap-img,
@@ -4232,7 +4232,7 @@ body .onix-nav button.onix-nav-active::after {
 
 
 
-/* === REFERENCE HOME SCREEN PATCH v6036 === */
+/* === REFERENCE HOME SCREEN PATCH v6136 === */
 /* User-provided PNG tap coin inserted as-is */
 .onix-home-reference-mode .onix-ref-v5-coin img,
 .onix-home-reference-mode .onix-tap-img,
@@ -4244,7 +4244,7 @@ body .onix-nav button.onix-nav-active::after {
 
 
 
-/* === REFERENCE HOME SCREEN PATCH v6036 === */
+/* === REFERENCE HOME SCREEN PATCH v6136 === */
 /* Transparent tap coin: only external black background removed, internal dark details preserved */
 .onix-home-reference-mode .onix-ref-v5-coin,
 .onix-home-reference-mode .onix-tap-orb,
@@ -4265,7 +4265,7 @@ body .onix-nav button.onix-nav-active::after {
 
 
 
-/* === REFERENCE HOME SCREEN PATCH v6036 === */
+/* === REFERENCE HOME SCREEN PATCH v6136 === */
 .onix-ref-v5-coin {
   overflow: visible !important;
 }
@@ -4308,7 +4308,7 @@ body .onix-nav button.onix-nav-active::after {
 
 
 
-/* === REFERENCE HOME SCREEN PATCH v601 === */
+/* === REFERENCE HOME SCREEN PATCH v611 === */
 /* Fix v37: show the embedded tap coin image, old rule was hiding all img inside coin */
 .onix-home-reference-mode .onix-ref-v5-coin .onix-ref-v5-coin-render,
 .onix-ref-v5-coin .onix-ref-v5-coin-render {
@@ -4334,7 +4334,7 @@ body .onix-nav button.onix-nav-active::after {
 
 
 
-/* === REFERENCE HOME SCREEN PATCH v601 === */
+/* === REFERENCE HOME SCREEN PATCH v611 === */
 /* Real alpha tap coin: external black contour removed from the image itself */
 .onix-home-reference-mode .onix-ref-v5-coin-art,
 .onix-ref-v5-coin-art {
@@ -4359,7 +4359,7 @@ body .onix-nav button.onix-nav-active::after {
 
 
 
-/* === REFERENCE HOME SCREEN PATCH v60 === */
+/* === REFERENCE HOME SCREEN PATCH v61 === */
 /* Clean no-glow coin asset + separate controllable CSS glow behind it */
 .onix-home-reference-mode .onix-ref-v5-coin,
 .onix-ref-v5-coin {
@@ -4415,7 +4415,7 @@ body .onix-nav button.onix-nav-active::after {
 
 
 
-/* === REFERENCE HOME SCREEN PATCH v60 === */
+/* === REFERENCE HOME SCREEN PATCH v61 === */
 /* CSS-only ONIX frames for player avatar and rank emblem — no image frame artifacts */
 .onix-home-reference-mode .onix-ref-v5-avatar-badge,
 .onix-home-reference-mode .onix-ref-v5-rank-badge,
@@ -4491,7 +4491,7 @@ body .onix-nav button.onix-nav-active::after {
 
 
 
-/* === REFERENCE HOME SCREEN PATCH v60 === */
+/* === REFERENCE HOME SCREEN PATCH v61 === */
 /* Revert rank emblem frame back to the previous clean look. Keep player avatar frame. */
 .onix-home-reference-mode .onix-ref-v5-rank-badge,
 .onix-home-reference-mode .onix-ref-v5-rank-icon {
@@ -4523,7 +4523,7 @@ body .onix-nav button.onix-nav-active::after {
 
 
 
-/* === REFERENCE HOME SCREEN PATCH v60 === */
+/* === REFERENCE HOME SCREEN PATCH v61 === */
 /* Telegram avatar in player card. Fallback remains ONIX emblem. */
 .onix-home-reference-mode .onix-ref-v5-avatar {
   overflow: hidden !important;
@@ -4550,7 +4550,7 @@ body .onix-nav button.onix-nav-active::after {
 
 
 
-/* === REFERENCE HOME SCREEN PATCH v60 === */
+/* === REFERENCE HOME SCREEN PATCH v61 === */
 /* ONIX-style tap floating numbers */
 .onix-home-reference-mode .onix-floating-number,
 .onix-floating-number {
@@ -4591,7 +4591,7 @@ body .onix-nav button.onix-nav-active::after {
 
 
 
-/* === REFERENCE HOME SCREEN PATCH v60 === */
+/* === REFERENCE HOME SCREEN PATCH v61 === */
 /* ONIX energy progress bar under the tap coin */
 .onix-home-reference-mode .onix-ref-v5-energy {
   width: 100% !important;
@@ -4730,7 +4730,7 @@ body .onix-nav button.onix-nav-active::after {
 
 
 
-/* === REFERENCE HOME SCREEN PATCH v60 === */
+/* === REFERENCE HOME SCREEN PATCH v61 === */
 /* Upgrades screen: 3 categories, ONIX-only wallet */
 .onix-upgrades-ref-wallets {
   grid-template-columns: 1fr !important;
@@ -4773,7 +4773,7 @@ body .onix-nav button.onix-nav-active::after {
 
 
 
-/* === REFERENCE HOME SCREEN PATCH v60 === */
+/* === REFERENCE HOME SCREEN PATCH v61 === */
 /* Upgrades ONIX wallet: home-style gold balance, adaptive text size, full-width label */
 .onix-upgrades-ref-wallet-onix {
   min-height: 128px !important;
@@ -4863,7 +4863,7 @@ body .onix-nav button.onix-nav-active::after {
 
 
 
-/* === REFERENCE HOME SCREEN PATCH v60 === */
+/* === REFERENCE HOME SCREEN PATCH v61 === */
 /* Fixed wallet frame: balance text adapts inside, card never grows or shifts */
 .onix-upgrades-ref-wallets {
   width: 100% !important;
@@ -4943,7 +4943,7 @@ body .onix-nav button.onix-nav-active::after {
 
 
 
-/* === REFERENCE HOME SCREEN PATCH v60 === */
+/* === REFERENCE HOME SCREEN PATCH v61 === */
 /* Replace home screen background with new crystal cathedral background */
 .onix-home-reference-mode,
 .onix-home-reference-mode .onix-ref-v5-screen,
@@ -4981,7 +4981,7 @@ body .onix-nav button.onix-nav-active::after {
 
 
 
-/* === REFERENCE HOME SCREEN PATCH v60 === */
+/* === REFERENCE HOME SCREEN PATCH v61 === */
 /* Unified ONIX background across all tabs + per-tab visual overlays */
 body,
 #root {
@@ -5125,7 +5125,7 @@ body,
 
 
 
-/* === REFERENCE HOME SCREEN PATCH v60 === */
+/* === REFERENCE HOME SCREEN PATCH v61 === */
 /* Upgrades wallet balance text now matches main home balance typography */
 .onix-upgrades-ref-wallet-onix .onix-upgrades-ref-wallet-value {
   font-family: 'Orbitron', 'Exo 2', system-ui, sans-serif !important;
@@ -5169,7 +5169,7 @@ body,
 
 
 
-/* === REFERENCE HOME SCREEN PATCH v60 === */
+/* === REFERENCE HOME SCREEN PATCH v61 === */
 /* HARD override: upgrades balance uses the same visual language as home balance */
 .onix-upgrades-ref-wallet-onix {
   align-items: center !important;
@@ -5232,7 +5232,7 @@ body,
 
 
 
-/* === REFERENCE HOME SCREEN PATCH v60 === */
+/* === REFERENCE HOME SCREEN PATCH v61 === */
 /* Upgrades ONIX balance is now a real clone of the home balance block */
 .onix-upgrades-ref-wallet-onix.onix-upgrades-home-balance-card {
   min-height: 128px !important;
@@ -5314,7 +5314,7 @@ body,
 
 
 
-/* === REFERENCE HOME SCREEN PATCH v60 === */
+/* === REFERENCE HOME SCREEN PATCH v61 === */
 /* Exact home balance typography for Upgrades balance: Exo 2, softer glow */
 .onix-upgrades-home-balance-card .onix-upgrades-home-balance-clone,
 .onix-upgrades-home-balance-clone {
@@ -5377,7 +5377,7 @@ body,
 
 
 
-/* === REFERENCE HOME SCREEN PATCH v60 === */
+/* === REFERENCE HOME SCREEN PATCH v61 === */
 /* Premium ONIX balance card in Upgrades: clean text without glow */
 .onix-upgrades-ref-wallet-onix.onix-upgrades-balance-premium-card {
   position: relative !important;
@@ -5514,7 +5514,7 @@ body,
 
 
 
-/* === REFERENCE HOME SCREEN PATCH v60 === */
+/* === REFERENCE HOME SCREEN PATCH v61 === */
 /* Centered ONIX notifications and modal popups */
 .onix-toast-layer {
   position: fixed !important;
@@ -5686,6 +5686,18 @@ div.fixed.inset-0.z-\[90\] button.bg-yellow-400 {
   background: linear-gradient(180deg, #9b3dff 0%, #7b22ee 100%) !important;
   border: 1px solid rgba(219, 188, 255, 0.28) !important;
   box-shadow: 0 0 22px rgba(168, 85, 247, 0.30), inset 0 1px 0 rgba(255,255,255,0.18) !important;
+}
+
+
+
+/* === REFERENCE HOME SCREEN PATCH v61 === */
+/* Temporary boosts are reusable purchases without levels */
+.onix-upgrade-ref-card:has(.onix-upgrade-ref-buy) .onix-upgrade-ref-level:empty {
+  display: none !important;
+}
+
+.onix-upgrade-ref-buy span:last-child {
+  white-space: nowrap !important;
 }
 
 
@@ -6263,12 +6275,20 @@ function getDailyRewardWithStreak(level: number, streakDay: number) {
   return Math.round(getDailyReward(level) * getDailyStreakMultiplier(streakDay));
 }
 
-function getTapBoostCost(tapPower: number) {
-  return Math.max(2500, Math.round(Number(tapPower || 1) * 500 * 0.7));
+const TEMP_TAP_BOOST_COST = 15000;
+const TEMP_MINING_BOOST_COST = 20000;
+const TEMP_ENERGY_REFILL_COST = 25000;
+
+function getTapBoostCost(_tapPower: number) {
+  return TEMP_TAP_BOOST_COST;
 }
 
-function getMiningBoostCost(autoclickers: number) {
-  return Math.max(2500, Math.round(Number(autoclickers || 0.5) * 900 * 0.7));
+function getMiningBoostCost(_autoclickers: number) {
+  return TEMP_MINING_BOOST_COST;
+}
+
+function getEnergyRefillCost() {
+  return TEMP_ENERGY_REFILL_COST;
 }
 
 
@@ -7511,6 +7531,61 @@ function App() {
       showToast(`⚡ ${type === 'tap' ? 'Тап' : 'Майнинг'} ×2 активирован!`);
     } catch (error: any) {
       showToast(error?.response?.data?.message || 'Не удалось активировать буст');
+    }
+  };
+
+  const refillEnergy = async (_cost: number) => {
+    const telegramId = getTelegramId();
+
+    if (!telegramId) {
+      showToast('Не удалось получить Telegram ID', 'error');
+      return;
+    }
+
+    if (Number(energy || 0) >= Number(maxEnergy || 0)) {
+      showToast('Энергия уже полная', 'info');
+      return;
+    }
+
+    try {
+      const response = await axios.post(`${API_URL}/refill-energy`, {
+        telegramId,
+      });
+
+      const user = response.data.user || response.data;
+
+      setBalance(user.balance || 0);
+      setUsername(user.username || 'Пользователь');
+      setWeeklyEarned(Number(user.weeklyEarned || 0));
+      setEnergy(user.energy || 0);
+      setMaxEnergy(user.maxEnergy ?? 500);
+      setTapPower(user.tapPower ?? 1);
+      setEnergyRecharge(user.energyRecharge ?? 0.5);
+      setAutoclickers(user.autoclickers ?? 0.5);
+      setTotalEarned(user.totalEarned || 0);
+      setLevel(user.level || 1);
+      setReferralsCount(user.referralsCount || 0);
+      setReferralLimit(user.referralLimit || response.data.referralLimit || referralLimit);
+      setCompletedTasks(user.completedTasks || []);
+      setOwnedPerks(user.ownedPerks || []);
+      setPerkLevels(normalizePerkLevels(user.perkLevels));
+      setDailyStreak(Number(user.dailyStreak || 0));
+      setTransactions(user.transactions || []);
+      setAchievements(user.achievements || response.data.achievements || ACHIEVEMENTS);
+      setActiveBoost(normalizeBoost(user.activeBoost));
+      setBoostEndTime(Number(user.boostEndTime || 0));
+      applyUserStats(user);
+      showRewardPopupFromResponse(response.data);
+      showReferralBonusPaidToast(response.data);
+      refreshAfterAction();
+
+      try {
+        WebApp.HapticFeedback?.notificationOccurred('success');
+      } catch {}
+
+      showToast('🔋 Энергия полностью восстановлена!', 'success');
+    } catch (error: any) {
+      showToast(error?.response?.data?.message || 'Не удалось восстановить энергию', 'error');
     }
   };
 
@@ -11372,18 +11447,6 @@ body:has(.onix-home-reference-mode),
             disabled: balance < nextEnergyCost,
             action: () => buyUpgrade('energy'),
           },
-          {
-            id: 'energy',
-            icon: '🔋',
-            accent: 'emerald',
-            title: 'Энергия',
-            level: energyLevel,
-            subtitle: `${Math.floor(energy).toLocaleString('ru-RU')} / ${maxEnergy.toLocaleString('ru-RU')} энергии`,
-            price: nextEnergyCost,
-            priceType: 'onix',
-            disabled: balance < nextEnergyCost,
-            action: () => buyUpgrade('energy'),
-          },
         ];
 
         const energySaverCost = energySaverLevel >= 3 ? 0 : getPerkCost(150000, energySaverLevel + 1);
@@ -11393,19 +11456,36 @@ body:has(.onix-home-reference-mode),
         const engineerCost = engineerLevel >= 3 ? 0 : getPerkCost(250000, engineerLevel + 1);
         const offlineProCost = offlineProLevel >= 3 ? 0 : getPerkCost(100000, offlineProLevel + 1);
 
-        const boostsCards = boostCards.map((boost) => ({
-          id: boost.type,
-          icon: boost.type === 'tap' ? '🚀' : '⚡',
-          accent: boost.isActive ? 'emerald' : 'gold',
-          title: boost.title,
-          level: boost.isActive ? 1 : 0,
-          subtitle: `${boost.multiplier} • ${boost.durationMinutes} мин${boost.isActive ? ` • ${boostTimeLeft}` : ''}`,
-          price: boost.cost,
-          priceType: 'onix',
-          disabled: (isAnyBoostActive && !boost.isActive) || (!boost.isActive && balance < boost.cost),
-          priceLabel: boost.isActive ? 'ACTIVE' : undefined,
-          action: () => activateBoost(boost.type, boost.durationMinutes, boost.cost),
-        }));
+        const energyRefillCost = getEnergyRefillCost();
+
+        const boostsCards = [
+          ...boostCards.map((boost) => ({
+            id: boost.type,
+            icon: boost.type === 'tap' ? '🚀' : '⛏️',
+            accent: boost.isActive ? 'emerald' : 'gold',
+            title: boost.title,
+            level: null,
+            subtitle: `${boost.multiplier} • ${boost.durationMinutes} мин${boost.isActive ? ` • ${boostTimeLeft}` : ''}`,
+            price: boost.cost,
+            priceType: 'onix',
+            disabled: (isAnyBoostActive && !boost.isActive) || (!boost.isActive && balance < boost.cost),
+            priceLabel: boost.isActive ? 'ACTIVE' : undefined,
+            action: () => activateBoost(boost.type, boost.durationMinutes, boost.cost),
+          })),
+          {
+            id: 'energy-refill',
+            icon: '🔋',
+            accent: 'emerald',
+            title: 'Энергия',
+            level: null,
+            subtitle: `${Math.floor(energy).toLocaleString('ru-RU')} / ${maxEnergy.toLocaleString('ru-RU')} • пополнить до 100%`,
+            price: energyRefillCost,
+            priceType: 'onix',
+            disabled: balance < energyRefillCost || Math.floor(energy) >= Math.floor(maxEnergy),
+            priceLabel: Math.floor(energy) >= Math.floor(maxEnergy) ? 'FULL' : undefined,
+            action: () => refillEnergy(energyRefillCost),
+          },
+        ];
 
         const otherCards = [
           {
@@ -11556,7 +11636,9 @@ body:has(.onix-home-reference-mode),
 
                   <div className="onix-upgrade-ref-main">
                     <div className="onix-upgrade-ref-title">{item.title}</div>
-                    <div className="onix-upgrade-ref-level">Уровень {item.level}</div>
+                    {item.level !== null && item.level !== undefined && (
+                      <div className="onix-upgrade-ref-level">Уровень {item.level}</div>
+                    )}
                     <div className="onix-upgrade-ref-subtitle">{item.subtitle}</div>
                   </div>
 
