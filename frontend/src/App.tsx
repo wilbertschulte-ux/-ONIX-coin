@@ -3,6 +3,11 @@ import { Zap, Trophy, Home, Star, Wallet, UserCircle, Rocket, Menu, Bell } from 
 import WebApp from '@twa-dev/sdk';
 import axios from 'axios';
 import onixLogoCrystal from './assets/onix-logo-crystal.webp';
+import onixBoostTapStrengthIcon from './assets/onix-boost-icons/boost-tap-strength.png';
+import onixBoostCoinMultiplierIcon from './assets/onix-boost-icons/boost-coin-multiplier.png';
+import onixBoostEnergyRechargeIcon from './assets/onix-boost-icons/boost-energy-recharge.png';
+import onixBoostMaxEnergyIcon from './assets/onix-boost-icons/boost-max-energy.png';
+import onixBoostEnergyIcon from './assets/onix-boost-icons/boost-energy.png';
 
 const tg = window.Telegram?.WebApp;
 
@@ -10,6 +15,14 @@ if (tg) {
   tg.ready();
   tg.expand();
 }
+
+const onixBoostIcons = {
+  tap: onixBoostTapStrengthIcon,
+  miner: onixBoostCoinMultiplierIcon,
+  recharge: onixBoostEnergyRechargeIcon,
+  maxEnergy: onixBoostMaxEnergyIcon,
+  energy: onixBoostEnergyIcon,
+} as const;
 
 
 
@@ -2819,6 +2832,20 @@ body,
   border-radius: 14px !important;
   border: 1px solid rgba(255,255,255,0.08) !important;
   font-size: 24px !important;
+}
+.onix-upgrade-ref-icon img {
+  width: 30px !important;
+  height: 30px !important;
+  object-fit: contain !important;
+  display: block !important;
+  filter: drop-shadow(0 0 10px rgba(168, 85, 247, 0.28)) !important;
+}
+
+.onix-upgrade-ref-icon span {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  line-height: 1 !important;
 }
 
 .onix-upgrade-ref-icon-violet { background: radial-gradient(circle at 30% 30%, rgba(195, 95, 255, 0.46), rgba(84, 18, 192, 0.26) 58%, rgba(14, 11, 35, 0.96) 100%) !important; box-shadow: 0 0 20px rgba(168, 85, 247, 0.28) !important; }
@@ -10584,7 +10611,7 @@ body:has(.onix-home-reference-mode),
     }
 
     if (rankInfo.currentRank.id === 'diamond' || rankInfo.currentRank.threshold >= 5000000) {
-      badges.push({ icon: '💎', label: 'Diamond' });
+      badges.push({ icon: onixBoostIcons.maxEnergy, label: 'Diamond' });
     }
 
     if (referralsCount >= 5) {
@@ -10780,7 +10807,7 @@ body:has(.onix-home-reference-mode),
     },
     {
       type: 'recharge',
-      icon: '⚡',
+      icon: onixBoostIcons.recharge,
       title: 'Восстановление',
       description: 'Энергия быстрее восстанавливается',
       level: rechargeLevel,
@@ -10892,12 +10919,12 @@ body:has(.onix-home-reference-mode),
   );
   const tutorialSteps = [
     {
-      icon: '🪙',
+      icon: onixBoostIcons.miner,
       title: 'Тапай и зарабатывай',
       text: 'Нажимай на монету, получай ONIX и следи за энергией.',
     },
     {
-      icon: '⚡',
+      icon: onixBoostIcons.recharge,
       title: 'Прокачивайся',
       text: 'Покупай улучшения, перки и бусты, чтобы зарабатывать быстрее.',
     },
@@ -11401,7 +11428,7 @@ body:has(.onix-home-reference-mode),
         const tappingCards = [
           {
             id: 'tap',
-            icon: '👆',
+            icon: onixBoostIcons.tap,
             accent: 'violet',
             title: 'Сила тапа',
             level: tapLevel,
@@ -11413,7 +11440,7 @@ body:has(.onix-home-reference-mode),
           },
           {
             id: 'miner',
-            icon: '🪙',
+            icon: onixBoostIcons.miner,
             accent: 'gold',
             title: 'Множитель монеты',
             level: minerLevel,
@@ -11425,7 +11452,7 @@ body:has(.onix-home-reference-mode),
           },
           {
             id: 'recharge',
-            icon: '⚡',
+            icon: onixBoostIcons.recharge,
             accent: 'cyan',
             title: 'Восстановление энергии',
             level: rechargeLevel,
@@ -11437,7 +11464,7 @@ body:has(.onix-home-reference-mode),
           },
           {
             id: 'max-energy',
-            icon: '💎',
+            icon: onixBoostIcons.maxEnergy,
             accent: 'blue',
             title: 'Макс. энергия',
             level: energyLevel,
@@ -11474,7 +11501,7 @@ body:has(.onix-home-reference-mode),
           })),
           {
             id: 'energy-refill',
-            icon: '🔋',
+            icon: onixBoostIcons.energy,
             accent: 'emerald',
             title: 'Энергия',
             level: null,
@@ -11631,7 +11658,11 @@ body:has(.onix-home-reference-mode),
               {currentCards.map((item) => (
                 <div key={item.id} className="onix-upgrade-ref-card">
                   <div className={`onix-upgrade-ref-icon onix-upgrade-ref-icon-${item.accent}`}>
-                    <span>{item.icon}</span>
+                    {typeof item.icon === 'string' && (item.icon.startsWith('data:image/') || item.icon.startsWith('/') || item.icon.includes('/assets/') || item.icon.endsWith('.png') || item.icon.endsWith('.webp') || item.icon.endsWith('.jpg') || item.icon.endsWith('.jpeg')) ? (
+                      <img src={item.icon} alt={item.title} />
+                    ) : (
+                      <span>{item.icon}</span>
+                    )}
                   </div>
 
                   <div className="onix-upgrade-ref-main">
