@@ -2162,7 +2162,7 @@ body,
   }
 }
 
-/* === REFERENCE HOME SCREEN PATCH v66 === */
+/* === REFERENCE HOME SCREEN PATCH v67 === */
 /* Clean isolated home screen based on reference */
 html,
 body,
@@ -2555,7 +2555,7 @@ body,
 }
 
 
-/* === REFERENCE HOME SCREEN PATCH v66 === */
+/* === REFERENCE HOME SCREEN PATCH v67 === */
 /* Hard final override: massive TAP button and lower button block above bottom menu */
 .onix-home-reference-mode .onix-ref-v5-coin {
   width: min(77vw, 300px) !important;
@@ -2623,7 +2623,7 @@ body,
 
 
 
-/* === REFERENCE HOME SCREEN PATCH v66 === */
+/* === REFERENCE HOME SCREEN PATCH v67 === */
 /* Bottom navigation polish only */
 .onix-home-reference-mode .onix-nav {
   height: 64px !important;
@@ -2707,7 +2707,7 @@ body,
 
 
 
-/* === REFERENCE HOME SCREEN PATCH v66 === */
+/* === REFERENCE HOME SCREEN PATCH v67 === */
 /* Upgrade screen redesign based on reference */
 .onix-upgrades-ref-screen {
   padding: 14px 16px calc(88px + env(safe-area-inset-bottom)) !important;
@@ -2977,7 +2977,7 @@ body,
 }
 
 
-/* === REFERENCE HOME SCREEN PATCH v66 === */
+/* === REFERENCE HOME SCREEN PATCH v67 === */
 /* Remove old rank/balance blocks from Upgrades screen */
 .onix-boosts-screen > .rounded-3xl,
 .onix-boosts-screen > .onix-rank-card,
@@ -3026,11 +3026,11 @@ body,
 
 
 
-/* === REFERENCE HOME SCREEN PATCH v66 === */
+/* === REFERENCE HOME SCREEN PATCH v67 === */
 /* Old global rank/balance header is disabled on Upgrades tab in JSX */
 
 
-/* === REFERENCE HOME SCREEN PATCH v66 === */
+/* === REFERENCE HOME SCREEN PATCH v67 === */
 /* Profile screen redesign based on reference */
 .onix-social-screen {
   margin-top: 0 !important;
@@ -3239,7 +3239,7 @@ body,
 
 
 
-/* === REFERENCE HOME SCREEN PATCH v66 === */
+/* === REFERENCE HOME SCREEN PATCH v67 === */
 /* Rank icons: Novice / Bronze / Silver / Gold / Platinum / Diamond / Grandmaster */
 .onix-rank-icon {
   --rank-main: #8ea0c9;
@@ -3379,7 +3379,7 @@ body,
 
 
 
-/* === REFERENCE HOME SCREEN PATCH v66 === */
+/* === REFERENCE HOME SCREEN PATCH v67 === */
 /* Rank icons now use exact cropped reference images */
 .onix-rank-icon {
   background: transparent !important;
@@ -3417,7 +3417,7 @@ body,
 }
 
 
-/* === REFERENCE HOME SCREEN PATCH v66 === */
+/* === REFERENCE HOME SCREEN PATCH v67 === */
 /* Clean reference rank icon rendering */
 .onix-ref-v5-rank-badge {
   width: 58px !important;
@@ -3482,7 +3482,7 @@ body,
 
 
 
-/* === REFERENCE HOME SCREEN PATCH v66 === */
+/* === REFERENCE HOME SCREEN PATCH v67 === */
 /* Generated ONIX rank icons inserted into project */
 .onix-rank-icon {
   display: grid !important;
@@ -3549,7 +3549,7 @@ body,
 
 
 
-/* === REFERENCE HOME SCREEN PATCH v66 === */
+/* === REFERENCE HOME SCREEN PATCH v67 === */
 /* Bottom nav active state like Upgrades tabs: purple underline instead of filled tile */
 .onix-home-reference-mode .onix-nav {
   height: 62px !important;
@@ -3635,7 +3635,7 @@ body,
 
 
 
-/* === REFERENCE HOME SCREEN PATCH v66 === */
+/* === REFERENCE HOME SCREEN PATCH v67 === */
 /* Force underline active nav style globally on every tab */
 .onix-nav {
   height: 62px !important;
@@ -3751,7 +3751,7 @@ body,
 
 
 
-/* === REFERENCE HOME SCREEN PATCH v66 === */
+/* === REFERENCE HOME SCREEN PATCH v67 === */
 /* One identical bottom nav on every screen */
 .onix-nav,
 .onix-home-reference-mode .onix-nav,
@@ -3959,7 +3959,7 @@ body .onix-nav button.onix-nav-active *,
 
 
 
-/* === REFERENCE HOME SCREEN PATCH v66 === */
+/* === REFERENCE HOME SCREEN PATCH v67 === */
 /* Home player avatar and rank emblem: same size, same horizontal line */
 .onix-home-reference-mode .onix-ref-v5-player {
   align-items: center !important;
@@ -4054,7 +4054,7 @@ body .onix-nav button.onix-nav-active *,
 
 
 
-/* === REFERENCE HOME SCREEN PATCH v66 === */
+/* === REFERENCE HOME SCREEN PATCH v67 === */
 /* Generated sci-fi arena background for home screen */
 .onix-home-reference-mode.onix-app-bg::before {
   background-image:
@@ -4099,7 +4099,7 @@ body .onix-nav button.onix-nav-active *,
 
 
 
-/* === REFERENCE HOME SCREEN PATCH v66 === */
+/* === REFERENCE HOME SCREEN PATCH v67 === */
 /* Fix: keep bottom navigation fixed at the bottom on every screen, including Home */
 .onix-nav,
 .onix-home-reference-mode .onix-nav,
@@ -4228,7 +4228,7 @@ body .onix-nav button.onix-nav-active::after {
 
 
 
-/* === REFERENCE HOME SCREEN PATCH v66 === */
+/* === REFERENCE HOME SCREEN PATCH v67 === */
 /* Clean transparent tap coin inserted from user image */
 .onix-home-reference-mode .onix-ref-v5-coin img {
   width: 100% !important;
@@ -4243,7 +4243,7 @@ body .onix-nav button.onix-nav-active::after {
 
 
 
-/* === REFERENCE HOME SCREEN PATCH v66 === */
+/* === REFERENCE HOME SCREEN PATCH v67 === */
 /* Remove the extra outer glow around the tap coin */
 .onix-home-reference-mode .onix-ref-v5-coin {
   overflow: visible !important;
@@ -4261,7 +4261,7 @@ body .onix-nav button.onix-nav-active::after {
 
 
 
-/* === REFERENCE HOME SCREEN PATCH v66 === */
+/* === REFERENCE HOME SCREEN PATCH v67 === */
 /* Clean generated ONIX tap coin embedded directly into App.tsx */
 .onix-home-reference-mode .onix-ref-v5-coin,
 .onix-home-reference-mode .onix-tap-orb,
@@ -4279,7 +4279,7 @@ body .onix-nav button.onix-nav-active::after {
 
 
 
-/* === REFERENCE HOME SCREEN PATCH v66 === */
+/* === REFERENCE HOME SCREEN PATCH v67 === */
 /* Clean tap coin with black background removed */
 .onix-home-reference-mode .onix-ref-v5-coin img,
 .onix-home-reference-mode .onix-tap-img,
@@ -4291,7 +4291,7 @@ body .onix-nav button.onix-nav-active::after {
 
 
 
-/* === REFERENCE HOME SCREEN PATCH v66 === */
+/* === REFERENCE HOME SCREEN PATCH v67 === */
 /* User-provided PNG tap coin inserted as-is */
 .onix-home-reference-mode .onix-ref-v5-coin img,
 .onix-home-reference-mode .onix-tap-img,
@@ -4303,7 +4303,7 @@ body .onix-nav button.onix-nav-active::after {
 
 
 
-/* === REFERENCE HOME SCREEN PATCH v66 === */
+/* === REFERENCE HOME SCREEN PATCH v67 === */
 /* Transparent tap coin: only external black background removed, internal dark details preserved */
 .onix-home-reference-mode .onix-ref-v5-coin,
 .onix-home-reference-mode .onix-tap-orb,
@@ -4324,7 +4324,7 @@ body .onix-nav button.onix-nav-active::after {
 
 
 
-/* === REFERENCE HOME SCREEN PATCH v66 === */
+/* === REFERENCE HOME SCREEN PATCH v67 === */
 .onix-ref-v5-coin {
   overflow: visible !important;
 }
@@ -4367,7 +4367,7 @@ body .onix-nav button.onix-nav-active::after {
 
 
 
-/* === REFERENCE HOME SCREEN PATCH v66 === */
+/* === REFERENCE HOME SCREEN PATCH v67 === */
 /* Fix v37: show the embedded tap coin image, old rule was hiding all img inside coin */
 .onix-home-reference-mode .onix-ref-v5-coin .onix-ref-v5-coin-render,
 .onix-ref-v5-coin .onix-ref-v5-coin-render {
@@ -4393,7 +4393,7 @@ body .onix-nav button.onix-nav-active::after {
 
 
 
-/* === REFERENCE HOME SCREEN PATCH v66 === */
+/* === REFERENCE HOME SCREEN PATCH v67 === */
 /* Real alpha tap coin: external black contour removed from the image itself */
 .onix-home-reference-mode .onix-ref-v5-coin-art,
 .onix-ref-v5-coin-art {
@@ -4418,7 +4418,7 @@ body .onix-nav button.onix-nav-active::after {
 
 
 
-/* === REFERENCE HOME SCREEN PATCH v66 === */
+/* === REFERENCE HOME SCREEN PATCH v67 === */
 /* Clean no-glow coin asset + separate controllable CSS glow behind it */
 .onix-home-reference-mode .onix-ref-v5-coin,
 .onix-ref-v5-coin {
@@ -4474,7 +4474,7 @@ body .onix-nav button.onix-nav-active::after {
 
 
 
-/* === REFERENCE HOME SCREEN PATCH v66 === */
+/* === REFERENCE HOME SCREEN PATCH v67 === */
 /* CSS-only ONIX frames for player avatar and rank emblem — no image frame artifacts */
 .onix-home-reference-mode .onix-ref-v5-avatar-badge,
 .onix-home-reference-mode .onix-ref-v5-rank-badge,
@@ -4550,7 +4550,7 @@ body .onix-nav button.onix-nav-active::after {
 
 
 
-/* === REFERENCE HOME SCREEN PATCH v66 === */
+/* === REFERENCE HOME SCREEN PATCH v67 === */
 /* Revert rank emblem frame back to the previous clean look. Keep player avatar frame. */
 .onix-home-reference-mode .onix-ref-v5-rank-badge,
 .onix-home-reference-mode .onix-ref-v5-rank-icon {
@@ -4582,7 +4582,7 @@ body .onix-nav button.onix-nav-active::after {
 
 
 
-/* === REFERENCE HOME SCREEN PATCH v66 === */
+/* === REFERENCE HOME SCREEN PATCH v67 === */
 /* Telegram avatar in player card. Fallback remains ONIX emblem. */
 .onix-home-reference-mode .onix-ref-v5-avatar {
   overflow: hidden !important;
@@ -4609,7 +4609,7 @@ body .onix-nav button.onix-nav-active::after {
 
 
 
-/* === REFERENCE HOME SCREEN PATCH v66 === */
+/* === REFERENCE HOME SCREEN PATCH v67 === */
 /* ONIX-style tap floating numbers */
 .onix-home-reference-mode .onix-floating-number,
 .onix-floating-number {
@@ -4650,7 +4650,7 @@ body .onix-nav button.onix-nav-active::after {
 
 
 
-/* === REFERENCE HOME SCREEN PATCH v66 === */
+/* === REFERENCE HOME SCREEN PATCH v67 === */
 /* ONIX energy progress bar under the tap coin */
 .onix-home-reference-mode .onix-ref-v5-energy {
   width: 100% !important;
@@ -4789,7 +4789,7 @@ body .onix-nav button.onix-nav-active::after {
 
 
 
-/* === REFERENCE HOME SCREEN PATCH v66 === */
+/* === REFERENCE HOME SCREEN PATCH v67 === */
 /* Upgrades screen: 3 categories, ONIX-only wallet */
 .onix-upgrades-ref-wallets {
   grid-template-columns: 1fr !important;
@@ -4832,7 +4832,7 @@ body .onix-nav button.onix-nav-active::after {
 
 
 
-/* === REFERENCE HOME SCREEN PATCH v66 === */
+/* === REFERENCE HOME SCREEN PATCH v67 === */
 /* Upgrades ONIX wallet: home-style gold balance, adaptive text size, full-width label */
 .onix-upgrades-ref-wallet-onix {
   min-height: 128px !important;
@@ -4922,7 +4922,7 @@ body .onix-nav button.onix-nav-active::after {
 
 
 
-/* === REFERENCE HOME SCREEN PATCH v66 === */
+/* === REFERENCE HOME SCREEN PATCH v67 === */
 /* Fixed wallet frame: balance text adapts inside, card never grows or shifts */
 .onix-upgrades-ref-wallets {
   width: 100% !important;
@@ -5002,7 +5002,7 @@ body .onix-nav button.onix-nav-active::after {
 
 
 
-/* === REFERENCE HOME SCREEN PATCH v66 === */
+/* === REFERENCE HOME SCREEN PATCH v67 === */
 /* Replace home screen background with new crystal cathedral background */
 .onix-home-reference-mode,
 .onix-home-reference-mode .onix-ref-v5-screen,
@@ -5040,7 +5040,7 @@ body .onix-nav button.onix-nav-active::after {
 
 
 
-/* === REFERENCE HOME SCREEN PATCH v66 === */
+/* === REFERENCE HOME SCREEN PATCH v67 === */
 /* Unified ONIX background across all tabs + per-tab visual overlays */
 body,
 #root {
@@ -5184,7 +5184,7 @@ body,
 
 
 
-/* === REFERENCE HOME SCREEN PATCH v66 === */
+/* === REFERENCE HOME SCREEN PATCH v67 === */
 /* Upgrades wallet balance text now matches main home balance typography */
 .onix-upgrades-ref-wallet-onix .onix-upgrades-ref-wallet-value {
   font-family: 'Orbitron', 'Exo 2', system-ui, sans-serif !important;
@@ -5228,7 +5228,7 @@ body,
 
 
 
-/* === REFERENCE HOME SCREEN PATCH v66 === */
+/* === REFERENCE HOME SCREEN PATCH v67 === */
 /* HARD override: upgrades balance uses the same visual language as home balance */
 .onix-upgrades-ref-wallet-onix {
   align-items: center !important;
@@ -5291,7 +5291,7 @@ body,
 
 
 
-/* === REFERENCE HOME SCREEN PATCH v66 === */
+/* === REFERENCE HOME SCREEN PATCH v67 === */
 /* Upgrades ONIX balance is now a real clone of the home balance block */
 .onix-upgrades-ref-wallet-onix.onix-upgrades-home-balance-card {
   min-height: 128px !important;
@@ -5373,7 +5373,7 @@ body,
 
 
 
-/* === REFERENCE HOME SCREEN PATCH v66 === */
+/* === REFERENCE HOME SCREEN PATCH v67 === */
 /* Exact home balance typography for Upgrades balance: Exo 2, softer glow */
 .onix-upgrades-home-balance-card .onix-upgrades-home-balance-clone,
 .onix-upgrades-home-balance-clone {
@@ -5436,7 +5436,7 @@ body,
 
 
 
-/* === REFERENCE HOME SCREEN PATCH v66 === */
+/* === REFERENCE HOME SCREEN PATCH v67 === */
 /* Premium ONIX balance card in Upgrades: clean text without glow */
 .onix-upgrades-ref-wallet-onix.onix-upgrades-balance-premium-card {
   position: relative !important;
@@ -5573,7 +5573,7 @@ body,
 
 
 
-/* === REFERENCE HOME SCREEN PATCH v66 === */
+/* === REFERENCE HOME SCREEN PATCH v67 === */
 /* Centered ONIX notifications and modal popups */
 .onix-toast-layer {
   position: fixed !important;
@@ -5749,7 +5749,7 @@ div.fixed.inset-0.z-\[90\] button.bg-yellow-400 {
 
 
 
-/* === REFERENCE HOME SCREEN PATCH v66 === */
+/* === REFERENCE HOME SCREEN PATCH v67 === */
 /* Temporary boosts are reusable purchases without levels */
 .onix-upgrade-ref-card:has(.onix-upgrade-ref-buy) .onix-upgrade-ref-level:empty {
   display: none !important;
@@ -5761,7 +5761,7 @@ div.fixed.inset-0.z-\[90\] button.bg-yellow-400 {
 
 
 
-/* === REFERENCE HOME SCREEN PATCH v66 === */
+/* === REFERENCE HOME SCREEN PATCH v67 === */
 /* Final fix for boost PNG icons: tight crop, no black contour, no extra wrapper frame. */
 .onix-upgrade-ref-icon--image {
   width: 60px !important;
@@ -5799,6 +5799,265 @@ div.fixed.inset-0.z-\[90\] button.bg-yellow-400 {
     height: 58px !important;
   }
 }
+
+
+/* === REFERENCE HOME SCREEN PATCH v67 === */
+/* ONIX style for Tasks, missions and achievements */
+.onix-tasks-ref-screen {
+  position: relative !important;
+  isolation: isolate !important;
+  padding-bottom: 126px !important;
+  color: #f5f0ff !important;
+}
+
+.onix-tasks-ref-screen > h2:first-child {
+  position: relative !important;
+  margin: 0 0 18px !important;
+  padding: 18px 18px 18px 56px !important;
+  border-radius: 26px !important;
+  border: 1px solid rgba(168, 85, 247, 0.42) !important;
+  background:
+    radial-gradient(circle at 18% 15%, rgba(168, 85, 247, 0.20), transparent 38%),
+    radial-gradient(circle at 88% 20%, rgba(45, 212, 255, 0.12), transparent 34%),
+    linear-gradient(145deg, rgba(13, 11, 35, 0.92), rgba(5, 9, 24, 0.96)) !important;
+  box-shadow:
+    inset 0 0 22px rgba(132, 86, 255, 0.10),
+    0 16px 36px rgba(0, 0, 0, 0.24) !important;
+  font-family: 'Exo 2', system-ui, sans-serif !important;
+  font-size: 24px !important;
+  line-height: 1.05 !important;
+  font-weight: 900 !important;
+  letter-spacing: 0.01em !important;
+  color: #ffffff !important;
+}
+
+.onix-tasks-ref-screen > h2:first-child::before {
+  content: '◆' !important;
+  position: absolute !important;
+  left: 18px !important;
+  top: 50% !important;
+  transform: translateY(-50%) !important;
+  width: 28px !important;
+  height: 28px !important;
+  border-radius: 11px !important;
+  display: grid !important;
+  place-items: center !important;
+  color: #7ef9ff !important;
+  background:
+    radial-gradient(circle at 50% 45%, rgba(45, 212, 255, 0.28), rgba(75, 18, 190, 0.22) 62%, rgba(8, 10, 30, 0.92) 100%) !important;
+  border: 1px solid rgba(126, 249, 255, 0.20) !important;
+  box-shadow: 0 0 18px rgba(126, 249, 255, 0.16) !important;
+  font-size: 13px !important;
+}
+
+.onix-tasks-ref-screen .shop-item {
+  position: relative !important;
+  overflow: hidden !important;
+  min-height: 88px !important;
+  padding: 17px 18px !important;
+  border-radius: 25px !important;
+  border: 1px solid rgba(124, 58, 237, 0.34) !important;
+  background:
+    radial-gradient(circle at 16% 18%, rgba(168, 85, 247, 0.16), transparent 36%),
+    linear-gradient(145deg, rgba(10, 12, 35, 0.94), rgba(5, 8, 24, 0.97)) !important;
+  box-shadow:
+    inset 0 0 18px rgba(132, 86, 255, 0.08),
+    0 14px 30px rgba(0, 0, 0, 0.22) !important;
+}
+
+.onix-tasks-ref-screen .shop-item::before {
+  content: '' !important;
+  position: absolute !important;
+  inset: 1px !important;
+  border-radius: 24px !important;
+  border: 1px solid rgba(210, 184, 255, 0.08) !important;
+  pointer-events: none !important;
+}
+
+.onix-tasks-ref-screen .shop-item p.font-bold {
+  font-family: 'Exo 2', system-ui, sans-serif !important;
+  font-size: 17px !important;
+  font-weight: 900 !important;
+  color: #ffffff !important;
+  letter-spacing: 0.01em !important;
+}
+
+.onix-tasks-ref-screen .shop-item p.text-gray-400 {
+  color: rgba(218, 208, 255, 0.74) !important;
+  font-weight: 700 !important;
+}
+
+.onix-tasks-ref-screen .shop-item p.text-yellow-400,
+.onix-tasks-ref-screen .shop-item .text-yellow-400 {
+  color: #f6c833 !important;
+  text-shadow: none !important;
+}
+
+.onix-tasks-ref-screen .shop-item > span {
+  min-width: 92px !important;
+  padding: 10px 12px !important;
+  border-radius: 17px !important;
+  text-align: center !important;
+  color: #f6c833 !important;
+  background:
+    linear-gradient(145deg, rgba(28, 19, 9, 0.92), rgba(10, 12, 35, 0.92)) !important;
+  border: 1px solid rgba(246, 200, 51, 0.24) !important;
+  box-shadow: inset 0 0 12px rgba(246, 200, 51, 0.06) !important;
+}
+
+/* Mission / achievements panels */
+.onix-tasks-ref-screen > div.rounded-3xl,
+.onix-tasks-ref-screen .mt-8 > div.rounded-3xl,
+.onix-tasks-ref-screen .space-y-4 > div.rounded-3xl {
+  position: relative !important;
+  overflow: hidden !important;
+  border-radius: 28px !important;
+  border: 1px solid rgba(168, 85, 247, 0.38) !important;
+  background:
+    radial-gradient(circle at 18% 0%, rgba(168, 85, 247, 0.16), transparent 42%),
+    radial-gradient(circle at 92% 18%, rgba(45, 212, 255, 0.10), transparent 34%),
+    linear-gradient(145deg, rgba(11, 12, 35, 0.96), rgba(5, 9, 24, 0.98)) !important;
+  box-shadow:
+    inset 0 0 22px rgba(132, 86, 255, 0.09),
+    0 16px 38px rgba(0, 0, 0, 0.25) !important;
+}
+
+.onix-tasks-ref-screen > div.rounded-3xl::before,
+.onix-tasks-ref-screen .mt-8 > div.rounded-3xl::before,
+.onix-tasks-ref-screen .space-y-4 > div.rounded-3xl::before {
+  content: '' !important;
+  position: absolute !important;
+  inset: 1px !important;
+  border-radius: 27px !important;
+  border: 1px solid rgba(210, 184, 255, 0.08) !important;
+  pointer-events: none !important;
+}
+
+.onix-tasks-ref-screen h3,
+.onix-tasks-ref-screen .mt-8 h2 {
+  font-family: 'Exo 2', system-ui, sans-serif !important;
+  font-weight: 900 !important;
+  color: #ffffff !important;
+  letter-spacing: 0.01em !important;
+}
+
+.onix-tasks-ref-screen .text-gray-400 {
+  color: rgba(218, 208, 255, 0.70) !important;
+}
+
+.onix-tasks-ref-screen .text-yellow-400 {
+  color: #f6c833 !important;
+}
+
+.onix-tasks-ref-screen .text-emerald-400 {
+  color: #7ef9ff !important;
+}
+
+/* Inner mission cards */
+.onix-tasks-ref-screen .space-y-3 > div.rounded-2xl,
+.onix-tasks-ref-screen .space-y-4 > div.rounded-3xl {
+  border: 1px solid rgba(124, 58, 237, 0.25) !important;
+  background:
+    radial-gradient(circle at 18% 14%, rgba(88, 28, 135, 0.18), transparent 40%),
+    linear-gradient(145deg, rgba(6, 9, 27, 0.96), rgba(4, 7, 20, 0.98)) !important;
+  box-shadow: inset 0 0 16px rgba(132, 86, 255, 0.06) !important;
+}
+
+.onix-tasks-ref-screen .space-y-3 > div.rounded-2xl .rounded-2xl,
+.onix-tasks-ref-screen .space-y-4 > div.rounded-3xl .rounded-2xl {
+  border: 1px solid rgba(246, 200, 51, 0.18) !important;
+  background:
+    linear-gradient(145deg, rgba(28, 19, 9, 0.92), rgba(8, 10, 26, 0.94)) !important;
+  box-shadow: inset 0 0 12px rgba(246, 200, 51, 0.05) !important;
+}
+
+/* ONIX progress bars */
+.onix-tasks-ref-screen .h-3.overflow-hidden.rounded-full {
+  height: 9px !important;
+  border-radius: 999px !important;
+  background: rgba(10, 14, 35, 0.92) !important;
+  border: 1px solid rgba(126, 249, 255, 0.12) !important;
+  box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.38) !important;
+}
+
+.onix-tasks-ref-screen .h-3.overflow-hidden.rounded-full > div {
+  background:
+    linear-gradient(90deg, #22d3ee 0%, #8b5cf6 54%, #d946ef 100%) !important;
+  box-shadow:
+    0 0 10px rgba(168, 85, 247, 0.32),
+    0 0 14px rgba(45, 212, 255, 0.18) !important;
+}
+
+/* ONIX buttons */
+.onix-tasks-ref-screen button.rounded-2xl {
+  border-radius: 18px !important;
+  font-family: 'Exo 2', system-ui, sans-serif !important;
+  font-weight: 900 !important;
+  letter-spacing: 0.01em !important;
+  transition: transform 0.14s ease, opacity 0.14s ease !important;
+}
+
+.onix-tasks-ref-screen button.rounded-2xl:not(:disabled) {
+  color: #ffffff !important;
+  background: linear-gradient(180deg, #9b3dff 0%, #7b22ee 100%) !important;
+  border: 1px solid rgba(219, 188, 255, 0.28) !important;
+  box-shadow:
+    0 0 22px rgba(168, 85, 247, 0.24),
+    inset 0 1px 0 rgba(255, 255, 255, 0.18) !important;
+}
+
+.onix-tasks-ref-screen button.rounded-2xl:disabled {
+  color: rgba(218, 208, 255, 0.46) !important;
+  background: rgba(14, 18, 38, 0.92) !important;
+  border: 1px solid rgba(124, 58, 237, 0.18) !important;
+}
+
+/* Achievement filter pills */
+.onix-tasks-ref-screen .overflow-x-auto button.rounded-full {
+  border: 1px solid rgba(168, 85, 247, 0.24) !important;
+  background: rgba(8, 10, 28, 0.90) !important;
+  color: rgba(218, 208, 255, 0.72) !important;
+}
+
+.onix-tasks-ref-screen .overflow-x-auto button.bg-yellow-400 {
+  color: #ffffff !important;
+  background: linear-gradient(180deg, #9b3dff 0%, #7b22ee 100%) !important;
+  box-shadow: 0 0 18px rgba(168, 85, 247, 0.30) !important;
+}
+
+.onix-tasks-ref-screen .mt-8 > .mb-4 > span {
+  border: 1px solid rgba(246, 200, 51, 0.22) !important;
+  background:
+    linear-gradient(145deg, rgba(28, 19, 9, 0.92), rgba(10, 12, 35, 0.92)) !important;
+  color: #f6c833 !important;
+}
+
+/* Completed all achievements message */
+.onix-tasks-ref-screen .bg-emerald-500\/10 {
+  border-color: rgba(45, 212, 255, 0.30) !important;
+  background:
+    radial-gradient(circle at 50% 0%, rgba(45, 212, 255, 0.10), transparent 42%),
+    linear-gradient(145deg, rgba(5, 18, 30, 0.94), rgba(5, 9, 24, 0.98)) !important;
+}
+
+@media (max-width: 430px) {
+  .onix-tasks-ref-screen > h2:first-child {
+    padding: 16px 16px 16px 52px !important;
+    font-size: 22px !important;
+  }
+
+  .onix-tasks-ref-screen .shop-item {
+    min-height: 82px !important;
+    padding: 15px 15px !important;
+  }
+
+  .onix-tasks-ref-screen .shop-item > span {
+    min-width: 84px !important;
+    padding: 9px 10px !important;
+    font-size: 13px !important;
+  }
+}
+
 
 `;
 
@@ -11767,7 +12026,7 @@ body:has(.onix-home-reference-mode),
       })()}
 
       {activeTab === 'tasks' && (
-        <div className="onix-tasks-screen px-5 mt-8 space-y-4">
+        <div className="onix-tasks-screen onix-tasks-ref-screen px-5 mt-8 space-y-4">
           <h2 className="text-2xl font-bold mb-6">📋 Задания</h2>
 
           <div
