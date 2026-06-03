@@ -2841,6 +2841,27 @@ body,
   filter: drop-shadow(0 0 10px rgba(168, 85, 247, 0.28)) !important;
 }
 
+.onix-upgrade-ref-icon--image {
+  width: 64px !important;
+  height: 64px !important;
+  flex: 0 0 64px !important;
+  background: transparent !important;
+  border: none !important;
+  border-radius: 18px !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+  overflow: visible !important;
+}
+
+.onix-upgrade-ref-icon--image img {
+  width: 64px !important;
+  height: 64px !important;
+  object-fit: contain !important;
+  display: block !important;
+  filter: none !important;
+  border-radius: 18px !important;
+}
+
 .onix-upgrade-ref-icon span {
   display: inline-flex !important;
   align-items: center !important;
@@ -2934,6 +2955,17 @@ body,
     height: 44px !important;
     flex-basis: 44px !important;
     font-size: 22px !important;
+  }
+
+  .onix-upgrade-ref-icon--image {
+    width: 58px !important;
+    height: 58px !important;
+    flex-basis: 58px !important;
+  }
+
+  .onix-upgrade-ref-icon--image img {
+    width: 58px !important;
+    height: 58px !important;
   }
 
   .onix-upgrade-ref-buy {
@@ -11655,10 +11687,12 @@ body:has(.onix-home-reference-mode),
             </div>
 
             <div className="onix-upgrades-ref-list">
-              {currentCards.map((item) => (
+              {currentCards.map((item) => {
+                const isImageIcon = typeof item.icon === 'string' && (item.icon.startsWith('data:image/') || item.icon.startsWith('/') || item.icon.includes('/assets/') || item.icon.endsWith('.png') || item.icon.endsWith('.webp') || item.icon.endsWith('.jpg') || item.icon.endsWith('.jpeg'));
+                return (
                 <div key={item.id} className="onix-upgrade-ref-card">
-                  <div className={`onix-upgrade-ref-icon onix-upgrade-ref-icon-${item.accent}`}>
-                    {typeof item.icon === 'string' && (item.icon.startsWith('data:image/') || item.icon.startsWith('/') || item.icon.includes('/assets/') || item.icon.endsWith('.png') || item.icon.endsWith('.webp') || item.icon.endsWith('.jpg') || item.icon.endsWith('.jpeg')) ? (
+                  <div className={`onix-upgrade-ref-icon onix-upgrade-ref-icon-${item.accent}${isImageIcon ? ' onix-upgrade-ref-icon--image' : ''}`}>
+                    {isImageIcon ? (
                       <img src={item.icon} alt={item.title} />
                     ) : (
                       <span>{item.icon}</span>
@@ -11685,7 +11719,8 @@ body:has(.onix-home-reference-mode),
                     </span>
                   </button>
                 </div>
-              ))}
+                );
+              })}
             </div>
           </div>
         );
