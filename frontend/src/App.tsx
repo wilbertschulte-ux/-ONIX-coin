@@ -7249,8 +7249,8 @@ div.fixed.inset-0.z-\[90\] button.bg-yellow-400 {
 }
 
 /* The rank image itself contains a rectangular glow. Crop/mask the outer edge and scale the art. */
-.onix-profile-v79-rank-clean,
-.onix-profile-v79-page .onix-profile-v75-rank-icon.onix-profile-v79-rank-clean {
+.onix-profile-v80-rank-clean,
+.onix-profile-v79-page .onix-profile-v75-rank-icon.onix-profile-v80-rank-clean {
   width: 92px !important;
   height: 92px !important;
   display: grid !important;
@@ -7264,7 +7264,7 @@ div.fixed.inset-0.z-\[90\] button.bg-yellow-400 {
   filter: none !important;
 }
 
-.onix-profile-v79-rank-img {
+.onix-profile-v80-rank-img {
   width: 112% !important;
   height: 112% !important;
   object-fit: contain !important;
@@ -7290,8 +7290,150 @@ div.fixed.inset-0.z-\[90\] button.bg-yellow-400 {
 }
 
 @media(max-width:430px){
-  .onix-profile-v79-rank-clean,
-  .onix-profile-v79-page .onix-profile-v75-rank-icon.onix-profile-v79-rank-clean {
+  .onix-profile-v80-rank-clean,
+  .onix-profile-v79-page .onix-profile-v75-rank-icon.onix-profile-v80-rank-clean {
+    width: 82px !important;
+    height: 82px !important;
+  }
+}
+
+
+
+/* === REFERENCE HOME SCREEN PATCH v80 === */
+/* Profile uses the exact shared tab background + rank image border/glow edge removal */
+.onix-social-screen.onix-profile-screen.onix-profile-v80-page {
+  position: relative !important;
+  isolation: isolate !important;
+  margin-top: 0 !important;
+  padding: 12px 16px calc(84px + env(safe-area-inset-bottom)) !important;
+  background: transparent !important;
+  background-image: none !important;
+  background-color: transparent !important;
+  overflow: hidden !important;
+}
+
+/* Restore the same shared background layer that is used by Tasks/Upgrades. */
+.onix-social-screen.onix-profile-screen.onix-profile-v80-page::before {
+  content: '' !important;
+  position: fixed !important;
+  inset: 0 !important;
+  pointer-events: none !important;
+  z-index: -2 !important;
+  background-image:
+    linear-gradient(180deg, rgba(2, 4, 13, 0.10) 0%, rgba(2, 4, 13, 0.12) 55%, rgba(2, 4, 13, 0.34) 100%),
+    url(data:image/webp;base64,UklGRsQDAwBXRUJQVlA4ILgDAwCwfgqdASqtA4gGPikUiEMhoSIipHMJ+FAFCU283LxFvTb64fEZfOlg+Drf3bJjg3527/lnCsd6b/u+Nfr/TiYwmT00XyP/8107fJK/4u0xAPUvq369fCH4v9J6PnJvbr73++/5b/m/5L92/mP/7v9d32ddf/D/Yfmp7xfnn73/2v8f/pv/r/tf/////v3/wf/X/qf9T8Pv7p/tf/V/qP3x+gj+rf4j/s/5H/aft39UP+p+4fuv/c7/3/7n/hf/f5Df1//Of+n/Q/7T/9f876Uf+F/8f91/wP/1/yvpV/U/9b/8f9P/sf///yfsD/oH+A/9X+g/3H/8+Y7/xf/z/h/Cv/av+j/9/+L/zv//9C/88/yX/s/0n+2//v/Q+o//w//n/jf8r/+f9H7WP7T/zP/v/vv+J///+j9kH9S/1H/x/03/E////h+gD/2//D3oP4B/5////1PcA/f/u6fPh8q/yP+54y9lH6n/7n+Z+P7+Z0x+mf6Xmp/OPyl/S/x/7zfGH/L8bf2f+79BT89/uP/O9ef8v9vPAa6D/mf+j/dewX76/iP+t/n/9R/8/9t7jn5X/t/1Xrx+qf6r/0f6r8xfsC/nf9v/6/+O/e79//qb/zeV391/8f7kfAd/R/85/6/9V+ZH05/7H/1/3/5q/Bb9L/4f/w/13wK/0X/Df9//O/vt/rv/////vt/+vvV9FP90//WQ8W5/44HCsB2ZuQVUbBljS3P2mdu9ivJce1rK9V53nWIiIiIi8dPPB2AIiJ84x9DxZkxMxwq+bJNKZauoWVMQTDuZW/a7nF0fHbPpgPRLhw4D3UGx/EJG//OFyPOTLcepfu2BxaQER+2Kl7s1rPUm8R6GrJfWLlS1oyAj6f2L1yYwERkS2lZpj9wPNwQ3W34WPHeb4fAjXgMD/4nmzj2YD+kkwC1kCLPqCZCiCTHMKEGrWBEwMpiFGOEUMEovOx+i2KqYAGIp50UqC2UGYHZxM0GxhpAFyZDgxZbeXOp8u6dxxgEaKqEEm4hD9WJGAPUCyymAdMJ2J9KkAbEzEKBjgx0tGxgRoAV9wYWGMwG4mxWjYxEMQ9Y5KBh8hHcYxWjmUIiI0OCAQQCEGh1iDCKGKoAbTQYzITZgZC6YDMTgGxiJEUOa1hGShEAil2RMyCqCQbE9MSMDaBzhJRf0lIiJHUUERMQITItOVxBwYjMHkHObYaQ4OYmGDMBiIWULBljS2bOcam0PG+Ls17WSGhnf7urRKzk7uR2mK6Yz+7Kzbr6k7wYf1TLtPz+FWOkz5lFNuErOR5KkPpxymIuuc7m88+3Cl4l7O4y7eonIiKuWWuxbVX49IkXNEuLUc3x6QMfoojYk1VBHdgqP4Qy6ShEZGr/t4JSxWwwh8OnMH9JzQWXRdGzU1f2GvFiUD+kxk0B9CxtU48TrGyxLxv+ce1STU8Rqm2plzMPF1cVmAInvL84r6cKTv0upbgcVTc8GsR7067INM8GoyufrnW7w5AixuPjzAbhjz5Te4ZB9bSEw7c5OnmjaDb9EQQBS7qzAA=) !important;
+  background-size: cover, cover !important;
+  background-position: center top, center top !important;
+  background-repeat: no-repeat, no-repeat !important;
+  opacity: 1 !important;
+}
+
+/* same subtle vertical glow overlay, not a separate profile-only background */
+.onix-social-screen.onix-profile-screen.onix-profile-v80-page::after {
+  content: '' !important;
+  position: fixed !important;
+  inset: 0 !important;
+  z-index: -1 !important;
+  pointer-events: none !important;
+  opacity: 0.30 !important;
+  background:
+    radial-gradient(circle at 50% 83%, rgba(169, 70, 255, 0.20), transparent 34%),
+    linear-gradient(180deg, rgba(0,0,0,0.02), rgba(0,0,0,0.18)) !important;
+}
+
+/* remove v79/v78 custom profile background layers */
+.onix-profile-v79-page::before,
+.onix-profile-v79-page::after,
+.onix-profile-v78-page::before,
+.onix-profile-v78-page::after {
+  display: none !important;
+  content: none !important;
+  background: none !important;
+}
+
+/* Hero stays transparent over the shared background */
+.onix-profile-v80-page .onix-profile-ref-screen,
+.onix-profile-v80-page .onix-profile-v75-screen,
+.onix-profile-v80-page .onix-profile-v75-hero,
+.onix-profile-v80-hero {
+  background: transparent !important;
+  background-image: none !important;
+  box-shadow: none !important;
+  border: 0 !important;
+  filter: none !important;
+}
+
+/* Clean rank icon: mask away the square glow that exists inside the rank picture itself */
+.onix-profile-v80-rank-clean,
+.onix-profile-v80-page .onix-profile-v75-rank-icon.onix-profile-v80-rank-clean {
+  width: 92px !important;
+  height: 92px !important;
+  display: grid !important;
+  place-items: center !important;
+  overflow: visible !important;
+  padding: 0 !important;
+  background: transparent !important;
+  background-image: none !important;
+  border: 0 !important;
+  outline: 0 !important;
+  box-shadow: none !important;
+  filter: none !important;
+  border-radius: 0 !important;
+}
+
+.onix-profile-v80-rank-clean *,
+.onix-profile-v80-page .onix-profile-v80-rank-clean * {
+  background: transparent !important;
+  background-image: none !important;
+  border: 0 !important;
+  box-shadow: none !important;
+  outline: 0 !important;
+}
+
+.onix-profile-v80-rank-img {
+  width: 124% !important;
+  height: 124% !important;
+  object-fit: contain !important;
+  object-position: center center !important;
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+  filter: drop-shadow(0 0 5px rgba(168, 85, 247, 0.14)) !important;
+  clip-path: inset(15% 15% 15% 15% round 999px) !important;
+  -webkit-mask-image:
+    radial-gradient(circle at 50% 50%,
+      #000 0%,
+      #000 43%,
+      rgba(0,0,0,0.90) 49%,
+      rgba(0,0,0,0.38) 56%,
+      transparent 67%
+    ) !important;
+  mask-image:
+    radial-gradient(circle at 50% 50%,
+      #000 0%,
+      #000 43%,
+      rgba(0,0,0,0.90) 49%,
+      rgba(0,0,0,0.38) 56%,
+      transparent 67%
+    ) !important;
+}
+
+/* Avatar also sits naturally on the same background */
+.onix-profile-v80-page .onix-profile-v75-avatar {
+  background: rgba(6, 9, 27, 0.34) !important;
+  background-image: none !important;
+  border: 1px solid rgba(168, 85, 247, 0.14) !important;
+  box-shadow: none !important;
+  filter: none !important;
+}
+.onix-profile-v80-page .onix-profile-v75-avatar img {
+  filter: none !important;
+  box-shadow: none !important;
+}
+
+@media(max-width:430px){
+  .onix-profile-v80-rank-clean,
+  .onix-profile-v80-page .onix-profile-v75-rank-icon.onix-profile-v80-rank-clean {
     width: 82px !important;
     height: 82px !important;
   }
@@ -13938,9 +14080,9 @@ body:has(.onix-home-reference-mode),
       })()}
 
       {activeTab === 'friends' && (
-        <div className="onix-social-screen onix-profile-v79-page px-5 mt-8 space-y-5">
+        <div className="onix-social-screen onix-profile-screen onix-profile-v80-page px-5 mt-8 space-y-5">
           <div className="onix-profile-ref-screen onix-profile-v75-screen">
-            <div className="onix-profile-v75-hero onix-profile-v79-hero">
+            <div className="onix-profile-v75-hero onix-profile-v80-hero">
               <div className="onix-profile-v75-avatar">
                 {telegramAvatarUrl ? (
                   <img src={telegramAvatarUrl} alt="Telegram avatar" draggable={false} />
@@ -13954,9 +14096,9 @@ body:has(.onix-home-reference-mode),
                 <div className="onix-profile-v75-title">{selectedTitle || rankInfo.currentRank.name}</div>
               </div>
 
-              <div className="onix-profile-v75-rank-icon onix-profile-v79-rank-clean">
+              <div className="onix-profile-v75-rank-icon onix-profile-v80-rank-clean">
                 <img
-                  className="onix-profile-v79-rank-img"
+                  className="onix-profile-v80-rank-img"
                   src={RANK_ICON_IMAGES[getRankIconTier(rankInfo.currentRank.id, rankInfo.currentRank.name)] || RANK_ICON_IMAGES.novice}
                   alt={rankInfo.currentRank.name}
                   draggable={false}
