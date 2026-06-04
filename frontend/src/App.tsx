@@ -6205,6 +6205,126 @@ div.fixed.inset-0.z-\[90\] button.bg-yellow-400 {
 }
 
 
+
+/* === REFERENCE HOME SCREEN PATCH v70 === */
+/* Tasks final layout: starts at top, inner tabs match Upgrades, completed one-time tasks disappear */
+.onix-tasks-ref-screen {
+  margin-top: 0 !important;
+  padding-top: 14px !important;
+}
+
+.onix-tasks-ref-screen > h2:first-child {
+  position: relative !important;
+  top: auto !important;
+  z-index: 1 !important;
+  margin: 0 0 18px !important;
+}
+
+/* Make Tasks inner tabs one-to-one with Upgrades tabs */
+.onix-tasks-ref-tabs {
+  position: relative !important;
+  top: auto !important;
+  z-index: 1 !important;
+  display: grid !important;
+  grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+  gap: 8px !important;
+  margin: 0 0 14px !important;
+  padding: 0 0 10px !important;
+  border: 0 !important;
+  border-bottom: 1px solid rgba(132, 96, 255, 0.24) !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  backdrop-filter: none !important;
+}
+
+.onix-tasks-ref-tab {
+  position: relative !important;
+  height: auto !important;
+  min-height: 42px !important;
+  padding: 8px 2px 10px !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  color: rgba(205, 210, 231, 0.72) !important;
+  font-family: 'Exo 2', system-ui, sans-serif !important;
+  font-size: 12px !important;
+  line-height: 1.1 !important;
+  font-weight: 800 !important;
+  letter-spacing: 0.01em !important;
+  white-space: normal !important;
+}
+
+.onix-tasks-ref-tab.is-active {
+  color: #ffffff !important;
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+}
+
+.onix-tasks-ref-tab.is-active::after {
+  content: '' !important;
+  position: absolute !important;
+  left: 14% !important;
+  right: 14% !important;
+  bottom: 0 !important;
+  height: 3px !important;
+  border-radius: 999px !important;
+  background: linear-gradient(90deg, #932bff 0%, #d04cff 100%) !important;
+  box-shadow: 0 0 12px rgba(175, 70, 255, 0.75) !important;
+}
+
+.onix-tasks-empty-card {
+  position: relative !important;
+  overflow: hidden !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 14px !important;
+  min-height: 86px !important;
+  padding: 17px 18px !important;
+  border-radius: 25px !important;
+  border: 1px solid rgba(45, 212, 255, 0.26) !important;
+  background:
+    radial-gradient(circle at 16% 18%, rgba(45, 212, 255, 0.10), transparent 36%),
+    linear-gradient(145deg, rgba(10, 12, 35, 0.94), rgba(5, 8, 24, 0.97)) !important;
+  box-shadow:
+    inset 0 0 18px rgba(132, 86, 255, 0.08),
+    0 14px 30px rgba(0, 0, 0, 0.22) !important;
+}
+
+.onix-tasks-empty-icon {
+  width: 42px !important;
+  height: 42px !important;
+  flex: 0 0 42px !important;
+  display: grid !important;
+  place-items: center !important;
+  border-radius: 15px !important;
+  color: #7ef9ff !important;
+  font-weight: 900 !important;
+  background:
+    radial-gradient(circle at 40% 35%, rgba(45, 212, 255, 0.22), rgba(9, 42, 66, 0.92) 70%) !important;
+  border: 1px solid rgba(45, 212, 255, 0.22) !important;
+}
+
+.onix-tasks-empty-card p.font-bold {
+  color: #ffffff !important;
+  font-family: 'Exo 2', system-ui, sans-serif !important;
+  font-weight: 900 !important;
+}
+
+@media (max-width: 430px) {
+  .onix-tasks-ref-screen {
+    padding-top: 10px !important;
+  }
+
+  .onix-tasks-ref-tab {
+    min-height: 39px !important;
+    font-size: 11px !important;
+  }
+}
+
+
 `;
 
 
@@ -11609,7 +11729,7 @@ body:has(.onix-home-reference-mode),
         </div>
       )}
 
-      {activeTab !== 'home' && activeTab !== 'boosts' && activeTab !== 'friends' && (
+      {activeTab !== 'home' && activeTab !== 'boosts' && activeTab !== 'friends' && activeTab !== 'tasks' && (
         <>
       <div className="onix-rank-panel px-5 pt-4">
         <div className="flex justify-between mb-2">
@@ -12199,6 +12319,7 @@ body:has(.onix-home-reference-mode),
 
           {tasksInnerTab === 'tasks' && (
             <div className="onix-tasks-ref-panel onix-tasks-ref-panel-main">
+{!completedTasks.includes('channel') && (
 <div
             onClick={async () => {
               if (completedTasks.includes('channel')) return;
@@ -12257,7 +12378,9 @@ body:has(.onix-home-reference-mode),
                 : 'Подписаться'}
             </span>
           </div>
+)}
 
+{!completedTasks.includes('inviteFriend') && (
 <div
             onClick={async () => {
               if (completedTasks.includes('inviteFriend')) return;
@@ -12299,9 +12422,6 @@ body:has(.onix-home-reference-mode),
             <div>
               <p className="font-bold">👥 Пригласить друга</p>
               <p className="text-gray-400">+{formatOnix(economyConfig.referralReward)} ONIX</p>
-              <p className="text-xs text-yellow-400">
-                Бонусы сегодня: {referralLimit.used}/{referralLimit.max}
-              </p>
             </div>
 
             <span className="text-emerald-400 font-bold">
@@ -12312,6 +12432,17 @@ body:has(.onix-home-reference-mode),
                 : 'Пригласить'}
             </span>
           </div>
+)}
+
+{completedTasks.includes('channel') && completedTasks.includes('inviteFriend') && (
+  <div className="onix-tasks-empty-card">
+    <div className="onix-tasks-empty-icon">✓</div>
+    <div>
+      <p className="font-bold">Все одноразовые задания выполнены</p>
+      <p className="text-gray-400">Новые задания появятся позже.</p>
+    </div>
+  </div>
+)}
             </div>
           )}
 
