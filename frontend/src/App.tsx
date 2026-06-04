@@ -6818,6 +6818,144 @@ div.fixed.inset-0.z-\[90\] button.bg-yellow-400 {
 }
 
 
+
+/* === REFERENCE HOME SCREEN PATCH v77 === */
+/* Profile background unified with other tabs + remove visible rectangular glow bounds */
+.onix-social-screen {
+  margin-top: 0 !important;
+  padding: 12px 16px calc(84px + env(safe-area-inset-bottom)) !important;
+  background: transparent !important;
+}
+
+.onix-profile-ref-screen.onix-profile-v75-screen,
+.onix-profile-v75-screen {
+  position: relative !important;
+  max-height: calc(100dvh - 88px) !important;
+  overflow-y: auto !important;
+  padding-bottom: 20px !important;
+  scrollbar-width: none !important;
+  background: transparent !important;
+}
+
+.onix-profile-ref-screen.onix-profile-v75-screen::before,
+.onix-profile-ref-screen.onix-profile-v75-screen::after,
+.onix-profile-v75-screen::before,
+.onix-profile-v75-screen::after {
+  display: none !important;
+  content: none !important;
+}
+
+/* Top profile block should be natural, not a visible rectangular glow layer */
+.onix-profile-v75-hero {
+  position: relative !important;
+  display: grid !important;
+  grid-template-columns: 92px minmax(0,1fr) 92px !important;
+  gap: 14px !important;
+  align-items: center !important;
+  margin-bottom: 16px !important;
+  padding: 0 !important;
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+  overflow: visible !important;
+  isolation: auto !important;
+}
+
+.onix-profile-v75-hero::before,
+.onix-profile-v75-hero::after {
+  display: none !important;
+  content: none !important;
+}
+
+/* Avatar stays a clean avatar card; no large external glow box */
+.onix-profile-v75-avatar {
+  width: 92px !important;
+  height: 92px !important;
+  border-radius: 26px !important;
+  overflow: hidden !important;
+  display: grid !important;
+  place-items: center !important;
+  background:
+    linear-gradient(145deg, rgba(13, 11, 35, 0.72), rgba(5, 9, 24, 0.88)) !important;
+  border: 1px solid rgba(168, 85, 247, 0.22) !important;
+  box-shadow:
+    inset 0 0 16px rgba(45, 212, 255, 0.05),
+    0 0 14px rgba(168, 85, 247, 0.12) !important;
+}
+
+.onix-profile-v75-avatar img {
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: cover !important;
+  filter: none !important;
+}
+
+/* Rank icon: icon only, no wrapper, no rectangular glow artifacts */
+.onix-profile-v75-rank-icon {
+  width: 92px !important;
+  height: 92px !important;
+  display: grid !important;
+  place-items: center !important;
+  overflow: visible !important;
+  background: transparent !important;
+  border: none !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+}
+
+.onix-profile-v75-rank-icon img,
+.onix-profile-v75-rank-icon .onix-rank-icon-image,
+.onix-profile-v75-rank-icon .onix-rank-ref-img {
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: contain !important;
+  filter:
+    drop-shadow(0 0 9px rgba(168, 85, 247, 0.30))
+    drop-shadow(0 0 14px rgba(45, 212, 255, 0.08)) !important;
+}
+
+.onix-profile-v75-rank-icon .onix-rank-icon,
+.onix-profile-v75-rank-icon .onix-ref-v5-rank-badge,
+.onix-profile-v75-rank-icon .onix-home-rank-mark {
+  width: 100% !important;
+  height: 100% !important;
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  border-radius: 0 !important;
+  overflow: visible !important;
+}
+
+/* All profile cards use the same ONIX glass style as the other tabs */
+.onix-profile-v75-stat,
+.onix-profile-v75-menu button,
+.onix-profile-v75-panel,
+.onix-profile-v75-section-card,
+.onix-profile-v75-invited-card,
+.onix-profile-v75-rank-row {
+  background:
+    radial-gradient(circle at 16% 14%, rgba(168, 85, 247, 0.12), transparent 38%),
+    linear-gradient(145deg, rgba(10, 12, 35, 0.88), rgba(5, 8, 24, 0.96)) !important;
+  border: 1px solid rgba(124, 58, 237, 0.24) !important;
+  box-shadow:
+    inset 0 0 18px rgba(132, 86, 255, 0.06),
+    0 12px 26px rgba(0, 0, 0, 0.16) !important;
+}
+
+@media(max-width:430px){
+  .onix-profile-v75-hero {
+    grid-template-columns: 82px minmax(0,1fr) 82px !important;
+  }
+
+  .onix-profile-v75-avatar,
+  .onix-profile-v75-rank-icon {
+    width: 82px !important;
+    height: 82px !important;
+  }
+}
+
+
 `;
 
 
