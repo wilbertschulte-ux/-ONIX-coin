@@ -7150,6 +7150,154 @@ div.fixed.inset-0.z-\[90\] button.bg-yellow-400 {
 }
 
 
+
+/* === REFERENCE HOME SCREEN PATCH v79 === */
+/* Real profile fix: unified tab background + clean cropped rank image without square glow edges */
+.onix-social-screen.onix-profile-v79-page {
+  position: relative !important;
+  isolation: isolate !important;
+  margin-top: 0 !important;
+  padding: 12px 16px calc(84px + env(safe-area-inset-bottom)) !important;
+  background:
+    linear-gradient(rgba(3, 6, 20, 0.16), rgba(3, 6, 20, 0.16)),
+    var(--onix-app-screen-bg, none) !important;
+  background-color: #050914 !important;
+  background-size: cover !important;
+  background-position: center top !important;
+  overflow: hidden !important;
+}
+
+/* force same crystal/cavern background layer as other tabs, even if the outer app bg differs */
+.onix-social-screen.onix-profile-v79-page::before {
+  content: '' !important;
+  position: fixed !important;
+  inset: 0 !important;
+  z-index: -2 !important;
+  pointer-events: none !important;
+  background:
+    linear-gradient(180deg, rgba(2, 4, 18, 0.12), rgba(2, 4, 18, 0.22)),
+    radial-gradient(circle at 50% 82%, rgba(151, 71, 255, 0.18), transparent 34%),
+    radial-gradient(circle at 14% 18%, rgba(93, 43, 255, 0.20), transparent 32%),
+    radial-gradient(circle at 86% 16%, rgba(45, 212, 255, 0.10), transparent 30%),
+    linear-gradient(180deg, #020514 0%, #07102a 46%, #050914 100%) !important;
+}
+
+.onix-social-screen.onix-profile-v79-page::after {
+  content: '' !important;
+  position: fixed !important;
+  inset: 0 !important;
+  z-index: -1 !important;
+  pointer-events: none !important;
+  opacity: 0.48 !important;
+  background-image:
+    linear-gradient(180deg, rgba(100, 50, 255, 0.16), transparent 18%, transparent 82%, rgba(100, 50, 255, 0.12)),
+    radial-gradient(circle at 18% 28%, rgba(140, 65, 255, 0.24) 0 1px, transparent 1px),
+    radial-gradient(circle at 72% 24%, rgba(55, 210, 255, 0.18) 0 1px, transparent 1px),
+    radial-gradient(circle at 52% 68%, rgba(168, 85, 247, 0.16) 0 1px, transparent 1px) !important;
+  background-size: 100% 100%, 150px 150px, 220px 220px, 190px 190px !important;
+}
+
+.onix-profile-v79-page .onix-profile-ref-screen,
+.onix-profile-v79-page .onix-profile-v75-screen {
+  background: transparent !important;
+  background-image: none !important;
+  box-shadow: none !important;
+  border: 0 !important;
+  position: relative !important;
+  z-index: 1 !important;
+}
+
+.onix-profile-v79-page .onix-profile-ref-screen::before,
+.onix-profile-v79-page .onix-profile-ref-screen::after,
+.onix-profile-v79-page .onix-profile-v75-screen::before,
+.onix-profile-v79-page .onix-profile-v75-screen::after {
+  display: none !important;
+  content: none !important;
+}
+
+/* Top profile line is only content; no panel or glow rectangle */
+.onix-profile-v79-page .onix-profile-v75-hero,
+.onix-profile-v79-hero {
+  background: transparent !important;
+  background-image: none !important;
+  border: 0 !important;
+  box-shadow: none !important;
+  filter: none !important;
+  backdrop-filter: none !important;
+  overflow: visible !important;
+}
+
+.onix-profile-v79-page .onix-profile-v75-hero::before,
+.onix-profile-v79-page .onix-profile-v75-hero::after,
+.onix-profile-v79-hero::before,
+.onix-profile-v79-hero::after {
+  display: none !important;
+  content: none !important;
+}
+
+/* Clean the avatar side too */
+.onix-profile-v79-page .onix-profile-v75-avatar {
+  background: rgba(6, 9, 27, 0.32) !important;
+  background-image: none !important;
+  box-shadow: none !important;
+  border: 1px solid rgba(168, 85, 247, 0.12) !important;
+  filter: none !important;
+}
+.onix-profile-v79-page .onix-profile-v75-avatar img {
+  filter: none !important;
+  box-shadow: none !important;
+}
+
+/* The rank image itself contains a rectangular glow. Crop/mask the outer edge and scale the art. */
+.onix-profile-v79-rank-clean,
+.onix-profile-v79-page .onix-profile-v75-rank-icon.onix-profile-v79-rank-clean {
+  width: 92px !important;
+  height: 92px !important;
+  display: grid !important;
+  place-items: center !important;
+  overflow: visible !important;
+  padding: 0 !important;
+  background: transparent !important;
+  background-image: none !important;
+  border: 0 !important;
+  box-shadow: none !important;
+  filter: none !important;
+}
+
+.onix-profile-v79-rank-img {
+  width: 112% !important;
+  height: 112% !important;
+  object-fit: contain !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  filter: drop-shadow(0 0 8px rgba(168, 85, 247, 0.18)) !important;
+  clip-path: inset(9% 9% 9% 9% round 22px) !important;
+  -webkit-mask-image: radial-gradient(ellipse at center, #000 0 61%, rgba(0,0,0,0.95) 67%, rgba(0,0,0,0.35) 78%, transparent 91%) !important;
+  mask-image: radial-gradient(ellipse at center, #000 0 61%, rgba(0,0,0,0.95) 67%, rgba(0,0,0,0.35) 78%, transparent 91%) !important;
+}
+
+/* cards stay unified ONIX glass */
+.onix-profile-v79-page .onix-profile-v75-stat,
+.onix-profile-v79-page .onix-profile-v75-menu button,
+.onix-profile-v79-page .onix-profile-v75-panel,
+.onix-profile-v79-page .onix-profile-v75-section-card,
+.onix-profile-v79-page .onix-profile-v75-invited-card,
+.onix-profile-v79-page .onix-profile-v75-rank-row {
+  background:
+    radial-gradient(circle at 16% 14%, rgba(168, 85, 247, 0.10), transparent 38%),
+    linear-gradient(145deg, rgba(10, 12, 35, 0.88), rgba(5, 8, 24, 0.96)) !important;
+  border: 1px solid rgba(124, 58, 237, 0.24) !important;
+}
+
+@media(max-width:430px){
+  .onix-profile-v79-rank-clean,
+  .onix-profile-v79-page .onix-profile-v75-rank-icon.onix-profile-v79-rank-clean {
+    width: 82px !important;
+    height: 82px !important;
+  }
+}
+
+
 `;
 
 
@@ -13790,9 +13938,9 @@ body:has(.onix-home-reference-mode),
       })()}
 
       {activeTab === 'friends' && (
-        <div className="onix-social-screen onix-profile-v78-page px-5 mt-8 space-y-5">
+        <div className="onix-social-screen onix-profile-v79-page px-5 mt-8 space-y-5">
           <div className="onix-profile-ref-screen onix-profile-v75-screen">
-            <div className="onix-profile-v75-hero onix-profile-v78-hero">
+            <div className="onix-profile-v75-hero onix-profile-v79-hero">
               <div className="onix-profile-v75-avatar">
                 {telegramAvatarUrl ? (
                   <img src={telegramAvatarUrl} alt="Telegram avatar" draggable={false} />
@@ -13806,8 +13954,13 @@ body:has(.onix-home-reference-mode),
                 <div className="onix-profile-v75-title">{selectedTitle || rankInfo.currentRank.name}</div>
               </div>
 
-              <div className="onix-profile-v75-rank-icon">
-                <RankIcon rank={rankInfo.currentRank} size="lg" />
+              <div className="onix-profile-v75-rank-icon onix-profile-v79-rank-clean">
+                <img
+                  className="onix-profile-v79-rank-img"
+                  src={RANK_ICON_IMAGES[getRankIconTier(rankInfo.currentRank.id, rankInfo.currentRank.name)] || RANK_ICON_IMAGES.novice}
+                  alt={rankInfo.currentRank.name}
+                  draggable={false}
+                />
               </div>
             </div>
 
