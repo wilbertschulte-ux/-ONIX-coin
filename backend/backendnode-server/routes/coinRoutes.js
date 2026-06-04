@@ -1182,20 +1182,12 @@ function getDailyRewardWithStreak(level, streakDay) {
   return Math.round(getDailyReward(level) * getDailyStreakMultiplier(streakDay));
 }
 
-const TEMP_TAP_BOOST_COST = 15000;
-const TEMP_MINING_BOOST_COST = 20000;
-const TEMP_ENERGY_REFILL_COST = 25000;
-
-function getTapBoostCost(_tapPower) {
-  return TEMP_TAP_BOOST_COST;
+function getTapBoostCost(tapPower) {
+  return Math.max(2500, Math.round(Number(tapPower || DEFAULT_TAP_POWER) * 500 * 0.7));
 }
 
-function getMiningBoostCost(_autoclickers) {
-  return TEMP_MINING_BOOST_COST;
-}
-
-function getEnergyRefillCost() {
-  return TEMP_ENERGY_REFILL_COST;
+function getMiningBoostCost(autoclickers) {
+  return Math.max(2500, Math.round(Number(autoclickers || DEFAULT_MINER_INCOME) * 900 * 0.7));
 }
 
 
@@ -2803,6 +2795,46 @@ router.get('/leaderboard/teams', async (req, res) => {
         teamName: team._id,
         weeklyEarned: roundOnix(team.weeklyEarned || 0),
         members: team.members,
+      })),
+    });
+  } catch (error) {
+    return res.status(500).json({ error: error.message });
+  }
+});
+
+
+// REFERRALS LIST FOR PROFILE
+router.get('/referrals/:telegramId', async (req, res) => {
+  try {
+    const { telegramId } = req.params;
+
+    if (!telegramId) {
+      return res.status(400).json({ message: 'Telegram ID is required' });
+    }
+
+    const owner = await User.findOne({ telegramId });
+
+    if (!owner) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    const referrals = await User.find({ referredBy: telegramId })
+      .sort({ createdAt: -1, _id: -1 })
+      .limit(100)
+      .select('telegramId username selectedTitle totalEarned weeklyEarned totalTaps referralsCount createdAt')
+      .lean();
+
+    return res.json({
+      referrals: referrals.map((user) => ({
+        telegramId: user.telegramId,
+        username: user.username || 'ONIX Player',
+        selectedTitle: user.selectedTitle || 'ONIX Player',
+        rankName: getRankInfo(Number(user.totalEarned || 0)).currentRank.name,
+        totalEarned: Number(user.totalEarned || 0),
+        weeklyEarned: Number(user.weeklyEarned || 0),
+        totalTaps: Number(user.totalTaps || 0),
+        referralsCount: Number(user.referralsCount || 0),
+        createdAt: user.createdAt ? new Date(user.createdAt).getTime() : 0,
       })),
     });
   } catch (error) {
@@ -4654,98 +4686,6 @@ router.post('/mine-tick', async (req, res) => {
       income,
       multiplier,
       isMiningBoostActive,
-    });
-  } catch (error) {
-    return res.status(500).json({
-      error: error.message,
-    });
-  }
-});
-
-
-// REFILL ENERGY — TEMPORARY REUSABLE PURCHASE
-router.post('/refill-energy', async (req, res) => {
-  try {
-    const { telegramId } = req.body;
-
-    if (!telegramId) {
-      return res.status(400).json({
-        message: 'Telegram ID is required',
-      });
-    }
-
-    const user = await User.findOne({ telegramId });
-
-    if (!user) {
-      return res.status(404).json({
-        message: 'User not found',
-      });
-    }
-
-    normalizeUserFields(user);
-
-    const frozenResponse = ensureUserNotFrozen(user, res);
-    if (frozenResponse) return frozenResponse;
-
-    const maxEnergy = Number(user.maxEnergy || DEFAULT_MAX_ENERGY);
-    const currentEnergy = Number(user.energy || 0);
-
-    if (currentEnergy >= maxEnergy) {
-      return res.status(400).json({
-        message: 'Энергия уже полная',
-      });
-    }
-
-    const cost = getEnergyRefillCost();
-
-    if (Number(user.balance || 0) < cost) {
-      return res.status(400).json({
-        message: 'Недостаточно ONIX',
-      });
-    }
-
-    const now = Date.now();
-
-    user.balance = roundOnix(Number(user.balance || 0) - cost);
-    user.energy = maxEnergy;
-
-    addTransaction(
-      user,
-      'expense_boost',
-      -cost,
-      'Пополнение энергии'
-    );
-
-    user.totalBoostsUsed = Number(user.totalBoostsUsed || 0) + 1;
-    const achievementBonuses = applyAchievements(user);
-    const rankBonuses = applyRankBonuses(user);
-    user.level = calculateLevel(user.totalEarned);
-    user.updatedAt = new Date();
-    user.lastSeenAt = now;
-
-    const referralBonus = await tryPayQualifiedReferralBonus(user);
-
-    await user.save();
-
-    return res.json({
-      user: {
-        ...user.toObject({ flattenMaps: true }),
-        perkLevels: getPerkLevelsPayload(user),
-        achievements: getAchievementsPayload(user),
-        referralLimit: getReferralLimitPayload(user),
-        missions: getMissionsPayload(user),
-      },
-      achievements: getAchievementsPayload(user),
-      referralLimit: getReferralLimitPayload(user),
-      missions: getMissionsPayload(user),
-      achievementBonuses,
-      rankBonuses,
-      energyRefill: {
-        cost,
-        energy: user.energy,
-        maxEnergy,
-      },
-      referralBonusPaid: typeof referralBonus !== 'undefined' ? referralBonus : null,
     });
   } catch (error) {
     return res.status(500).json({
