@@ -6399,6 +6399,135 @@ div.fixed.inset-0.z-\[90\] button.bg-yellow-400 {
 }
 
 
+
+/* === REFERENCE HOME SCREEN PATCH v72 === */
+/* Fixed top blocks + scroll only the highlighted lower content areas */
+
+/* Upgrades: balance + tabs stay static, only cards list scrolls */
+.onix-upgrades-ref-screen {
+  height: calc(100dvh - 166px - env(safe-area-inset-bottom)) !important;
+  max-height: calc(100dvh - 166px - env(safe-area-inset-bottom)) !important;
+  overflow: hidden !important;
+  display: flex !important;
+  flex-direction: column !important;
+  padding-bottom: 0 !important;
+}
+
+.onix-upgrades-ref-wallets,
+.onix-upgrades-ref-tabs {
+  flex: 0 0 auto !important;
+}
+
+.onix-upgrades-ref-list {
+  flex: 1 1 auto !important;
+  min-height: 0 !important;
+  overflow-y: auto !important;
+  overflow-x: hidden !important;
+  padding-right: 2px !important;
+  padding-bottom: calc(96px + env(safe-area-inset-bottom)) !important;
+  -webkit-overflow-scrolling: touch !important;
+  scrollbar-width: none !important;
+}
+
+.onix-upgrades-ref-list::-webkit-scrollbar {
+  display: none !important;
+}
+
+/* Tasks: header + inner tabs stay static, lower tab content scrolls */
+.onix-tasks-ref-screen {
+  height: calc(100dvh - 166px - env(safe-area-inset-bottom)) !important;
+  max-height: calc(100dvh - 166px - env(safe-area-inset-bottom)) !important;
+  overflow: hidden !important;
+  display: flex !important;
+  flex-direction: column !important;
+  padding-bottom: 0 !important;
+}
+
+.onix-tasks-ref-screen > h2:first-child,
+.onix-tasks-ref-tabs {
+  flex: 0 0 auto !important;
+}
+
+.onix-tasks-ref-panel {
+  flex: 1 1 auto !important;
+  min-height: 0 !important;
+  overflow: hidden !important;
+}
+
+/* In Tasks and Temporary Tasks tabs, scroll only the content cards below tabs */
+.onix-tasks-ref-panel-main,
+.onix-tasks-ref-panel-temporary {
+  overflow-y: auto !important;
+  overflow-x: hidden !important;
+  padding-right: 2px !important;
+  padding-bottom: calc(96px + env(safe-area-inset-bottom)) !important;
+  -webkit-overflow-scrolling: touch !important;
+  scrollbar-width: none !important;
+}
+
+.onix-tasks-ref-panel-main::-webkit-scrollbar,
+.onix-tasks-ref-panel-temporary::-webkit-scrollbar {
+  display: none !important;
+}
+
+/* Achievements: keep title/counter + category filters static, scroll only achievement cards */
+.onix-tasks-ref-panel-achievements {
+  overflow: hidden !important;
+  padding-bottom: 0 !important;
+}
+
+.onix-tasks-ref-panel-achievements > .mt-8 {
+  height: 100% !important;
+  min-height: 0 !important;
+  margin-top: 0 !important;
+  display: flex !important;
+  flex-direction: column !important;
+  overflow: hidden !important;
+}
+
+.onix-tasks-ref-panel-achievements > .mt-8 > .mb-4,
+.onix-tasks-ref-panel-achievements > .mt-8 > .overflow-x-auto,
+.onix-tasks-ref-panel-achievements > .mt-8 > .mb-4.flex {
+  flex: 0 0 auto !important;
+}
+
+.onix-achievements-scroll-list {
+  flex: 1 1 auto !important;
+  min-height: 0 !important;
+  overflow-y: auto !important;
+  overflow-x: hidden !important;
+  padding-right: 2px !important;
+  padding-bottom: calc(96px + env(safe-area-inset-bottom)) !important;
+  -webkit-overflow-scrolling: touch !important;
+  scrollbar-width: none !important;
+}
+
+.onix-achievements-scroll-list::-webkit-scrollbar {
+  display: none !important;
+}
+
+/* Empty-state cards should not stretch and should stay at the top */
+.onix-tasks-ref-panel-main .onix-tasks-empty-card,
+.onix-tasks-ref-panel-achievements > .mt-8 > .rounded-3xl {
+  flex: 0 0 auto !important;
+}
+
+@media (max-width: 430px) {
+  .onix-upgrades-ref-screen,
+  .onix-tasks-ref-screen {
+    height: calc(100dvh - 158px - env(safe-area-inset-bottom)) !important;
+    max-height: calc(100dvh - 158px - env(safe-area-inset-bottom)) !important;
+  }
+
+  .onix-upgrades-ref-list,
+  .onix-tasks-ref-panel-main,
+  .onix-tasks-ref-panel-temporary,
+  .onix-achievements-scroll-list {
+    padding-bottom: calc(92px + env(safe-area-inset-bottom)) !important;
+  }
+}
+
+
 `;
 
 
@@ -12922,7 +13051,7 @@ body:has(.onix-home-reference-mode),
             </div>
 
             {visibleAchievements.length > 0 ? (
-              <div className="space-y-4">
+              <div className="onix-achievements-scroll-list space-y-4">
                 {visibleAchievements.map((achievement) => {
                   const progressPercent = Math.min(
                     (Number(achievement.progress || 0) /
