@@ -6773,6 +6773,51 @@ div.fixed.inset-0.z-\[90\] button.bg-yellow-400 {
 .onix-profile-v75-invited-grid{display:grid!important;grid-template-columns:1fr!important;gap:10px!important}.onix-profile-v75-friend-card{display:flex!important;align-items:center!important;gap:12px!important;padding:12px!important;border-radius:18px!important;background:rgba(6,9,27,.72)!important;border:1px solid rgba(124,58,237,.20)!important}.onix-profile-v75-friend-avatar{width:44px!important;height:44px!important;border-radius:16px!important;display:grid!important;place-items:center!important;color:#7ef9ff!important;font-weight:1000!important;background:radial-gradient(circle at 45% 35%,rgba(45,212,255,.22),rgba(9,42,66,.92) 70%)!important;border:1px solid rgba(45,212,255,.22)!important}.onix-profile-v75-friend-card strong{display:block!important;color:#fff!important}.onix-profile-v75-friend-card span,.onix-profile-v75-friend-card em{display:block!important;color:rgba(218,208,255,.65)!important;font-style:normal!important;font-size:12px!important}.onix-profile-v75-empty{padding:18px!important;border-radius:18px!important;text-align:center!important;color:rgba(218,208,255,.70)!important;background:rgba(6,9,27,.72)!important;}
 @media(max-width:430px){.onix-profile-v75-hero{grid-template-columns:82px minmax(0,1fr) 82px!important}.onix-profile-v75-avatar,.onix-profile-v75-rank-icon{width:82px!important;height:82px!important;border-radius:24px!important}.onix-profile-v75-name{font-size:21px!important}.onix-profile-v75-stats-list{grid-template-columns:1fr!important}}
 
+
+/* === REFERENCE HOME SCREEN PATCH v76 === */
+/* Profile rank icon: same as home — icon only, no frame/card */
+.onix-profile-v75-rank-icon {
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  border-radius: 0 !important;
+  overflow: visible !important;
+  padding: 0 !important;
+}
+
+.onix-profile-v75-rank-icon img {
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: contain !important;
+  filter:
+    drop-shadow(0 0 14px rgba(168, 85, 247, 0.58))
+    drop-shadow(0 0 22px rgba(45, 212, 255, 0.18)) !important;
+}
+
+.onix-profile-v75-rank-icon .onix-rank-icon,
+.onix-profile-v75-rank-icon .onix-ref-v5-rank-badge,
+.onix-profile-v75-rank-icon .onix-home-rank-mark {
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  border-radius: 0 !important;
+  overflow: visible !important;
+}
+
+.onix-profile-v75-rank-icon .onix-rank-icon-image,
+.onix-profile-v75-rank-icon .onix-rank-ref-img {
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: contain !important;
+}
+
+@media(max-width:430px){
+  .onix-profile-v75-rank-icon {
+    border-radius: 0 !important;
+  }
+}
+
+
 `;
 
 
