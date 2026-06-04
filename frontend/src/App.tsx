@@ -2162,7 +2162,7 @@ body,
   }
 }
 
-/* === REFERENCE HOME SCREEN PATCH v73 === */
+/* === REFERENCE HOME SCREEN PATCH v75 === */
 /* Clean isolated home screen based on reference */
 html,
 body,
@@ -2555,7 +2555,7 @@ body,
 }
 
 
-/* === REFERENCE HOME SCREEN PATCH v73 === */
+/* === REFERENCE HOME SCREEN PATCH v75 === */
 /* Hard final override: massive TAP button and lower button block above bottom menu */
 .onix-home-reference-mode .onix-ref-v5-coin {
   width: min(77vw, 300px) !important;
@@ -2623,7 +2623,7 @@ body,
 
 
 
-/* === REFERENCE HOME SCREEN PATCH v73 === */
+/* === REFERENCE HOME SCREEN PATCH v75 === */
 /* Bottom navigation polish only */
 .onix-home-reference-mode .onix-nav {
   height: 64px !important;
@@ -2707,7 +2707,7 @@ body,
 
 
 
-/* === REFERENCE HOME SCREEN PATCH v73 === */
+/* === REFERENCE HOME SCREEN PATCH v75 === */
 /* Upgrade screen redesign based on reference */
 .onix-upgrades-ref-screen {
   padding: 14px 16px calc(88px + env(safe-area-inset-bottom)) !important;
@@ -2977,7 +2977,7 @@ body,
 }
 
 
-/* === REFERENCE HOME SCREEN PATCH v73 === */
+/* === REFERENCE HOME SCREEN PATCH v75 === */
 /* Remove old rank/balance blocks from Upgrades screen */
 .onix-boosts-screen > .rounded-3xl,
 .onix-boosts-screen > .onix-rank-card,
@@ -3026,11 +3026,11 @@ body,
 
 
 
-/* === REFERENCE HOME SCREEN PATCH v73 === */
+/* === REFERENCE HOME SCREEN PATCH v75 === */
 /* Old global rank/balance header is disabled on Upgrades tab in JSX */
 
 
-/* === REFERENCE HOME SCREEN PATCH v73 === */
+/* === REFERENCE HOME SCREEN PATCH v75 === */
 /* Profile screen redesign based on reference */
 .onix-social-screen {
   margin-top: 0 !important;
@@ -3239,7 +3239,7 @@ body,
 
 
 
-/* === REFERENCE HOME SCREEN PATCH v73 === */
+/* === REFERENCE HOME SCREEN PATCH v75 === */
 /* Rank icons: Novice / Bronze / Silver / Gold / Platinum / Diamond / Grandmaster */
 .onix-rank-icon {
   --rank-main: #8ea0c9;
@@ -3379,7 +3379,7 @@ body,
 
 
 
-/* === REFERENCE HOME SCREEN PATCH v73 === */
+/* === REFERENCE HOME SCREEN PATCH v75 === */
 /* Rank icons now use exact cropped reference images */
 .onix-rank-icon {
   background: transparent !important;
@@ -3417,7 +3417,7 @@ body,
 }
 
 
-/* === REFERENCE HOME SCREEN PATCH v73 === */
+/* === REFERENCE HOME SCREEN PATCH v75 === */
 /* Clean reference rank icon rendering */
 .onix-ref-v5-rank-badge {
   width: 58px !important;
@@ -3482,7 +3482,7 @@ body,
 
 
 
-/* === REFERENCE HOME SCREEN PATCH v73 === */
+/* === REFERENCE HOME SCREEN PATCH v75 === */
 /* Generated ONIX rank icons inserted into project */
 .onix-rank-icon {
   display: grid !important;
@@ -3549,7 +3549,7 @@ body,
 
 
 
-/* === REFERENCE HOME SCREEN PATCH v73 === */
+/* === REFERENCE HOME SCREEN PATCH v75 === */
 /* Bottom nav active state like Upgrades tabs: purple underline instead of filled tile */
 .onix-home-reference-mode .onix-nav {
   height: 62px !important;
@@ -3635,7 +3635,7 @@ body,
 
 
 
-/* === REFERENCE HOME SCREEN PATCH v73 === */
+/* === REFERENCE HOME SCREEN PATCH v75 === */
 /* Force underline active nav style globally on every tab */
 .onix-nav {
   height: 62px !important;
@@ -3751,7 +3751,7 @@ body,
 
 
 
-/* === REFERENCE HOME SCREEN PATCH v73 === */
+/* === REFERENCE HOME SCREEN PATCH v75 === */
 /* One identical bottom nav on every screen */
 .onix-nav,
 .onix-home-reference-mode .onix-nav,
@@ -3959,7 +3959,7 @@ body .onix-nav button.onix-nav-active *,
 
 
 
-/* === REFERENCE HOME SCREEN PATCH v73 === */
+/* === REFERENCE HOME SCREEN PATCH v75 === */
 /* Home player avatar and rank emblem: same size, same horizontal line */
 .onix-home-reference-mode .onix-ref-v5-player {
   align-items: center !important;
@@ -4054,7 +4054,7 @@ body .onix-nav button.onix-nav-active *,
 
 
 
-/* === REFERENCE HOME SCREEN PATCH v73 === */
+/* === REFERENCE HOME SCREEN PATCH v75 === */
 /* Generated sci-fi arena background for home screen */
 .onix-home-reference-mode.onix-app-bg::before {
   background-image:
@@ -4099,7 +4099,7 @@ body .onix-nav button.onix-nav-active *,
 
 
 
-/* === REFERENCE HOME SCREEN PATCH v73 === */
+/* === REFERENCE HOME SCREEN PATCH v75 === */
 /* Fix: keep bottom navigation fixed at the bottom on every screen, including Home */
 .onix-nav,
 .onix-home-reference-mode .onix-nav,
@@ -4228,7 +4228,7 @@ body .onix-nav button.onix-nav-active::after {
 
 
 
-/* === REFERENCE HOME SCREEN PATCH v73 === */
+/* === REFERENCE HOME SCREEN PATCH v75 === */
 /* Clean transparent tap coin inserted from user image */
 .onix-home-reference-mode .onix-ref-v5-coin img {
   width: 100% !important;
@@ -4243,7 +4243,7 @@ body .onix-nav button.onix-nav-active::after {
 
 
 
-/* === REFERENCE HOME SCREEN PATCH v73 === */
+/* === REFERENCE HOME SCREEN PATCH v75 === */
 /* Remove the extra outer glow around the tap coin */
 .onix-home-reference-mode .onix-ref-v5-coin {
   overflow: visible !important;
@@ -4261,7 +4261,7 @@ body .onix-nav button.onix-nav-active::after {
 
 
 
-/* === REFERENCE HOME SCREEN PATCH v73 === */
+/* === REFERENCE HOME SCREEN PATCH v75 === */
 /* Clean generated ONIX tap coin embedded directly into App.tsx */
 .onix-home-reference-mode .onix-ref-v5-coin,
 .onix-home-reference-mode .onix-tap-orb,
@@ -4279,7 +4279,7 @@ body .onix-nav button.onix-nav-active::after {
 
 
 
-/* === REFERENCE HOME SCREEN PATCH v73 === */
+/* === REFERENCE HOME SCREEN PATCH v75 === */
 /* Clean tap coin with black background removed */
 .onix-home-reference-mode .onix-ref-v5-coin img,
 .onix-home-reference-mode .onix-tap-img,
@@ -4291,7 +4291,7 @@ body .onix-nav button.onix-nav-active::after {
 
 
 
-/* === REFERENCE HOME SCREEN PATCH v73 === */
+/* === REFERENCE HOME SCREEN PATCH v75 === */
 /* User-provided PNG tap coin inserted as-is */
 .onix-home-reference-mode .onix-ref-v5-coin img,
 .onix-home-reference-mode .onix-tap-img,
@@ -4303,7 +4303,7 @@ body .onix-nav button.onix-nav-active::after {
 
 
 
-/* === REFERENCE HOME SCREEN PATCH v73 === */
+/* === REFERENCE HOME SCREEN PATCH v75 === */
 /* Transparent tap coin: only external black background removed, internal dark details preserved */
 .onix-home-reference-mode .onix-ref-v5-coin,
 .onix-home-reference-mode .onix-tap-orb,
@@ -4324,7 +4324,7 @@ body .onix-nav button.onix-nav-active::after {
 
 
 
-/* === REFERENCE HOME SCREEN PATCH v73 === */
+/* === REFERENCE HOME SCREEN PATCH v75 === */
 .onix-ref-v5-coin {
   overflow: visible !important;
 }
@@ -4367,7 +4367,7 @@ body .onix-nav button.onix-nav-active::after {
 
 
 
-/* === REFERENCE HOME SCREEN PATCH v73 === */
+/* === REFERENCE HOME SCREEN PATCH v75 === */
 /* Fix v37: show the embedded tap coin image, old rule was hiding all img inside coin */
 .onix-home-reference-mode .onix-ref-v5-coin .onix-ref-v5-coin-render,
 .onix-ref-v5-coin .onix-ref-v5-coin-render {
@@ -4393,7 +4393,7 @@ body .onix-nav button.onix-nav-active::after {
 
 
 
-/* === REFERENCE HOME SCREEN PATCH v73 === */
+/* === REFERENCE HOME SCREEN PATCH v75 === */
 /* Real alpha tap coin: external black contour removed from the image itself */
 .onix-home-reference-mode .onix-ref-v5-coin-art,
 .onix-ref-v5-coin-art {
@@ -4418,7 +4418,7 @@ body .onix-nav button.onix-nav-active::after {
 
 
 
-/* === REFERENCE HOME SCREEN PATCH v73 === */
+/* === REFERENCE HOME SCREEN PATCH v75 === */
 /* Clean no-glow coin asset + separate controllable CSS glow behind it */
 .onix-home-reference-mode .onix-ref-v5-coin,
 .onix-ref-v5-coin {
@@ -4474,7 +4474,7 @@ body .onix-nav button.onix-nav-active::after {
 
 
 
-/* === REFERENCE HOME SCREEN PATCH v73 === */
+/* === REFERENCE HOME SCREEN PATCH v75 === */
 /* CSS-only ONIX frames for player avatar and rank emblem — no image frame artifacts */
 .onix-home-reference-mode .onix-ref-v5-avatar-badge,
 .onix-home-reference-mode .onix-ref-v5-rank-badge,
@@ -4550,7 +4550,7 @@ body .onix-nav button.onix-nav-active::after {
 
 
 
-/* === REFERENCE HOME SCREEN PATCH v73 === */
+/* === REFERENCE HOME SCREEN PATCH v75 === */
 /* Revert rank emblem frame back to the previous clean look. Keep player avatar frame. */
 .onix-home-reference-mode .onix-ref-v5-rank-badge,
 .onix-home-reference-mode .onix-ref-v5-rank-icon {
@@ -4582,7 +4582,7 @@ body .onix-nav button.onix-nav-active::after {
 
 
 
-/* === REFERENCE HOME SCREEN PATCH v73 === */
+/* === REFERENCE HOME SCREEN PATCH v75 === */
 /* Telegram avatar in player card. Fallback remains ONIX emblem. */
 .onix-home-reference-mode .onix-ref-v5-avatar {
   overflow: hidden !important;
@@ -4609,7 +4609,7 @@ body .onix-nav button.onix-nav-active::after {
 
 
 
-/* === REFERENCE HOME SCREEN PATCH v73 === */
+/* === REFERENCE HOME SCREEN PATCH v75 === */
 /* ONIX-style tap floating numbers */
 .onix-home-reference-mode .onix-floating-number,
 .onix-floating-number {
@@ -4650,7 +4650,7 @@ body .onix-nav button.onix-nav-active::after {
 
 
 
-/* === REFERENCE HOME SCREEN PATCH v73 === */
+/* === REFERENCE HOME SCREEN PATCH v75 === */
 /* ONIX energy progress bar under the tap coin */
 .onix-home-reference-mode .onix-ref-v5-energy {
   width: 100% !important;
@@ -4789,7 +4789,7 @@ body .onix-nav button.onix-nav-active::after {
 
 
 
-/* === REFERENCE HOME SCREEN PATCH v73 === */
+/* === REFERENCE HOME SCREEN PATCH v75 === */
 /* Upgrades screen: 3 categories, ONIX-only wallet */
 .onix-upgrades-ref-wallets {
   grid-template-columns: 1fr !important;
@@ -4832,7 +4832,7 @@ body .onix-nav button.onix-nav-active::after {
 
 
 
-/* === REFERENCE HOME SCREEN PATCH v73 === */
+/* === REFERENCE HOME SCREEN PATCH v75 === */
 /* Upgrades ONIX wallet: home-style gold balance, adaptive text size, full-width label */
 .onix-upgrades-ref-wallet-onix {
   min-height: 128px !important;
@@ -4922,7 +4922,7 @@ body .onix-nav button.onix-nav-active::after {
 
 
 
-/* === REFERENCE HOME SCREEN PATCH v73 === */
+/* === REFERENCE HOME SCREEN PATCH v75 === */
 /* Fixed wallet frame: balance text adapts inside, card never grows or shifts */
 .onix-upgrades-ref-wallets {
   width: 100% !important;
@@ -5002,7 +5002,7 @@ body .onix-nav button.onix-nav-active::after {
 
 
 
-/* === REFERENCE HOME SCREEN PATCH v73 === */
+/* === REFERENCE HOME SCREEN PATCH v75 === */
 /* Replace home screen background with new crystal cathedral background */
 .onix-home-reference-mode,
 .onix-home-reference-mode .onix-ref-v5-screen,
@@ -5040,7 +5040,7 @@ body .onix-nav button.onix-nav-active::after {
 
 
 
-/* === REFERENCE HOME SCREEN PATCH v73 === */
+/* === REFERENCE HOME SCREEN PATCH v75 === */
 /* Unified ONIX background across all tabs + per-tab visual overlays */
 body,
 #root {
@@ -5184,7 +5184,7 @@ body,
 
 
 
-/* === REFERENCE HOME SCREEN PATCH v73 === */
+/* === REFERENCE HOME SCREEN PATCH v75 === */
 /* Upgrades wallet balance text now matches main home balance typography */
 .onix-upgrades-ref-wallet-onix .onix-upgrades-ref-wallet-value {
   font-family: 'Orbitron', 'Exo 2', system-ui, sans-serif !important;
@@ -5228,7 +5228,7 @@ body,
 
 
 
-/* === REFERENCE HOME SCREEN PATCH v73 === */
+/* === REFERENCE HOME SCREEN PATCH v75 === */
 /* HARD override: upgrades balance uses the same visual language as home balance */
 .onix-upgrades-ref-wallet-onix {
   align-items: center !important;
@@ -5291,7 +5291,7 @@ body,
 
 
 
-/* === REFERENCE HOME SCREEN PATCH v73 === */
+/* === REFERENCE HOME SCREEN PATCH v75 === */
 /* Upgrades ONIX balance is now a real clone of the home balance block */
 .onix-upgrades-ref-wallet-onix.onix-upgrades-home-balance-card {
   min-height: 128px !important;
@@ -5373,7 +5373,7 @@ body,
 
 
 
-/* === REFERENCE HOME SCREEN PATCH v73 === */
+/* === REFERENCE HOME SCREEN PATCH v75 === */
 /* Exact home balance typography for Upgrades balance: Exo 2, softer glow */
 .onix-upgrades-home-balance-card .onix-upgrades-home-balance-clone,
 .onix-upgrades-home-balance-clone {
@@ -5436,7 +5436,7 @@ body,
 
 
 
-/* === REFERENCE HOME SCREEN PATCH v73 === */
+/* === REFERENCE HOME SCREEN PATCH v75 === */
 /* Premium ONIX balance card in Upgrades: clean text without glow */
 .onix-upgrades-ref-wallet-onix.onix-upgrades-balance-premium-card {
   position: relative !important;
@@ -5573,7 +5573,7 @@ body,
 
 
 
-/* === REFERENCE HOME SCREEN PATCH v73 === */
+/* === REFERENCE HOME SCREEN PATCH v75 === */
 /* Centered ONIX notifications and modal popups */
 .onix-toast-layer {
   position: fixed !important;
@@ -5749,7 +5749,7 @@ div.fixed.inset-0.z-\[90\] button.bg-yellow-400 {
 
 
 
-/* === REFERENCE HOME SCREEN PATCH v73 === */
+/* === REFERENCE HOME SCREEN PATCH v75 === */
 /* Temporary boosts are reusable purchases without levels */
 .onix-upgrade-ref-card:has(.onix-upgrade-ref-buy) .onix-upgrade-ref-level:empty {
   display: none !important;
@@ -5761,7 +5761,7 @@ div.fixed.inset-0.z-\[90\] button.bg-yellow-400 {
 
 
 
-/* === REFERENCE HOME SCREEN PATCH v73 === */
+/* === REFERENCE HOME SCREEN PATCH v75 === */
 /* Final fix for boost PNG icons: tight crop, no black contour, no extra wrapper frame. */
 .onix-upgrade-ref-icon--image {
   width: 60px !important;
@@ -5801,7 +5801,7 @@ div.fixed.inset-0.z-\[90\] button.bg-yellow-400 {
 }
 
 
-/* === REFERENCE HOME SCREEN PATCH v73 === */
+/* === REFERENCE HOME SCREEN PATCH v75 === */
 /* ONIX style for Tasks, missions and achievements */
 .onix-tasks-ref-screen {
   position: relative !important;
@@ -6060,7 +6060,7 @@ div.fixed.inset-0.z-\[90\] button.bg-yellow-400 {
 
 
 
-/* === REFERENCE HOME SCREEN PATCH v73 === */
+/* === REFERENCE HOME SCREEN PATCH v75 === */
 /* Tasks screen starts from the top, no huge empty vertical gap */
 .onix-tasks-ref-screen {
   margin-top: 10px !important;
@@ -6094,7 +6094,7 @@ div.fixed.inset-0.z-\[90\] button.bg-yellow-400 {
 
 
 
-/* === REFERENCE HOME SCREEN PATCH v73 === */
+/* === REFERENCE HOME SCREEN PATCH v75 === */
 /* Inner tabs for Tasks screen: Tasks / Temporary tasks / Achievements */
 .onix-tasks-ref-screen > h2:first-child {
   position: sticky !important;
@@ -6206,7 +6206,7 @@ div.fixed.inset-0.z-\[90\] button.bg-yellow-400 {
 
 
 
-/* === REFERENCE HOME SCREEN PATCH v73 === */
+/* === REFERENCE HOME SCREEN PATCH v75 === */
 /* Tasks final layout: starts at top, inner tabs match Upgrades, completed one-time tasks disappear */
 .onix-tasks-ref-screen {
   margin-top: 0 !important;
@@ -6326,7 +6326,7 @@ div.fixed.inset-0.z-\[90\] button.bg-yellow-400 {
 
 
 
-/* === REFERENCE HOME SCREEN PATCH v73 === */
+/* === REFERENCE HOME SCREEN PATCH v75 === */
 /* Mission reset counters and compact completed state */
 .onix-mission-cycle-card {
   position: relative !important;
@@ -6400,7 +6400,7 @@ div.fixed.inset-0.z-\[90\] button.bg-yellow-400 {
 
 
 
-/* === REFERENCE HOME SCREEN PATCH v73 === */
+/* === REFERENCE HOME SCREEN PATCH v75 === */
 /* Fixed top blocks + scroll only the highlighted lower content areas */
 
 /* Upgrades: balance + tabs stay static, only cards list scrolls */
@@ -6529,7 +6529,7 @@ div.fixed.inset-0.z-\[90\] button.bg-yellow-400 {
 
 
 
-/* === REFERENCE HOME SCREEN PATCH v73 === */
+/* === REFERENCE HOME SCREEN PATCH v75 === */
 /* Scroll areas extend behind the bottom menu. No large empty gap before nav. */
 .onix-upgrades-ref-screen,
 .onix-tasks-ref-screen {
@@ -6576,7 +6576,7 @@ div.fixed.inset-0.z-\[90\] button.bg-yellow-400 {
 
 
 
-/* === REFERENCE HOME SCREEN PATCH v74 === */
+/* === REFERENCE HOME SCREEN PATCH v75 === */
 /* Tasks progress bars now match the home energy progress bar */
 .onix-task-progress {
   width: 100% !important;
@@ -6741,6 +6741,37 @@ div.fixed.inset-0.z-\[90\] button.bg-yellow-400 {
   }
 }
 
+
+
+/* === REFERENCE HOME SCREEN PATCH v75 === */
+/* Profile redesign: Telegram avatar, rank progress, ONIX cards, openable profile sections */
+.onix-social-screen { padding: 12px 16px calc(84px + env(safe-area-inset-bottom)) !important; margin-top: 0 !important; }
+.onix-profile-v75-screen { max-height: calc(100dvh - 88px) !important; overflow-y: auto !important; padding-bottom: 20px !important; scrollbar-width: none !important; }
+.onix-profile-v75-screen::-webkit-scrollbar { display: none !important; }
+.onix-profile-v75-hero { display: grid !important; grid-template-columns: 92px minmax(0,1fr) 92px !important; gap: 14px !important; align-items: center !important; margin-bottom: 16px !important; }
+.onix-profile-v75-avatar,.onix-profile-v75-rank-icon{ width:92px!important;height:92px!important;border-radius:26px!important;display:grid!important;place-items:center!important;overflow:hidden!important;border:1px solid rgba(168,85,247,.38)!important;background:linear-gradient(145deg,rgba(13,11,35,.94),rgba(5,9,24,.98))!important;box-shadow:0 0 26px rgba(168,85,247,.22),inset 0 0 18px rgba(45,212,255,.08)!important; }
+.onix-profile-v75-avatar img{width:100%!important;height:100%!important;object-fit:cover!important;}
+.onix-profile-v75-rank-icon img{width:78%!important;height:78%!important;object-fit:contain!important;}
+.onix-profile-v75-name{font-family:'Exo 2',system-ui,sans-serif!important;font-size:24px!important;line-height:1!important;font-weight:1000!important;color:#fff!important;letter-spacing:-.02em!important;}
+.onix-profile-v75-title{margin-top:8px!important;color:#a855f7!important;font-size:14px!important;font-weight:900!important;}
+.onix-profile-v75-rank-progress{ margin: 0 0 18px !important; }
+.onix-profile-v75-stats-grid{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:12px!important;margin-bottom:16px!important;}
+.onix-profile-v75-stat{min-height:86px!important;text-align:left!important;padding:16px!important;border-radius:22px!important;border:1px solid rgba(124,58,237,.28)!important;background:linear-gradient(145deg,rgba(10,12,35,.94),rgba(5,8,24,.97))!important;box-shadow:inset 0 0 18px rgba(132,86,255,.08)!important;color:#fff!important;}
+.onix-profile-v75-stat span{display:block!important;color:rgba(218,208,255,.70)!important;font-weight:800!important;font-size:13px!important;margin-bottom:10px!important;}
+.onix-profile-v75-stat strong{font-family:'Exo 2',system-ui,sans-serif!important;font-size:24px!important;font-weight:1000!important;color:#fff!important;line-height:1!important;}
+.onix-profile-v75-menu{display:flex!important;flex-direction:column!important;gap:10px!important;margin-bottom:14px!important;}
+.onix-profile-v75-menu button{height:64px!important;display:grid!important;grid-template-columns:42px minmax(0,1fr) auto 18px!important;align-items:center!important;gap:12px!important;padding:0 16px!important;border-radius:20px!important;border:1px solid rgba(124,58,237,.28)!important;background:linear-gradient(145deg,rgba(10,12,35,.94),rgba(5,8,24,.97))!important;color:#fff!important;}
+.onix-profile-v75-menu button.is-active{border-color:rgba(168,85,247,.58)!important;box-shadow:0 0 20px rgba(168,85,247,.20)!important;}
+.onix-profile-v75-menu button span{font-size:24px!important}.onix-profile-v75-menu button strong{text-align:left!important;font-family:'Exo 2',system-ui,sans-serif!important;font-size:17px!important;font-weight:1000!important}.onix-profile-v75-menu button em{font-style:normal!important;color:rgba(218,208,255,.72)!important;font-weight:800!important}.onix-profile-v75-menu button b{font-size:26px!important;color:rgba(218,208,255,.62)!important;}
+.onix-profile-v75-panel{margin-top:12px!important;padding:14px!important;border-radius:24px!important;border:1px solid rgba(168,85,247,.32)!important;background:linear-gradient(145deg,rgba(10,12,35,.94),rgba(5,8,24,.97))!important;box-shadow:inset 0 0 18px rgba(132,86,255,.08)!important;}
+.onix-profile-v75-panel-title{display:flex!important;align-items:center!important;justify-content:space-between!important;margin-bottom:12px!important;gap:10px!important}.onix-profile-v75-panel-title strong{font-family:'Exo 2',system-ui,sans-serif!important;font-size:20px!important;color:#fff!important;font-weight:1000!important}.onix-profile-v75-panel-title span{padding:8px 12px!important;border-radius:999px!important;color:#f6c833!important;border:1px solid rgba(246,200,51,.22)!important;background:rgba(28,19,9,.70)!important;font-weight:900!important;}
+.onix-profile-v75-list{display:flex!important;flex-direction:column!important;gap:12px!important;max-height:420px!important;overflow-y:auto!important;scrollbar-width:none!important}.onix-profile-v75-list::-webkit-scrollbar{display:none!important;}
+.onix-profile-v75-achievement,.onix-profile-v75-rank-row{padding:14px!important;border-radius:20px!important;border:1px solid rgba(124,58,237,.22)!important;background:rgba(6,9,27,.72)!important;}.onix-profile-v75-achievement.is-done,.onix-profile-v75-rank-row.is-passed{opacity:.62!important;}.onix-profile-v75-rank-row.is-current{opacity:1!important;border-color:rgba(246,200,51,.42)!important;}
+.onix-profile-v75-achievement-top,.onix-profile-v75-rank-title{display:flex!important;align-items:flex-start!important;justify-content:space-between!important;gap:10px!important}.onix-profile-v75-achievement strong,.onix-profile-v75-rank-title strong{color:#fff!important;font-family:'Exo 2',system-ui,sans-serif!important;font-size:16px!important;font-weight:1000!important}.onix-profile-v75-achievement p{margin-top:4px!important;color:rgba(218,208,255,.70)!important;font-size:13px!important}.onix-profile-v75-achievement-top span,.onix-profile-v75-rank-title span{color:#f6c833!important;font-weight:900!important;white-space:nowrap!important;}
+.onix-profile-v75-rank-row{display:flex!important;gap:12px!important;align-items:center!important}.onix-profile-v75-rank-mini{width:52px!important;height:52px!important;flex:0 0 52px!important;display:grid!important;place-items:center!important}.onix-profile-v75-rank-mini img{width:46px!important;height:46px!important;object-fit:contain!important}.onix-profile-v75-rank-body{flex:1!important;min-width:0!important;}
+.onix-profile-v75-stats-list{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:10px!important}.onix-profile-v75-stats-list div{padding:14px!important;border-radius:18px!important;background:rgba(6,9,27,.72)!important;border:1px solid rgba(124,58,237,.20)!important}.onix-profile-v75-stats-list span{display:block!important;color:rgba(218,208,255,.68)!important;font-size:12px!important;font-weight:800!important;margin-bottom:7px!important}.onix-profile-v75-stats-list strong{color:#fff!important;font-family:'Exo 2',system-ui,sans-serif!important;font-size:17px!important;font-weight:1000!important;}
+.onix-profile-v75-invited-grid{display:grid!important;grid-template-columns:1fr!important;gap:10px!important}.onix-profile-v75-friend-card{display:flex!important;align-items:center!important;gap:12px!important;padding:12px!important;border-radius:18px!important;background:rgba(6,9,27,.72)!important;border:1px solid rgba(124,58,237,.20)!important}.onix-profile-v75-friend-avatar{width:44px!important;height:44px!important;border-radius:16px!important;display:grid!important;place-items:center!important;color:#7ef9ff!important;font-weight:1000!important;background:radial-gradient(circle at 45% 35%,rgba(45,212,255,.22),rgba(9,42,66,.92) 70%)!important;border:1px solid rgba(45,212,255,.22)!important}.onix-profile-v75-friend-card strong{display:block!important;color:#fff!important}.onix-profile-v75-friend-card span,.onix-profile-v75-friend-card em{display:block!important;color:rgba(218,208,255,.65)!important;font-style:normal!important;font-size:12px!important}.onix-profile-v75-empty{padding:18px!important;border-radius:18px!important;text-align:center!important;color:rgba(218,208,255,.70)!important;background:rgba(6,9,27,.72)!important;}
+@media(max-width:430px){.onix-profile-v75-hero{grid-template-columns:82px minmax(0,1fr) 82px!important}.onix-profile-v75-avatar,.onix-profile-v75-rank-icon{width:82px!important;height:82px!important;border-radius:24px!important}.onix-profile-v75-name{font-size:21px!important}.onix-profile-v75-stats-list{grid-template-columns:1fr!important}}
 
 `;
 
@@ -6993,6 +7024,18 @@ type FriendLeaderboardItem = {
   weeklyEarned: number;
   referralsCount: number;
   isMe: boolean;
+};
+
+type InvitedProfileItem = {
+  telegramId: string;
+  username: string;
+  selectedTitle?: string;
+  rankName?: string;
+  totalEarned: number;
+  weeklyEarned: number;
+  totalTaps: number;
+  referralsCount: number;
+  createdAt?: number;
 };
 
 type SeasonPrizePopup = {
@@ -7868,6 +7911,9 @@ function App() {
   const [teamSocialDashboard, setTeamSocialDashboard] =
     useState<TeamSocialDashboard | null>(null);
   const [friendLeaderboard, setFriendLeaderboard] = useState<FriendLeaderboardItem[]>([]);
+  const [profilePanel, setProfilePanel] =
+    useState<'overview' | 'achievements' | 'ranks' | 'stats' | 'invited'>('overview');
+  const [invitedProfiles, setInvitedProfiles] = useState<InvitedProfileItem[]>([]);
   const [league, setLeague] = useState('Bronze');
   const [isWithdrawalLoading, setIsWithdrawalLoading] = useState(false);
   const [withdrawalRequests, setWithdrawalRequests] = useState<WithdrawalRequest[]>([]);
@@ -8995,6 +9041,20 @@ function App() {
       setFriendLeaderboard(response.data.friends || []);
     } catch (error) {
       console.log('Ошибка загрузки рейтинга друзей:', error);
+    }
+  };
+
+  const loadInvitedProfiles = async () => {
+    const telegramId = getTelegramId();
+
+    if (!telegramId) return;
+
+    try {
+      const response = await axios.get(`${API_URL}/referrals/${telegramId}`);
+      setInvitedProfiles(response.data.referrals || []);
+    } catch (error) {
+      console.log('Ошибка загрузки приглашенных:', error);
+      setInvitedProfiles([]);
     }
   };
 
@@ -11810,6 +11870,26 @@ body:has(.onix-home-reference-mode),
   const profileLevelProgress = Math.min(((totalEarned % 100000) / 100000) * 100, 100);
   const profileBadges = getProfileBadges();
   const availableTitles = getAvailableTitles();
+  const profileRankProgressPercent = rankInfo.progressPercent;
+  const profileRankText = rankInfo.nextRank
+    ? `${formatOnix(rankInfo.progressCurrent)} / ${formatOnix(rankInfo.progressTotal)}`
+    : 'MAX';
+  const completedAchievementsList = achievements.filter((item) => item.isCompleted);
+  const pendingAchievementsList = achievements.filter((item) => !item.isCompleted);
+  const profileStats = [
+    { label: 'Баланс ONIX', value: formatOnix(balance) },
+    { label: 'Всего заработано', value: formatOnix(totalEarned) },
+    { label: 'Тапов всего', value: formatOnix(totalTaps) },
+    { label: 'Доход майнера / сек', value: formatOnix(autoclickers) },
+    { label: 'Сила тапа', value: formatOnix(tapPower) },
+    { label: 'Макс. энергия', value: formatOnix(maxEnergy) },
+    { label: 'Восстановление энергии', value: `+${formatOnix(energyRecharge)}/сек` },
+    { label: 'Бустов использовано', value: formatOnix(totalBoostsUsed) },
+    { label: 'Улучшений куплено', value: formatOnix(totalUpgradesBought) },
+    { label: 'Оффлайн сборов', value: formatOnix(offlineClaimsCount) },
+    { label: 'Приглашено', value: formatOnix(referralsCount) },
+    { label: 'Команда', value: teamName || '—' },
+  ];
   const activeBoostValue = normalizeBoost(activeBoost);
   const normalizedBoostEndTime = Number(boostEndTime || 0);
   const isBoostActive =
@@ -13334,77 +13414,146 @@ body:has(.onix-home-reference-mode),
 
       {activeTab === 'friends' && (
         <div className="onix-social-screen px-5 mt-8 space-y-5">
-          <div className="onix-profile-ref-screen">
-            <div className="onix-profile-ref-head">
-              <div className="onix-profile-ref-avatar">
-                <RankIcon rank={rankInfo.currentRank} size="lg" />
+          <div className="onix-profile-ref-screen onix-profile-v75-screen">
+            <div className="onix-profile-v75-hero">
+              <div className="onix-profile-v75-avatar">
+                {telegramAvatarUrl ? (
+                  <img src={telegramAvatarUrl} alt="Telegram avatar" draggable={false} />
+                ) : (
+                  <img src={onixLogoCrystal} alt="Telegram avatar fallback" draggable={false} />
+                )}
               </div>
 
-              <div className="onix-profile-ref-user">
-                <div className="onix-profile-ref-name">{username}</div>
-                <div className="onix-profile-ref-rank">{selectedTitle || rankInfo.currentRank.name}</div>
+              <div className="onix-profile-v75-user">
+                <div className="onix-profile-v75-name">{username}</div>
+                <div className="onix-profile-v75-title">{selectedTitle || rankInfo.currentRank.name}</div>
+              </div>
+
+              <div className="onix-profile-v75-rank-icon">
+                <RankIcon rank={rankInfo.currentRank} size="lg" />
               </div>
             </div>
 
-            <div className="onix-profile-ref-level">
-              <div className="onix-profile-ref-level-row">
-                <span>Уровень {profileLevel}</span>
-                <span>
-                  {formatOnix(totalEarned % 100000)} / 100 000 XP
-                </span>
+            <div className="onix-profile-v75-rank-progress">
+              <div className="onix-task-progress-text">
+                <span className="onix-task-progress-status">{rankInfo.currentRank.name}</span>
+                <span><strong>{profileRankText}</strong>{rankInfo.nextRank ? ` до ${rankInfo.nextRank.name}` : ''}</span>
               </div>
-              <div className="onix-profile-ref-progress">
+
+              <div className="onix-task-progress-track">
                 <div
-                  className="onix-profile-ref-progress-fill"
-                  style={{ width: `${profileLevelProgress}%` }}
+                  className="onix-task-progress-fill"
+                  style={{ width: `${profileRankProgressPercent}%` }}
                 />
               </div>
             </div>
 
-            <div className="onix-profile-ref-stats">
-              <div className="onix-profile-ref-stat">
+            <div className="onix-profile-v75-stats-grid">
+              <div className="onix-profile-v75-stat">
                 <span>Баланс ONIX</span>
                 <strong>{Math.floor(balance).toLocaleString('ru-RU')}</strong>
               </div>
-
-              <div className="onix-profile-ref-stat">
+              <div className="onix-profile-v75-stat">
                 <span>Всего заработано</span>
                 <strong>{Math.floor(totalEarned).toLocaleString('ru-RU')}</strong>
               </div>
-
-              <div className="onix-profile-ref-stat">
+              <button type="button" className="onix-profile-v75-stat" onClick={() => { setProfilePanel('invited'); loadInvitedProfiles(); }}>
                 <span>Приглашено</span>
                 <strong>{referralsCount}</strong>
-              </div>
-
-              <div className="onix-profile-ref-stat">
+              </button>
+              <div className="onix-profile-v75-stat">
                 <span>Команда</span>
-                <strong>{teamName || 'ONIX Squad'}</strong>
+                <strong>{teamName || '—'}</strong>
               </div>
             </div>
 
-            <div className="onix-profile-ref-menu">
-              <button type="button" className="onix-profile-ref-menu-item">
-                <span>🏆</span>
-                <strong>Достижения</strong>
-                <em>{completedAchievementsCount}/{achievements.length}</em>
-                <b>›</b>
+            <div className="onix-profile-v75-menu">
+              <button type="button" className={profilePanel === 'achievements' ? 'is-active' : ''} onClick={() => setProfilePanel(profilePanel === 'achievements' ? 'overview' : 'achievements')}>
+                <span>🏆</span><strong>Достижения</strong><em>{completedAchievementsCount}/{achievements.length}</em><b>›</b>
               </button>
-
-              <button type="button" className="onix-profile-ref-menu-item">
-                <span>🏅</span>
-                <strong>Ранги</strong>
-                <em>{rankInfo.currentRank.name}</em>
-                <b>›</b>
+              <button type="button" className={profilePanel === 'ranks' ? 'is-active' : ''} onClick={() => setProfilePanel(profilePanel === 'ranks' ? 'overview' : 'ranks')}>
+                <span>🏅</span><strong>Ранги</strong><em>{rankInfo.currentRank.name}</em><b>›</b>
               </button>
-
-              <button type="button" className="onix-profile-ref-menu-item">
-                <span>📊</span>
-                <strong>Статистика</strong>
-                <em>{formatOnix(totalTaps)} тапов</em>
-                <b>›</b>
+              <button type="button" className={profilePanel === 'stats' ? 'is-active' : ''} onClick={() => setProfilePanel(profilePanel === 'stats' ? 'overview' : 'stats')}>
+                <span>📊</span><strong>Статистика</strong><em>{formatOnix(totalTaps)} тапов</em><b>›</b>
               </button>
             </div>
+
+            {profilePanel === 'achievements' && (
+              <div className="onix-profile-v75-panel">
+                <div className="onix-profile-v75-panel-title"><strong>🏆 Все достижения</strong><span>{completedAchievementsCount}/{achievements.length}</span></div>
+                <div className="onix-profile-v75-list">
+                  {[...pendingAchievementsList, ...completedAchievementsList].map((achievement) => {
+                    const progressPercent = Math.min((Number(achievement.progress || 0) / Number(achievement.goal || 1)) * 100, 100);
+                    return (
+                      <div key={achievement.id} className={`onix-profile-v75-achievement ${achievement.isCompleted ? 'is-done' : ''}`}>
+                        <div className="onix-profile-v75-achievement-top">
+                          <div><strong>{achievement.title}</strong><p>{achievement.description}</p></div>
+                          <span>{achievement.isCompleted ? '✓' : `+${formatOnix(achievement.reward)}`}</span>
+                        </div>
+                        <div className="onix-task-progress">
+                          <div className="onix-task-progress-text"><span className="onix-task-progress-status">Прогресс</span><span><strong>{formatOnix(achievement.progress)}</strong> / {formatOnix(achievement.goal)}</span></div>
+                          <div className="onix-task-progress-track"><div className="onix-task-progress-fill" style={{ width: `${progressPercent}%` }} /></div>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
+
+            {profilePanel === 'ranks' && (
+              <div className="onix-profile-v75-panel">
+                <div className="onix-profile-v75-panel-title"><strong>🏅 Все ранги</strong><span>{rankInfo.currentRank.name}</span></div>
+                <div className="onix-profile-v75-list">
+                  {RANKS.map((rank) => {
+                    const passed = totalEarned >= rank.threshold;
+                    const current = rank.id === rankInfo.currentRank.id;
+                    return (
+                      <div key={rank.id} className={`onix-profile-v75-rank-row ${passed ? 'is-passed' : ''} ${current ? 'is-current' : ''}`}>
+                        <div className="onix-profile-v75-rank-mini"><RankIcon rank={rank} size="sm" /></div>
+                        <div className="onix-profile-v75-rank-body">
+                          <div className="onix-profile-v75-rank-title"><strong>{rank.name}</strong><span>{current ? 'Текущий' : passed ? 'Пройден' : `Нужно ${formatOnix(rank.threshold)}`}</span></div>
+                          {!passed && (
+                            <div className="onix-task-progress">
+                              <div className="onix-task-progress-text"><span className="onix-task-progress-status">Прогресс</span><span><strong>{formatOnix(totalEarned)}</strong> / {formatOnix(rank.threshold)}</span></div>
+                              <div className="onix-task-progress-track"><div className="onix-task-progress-fill" style={{ width: `${Math.min((totalEarned / Math.max(rank.threshold, 1)) * 100, 100)}%` }} /></div>
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
+
+            {profilePanel === 'stats' && (
+              <div className="onix-profile-v75-panel">
+                <div className="onix-profile-v75-panel-title"><strong>📊 Игровая статистика</strong><span>ONIX</span></div>
+                <div className="onix-profile-v75-stats-list">
+                  {profileStats.map((item) => (
+                    <div key={item.label}><span>{item.label}</span><strong>{item.value}</strong></div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {profilePanel === 'invited' && (
+              <div className="onix-profile-v75-panel">
+                <div className="onix-profile-v75-panel-title"><strong>👥 Приглашенные игроки</strong><span>{invitedProfiles.length || referralsCount}</span></div>
+                <div className="onix-profile-v75-invited-grid">
+                  {invitedProfiles.length > 0 ? invitedProfiles.map((friend) => (
+                    <div key={friend.telegramId} className="onix-profile-v75-friend-card">
+                      <div className="onix-profile-v75-friend-avatar">{String(friend.username || 'O').slice(0, 1).toUpperCase()}</div>
+                      <div><strong>{friend.username || 'ONIX Player'}</strong><span>{friend.rankName || getRankInfo(friend.totalEarned).currentRank.name}</span><em>{formatOnix(friend.totalEarned)} earned</em></div>
+                    </div>
+                  )) : (
+                    <div className="onix-profile-v75-empty">Пока нет данных по приглашенным игрокам.</div>
+                  )}
+                </div>
+              </div>
+            )}
           </div>
           <div className="rounded-3xl border border-yellow-400/20 bg-[#111827] p-6 text-center shadow-xl">
             <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-yellow-400 text-3xl">
