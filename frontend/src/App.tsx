@@ -6575,6 +6575,173 @@ div.fixed.inset-0.z-\[90\] button.bg-yellow-400 {
 }
 
 
+
+/* === REFERENCE HOME SCREEN PATCH v74 === */
+/* Tasks progress bars now match the home energy progress bar */
+.onix-task-progress {
+  width: 100% !important;
+  margin-top: 12px !important;
+  margin-bottom: 2px !important;
+  position: relative !important;
+}
+
+.onix-task-progress-text {
+  width: 100% !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  gap: 8px !important;
+  color: #cfd7f2 !important;
+  font-family: 'Exo 2', system-ui, sans-serif !important;
+  font-size: 12px !important;
+  line-height: 1 !important;
+  font-weight: 900 !important;
+  white-space: nowrap !important;
+  text-shadow:
+    0 0 8px rgba(168, 85, 247, 0.34),
+    0 0 12px rgba(45, 212, 255, 0.10) !important;
+}
+
+.onix-task-progress-text strong {
+  color: #ffd739 !important;
+  text-shadow:
+    0 0 7px rgba(246, 200, 51, 0.70),
+    0 0 12px rgba(168, 85, 247, 0.38) !important;
+}
+
+.onix-task-progress-status {
+  color: #b9c1df !important;
+  font-weight: 800 !important;
+  text-shadow: 0 0 8px rgba(168, 85, 247, 0.26) !important;
+}
+
+.onix-task-progress-track {
+  position: relative !important;
+  width: 100% !important;
+  height: 10px !important;
+  margin-top: 9px !important;
+  border-radius: 999px !important;
+  overflow: hidden !important;
+  background:
+    linear-gradient(180deg, rgba(18, 17, 43, 0.98), rgba(5, 8, 22, 0.98)) !important;
+  border: 1px solid rgba(168, 85, 247, 0.40) !important;
+  box-shadow:
+    inset 0 0 8px rgba(0, 0, 0, 0.72),
+    inset 0 0 14px rgba(29, 213, 255, 0.08),
+    0 0 10px rgba(168, 85, 247, 0.24),
+    0 0 18px rgba(45, 212, 255, 0.10) !important;
+}
+
+.onix-task-progress-track::before {
+  content: '' !important;
+  position: absolute !important;
+  inset: 1px !important;
+  border-radius: inherit !important;
+  border: 1px solid rgba(199, 169, 255, 0.18) !important;
+  pointer-events: none !important;
+  z-index: 3 !important;
+}
+
+.onix-task-progress-track::after {
+  content: '' !important;
+  position: absolute !important;
+  inset: 0 !important;
+  border-radius: inherit !important;
+  background:
+    linear-gradient(90deg, transparent 0%, rgba(255, 255, 255, 0.16) 46%, transparent 100%) !important;
+  opacity: 0.30 !important;
+  pointer-events: none !important;
+  z-index: 4 !important;
+}
+
+.onix-task-progress-fill {
+  position: relative !important;
+  height: 100% !important;
+  border-radius: 999px !important;
+  background:
+    linear-gradient(90deg,
+      #18e8ff 0%,
+      #39c9ff 22%,
+      #7d5cff 54%,
+      #a855f7 78%,
+      #f6c833 100%
+    ) !important;
+  box-shadow:
+    0 0 10px rgba(24, 232, 255, 0.55),
+    0 0 16px rgba(168, 85, 247, 0.58),
+    0 0 24px rgba(246, 200, 51, 0.16),
+    inset 0 1px 0 rgba(255, 255, 255, 0.38),
+    inset 0 -1px 0 rgba(37, 10, 72, 0.34) !important;
+  overflow: hidden !important;
+  transition: width 220ms ease !important;
+}
+
+.onix-task-progress-fill::before {
+  content: '' !important;
+  position: absolute !important;
+  inset: 0 !important;
+  border-radius: inherit !important;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.42), transparent 48%, rgba(0, 0, 0, 0.16)) !important;
+  opacity: 0.68 !important;
+  pointer-events: none !important;
+}
+
+.onix-task-progress-fill::after {
+  content: '' !important;
+  position: absolute !important;
+  top: -40% !important;
+  bottom: -40% !important;
+  left: -30% !important;
+  width: 38% !important;
+  transform: skewX(-24deg) !important;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.45), transparent) !important;
+  opacity: 0.42 !important;
+  animation: onixEnergyShineV49 2.7s ease-in-out infinite !important;
+  pointer-events: none !important;
+}
+
+/* Strong override for any old task progress bars left by legacy markup */
+.onix-tasks-ref-screen .h-3.overflow-hidden.rounded-full {
+  height: 10px !important;
+  margin-top: 9px !important;
+  border-radius: 999px !important;
+  background:
+    linear-gradient(180deg, rgba(18, 17, 43, 0.98), rgba(5, 8, 22, 0.98)) !important;
+  border: 1px solid rgba(168, 85, 247, 0.40) !important;
+  box-shadow:
+    inset 0 0 8px rgba(0, 0, 0, 0.72),
+    inset 0 0 14px rgba(29, 213, 255, 0.08),
+    0 0 10px rgba(168, 85, 247, 0.24),
+    0 0 18px rgba(45, 212, 255, 0.10) !important;
+}
+
+.onix-tasks-ref-screen .h-3.overflow-hidden.rounded-full > div {
+  background:
+    linear-gradient(90deg,
+      #18e8ff 0%,
+      #39c9ff 22%,
+      #7d5cff 54%,
+      #a855f7 78%,
+      #f6c833 100%
+    ) !important;
+  box-shadow:
+    0 0 10px rgba(24, 232, 255, 0.55),
+    0 0 16px rgba(168, 85, 247, 0.58),
+    0 0 24px rgba(246, 200, 51, 0.16) !important;
+}
+
+@media (max-width: 430px) {
+  .onix-task-progress-text {
+    font-size: 11.5px !important;
+  }
+
+  .onix-task-progress-track {
+    height: 9px !important;
+  }
+}
+
+
 `;
 
 
@@ -12927,18 +13094,18 @@ body:has(.onix-home-reference-mode),
                           </div>
                         </div>
 
-                        <div className="mb-2 flex items-center justify-between text-sm">
-                          <span className="text-gray-400">Прогресс</span>
-                          <span className="font-bold text-emerald-400">
-                            {formatOnix(mission.progress)} / {formatOnix(mission.goal)}
-                          </span>
-                        </div>
+                          <div className="onix-task-progress">
+                          <div className="onix-task-progress-text">
+                            <span className="onix-task-progress-status">Прогресс</span>
+                            <span><strong>{formatOnix(mission.progress)}</strong> / {formatOnix(mission.goal)}</span>
+                          </div>
 
-                        <div className="h-3 overflow-hidden rounded-full bg-gray-800">
-                          <div
-                            className="h-full rounded-full bg-yellow-400 transition-all"
-                            style={{ width: `${progressPercent}%` }}
-                          />
+                          <div className="onix-task-progress-track">
+                            <div
+                              className="onix-task-progress-fill"
+                              style={{ width: `${progressPercent}%` }}
+                            />
+                          </div>
                         </div>
 
                         <button
@@ -13026,18 +13193,18 @@ body:has(.onix-home-reference-mode),
                           </div>
                         </div>
 
-                        <div className="mb-2 flex items-center justify-between text-sm">
-                          <span className="text-gray-400">Прогресс</span>
-                          <span className="font-bold text-emerald-400">
-                            {formatOnix(mission.progress)} / {formatOnix(mission.goal)}
-                          </span>
-                        </div>
+                          <div className="onix-task-progress">
+                          <div className="onix-task-progress-text">
+                            <span className="onix-task-progress-status">Прогресс</span>
+                            <span><strong>{formatOnix(mission.progress)}</strong> / {formatOnix(mission.goal)}</span>
+                          </div>
 
-                        <div className="h-3 overflow-hidden rounded-full bg-gray-800">
-                          <div
-                            className="h-full rounded-full bg-yellow-400 transition-all"
-                            style={{ width: `${progressPercent}%` }}
-                          />
+                          <div className="onix-task-progress-track">
+                            <div
+                              className="onix-task-progress-fill"
+                              style={{ width: `${progressPercent}%` }}
+                            />
+                          </div>
                         </div>
 
                         <button
@@ -13130,19 +13297,18 @@ body:has(.onix-home-reference-mode),
                         </div>
                       </div>
 
-                      <div className="mb-2 flex items-center justify-between text-sm">
-                        <span className="text-gray-400">Прогресс</span>
-                        <span className="font-bold text-emerald-400">
-                          {formatOnix(achievement.progress)} /{' '}
-                          {formatOnix(achievement.goal)}
-                        </span>
-                      </div>
+                      <div className="onix-task-progress">
+                        <div className="onix-task-progress-text">
+                          <span className="onix-task-progress-status">Прогресс</span>
+                          <span><strong>{formatOnix(achievement.progress)}</strong> / {formatOnix(achievement.goal)}</span>
+                        </div>
 
-                      <div className="h-3 overflow-hidden rounded-full bg-gray-800">
-                        <div
-                          className="h-full rounded-full bg-yellow-400 transition-all"
-                          style={{ width: `${progressPercent}%` }}
-                        />
+                        <div className="onix-task-progress-track">
+                          <div
+                            className="onix-task-progress-fill"
+                            style={{ width: `${progressPercent}%` }}
+                          />
+                        </div>
                       </div>
                     </div>
                   );
