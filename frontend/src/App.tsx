@@ -6093,6 +6093,118 @@ div.fixed.inset-0.z-\[90\] button.bg-yellow-400 {
 }
 
 
+
+/* === REFERENCE HOME SCREEN PATCH v69 === */
+/* Inner tabs for Tasks screen: Tasks / Temporary tasks / Achievements */
+.onix-tasks-ref-screen > h2:first-child {
+  position: sticky !important;
+  top: 0 !important;
+  z-index: 20 !important;
+}
+
+.onix-tasks-ref-tabs {
+  position: sticky !important;
+  top: 82px !important;
+  z-index: 19 !important;
+  display: grid !important;
+  grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+  gap: 8px !important;
+  margin: 0 0 16px !important;
+  padding: 7px !important;
+  border-radius: 24px !important;
+  border: 1px solid rgba(124, 58, 237, 0.34) !important;
+  background:
+    radial-gradient(circle at 15% 10%, rgba(168, 85, 247, 0.14), transparent 42%),
+    linear-gradient(145deg, rgba(6, 9, 28, 0.94), rgba(4, 7, 20, 0.98)) !important;
+  box-shadow:
+    inset 0 0 18px rgba(132, 86, 255, 0.08),
+    0 12px 26px rgba(0, 0, 0, 0.18) !important;
+  backdrop-filter: blur(12px) !important;
+}
+
+.onix-tasks-ref-tab {
+  height: 42px !important;
+  border-radius: 17px !important;
+  border: 1px solid rgba(168, 85, 247, 0.16) !important;
+  background: rgba(9, 12, 32, 0.72) !important;
+  color: rgba(218, 208, 255, 0.70) !important;
+  font-family: 'Exo 2', system-ui, sans-serif !important;
+  font-size: 12px !important;
+  font-weight: 900 !important;
+  letter-spacing: 0.01em !important;
+  white-space: nowrap !important;
+  transition: transform 0.16s ease, color 0.16s ease, background 0.16s ease, box-shadow 0.16s ease !important;
+}
+
+.onix-tasks-ref-tab.is-active {
+  color: #ffffff !important;
+  border-color: rgba(219, 188, 255, 0.28) !important;
+  background: linear-gradient(180deg, rgba(155, 61, 255, 0.98), rgba(123, 34, 238, 0.98)) !important;
+  box-shadow:
+    0 0 18px rgba(168, 85, 247, 0.34),
+    inset 0 1px 0 rgba(255, 255, 255, 0.18) !important;
+}
+
+.onix-tasks-ref-tab:active {
+  transform: scale(0.98) !important;
+}
+
+.onix-tasks-ref-panel {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 16px !important;
+  animation: onixTasksPanelInV69 180ms ease-out both !important;
+}
+
+.onix-tasks-ref-panel .mt-8 {
+  margin-top: 0 !important;
+}
+
+.onix-tasks-ref-panel-achievements > .mt-8 > .mb-4:first-child {
+  position: relative !important;
+  overflow: hidden !important;
+  margin-bottom: 16px !important;
+  padding: 16px 16px !important;
+  border-radius: 25px !important;
+  border: 1px solid rgba(168, 85, 247, 0.34) !important;
+  background:
+    radial-gradient(circle at 18% 16%, rgba(168, 85, 247, 0.16), transparent 40%),
+    linear-gradient(145deg, rgba(10, 12, 35, 0.94), rgba(5, 8, 24, 0.97)) !important;
+  box-shadow: inset 0 0 18px rgba(132, 86, 255, 0.08) !important;
+}
+
+.onix-tasks-ref-panel-main .shop-item,
+.onix-tasks-ref-panel-temporary .shop-item {
+  margin: 0 !important;
+}
+
+@keyframes onixTasksPanelInV69 {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (max-width: 430px) {
+  .onix-tasks-ref-tabs {
+    top: 76px !important;
+    gap: 6px !important;
+    padding: 6px !important;
+  }
+
+  .onix-tasks-ref-tab {
+    height: 38px !important;
+    font-size: 10.5px !important;
+    border-radius: 15px !important;
+    letter-spacing: -0.01em !important;
+  }
+}
+
+
 `;
 
 
@@ -6998,6 +7110,8 @@ function App() {
   const [selectedTitle, setSelectedTitle] = useState('ONIX Player');
   const [achievementCategory, setAchievementCategory] =
     useState<AchievementCategory>('all');
+  const [tasksInnerTab, setTasksInnerTab] =
+    useState<'tasks' | 'temporary' | 'achievements'>('tasks');
   const [weeklyEarned, setWeeklyEarned] = useState(0);
   const [currentUserPlace, setCurrentUserPlace] = useState<number | null>(null);
   const [energy, setEnergy] = useState(500);
@@ -12059,11 +12173,151 @@ body:has(.onix-home-reference-mode),
         );
       })()}
 
-      {activeTab === 'tasks' && (
+      {activeTab === 'tasks' && (() => {
+        const tasksTabs = [
+          { id: 'tasks' as const, label: 'Задания' },
+          { id: 'temporary' as const, label: 'Временные задания' },
+          { id: 'achievements' as const, label: 'Достижения' },
+        ];
+
+        return (
         <div className="onix-tasks-screen onix-tasks-ref-screen px-5 mt-3 space-y-4">
           <h2 className="text-2xl font-bold mb-6">📋 Задания</h2>
 
-          <div
+          <div className="onix-tasks-ref-tabs">
+            {tasksTabs.map((tab) => (
+              <button
+                key={tab.id}
+                type="button"
+                onClick={() => setTasksInnerTab(tab.id)}
+                className={`onix-tasks-ref-tab ${tasksInnerTab === tab.id ? 'is-active' : ''}`}
+              >
+                {tab.label}
+              </button>
+            ))}
+          </div>
+
+          {tasksInnerTab === 'tasks' && (
+            <div className="onix-tasks-ref-panel onix-tasks-ref-panel-main">
+<div
+            onClick={async () => {
+              if (completedTasks.includes('channel')) return;
+
+              if (!channelJoined) {
+                window.open('https://t.me/+LEfKu_gQS_o4YTVh', '_blank');
+                localStorage.setItem('channelJoined', 'true');
+                setChannelJoined(true);
+                return;
+              }
+
+              try {
+                const response = await axios.post(`${API_URL}/claim-task`, {
+                  telegramId: getTelegramId(),
+                  task: 'channel',
+                });
+
+                const user = response.data;
+
+                setBalance(user.balance);
+                setUsername(user.username || 'Пользователь');
+                setWeeklyEarned(Number(user.weeklyEarned || 0));
+                setTotalEarned(user.totalEarned);
+                setLevel(user.level);
+                applyUserStats(user);
+                setCompletedTasks(user.completedTasks || []);
+                setOwnedPerks(user.ownedPerks || []);
+      setPerkLevels(normalizePerkLevels(user.perkLevels));
+                setTransactions(user.transactions || []);
+                setAchievements(user.achievements || response.data.achievements || ACHIEVEMENTS);
+                showRewardPopupFromResponse(response.data);
+      showReferralBonusPaidToast(response.data);
+                loadMissions();
+
+                showToast('🎉 Подписка подтверждена! +25000 ONIX');
+              } catch (error: any) {
+                showToast(error?.response?.data?.message || 'Сначала подпишитесь на канал');
+              }
+            }}
+            className={`shop-item ${
+              completedTasks.includes('channel')
+                ? 'opacity-50 cursor-not-allowed'
+                : ''
+            }`}
+          >
+            <div>
+              <p className="font-bold">📢 Подписаться на канал</p>
+              <p className="text-gray-400">+25000 ONIX</p>
+            </div>
+
+            <span className="text-emerald-400 font-bold">
+              {completedTasks.includes('channel')
+                ? 'Выполнено'
+                : channelJoined
+                ? 'Проверить'
+                : 'Подписаться'}
+            </span>
+          </div>
+
+<div
+            onClick={async () => {
+              if (completedTasks.includes('inviteFriend')) return;
+
+              if (referralsCount < 1) {
+                setReferralModalVisible(true);
+                return;
+              }
+
+              try {
+                const response = await axios.post(`${API_URL}/claim-task`, {
+                  telegramId: getTelegramId(),
+                  task: 'inviteFriend',
+                });
+
+                const user = response.data;
+
+                setBalance(user.balance);
+                setUsername(user.username || 'Пользователь');
+                setWeeklyEarned(Number(user.weeklyEarned || 0));
+                setTotalEarned(user.totalEarned);
+                setLevel(user.level);
+                applyUserStats(user);
+                setCompletedTasks(user.completedTasks || []);
+                setOwnedPerks(user.ownedPerks || []);
+      setPerkLevels(normalizePerkLevels(user.perkLevels));
+
+                showToast(`🎉 Вы получили +${formatOnix(economyConfig.referralReward)} ONIX!`, 'success');
+              } catch (error: any) {
+                showToast(error?.response?.data?.message || 'Сначала пригласите друга');
+              }
+            }}
+            className={`shop-item ${
+              completedTasks.includes('inviteFriend')
+                ? 'opacity-50 cursor-not-allowed'
+                : ''
+            }`}
+          >
+            <div>
+              <p className="font-bold">👥 Пригласить друга</p>
+              <p className="text-gray-400">+{formatOnix(economyConfig.referralReward)} ONIX</p>
+              <p className="text-xs text-yellow-400">
+                Бонусы сегодня: {referralLimit.used}/{referralLimit.max}
+              </p>
+            </div>
+
+            <span className="text-emerald-400 font-bold">
+              {completedTasks.includes('inviteFriend')
+                ? 'Выполнено'
+                : referralsCount >= 1
+                ? 'Забрать'
+                : 'Пригласить'}
+            </span>
+          </div>
+            </div>
+          )}
+
+          {tasksInnerTab === 'temporary' && (
+            <div className="onix-tasks-ref-panel onix-tasks-ref-panel-temporary">
+<div
             onClick={async () => {
               if (dailyCooldown > 0) return;
 
@@ -12135,7 +12389,7 @@ body:has(.onix-home-reference-mode),
             </span>
           </div>
 
-          <div className="rounded-3xl border border-yellow-400/20 bg-[#111827] p-5 shadow-xl">
+<div className="rounded-3xl border border-yellow-400/20 bg-[#111827] p-5 shadow-xl">
             <div className="mb-4 flex items-center justify-between gap-3">
               <div>
                 <h3 className="text-xl font-bold text-white">☀️ Ежедневные миссии</h3>
@@ -12220,7 +12474,7 @@ body:has(.onix-home-reference-mode),
             </div>
           </div>
 
-          <div className="rounded-3xl border border-yellow-400/20 bg-[#111827] p-5 shadow-xl">
+<div className="rounded-3xl border border-yellow-400/20 bg-[#111827] p-5 shadow-xl">
             <div className="mb-4 flex items-center justify-between gap-3">
               <div>
                 <h3 className="text-xl font-bold text-white">📅 Еженедельные миссии</h3>
@@ -12302,122 +12556,12 @@ body:has(.onix-home-reference-mode),
               )}
             </div>
           </div>
-
-          <div
-            onClick={async () => {
-              if (completedTasks.includes('channel')) return;
-
-              if (!channelJoined) {
-                window.open('https://t.me/+LEfKu_gQS_o4YTVh', '_blank');
-                localStorage.setItem('channelJoined', 'true');
-                setChannelJoined(true);
-                return;
-              }
-
-              try {
-                const response = await axios.post(`${API_URL}/claim-task`, {
-                  telegramId: getTelegramId(),
-                  task: 'channel',
-                });
-
-                const user = response.data;
-
-                setBalance(user.balance);
-                setUsername(user.username || 'Пользователь');
-                setWeeklyEarned(Number(user.weeklyEarned || 0));
-                setTotalEarned(user.totalEarned);
-                setLevel(user.level);
-                applyUserStats(user);
-                setCompletedTasks(user.completedTasks || []);
-                setOwnedPerks(user.ownedPerks || []);
-      setPerkLevels(normalizePerkLevels(user.perkLevels));
-                setTransactions(user.transactions || []);
-                setAchievements(user.achievements || response.data.achievements || ACHIEVEMENTS);
-                showRewardPopupFromResponse(response.data);
-      showReferralBonusPaidToast(response.data);
-                loadMissions();
-
-                showToast('🎉 Подписка подтверждена! +25000 ONIX');
-              } catch (error: any) {
-                showToast(error?.response?.data?.message || 'Сначала подпишитесь на канал');
-              }
-            }}
-            className={`shop-item ${
-              completedTasks.includes('channel')
-                ? 'opacity-50 cursor-not-allowed'
-                : ''
-            }`}
-          >
-            <div>
-              <p className="font-bold">📢 Подписаться на канал</p>
-              <p className="text-gray-400">+25000 ONIX</p>
             </div>
+          )}
 
-            <span className="text-emerald-400 font-bold">
-              {completedTasks.includes('channel')
-                ? 'Выполнено'
-                : channelJoined
-                ? 'Проверить'
-                : 'Подписаться'}
-            </span>
-          </div>
-
-          <div
-            onClick={async () => {
-              if (completedTasks.includes('inviteFriend')) return;
-
-              if (referralsCount < 1) {
-                setReferralModalVisible(true);
-                return;
-              }
-
-              try {
-                const response = await axios.post(`${API_URL}/claim-task`, {
-                  telegramId: getTelegramId(),
-                  task: 'inviteFriend',
-                });
-
-                const user = response.data;
-
-                setBalance(user.balance);
-                setUsername(user.username || 'Пользователь');
-                setWeeklyEarned(Number(user.weeklyEarned || 0));
-                setTotalEarned(user.totalEarned);
-                setLevel(user.level);
-                applyUserStats(user);
-                setCompletedTasks(user.completedTasks || []);
-                setOwnedPerks(user.ownedPerks || []);
-      setPerkLevels(normalizePerkLevels(user.perkLevels));
-
-                showToast(`🎉 Вы получили +${formatOnix(economyConfig.referralReward)} ONIX!`, 'success');
-              } catch (error: any) {
-                showToast(error?.response?.data?.message || 'Сначала пригласите друга');
-              }
-            }}
-            className={`shop-item ${
-              completedTasks.includes('inviteFriend')
-                ? 'opacity-50 cursor-not-allowed'
-                : ''
-            }`}
-          >
-            <div>
-              <p className="font-bold">👥 Пригласить друга</p>
-              <p className="text-gray-400">+{formatOnix(economyConfig.referralReward)} ONIX</p>
-              <p className="text-xs text-yellow-400">
-                Бонусы сегодня: {referralLimit.used}/{referralLimit.max}
-              </p>
-            </div>
-
-            <span className="text-emerald-400 font-bold">
-              {completedTasks.includes('inviteFriend')
-                ? 'Выполнено'
-                : referralsCount >= 1
-                ? 'Забрать'
-                : 'Пригласить'}
-            </span>
-          </div>
-
-          <div className="mt-8">
+          {tasksInnerTab === 'achievements' && (
+            <div className="onix-tasks-ref-panel onix-tasks-ref-panel-achievements">
+<div className="mt-8">
             <div className="mb-4 flex items-center justify-between gap-3">
               <h2 className="text-2xl font-bold">🏆 Достижения</h2>
               <span className="rounded-full bg-[#111827] px-3 py-1 text-sm font-bold text-yellow-400">
@@ -12503,9 +12647,12 @@ body:has(.onix-home-reference-mode),
               </div>
             )}
           </div>
+            </div>
+          )}
 
         </div>
-      )}
+        );
+      })()}
 
       {activeTab === 'friends' && (
         <div className="onix-social-screen px-5 mt-8 space-y-5">
