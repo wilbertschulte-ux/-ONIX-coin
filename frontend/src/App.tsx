@@ -4090,6 +4090,59 @@ body .onix-nav button.onix-nav-active *,
   z-index: 2 !important;
 }
 
+/* Use the same fixed arena background on the Profile tab without applying Home-only layout rules */
+.onix-profile-arena-bg-mode.onix-app-bg {
+  background-color: #050713 !important;
+  background-image:
+    radial-gradient(ellipse at 16% 7%, rgba(119, 43, 218, 0.52) 0%, rgba(84, 27, 164, 0.24) 25%, transparent 53%),
+    radial-gradient(ellipse at 96% 18%, rgba(0, 129, 178, 0.24) 0%, rgba(0, 129, 178, 0.11) 24%, transparent 52%),
+    radial-gradient(ellipse at 49% 49%, rgba(86, 31, 170, 0.17) 0%, transparent 58%),
+    radial-gradient(ellipse at 50% 88%, rgba(78, 22, 151, 0.34) 0%, rgba(78, 22, 151, 0.10) 30%, transparent 62%),
+    linear-gradient(180deg, #080a16 0%, #070916 42%, #050713 100%) !important;
+}
+
+.onix-profile-arena-bg-mode.onix-app-bg::before {
+  content: '' !important;
+  position: fixed !important;
+  left: 50% !important;
+  top: 0 !important;
+  bottom: 0 !important;
+  width: min(100vw, 430px) !important;
+  transform: translateX(-50%) !important;
+  z-index: 0 !important;
+  pointer-events: none !important;
+  opacity: 1 !important;
+  background-image:
+    linear-gradient(180deg, rgba(2, 4, 13, 0.14) 0%, rgba(2, 4, 13, 0.02) 42%, rgba(2, 4, 13, 0.24) 100%),
+    radial-gradient(ellipse at 50% 38%, rgba(129, 56, 255, 0.10) 0%, transparent 48%),
+    url("${ONIX_HOME_ARENA_BG_V25}") !important;
+  background-size: cover, cover, cover !important;
+  background-position: center top, center top, center center !important;
+  background-repeat: no-repeat !important;
+}
+
+.onix-profile-arena-bg-mode.onix-app-bg::after {
+  content: '' !important;
+  position: fixed !important;
+  left: 50% !important;
+  top: 0 !important;
+  bottom: 0 !important;
+  width: min(100vw, 430px) !important;
+  transform: translateX(-50%) !important;
+  z-index: 0 !important;
+  pointer-events: none !important;
+  background:
+    linear-gradient(180deg, rgba(3, 6, 18, 0.26) 0%, rgba(3, 6, 18, 0.00) 20%, rgba(3, 6, 18, 0.18) 100%),
+    radial-gradient(ellipse at 50% 39%, rgba(0, 0, 0, 0.00) 0%, rgba(0, 0, 0, 0.16) 64%, rgba(0, 0, 0, 0.34) 100%) !important;
+}
+
+.onix-profile-arena-bg-mode .onix-social-screen,
+.onix-profile-arena-bg-mode .onix-profile-ref-screen,
+.onix-profile-arena-bg-mode .onix-nav {
+  position: relative !important;
+  z-index: 2 !important;
+}
+
 /* Make coin area sit naturally on generated glowing platform */
 .onix-home-reference-mode .onix-ref-v5-coin {
   filter:
@@ -13508,7 +13561,7 @@ body:has(.onix-home-reference-mode),
   }
 
   return (
-    <div className={`onix-app-bg min-h-screen text-white ${activeTab === 'home' ? 'onix-home-reference-mode' : ''}`}>
+    <div className={`onix-app-bg min-h-screen text-white ${activeTab === 'home' ? 'onix-home-reference-mode' : ''} ${activeTab === 'friends' ? 'onix-profile-arena-bg-mode' : ''}`}>
       <style>{ONIX_THEME_STYLE}</style>
       <div className="onix-toast-layer">
         {toastMessages.map((toast) => (
