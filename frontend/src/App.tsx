@@ -8273,6 +8273,109 @@ div.fixed.inset-0.z-\[90\] button.bg-yellow-400 {
   display: none !important;
 }
 
+
+/* === PROFILE DETAIL PAGES v86 ===
+   Achievements, ranks, stats and invited players open as whole Profile sub-pages,
+   not as extra panels under the Profile overview. */
+.onix-profile-arena-bg-mode .onix-profile-v75-screen.is-profile-detail-mode {
+  padding-top: 0 !important;
+  padding-bottom: calc(104px + env(safe-area-inset-bottom)) !important;
+  max-height: calc(100dvh - 88px) !important;
+}
+
+.onix-profile-arena-bg-mode .onix-profile-v75-screen.is-profile-detail-mode > .onix-profile-v75-hero,
+.onix-profile-arena-bg-mode .onix-profile-v75-screen.is-profile-detail-mode > .onix-profile-v75-rank-progress,
+.onix-profile-arena-bg-mode .onix-profile-v75-screen.is-profile-detail-mode > .onix-profile-v75-stats-grid,
+.onix-profile-arena-bg-mode .onix-profile-v75-screen.is-profile-detail-mode > .onix-profile-v75-menu {
+  display: none !important;
+}
+
+.onix-profile-arena-bg-mode .onix-profile-v75-screen.is-profile-detail-mode > .onix-profile-v75-panel {
+  margin-top: 0 !important;
+  padding: 0 !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  background-image: none !important;
+  box-shadow: none !important;
+  min-height: calc(100dvh - 188px) !important;
+}
+
+.onix-profile-arena-bg-mode .onix-profile-v75-detail-title {
+  position: sticky !important;
+  top: 0 !important;
+  z-index: 8 !important;
+  min-height: 76px !important;
+  margin: 0 0 16px !important;
+  padding: 12px 14px !important;
+  border-radius: 24px !important;
+  border: 1px solid rgba(168,85,247,.34) !important;
+  background: linear-gradient(145deg, rgba(10,12,35,.88), rgba(5,8,24,.94)) !important;
+  box-shadow: 0 18px 36px rgba(0,0,0,.22), inset 0 0 18px rgba(132,86,255,.08) !important;
+  backdrop-filter: blur(8px) !important;
+  -webkit-backdrop-filter: blur(8px) !important;
+  display: grid !important;
+  grid-template-columns: 46px minmax(0, 1fr) auto !important;
+  align-items: center !important;
+  gap: 10px !important;
+}
+
+.onix-profile-v75-back {
+  width: 46px !important;
+  height: 46px !important;
+  border-radius: 16px !important;
+  display: grid !important;
+  place-items: center !important;
+  border: 1px solid rgba(168,85,247,.38) !important;
+  background: rgba(8,10,28,.72) !important;
+  color: #fff !important;
+  font-size: 38px !important;
+  line-height: 1 !important;
+  font-weight: 800 !important;
+  box-shadow: inset 0 0 16px rgba(132,86,255,.10) !important;
+}
+
+.onix-profile-v75-back:active {
+  transform: scale(.96) !important;
+}
+
+.onix-profile-arena-bg-mode .onix-profile-v75-detail-title strong {
+  min-width: 0 !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  white-space: nowrap !important;
+}
+
+.onix-profile-arena-bg-mode .onix-profile-v75-screen.is-profile-detail-mode .onix-profile-v75-list {
+  max-height: none !important;
+  overflow: visible !important;
+  padding-bottom: 12px !important;
+}
+
+.onix-profile-arena-bg-mode .onix-profile-v75-screen.is-profile-detail-mode .onix-profile-v75-stats-list,
+.onix-profile-arena-bg-mode .onix-profile-v75-screen.is-profile-detail-mode .onix-profile-v75-invited-grid {
+  padding-bottom: 12px !important;
+}
+
+@media(max-width:430px){
+  .onix-profile-arena-bg-mode .onix-profile-v75-detail-title {
+    min-height: 70px !important;
+    grid-template-columns: 42px minmax(0, 1fr) auto !important;
+    padding: 11px 12px !important;
+  }
+
+  .onix-profile-v75-back {
+    width: 42px !important;
+    height: 42px !important;
+    border-radius: 15px !important;
+    font-size: 34px !important;
+  }
+
+  .onix-profile-arena-bg-mode .onix-profile-v75-detail-title strong {
+    font-size: 18px !important;
+  }
+}
+
 `;
 
 
@@ -14914,7 +15017,7 @@ body:has(.onix-home-reference-mode),
 
       {activeTab === 'friends' && (
         <div className="onix-social-screen onix-profile-screen onix-profile-v82-page onix-profile-v83-page px-5 mt-8 space-y-5">
-          <div className="onix-profile-ref-screen onix-profile-v75-screen">
+          <div className={`onix-profile-ref-screen onix-profile-v75-screen ${profilePanel !== 'overview' ? 'is-profile-detail-mode' : ''}`}>
             <div className="onix-profile-v75-hero onix-profile-v82-player-card onix-profile-v83-player-row">
               <div className="onix-profile-v75-avatar">
                 {telegramAvatarUrl ? (
@@ -14981,7 +15084,7 @@ body:has(.onix-home-reference-mode),
 
             {profilePanel === 'achievements' && (
               <div className="onix-profile-v75-panel">
-                <div className="onix-profile-v75-panel-title"><strong>🏆 Все достижения</strong><span>{completedAchievementsCount}/{achievements.length}</span></div>
+                <div className="onix-profile-v75-panel-title onix-profile-v75-detail-title"><button type="button" className="onix-profile-v75-back" onClick={() => setProfilePanel('overview')}>‹</button><strong>🏆 Все достижения</strong><span>{completedAchievementsCount}/{achievements.length}</span></div>
                 <div className="onix-profile-v75-list">
                   {[...pendingAchievementsList, ...completedAchievementsList].map((achievement) => {
                     const progressPercent = Math.min((Number(achievement.progress || 0) / Number(achievement.goal || 1)) * 100, 100);
@@ -15004,7 +15107,7 @@ body:has(.onix-home-reference-mode),
 
             {profilePanel === 'ranks' && (
               <div className="onix-profile-v75-panel">
-                <div className="onix-profile-v75-panel-title"><strong>🏅 Все ранги</strong><span>{rankInfo.currentRank.name}</span></div>
+                <div className="onix-profile-v75-panel-title onix-profile-v75-detail-title"><button type="button" className="onix-profile-v75-back" onClick={() => setProfilePanel('overview')}>‹</button><strong>🏅 Все ранги</strong><span>{rankInfo.currentRank.name}</span></div>
                 <div className="onix-profile-v75-list">
                   {RANKS.map((rank) => {
                     const passed = totalEarned >= rank.threshold;
@@ -15030,7 +15133,7 @@ body:has(.onix-home-reference-mode),
 
             {profilePanel === 'stats' && (
               <div className="onix-profile-v75-panel">
-                <div className="onix-profile-v75-panel-title"><strong>📊 Игровая статистика</strong><span>ONIX</span></div>
+                <div className="onix-profile-v75-panel-title onix-profile-v75-detail-title"><button type="button" className="onix-profile-v75-back" onClick={() => setProfilePanel('overview')}>‹</button><strong>📊 Игровая статистика</strong><span>ONIX</span></div>
                 <div className="onix-profile-v75-stats-list">
                   {profileStats.map((item) => (
                     <div key={item.label}><span>{item.label}</span><strong>{item.value}</strong></div>
@@ -15041,7 +15144,7 @@ body:has(.onix-home-reference-mode),
 
             {profilePanel === 'invited' && (
               <div className="onix-profile-v75-panel">
-                <div className="onix-profile-v75-panel-title"><strong>👥 Приглашенные игроки</strong><span>{invitedProfiles.length || referralsCount}</span></div>
+                <div className="onix-profile-v75-panel-title onix-profile-v75-detail-title"><button type="button" className="onix-profile-v75-back" onClick={() => setProfilePanel('overview')}>‹</button><strong>👥 Приглашенные игроки</strong><span>{invitedProfiles.length || referralsCount}</span></div>
                 <div className="onix-profile-v75-invited-grid">
                   {invitedProfiles.length > 0 ? invitedProfiles.map((friend) => (
                     <div key={friend.telegramId} className="onix-profile-v75-friend-card">
