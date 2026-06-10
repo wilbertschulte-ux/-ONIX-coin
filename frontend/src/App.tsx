@@ -8324,15 +8324,29 @@ div.fixed.inset-0.z-\[90\] button.bg-yellow-400 {
   width: 46px !important;
   height: 46px !important;
   border-radius: 16px !important;
+  position: relative !important;
   display: grid !important;
   place-items: center !important;
   border: 1px solid rgba(168,85,247,.38) !important;
   background: rgba(8,10,28,.72) !important;
-  color: #fff !important;
-  font-size: 38px !important;
-  line-height: 1 !important;
+  color: transparent !important;
+  font-size: 0 !important;
+  line-height: 0 !important;
   font-weight: 800 !important;
+  overflow: hidden !important;
   box-shadow: inset 0 0 16px rgba(132,86,255,.10) !important;
+}
+
+.onix-profile-v75-back::before {
+  content: '‹';
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -54%);
+  color: #fff;
+  font-size: 38px;
+  line-height: 1;
+  font-weight: 900;
 }
 
 .onix-profile-v75-back:active {
@@ -8368,7 +8382,11 @@ div.fixed.inset-0.z-\[90\] button.bg-yellow-400 {
     width: 42px !important;
     height: 42px !important;
     border-radius: 15px !important;
+  }
+
+  .onix-profile-v75-back::before {
     font-size: 34px !important;
+    transform: translate(-50%, -54%) !important;
   }
 
   .onix-profile-arena-bg-mode .onix-profile-v75-detail-title strong {
