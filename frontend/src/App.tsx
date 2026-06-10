@@ -15127,18 +15127,22 @@ body:has(.onix-home-reference-mode),
               <div className="onix-profile-v75-panel">
                 <div className="onix-profile-v75-panel-title onix-profile-v75-detail-title"><button type="button" className="onix-profile-v75-back" onClick={() => setProfilePanel('overview')}>‹</button><strong>🏅 Все ранги</strong><span>{rankInfo.currentRank.name}</span></div>
                 <div className="onix-profile-v75-list">
-                  {RANKS.map((rank) => {
+                  {RANKS.map((rank, rankIndex) => {
                     const passed = totalEarned >= rank.threshold;
                     const current = rank.id === rankInfo.currentRank.id;
+                    const previousRankThreshold = RANKS[Math.max(0, rankIndex - 1)]?.threshold || 0;
+                    const rankStepTotal = Math.max(1, rank.threshold - previousRankThreshold);
+                    const rankStepCurrent = Math.max(0, totalEarned - previousRankThreshold);
+                    const rankStepPercent = Math.min((rankStepCurrent / rankStepTotal) * 100, 100);
                     return (
                       <div key={rank.id} className={`onix-profile-v75-rank-row ${passed ? 'is-passed' : ''} ${current ? 'is-current' : ''}`}>
                         <div className="onix-profile-v75-rank-mini"><RankIcon rank={rank} size="sm" /></div>
                         <div className="onix-profile-v75-rank-body">
-                          <div className="onix-profile-v75-rank-title"><strong>{rank.name}</strong><span>{current ? 'Текущий' : passed ? 'Пройден' : `Нужно ${formatOnix(rank.threshold)}`}</span></div>
+                          <div className="onix-profile-v75-rank-title"><strong>{rank.name}</strong><span>{current ? 'Текущий' : passed ? 'Пройден' : `Нужно ${formatOnix(rankStepTotal)}`}</span></div>
                           {!passed && (
                             <div className="onix-task-progress">
-                              <div className="onix-task-progress-text"><span className="onix-task-progress-status">Прогресс</span><span><strong>{formatOnix(totalEarned)}</strong> / {formatOnix(rank.threshold)}</span></div>
-                              <div className="onix-task-progress-track"><div className="onix-task-progress-fill" style={{ width: `${Math.min((totalEarned / Math.max(rank.threshold, 1)) * 100, 100)}%` }} /></div>
+                              <div className="onix-task-progress-text"><span className="onix-task-progress-status">Прогресс</span><span><strong>{formatOnix(rankStepCurrent)}</strong> / {formatOnix(rankStepTotal)}</span></div>
+                              <div className="onix-task-progress-track"><div className="onix-task-progress-fill" style={{ width: `${rankStepPercent}%` }} /></div>
                             </div>
                           )}
                         </div>
