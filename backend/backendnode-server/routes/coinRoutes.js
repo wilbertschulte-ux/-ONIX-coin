@@ -29,6 +29,74 @@ const Team = mongoose.models.Team || mongoose.model(
   )
 );
 
+
+function getTeamsCollection() {
+  return mongoose.connection.collection('teams');
+}
+
+async function findSavedTeamByName(teamName) {
+  const cleanTeamName = normalizeTeamNameValue(teamName);
+  if (!cleanTeamName) return null;
+
+  const normalizedName = cleanTeamName.toLowerCase();
+
+  try {
+    return await getTeamsCollection().findOne({ normalizedName });
+  } catch (error) {
+    return Team.findOne({ normalizedName }).lean();
+  }
+}
+
+async function listSavedTeams(limit = 500) {
+  try {
+    return await getTeamsCollection().find({}).limit(limit).toArray();
+  } catch (error) {
+    return Team.find({}).limit(limit).lean();
+  }
+}
+
+async function upsertSavedTeam(teamName, createdByTelegramId = '') {
+  const cleanTeamName = normalizeTeamNameValue(teamName);
+  if (!cleanTeamName) return null;
+
+  const normalizedName = cleanTeamName.toLowerCase();
+  const payload = {
+    name: cleanTeamName,
+    normalizedName,
+    createdByTelegramId: String(createdByTelegramId || ''),
+    updatedAt: new Date(),
+  };
+
+  try {
+    await getTeamsCollection().updateOne(
+      { normalizedName },
+      {
+        $setOnInsert: {
+          name: cleanTeamName,
+          normalizedName,
+          createdByTelegramId: String(createdByTelegramId || ''),
+          createdAt: new Date(),
+        },
+        $set: { updatedAt: new Date() },
+      },
+      { upsert: true }
+    );
+    return payload;
+  } catch (error) {
+    return Team.findOneAndUpdate(
+      { normalizedName },
+      {
+        $setOnInsert: {
+          name: cleanTeamName,
+          normalizedName,
+          createdByTelegramId: String(createdByTelegramId || ''),
+        },
+      },
+      { upsert: true, new: true }
+    );
+  }
+}
+
 function cleanupRateLimits(now = Date.now()) {
   if (API_RATE_LIMITS.size < 5000) return;
 
@@ -1869,17 +1937,7 @@ router.post('/admin-adjust-balance', async (req, res) => {
     user.level = calculateLevel(user.totalEarned);
     user.updatedAt = new Date();
 
-    await Team.findOneAndUpdate(
-      { normalizedName: cleanTeamName.toLowerCase() },
-      {
-        $setOnInsert: {
-          name: cleanTeamName,
-          normalizedName: cleanTeamName.toLowerCase(),
-          createdByTelegramId: String(telegramId),
-        },
-      },
-      { upsert: true, new: true }
-    );
+    await upsertSavedTeam(cleanTeamName, telegramId);
 
     await user.save();
 
@@ -3741,7 +3799,7 @@ router.get('/teams', async (req, res) => {
     // Fetch them without a strict Mongo regex filter and do the final search in JS,
     // so teams created earlier still appear in search/list even when nobody is inside.
     const [savedTeams, weeklyLeaderboard, userTeams] = await Promise.all([
-      Team.find({}).limit(500).lean(),
+      listSavedTeams(500),
       User.aggregate([
         {
           $match: {
@@ -3895,7 +3953,7 @@ router.post('/create-team', async (req, res) => {
       teamName: { $regex: new RegExp(`^${escapeRegExpValue(cleanTeamName)}$`, 'i') },
     }).select('teamName');
 
-    const existingSavedTeam = await Team.findOne({ normalizedName: cleanTeamName.toLowerCase() }).lean();
+    const existingSavedTeam = await findSavedTeamByName(cleanTeamName);
 
     if (existingTeamMember || existingSavedTeam) {
       return res.status(409).json({ message: 'Команда с таким названием уже существует' });
@@ -3918,11 +3976,7 @@ router.post('/create-team', async (req, res) => {
 
     addSecurityLog(user, 'team_create', 'Создание команды', cleanTeamName);
 
-    await Team.create({
-      name: cleanTeamName,
-      normalizedName: cleanTeamName.toLowerCase(),
-      createdByTelegramId: String(telegramId),
-    });
+    await upsertSavedTeam(cleanTeamName, telegramId);
 
     await user.save();
 
@@ -3982,17 +4036,7 @@ router.post('/join-team', async (req, res) => {
 
     addSecurityLog(user, 'team_join', 'Вступление в команду', cleanTeamName);
 
-    await Team.findOneAndUpdate(
-      { normalizedName: cleanTeamName.toLowerCase() },
-      {
-        $setOnInsert: {
-          name: cleanTeamName,
-          normalizedName: cleanTeamName.toLowerCase(),
-          createdByTelegramId: '',
-        },
-      },
-      { upsert: true, new: true }
-    );
+    await upsertSavedTeam(cleanTeamName);
 
     await user.save();
 
