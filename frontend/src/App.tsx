@@ -8437,12 +8437,12 @@ div.fixed.inset-0.z-\[90\] button.bg-yellow-400 {
 }
 
 .onix-profile-team-hero {
-  min-height: 74px !important;
+  min-height: 62px !important;
   display: flex !important;
   align-items: center !important;
   justify-content: space-between !important;
   gap: 12px !important;
-  padding: 12px 14px !important;
+  padding: 9px 14px !important;
   border-radius: 22px !important;
   overflow: hidden !important;
 }
@@ -8521,8 +8521,8 @@ div.fixed.inset-0.z-\[90\] button.bg-yellow-400 {
 }
 
 .onix-profile-team-stats-grid > div {
-  min-height: 58px !important;
-  padding: 10px 12px !important;
+  min-height: 50px !important;
+  padding: 8px 12px !important;
   border-radius: 18px !important;
 }
 
@@ -8538,7 +8538,7 @@ div.fixed.inset-0.z-\[90\] button.bg-yellow-400 {
 
 .onix-profile-team-prize {
   width: 100% !important;
-  min-height: 48px !important;
+  min-height: 42px !important;
   color: rgba(218, 208, 255, 0.66) !important;
   border-color: rgba(124, 58, 237, 0.22) !important;
 }
@@ -8748,8 +8748,8 @@ div.fixed.inset-0.z-\[90\] button.bg-yellow-400 {
 }
 
 .onix-profile-v75-screen.is-profile-detail-mode.is-profile-team-mode {
-  height: calc(100dvh - 122px - env(safe-area-inset-bottom)) !important;
-  max-height: calc(100dvh - 122px - env(safe-area-inset-bottom)) !important;
+  height: calc(100dvh - 72px - env(safe-area-inset-bottom)) !important;
+  max-height: calc(100dvh - 72px - env(safe-area-inset-bottom)) !important;
   overflow: hidden !important;
   padding-bottom: calc(92px + env(safe-area-inset-bottom)) !important;
 }
@@ -8759,12 +8759,12 @@ div.fixed.inset-0.z-\[90\] button.bg-yellow-400 {
 }
 
 .onix-profile-v75-screen.is-profile-detail-mode.is-profile-team-mode > .onix-profile-v75-team-panel {
-  height: calc(100dvh - 214px - env(safe-area-inset-bottom)) !important;
+  height: calc(100dvh - 94px - env(safe-area-inset-bottom)) !important;
   min-height: 0 !important;
   overflow: hidden !important;
   display: flex !important;
   flex-direction: column !important;
-  gap: 10px !important;
+  gap: 8px !important;
 }
 
 .onix-profile-v75-screen.is-profile-detail-mode.is-profile-team-mode .onix-profile-v75-detail-title {
@@ -8834,15 +8834,16 @@ div.fixed.inset-0.z-\[90\] button.bg-yellow-400 {
 .onix-profile-team-tab-content {
   min-height: 0 !important;
   flex: 1 1 auto !important;
-  overflow: hidden !important;
+  overflow: visible !important;
   display: flex !important;
   flex-direction: column !important;
 }
 
 .onix-profile-team-tab-content .onix-profile-team-block {
   min-height: 0 !important;
-  height: 100% !important;
-  overflow: hidden !important;
+  height: auto !important;
+  max-height: 100% !important;
+  overflow: visible !important;
   display: flex !important;
   flex-direction: column !important;
 }
@@ -8851,14 +8852,14 @@ div.fixed.inset-0.z-\[90\] button.bg-yellow-400 {
 .onix-profile-team-tab-content .onix-profile-team-podium,
 .onix-profile-team-tab-content .onix-profile-team-members {
   min-height: 0 !important;
-  flex: 1 1 auto !important;
-  overflow: hidden !important;
+  flex: 0 1 auto !important;
+  overflow: visible !important;
 }
 
 
 @media(max-width:430px){
   .onix-profile-v75-screen.is-profile-detail-mode.is-profile-team-mode > .onix-profile-v75-team-panel {
-    height: calc(100dvh - 202px - env(safe-area-inset-bottom)) !important;
+    height: calc(100dvh - 88px - env(safe-area-inset-bottom)) !important;
   }
 
   .onix-profile-team-hero {
@@ -8892,6 +8893,30 @@ div.fixed.inset-0.z-\[90\] button.bg-yellow-400 {
     font-size: 12px !important;
   }
 }
+
+/* Make the fixed Team page use the full available height without clipping the active tab content. */
+.onix-profile-v75-screen.is-profile-detail-mode.is-profile-team-mode .onix-profile-team-block-title {
+  margin-bottom: 8px !important;
+}
+
+.onix-profile-v75-screen.is-profile-detail-mode.is-profile-team-mode .onix-profile-team-block {
+  padding: 10px 12px !important;
+}
+
+.onix-profile-v75-screen.is-profile-detail-mode.is-profile-team-mode .onix-profile-team-member,
+.onix-profile-v75-screen.is-profile-detail-mode.is-profile-team-mode .onix-profile-team-podium-row,
+.onix-profile-v75-screen.is-profile-detail-mode.is-profile-team-mode .onix-profile-team-mission {
+  min-height: 52px !important;
+  padding: 10px 12px !important;
+}
+
+.onix-profile-v75-screen.is-profile-detail-mode.is-profile-team-mode .onix-profile-team-member strong,
+.onix-profile-v75-screen.is-profile-detail-mode.is-profile-team-mode .onix-profile-team-card strong,
+.onix-profile-v75-screen.is-profile-detail-mode.is-profile-team-mode .onix-profile-team-mission strong {
+  font-size: 16px !important;
+  line-height: 1.05 !important;
+}
+
 
 `;
 
