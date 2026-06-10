@@ -225,12 +225,105 @@ function getTeamMissionDefinitions() {
 }
 
 function getTeamPrizeByPlace(place) {
-  if (place === 1) return 100000;
-  if (place === 2) return 60000;
-  if (place === 3) return 30000;
-  if (place >= 4 && place <= 10) return 10000;
+  const cleanPlace = Number(place || 0);
+
+  if (cleanPlace === 1) return getNumberEnv('TEAM_CONTEST_PRIZE_TOP_1', 150000);
+  if (cleanPlace === 2) return getNumberEnv('TEAM_CONTEST_PRIZE_TOP_2', 100000);
+  if (cleanPlace === 3) return getNumberEnv('TEAM_CONTEST_PRIZE_TOP_3', 60000);
+  if (cleanPlace >= 4) return getNumberEnv('TEAM_CONTEST_PRIZE_PARTICIPATION', 10000);
 
   return 0;
+}
+
+async function getTeamLeaderboardForWeek(week, limit = 0) {
+  const pipeline = [
+    {
+      $match: {
+        weeklyEarnedWeek: week,
+        weeklyEarned: { $gt: 0 },
+        teamName: { $nin: ['', null] },
+      },
+    },
+    {
+      $group: {
+        _id: '$teamName',
+        weeklyEarned: { $sum: '$weeklyEarned' },
+        members: { $sum: 1 },
+        totalTaps: { $sum: '$totalTaps' },
+      },
+    },
+    { $sort: { weeklyEarned: -1, members: -1, _id: 1 } },
+  ];
+
+  if (limit > 0) pipeline.push({ $limit: limit });
+
+  const teams = await User.aggregate(pipeline);
+
+  return teams.map((team, index) => ({
+    place: index + 1,
+    teamName: team._id,
+    weeklyEarned: roundOnix(team.weeklyEarned || 0),
+    members: Number(team.members || 0),
+    totalTaps: Number(team.totalTaps || 0),
+    prize: getTeamPrizeByPlace(index + 1),
+  }));
+}
+
+function getTeamContestRewardTitle(place) {
+  const cleanPlace = Number(place || 0);
+
+  if (cleanPlace === 1) return '1 место';
+  if (cleanPlace === 2) return '2 место';
+  if (cleanPlace === 3) return '3 место';
+  if (cleanPlace >= 4) return 'приз за участие';
+
+  return 'нет места';
+}
+
+async function getTeamContestPayload(user) {
+  normalizeUserFields(user);
+
+  const now = Date.now();
+  const currentWeek = getWeekKey(now);
+  const previousWeek = getPreviousWeekKey(now);
+  const currentWeekEndsAt = getWeekEndTimestamp(now);
+  const previousWeekEndedAt = getWeekEndTimestamp(now - 7 * 24 * 60 * 60 * 1000);
+  const cleanTeamName = String(user.teamName || '').trim();
+
+  const [activeLeaderboard, completedLeaderboard] = await Promise.all([
+    getTeamLeaderboardForWeek(currentWeek, 0),
+    getTeamLeaderboardForWeek(previousWeek, 0),
+  ]);
+
+  const activeTeam = activeLeaderboard.find((team) => team.teamName === cleanTeamName) || null;
+  const completedTeam = completedLeaderboard.find((team) => team.teamName === cleanTeamName) || null;
+  const claimKey = `${previousWeek}_${cleanTeamName}`;
+  const joinedAfterCompletedContest =
+    Boolean(user.teamJoinedAt) && Number(user.teamJoinedAt || 0) > previousWeekEndedAt;
+  const completedPlace = completedTeam?.place || null;
+  const completedPrize =
+    completedPlace && !joinedAfterCompletedContest ? getTeamPrizeByPlace(completedPlace) : 0;
+  const hasClaimed = cleanTeamName ? user.teamPrizeClaims.includes(claimKey) : false;
+
+  return {
+    activeWeek: currentWeek,
+    completedWeek: previousWeek,
+    currentWeekEndsAt,
+    secondsUntilCurrentContestEnds: Math.max(0, Math.ceil((currentWeekEndsAt - now) / 1000)),
+    leaderboardTop3: activeLeaderboard.slice(0, 3),
+    activeTeamPlace: activeTeam?.place || null,
+    activeTeamWeeklyEarned: roundOnix(activeTeam?.weeklyEarned || 0),
+    completedTeamPlace: completedPlace,
+    completedTeamWeeklyEarned: roundOnix(completedTeam?.weeklyEarned || 0),
+    rewardTitle: getTeamContestRewardTitle(completedPlace),
+    prize: completedPrize,
+    claimKey,
+    hasClaimed,
+    canClaim: Boolean(cleanTeamName && completedPrize > 0 && !hasClaimed),
+    joinedAfterCompletedContest,
+    nextPrizeAvailableAt: currentWeekEndsAt,
+    secondsUntilNextPrize: Math.max(0, Math.ceil((currentWeekEndsAt - now) / 1000)),
+  };
 }
 
 async function getTeamStats(teamName) {
@@ -3773,12 +3866,18 @@ router.get('/team-dashboard/:telegramId', async (req, res) => {
 
     const team = await getTeamStats(user.teamName);
     const teamMissions = await getTeamMissionsPayload(user);
+    const teamContest = await getTeamContestPayload(user);
 
     return res.json({
-      team,
+      team: {
+        ...team,
+        place: teamContest.activeTeamPlace || team.place,
+        weeklyEarned: teamContest.activeTeamWeeklyEarned || team.weeklyEarned,
+      },
       teamMissions,
-      teamPrize: team.place ? getTeamPrizeByPlace(team.place) : 0,
-      week: getWeekKey(),
+      teamPrize: teamContest.prize,
+      teamContest,
+      week: teamContest.activeWeek,
     });
   } catch (error) {
     return res.status(500).json({ error: error.message });
@@ -3883,22 +3982,41 @@ router.post('/claim-team-prize', async (req, res) => {
       return res.status(400).json({ message: 'Сначала вступите в команду' });
     }
 
+    const teamContest = await getTeamContestPayload(user);
     const team = await getTeamStats(user.teamName);
-    const prize = team.place ? getTeamPrizeByPlace(team.place) : 0;
-    const claimKey = `${getWeekKey()}_${user.teamName}`;
+    const prize = Number(teamContest.prize || 0);
+    const claimKey = teamContest.claimKey;
 
-    if (!prize) {
-      return res.status(400).json({ message: 'Команда не в призовой зоне' });
+    if (teamContest.joinedAfterCompletedContest) {
+      return res.status(400).json({
+        message: 'Вы вступили в команду после окончания прошлого состязания',
+        teamContest,
+      });
+    }
+
+    if (!prize || !teamContest.completedTeamPlace) {
+      return res.status(400).json({
+        message: 'Команда не участвовала в прошлом состязании',
+        teamContest,
+      });
     }
 
     if (user.teamPrizeClaims.includes(claimKey)) {
-      return res.status(400).json({ message: 'Командный приз уже получен' });
+      return res.status(400).json({
+        message: 'Командный приз уже получен',
+        teamContest,
+      });
     }
 
     user.teamPrizeClaims.push(claimKey);
     user.balance = roundOnix(Number(user.balance || 0) + prize);
     addEarnings(user, prize);
-    addTransaction(user, 'income_team_prize', prize, `Командный приз: #${team.place} ${user.teamName}`);
+    addTransaction(
+      user,
+      'income_team_prize',
+      prize,
+      `Командное состязание ${teamContest.completedWeek}: ${teamContest.rewardTitle} (${user.teamName})`
+    );
 
     const achievementBonuses = applyAchievements(user);
     const rankBonuses = applyRankBonuses(user);
@@ -3906,6 +4024,8 @@ router.post('/claim-team-prize', async (req, res) => {
     user.updatedAt = new Date();
 
     await user.save();
+
+    const updatedContest = await getTeamContestPayload(user);
 
     return res.json({
       user: {
@@ -3917,6 +4037,7 @@ router.post('/claim-team-prize', async (req, res) => {
       },
       team,
       prize,
+      teamContest: updatedContest,
       achievementBonuses,
       rankBonuses,
     });

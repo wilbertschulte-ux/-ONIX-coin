@@ -8644,6 +8644,72 @@ div.fixed.inset-0.z-\[90\] button.bg-yellow-400 {
   border-color: rgba(124, 58, 237, 0.20) !important;
   background: rgba(6, 9, 27, 0.72) !important;
 }
+
+
+.onix-profile-team-podium {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 10px !important;
+}
+
+.onix-profile-team-podium-row {
+  display: flex !important;
+  align-items: center !important;
+  gap: 12px !important;
+  min-height: 66px !important;
+  padding: 12px !important;
+  border-radius: 20px !important;
+  border: 1px solid rgba(124, 58, 237, 0.24) !important;
+  background: linear-gradient(145deg, rgba(10, 12, 35, 0.88), rgba(5, 8, 24, 0.96)) !important;
+}
+
+.onix-profile-team-podium-row em {
+  width: 42px !important;
+  height: 42px !important;
+  flex: 0 0 42px !important;
+  display: grid !important;
+  place-items: center !important;
+  border-radius: 16px !important;
+  color: #050914 !important;
+  background: linear-gradient(135deg, #f6c833, #fff08a) !important;
+  font-style: normal !important;
+  font-weight: 1000 !important;
+}
+
+.onix-profile-team-podium-row div {
+  min-width: 0 !important;
+  flex: 1 !important;
+}
+
+.onix-profile-team-podium-row strong,
+.onix-profile-team-podium-row span {
+  display: block !important;
+}
+
+.onix-profile-team-podium-row strong {
+  color: #fff !important;
+  font-family: 'Exo 2', system-ui, sans-serif !important;
+  font-weight: 1000 !important;
+}
+
+.onix-profile-team-podium-row span {
+  margin-top: 3px !important;
+  color: rgba(218, 208, 255, 0.66) !important;
+  font-size: 12px !important;
+  font-weight: 800 !important;
+}
+
+.onix-profile-team-podium-row b {
+  color: #f6c833 !important;
+  font-family: 'Exo 2', system-ui, sans-serif !important;
+  font-size: 13px !important;
+  font-weight: 1000 !important;
+  white-space: nowrap !important;
+}
+
+.onix-profile-team-prize:disabled {
+  opacity: 1 !important;
+}
 `;
 
 
@@ -8851,6 +8917,27 @@ type TeamLeaderboardItem = {
   teamName: string;
   weeklyEarned: number;
   members: number;
+  prize?: number;
+};
+
+type TeamContestPayload = {
+  activeWeek: string;
+  completedWeek: string;
+  currentWeekEndsAt: number;
+  secondsUntilCurrentContestEnds: number;
+  leaderboardTop3: TeamLeaderboardItem[];
+  activeTeamPlace: number | null;
+  activeTeamWeeklyEarned: number;
+  completedTeamPlace: number | null;
+  completedTeamWeeklyEarned: number;
+  rewardTitle: string;
+  prize: number;
+  claimKey: string;
+  hasClaimed: boolean;
+  canClaim: boolean;
+  joinedAfterCompletedContest: boolean;
+  nextPrizeAvailableAt: number;
+  secondsUntilNextPrize: number;
 };
 
 type TeamMissionItem = {
@@ -8884,6 +8971,7 @@ type TeamSocialDashboard = {
   };
   teamMissions: TeamMissionItem[];
   teamPrize: number;
+  teamContest?: TeamContestPayload;
   week: string;
 };
 
@@ -10954,6 +11042,7 @@ function App() {
         team: response.data.team,
         teamMissions: response.data.teamMissions || [],
         teamPrize: response.data.teamPrize || 0,
+        teamContest: response.data.teamContest,
         week: response.data.week || '',
       });
       await loadTeamDirectory(teamSearch);
@@ -11031,8 +11120,9 @@ function App() {
       setTeamSocialDashboard({
         team: response.data.team,
         teamMissions: response.data.teamMissions || [],
-        teamPrize: 0,
-        week: '',
+        teamPrize: response.data.teamPrize || 0,
+        teamContest: response.data.teamContest,
+        week: response.data.week || '',
       });
 
       showToast(`👥 Вы вступили в команду ${user.teamName}`, 'success');
@@ -11076,9 +11166,41 @@ function App() {
       showToast(`🏆 Командный приз: +${formatOnix(response.data.prize)} ONIX`, 'success');
       await loadTeamSocialDashboard();
     } catch (error: any) {
+      if (error?.response?.data?.teamContest) {
+        setTeamSocialDashboard((prev) => prev ? {
+          ...prev,
+          teamContest: error.response.data.teamContest,
+          teamPrize: error.response.data.teamContest.prize || 0,
+        } : prev);
+      }
+
       showToast(error?.response?.data?.message || 'Не удалось забрать командный приз', 'error');
     }
   };
+
+  const getTeamPrizeButtonText = () => {
+    const contest = teamSocialDashboard?.teamContest;
+
+    if (!contest) return 'Загрузка состязания...';
+
+    const msToNextPrize = Math.max(Number(contest.nextPrizeAvailableAt || 0) - missionClock, 0);
+
+    if (contest.canClaim) {
+      return `Забрать командный приз +${formatOnix(contest.prize)} ONIX`;
+    }
+
+    if (contest.hasClaimed) {
+      return `Следующий приз через ${formatMissionResetTime(msToNextPrize)}`;
+    }
+
+    if (contest.joinedAfterCompletedContest) {
+      return `Приз после текущего состязания через ${formatMissionResetTime(msToNextPrize)}`;
+    }
+
+    return `Состязание закончится через ${formatMissionResetTime(msToNextPrize)}`;
+  };
+
+  const isTeamPrizeButtonActive = Boolean(teamSocialDashboard?.teamContest?.canClaim);
 
   const loadMissions = async () => {
     const telegramId = getTelegramId();
@@ -15495,20 +15617,35 @@ body:has(.onix-home-reference-mode),
                     </div>
 
                     <div className="onix-profile-team-stats-grid">
-                      <div><span>За неделю</span><strong>{formatOnix(teamSocialDashboard.team.weeklyEarned)}</strong></div>
-                      <div><span>Всего ONIX</span><strong>{formatOnix(teamSocialDashboard.team.totalEarned)}</strong></div>
-                      <div><span>Тапов</span><strong>{formatOnix(teamSocialDashboard.team.totalTaps)}</strong></div>
-                      <div><span>Приз</span><strong>+{formatOnix(teamSocialDashboard.teamPrize || 0)}</strong></div>
+                      <div><span>Текущая неделя</span><strong>{formatOnix(teamSocialDashboard.teamContest?.activeTeamWeeklyEarned ?? teamSocialDashboard.team.weeklyEarned)}</strong></div>
+                      <div><span>Место сейчас</span><strong>{teamSocialDashboard.teamContest?.activeTeamPlace ? `#${teamSocialDashboard.teamContest.activeTeamPlace}` : '—'}</strong></div>
+                      <div><span>Прошлое место</span><strong>{teamSocialDashboard.teamContest?.completedTeamPlace ? `#${teamSocialDashboard.teamContest.completedTeamPlace}` : '—'}</strong></div>
+                      <div><span>Приз недели</span><strong>+{formatOnix(teamSocialDashboard.teamContest?.prize || 0)}</strong></div>
                     </div>
 
                     <button
                       type="button"
                       onClick={claimTeamPrize}
-                      disabled={!teamSocialDashboard.teamPrize}
-                      className={`onix-profile-team-prize ${teamSocialDashboard.teamPrize ? 'is-available' : ''}`}
+                      disabled={!isTeamPrizeButtonActive}
+                      className={`onix-profile-team-prize ${isTeamPrizeButtonActive ? 'is-available' : ''}`}
                     >
-                      {teamSocialDashboard.teamPrize ? 'Забрать командный приз' : 'Команда вне призовой зоны'}
+                      {getTeamPrizeButtonText()}
                     </button>
+
+                    <div className="onix-profile-team-block onix-profile-team-contest-block">
+                      <div className="onix-profile-team-block-title"><strong>🏟 Топ команд</strong><span>{teamSocialDashboard.teamContest?.activeWeek || teamSocialDashboard.week}</span></div>
+                      <div className="onix-profile-team-podium">
+                        {(teamSocialDashboard.teamContest?.leaderboardTop3 || []).length > 0 ? (teamSocialDashboard.teamContest?.leaderboardTop3 || []).map((team) => (
+                          <div key={team.teamName} className={`onix-profile-team-podium-row place-${team.place}`}>
+                            <em>#{team.place}</em>
+                            <div><strong>{team.teamName}</strong><span>{formatOnix(team.weeklyEarned)} ONIX · {team.members} участников</span></div>
+                            <b>+{formatOnix(team.prize || 0)}</b>
+                          </div>
+                        )) : (
+                          <div className="onix-profile-v75-empty">Лидерборд появится после заработка команд.</div>
+                        )}
+                      </div>
+                    </div>
 
                     <div className="onix-profile-team-block">
                       <div className="onix-profile-team-block-title"><strong>Участники</strong><span>{teamSocialDashboard.team.members}</span></div>
