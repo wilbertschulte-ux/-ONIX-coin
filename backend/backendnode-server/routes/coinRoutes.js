@@ -8,6 +8,27 @@ const API_RATE_LIMITS = new Map();
 const ECONOMY_OVERRIDES = {};
 const APP_VERSION = process.env.APP_VERSION || '1.0.0';
 
+
+function escapeRegExpValue(value) {
+  return String(value).replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}
+
+function normalizeTeamNameValue(value) {
+  return String(value || '').replace(/\s+/g, ' ').trim().slice(0, 24);
+}
+
+const Team = mongoose.models.Team || mongoose.model(
+  'Team',
+  new mongoose.Schema(
+    {
+      name: { type: String, required: true, trim: true, maxlength: 24 },
+      normalizedName: { type: String, required: true, unique: true, index: true },
+      createdByTelegramId: { type: String, default: '' },
+    },
+    { timestamps: true, collection: 'teams' }
+  )
+);
+
 function cleanupRateLimits(now = Date.now()) {
   if (API_RATE_LIMITS.size < 5000) return;
 
@@ -1847,6 +1868,18 @@ router.post('/admin-adjust-balance', async (req, res) => {
     const rankBonuses = applyRankBonuses(user);
     user.level = calculateLevel(user.totalEarned);
     user.updatedAt = new Date();
+
+    await Team.findOneAndUpdate(
+      { normalizedName: cleanTeamName.toLowerCase() },
+      {
+        $setOnInsert: {
+          name: cleanTeamName,
+          normalizedName: cleanTeamName.toLowerCase(),
+          createdByTelegramId: String(telegramId),
+        },
+      },
+      { upsert: true, new: true }
+    );
 
     await user.save();
 
@@ -3688,65 +3721,105 @@ router.get('/teams', async (req, res) => {
   try {
     const q = String(req.query.q || '').trim();
     const currentWeek = getWeekKey();
-    const escapeRegExp = (value) => String(value).replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    const searchRegex = q ? new RegExp(escapeRegExpValue(q), 'i') : null;
 
-    const match = {
+    const userMatch = {
       teamName: { $nin: ['', null] },
     };
 
-    if (q) {
-      match.teamName = {
+    if (searchRegex) {
+      userMatch.teamName = {
         $nin: ['', null],
-        $regex: new RegExp(escapeRegExp(q), 'i'),
+        $regex: searchRegex,
       };
     }
 
-    const weeklyLeaderboard = await User.aggregate([
-      {
-        $match: {
-          weeklyEarnedWeek: currentWeek,
-          weeklyEarned: { $gt: 0 },
-          teamName: { $nin: ['', null] },
+    const savedTeamMatch = searchRegex ? { name: { $regex: searchRegex } } : {};
+
+    const [savedTeams, weeklyLeaderboard, userTeams] = await Promise.all([
+      Team.find(savedTeamMatch).lean(),
+      User.aggregate([
+        {
+          $match: {
+            weeklyEarnedWeek: currentWeek,
+            weeklyEarned: { $gt: 0 },
+            teamName: { $nin: ['', null] },
+          },
         },
-      },
-      {
-        $group: {
-          _id: '$teamName',
-          weeklyEarned: { $sum: '$weeklyEarned' },
+        {
+          $group: {
+            _id: '$teamName',
+            weeklyEarned: { $sum: '$weeklyEarned' },
+          },
         },
-      },
-      { $sort: { weeklyEarned: -1 } },
+        { $sort: { weeklyEarned: -1 } },
+      ]),
+      User.aggregate([
+        { $match: userMatch },
+        {
+          $group: {
+            _id: '$teamName',
+            members: { $sum: 1 },
+            weeklyEarned: { $sum: '$weeklyEarned' },
+            totalEarned: { $sum: '$totalEarned' },
+            totalTaps: { $sum: '$totalTaps' },
+          },
+        },
+      ]),
     ]);
 
     const placeByTeam = new Map(
-      weeklyLeaderboard.map((team, index) => [team._id, index + 1])
+      weeklyLeaderboard.map((team, index) => [String(team._id || '').toLowerCase(), index + 1])
     );
 
-    const teams = await User.aggregate([
-      { $match: match },
-      {
-        $group: {
-          _id: '$teamName',
-          members: { $sum: 1 },
-          weeklyEarned: { $sum: '$weeklyEarned' },
-          totalEarned: { $sum: '$totalEarned' },
-          totalTaps: { $sum: '$totalTaps' },
-        },
-      },
-      { $sort: { totalEarned: -1, members: -1, _id: 1 } },
-      { $limit: 100 },
-    ]);
+    const teamsByKey = new Map();
 
-    return res.json({
-      week: currentWeek,
-      teams: teams.map((team) => ({
-        teamName: team._id,
+    for (const team of savedTeams) {
+      const name = normalizeTeamNameValue(team.name);
+      if (!name) continue;
+      const key = name.toLowerCase();
+      teamsByKey.set(key, {
+        teamName: name,
+        members: 0,
+        weeklyEarned: 0,
+        totalEarned: 0,
+        totalTaps: 0,
+      });
+    }
+
+    for (const team of userTeams) {
+      const name = normalizeTeamNameValue(team._id);
+      if (!name) continue;
+      const key = name.toLowerCase();
+      const existing = teamsByKey.get(key) || { teamName: name };
+      teamsByKey.set(key, {
+        ...existing,
+        teamName: existing.teamName || name,
         members: Number(team.members || 0),
         weeklyEarned: roundOnix(team.weeklyEarned || 0),
         totalEarned: roundOnix(team.totalEarned || 0),
         totalTaps: Number(team.totalTaps || 0),
-        teamCode: getTeamCode(team._id),
-        place: placeByTeam.get(team._id) || null,
+      });
+    }
+
+    const teams = [...teamsByKey.values()]
+      .sort((a, b) =>
+        Number(b.totalEarned || 0) - Number(a.totalEarned || 0) ||
+        Number(b.members || 0) - Number(a.members || 0) ||
+        String(a.teamName).localeCompare(String(b.teamName))
+      )
+      .slice(0, 100);
+
+    return res.json({
+      week: currentWeek,
+      teams: teams.map((team) => ({
+        teamName: team.teamName,
+        members: Number(team.members || 0),
+        weeklyEarned: roundOnix(team.weeklyEarned || 0),
+        totalEarned: roundOnix(team.totalEarned || 0),
+        totalTaps: Number(team.totalTaps || 0),
+        teamCode: getTeamCode(team.teamName),
+        place: placeByTeam.get(String(team.teamName || '').toLowerCase()) || null,
       })),
     });
   } catch (error) {
@@ -3799,6 +3872,78 @@ router.post('/set-team', async (req, res) => {
 });
 
 
+// CREATE TEAM
+router.post('/create-team', async (req, res) => {
+  try {
+    const { telegramId, teamName } = req.body;
+
+    if (!telegramId) {
+      return res.status(400).json({ message: 'Telegram ID is required' });
+    }
+
+    const cleanTeamName = normalizeTeamNameValue(teamName);
+
+    if (cleanTeamName.length < 2) {
+      return res.status(400).json({ message: 'Введите название команды минимум 2 символа' });
+    }
+
+    const existingTeamMember = await User.findOne({
+      teamName: { $regex: new RegExp(`^${escapeRegExpValue(cleanTeamName)}$`, 'i') },
+    }).select('teamName');
+
+    const existingSavedTeam = await Team.findOne({ normalizedName: cleanTeamName.toLowerCase() }).lean();
+
+    if (existingTeamMember || existingSavedTeam) {
+      return res.status(409).json({ message: 'Команда с таким названием уже существует' });
+    }
+
+    const user = await User.findOne({ telegramId });
+
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    normalizeUserFields(user);
+
+    const frozenResponse = ensureUserNotFrozen(user, res);
+    if (frozenResponse) return frozenResponse;
+
+    user.teamName = cleanTeamName;
+    user.teamJoinedAt = Date.now();
+    user.updatedAt = new Date();
+
+    addSecurityLog(user, 'team_create', 'Создание команды', cleanTeamName);
+
+    await Team.create({
+      name: cleanTeamName,
+      normalizedName: cleanTeamName.toLowerCase(),
+      createdByTelegramId: String(telegramId),
+    });
+
+    await user.save();
+
+    const teamContest = await getTeamContestPayload(user);
+
+    return res.json({
+      user: {
+        ...user.toObject({ flattenMaps: true }),
+        perkLevels: getPerkLevelsPayload(user),
+        achievements: getAchievementsPayload(user),
+        referralLimit: getReferralLimitPayload(user),
+        missions: getMissionsPayload(user),
+      },
+      team: await getTeamStats(cleanTeamName),
+      teamMissions: await getTeamMissionsPayload(user),
+      teamPrize: teamContest.completedPrize || 0,
+      teamContest,
+      week: getWeekKey(),
+    });
+  } catch (error) {
+    return res.status(500).json({ error: error.message });
+  }
+});
+
+
 // JOIN TEAM BY CODE
 router.post('/join-team', async (req, res) => {
   try {
@@ -3832,6 +3977,18 @@ router.post('/join-team', async (req, res) => {
     user.updatedAt = new Date();
 
     addSecurityLog(user, 'team_join', 'Вступление в команду', cleanTeamName);
+
+    await Team.findOneAndUpdate(
+      { normalizedName: cleanTeamName.toLowerCase() },
+      {
+        $setOnInsert: {
+          name: cleanTeamName,
+          normalizedName: cleanTeamName.toLowerCase(),
+          createdByTelegramId: '',
+        },
+      },
+      { upsert: true, new: true }
+    );
 
     await user.save();
 

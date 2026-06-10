@@ -9218,6 +9218,125 @@ div.fixed.inset-0.z-\[90\] button.bg-yellow-400 {
   gap: 10px !important;
 }
 
+
+.onix-profile-team-create-button {
+  width: 100% !important;
+  min-height: 66px !important;
+  display: grid !important;
+  grid-template-columns: 46px 1fr 24px !important;
+  align-items: center !important;
+  gap: 12px !important;
+  padding: 11px 14px !important;
+  border-radius: 22px !important;
+  border: 1px solid rgba(250, 204, 21, 0.36) !important;
+  background: linear-gradient(135deg, rgba(43, 31, 7, 0.88), rgba(10, 12, 35, 0.88)) !important;
+  color: #fff !important;
+  text-align: left !important;
+}
+
+.onix-profile-team-create-button > span {
+  width: 42px !important;
+  height: 42px !important;
+  display: grid !important;
+  place-items: center !important;
+  border-radius: 15px !important;
+  background: rgba(250, 204, 21, 0.14) !important;
+  border: 1px solid rgba(250, 204, 21, 0.24) !important;
+  color: #fde047 !important;
+  font-size: 24px !important;
+  font-weight: 900 !important;
+}
+
+.onix-profile-team-create-button strong,
+.onix-profile-team-create-card strong {
+  font-family: 'Exo 2', system-ui, sans-serif !important;
+  font-weight: 900 !important;
+}
+
+.onix-profile-team-create-button strong {
+  display: block !important;
+  font-size: 18px !important;
+  color: #fff !important;
+}
+
+.onix-profile-team-create-button em {
+  display: block !important;
+  margin-top: 3px !important;
+  font-style: normal !important;
+  font-size: 12px !important;
+  font-weight: 800 !important;
+  color: rgba(205, 210, 231, 0.72) !important;
+}
+
+.onix-profile-team-create-button b {
+  justify-self: end !important;
+  color: rgba(220, 214, 255, 0.78) !important;
+  font-size: 28px !important;
+  line-height: 1 !important;
+}
+
+.onix-profile-team-create-page {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 12px !important;
+}
+
+.onix-profile-team-create-card {
+  padding: 16px !important;
+  border-radius: 24px !important;
+}
+
+.onix-profile-team-create-card p {
+  margin: 10px 0 14px !important;
+  color: rgba(205, 210, 231, 0.76) !important;
+  font-size: 14px !important;
+  line-height: 1.35 !important;
+}
+
+.onix-profile-team-create-input {
+  width: 100% !important;
+  border-radius: 20px !important;
+  border: 1px solid rgba(124, 58, 237, 0.28) !important;
+  background: rgba(4, 7, 22, 0.72) !important;
+  padding: 2px !important;
+}
+
+.onix-profile-team-create-input input {
+  width: 100% !important;
+  min-height: 56px !important;
+  border: none !important;
+  outline: none !important;
+  background: transparent !important;
+  color: #fff !important;
+  padding: 0 16px !important;
+  font-family: 'Exo 2', system-ui, sans-serif !important;
+  font-size: 18px !important;
+  font-weight: 900 !important;
+}
+
+.onix-profile-team-create-input input::placeholder {
+  color: rgba(205, 210, 231, 0.48) !important;
+}
+
+.onix-profile-team-create-submit {
+  width: 100% !important;
+  min-height: 52px !important;
+  margin-top: 12px !important;
+  border-radius: 18px !important;
+  border: 1px solid rgba(250, 204, 21, 0.38) !important;
+  background: linear-gradient(135deg, #facc15, #a16207) !important;
+  color: #17120a !important;
+  font-family: 'Exo 2', system-ui, sans-serif !important;
+  font-size: 17px !important;
+  font-weight: 1000 !important;
+  box-shadow: 0 14px 30px rgba(250, 204, 21, 0.14) !important;
+}
+
+.onix-profile-team-create-submit:disabled {
+  opacity: 0.48 !important;
+  filter: grayscale(0.45) !important;
+}
+
 .onix-profile-team-directory-page {
   overflow: hidden !important;
 }
@@ -10452,10 +10571,12 @@ function App() {
   const [profilePanel, setProfilePanel] =
     useState<'overview' | 'achievements' | 'ranks' | 'stats' | 'invited' | 'team'>('overview');
   const [teamDetailPanel, setTeamDetailPanel] =
-    useState<'overview' | 'missions' | 'top' | 'members'>('overview');
+    useState<'overview' | 'missions' | 'top' | 'members' | 'create'>('overview');
   const [invitedProfiles, setInvitedProfiles] = useState<InvitedProfileItem[]>([]);
   const [teamDirectory, setTeamDirectory] = useState<TeamDirectoryItem[]>([]);
   const [teamSearch, setTeamSearch] = useState('');
+  const [createTeamName, setCreateTeamName] = useState('');
+  const [isCreatingTeam, setIsCreatingTeam] = useState(false);
   const [isTeamDirectoryLoading, setIsTeamDirectoryLoading] = useState(false);
   const [league, setLeague] = useState('Bronze');
   const [isWithdrawalLoading, setIsWithdrawalLoading] = useState(false);
@@ -11613,6 +11734,46 @@ function App() {
       showToast('Вы вышли из команды. Выберите новую команду из списка.', 'success');
     } catch (error: any) {
       showToast(error?.response?.data?.message || 'Не удалось выйти из команды', 'error');
+    }
+  };
+
+  const createTeam = async () => {
+    const telegramId = getTelegramId();
+    const nextTeamName = createTeamName.trim();
+
+    if (!telegramId) return;
+
+    if (nextTeamName.length < 2) {
+      showToast('Введите название команды минимум 2 символа', 'error');
+      return;
+    }
+
+    try {
+      setIsCreatingTeam(true);
+      const response = await axios.post(`${API_URL}/create-team`, {
+        telegramId,
+        teamName: nextTeamName,
+      });
+
+      const user = response.data.user;
+
+      setTeamName(user.teamName || '');
+      setTeamNameInput(user.teamName || '');
+      setCreateTeamName('');
+      setTeamDetailPanel('overview');
+      setTeamSocialDashboard({
+        team: response.data.team,
+        teamMissions: response.data.teamMissions || [],
+        teamPrize: response.data.teamPrize || 0,
+        teamContest: response.data.teamContest,
+        week: response.data.week || '',
+      });
+      await loadTeamDirectory(teamSearch);
+      showToast(`👥 Команда ${user.teamName} создана`, 'success');
+    } catch (error: any) {
+      showToast(error?.response?.data?.message || 'Не удалось создать команду', 'error');
+    } finally {
+      setIsCreatingTeam(false);
     }
   };
 
@@ -16211,6 +16372,8 @@ body:has(.onix-home-reference-mode),
                       ? '🏟 Топ команд'
                       : teamDetailPanel === 'members'
                       ? '👥 Участники'
+                      : teamDetailPanel === 'create'
+                      ? '✨ Создать команду'
                       : '👥 Команда'}
                   </strong>
                   <span>{teamName || 'ONIX'}</span>
@@ -16336,37 +16499,70 @@ body:has(.onix-home-reference-mode),
                   </div>
                 ) : (
                   <div className="onix-profile-team-page onix-profile-team-directory-page">
-                    <div className="onix-profile-team-search">
-                      <input
-                        value={teamSearch}
-                        onChange={(event) => {
-                          const value = event.target.value;
-                          setTeamSearch(value);
-                          loadTeamDirectory(value);
-                        }}
-                        placeholder="Поиск команды по названию"
-                      />
-                    </div>
-
-                    <div className="onix-profile-team-block">
-                      <div className="onix-profile-team-block-title"><strong>Все команды ONIX</strong><span>{teamDirectory.length}</span></div>
-                      <div className="onix-profile-team-directory">
-                        {isTeamDirectoryLoading ? (
-                          <div className="onix-profile-v75-empty">Загружаю команды...</div>
-                        ) : teamDirectory.length > 0 ? teamDirectory.map((team) => (
-                          <div key={team.teamName} className="onix-profile-team-card">
-                            <div>
-                              <strong>{team.teamName}</strong>
-                              <span>{team.members} участников · {formatOnix(team.totalEarned)} ONIX всего</span>
-                              <em>{team.place ? `#${team.place} за неделю` : 'без места'} · {formatOnix(team.weeklyEarned)} за неделю</em>
-                            </div>
-                            <button type="button" onClick={() => joinTeamByName(team.teamName)}>Вступить</button>
+                    {teamDetailPanel === 'create' ? (
+                      <div className="onix-profile-team-create-page">
+                        <div className="onix-profile-team-block onix-profile-team-create-card">
+                          <div className="onix-profile-team-block-title"><strong>✨ Новая команда</strong><span>ONIX</span></div>
+                          <p>Придумайте название команды. После создания вы автоматически станете её первым участником, а другие игроки смогут найти команду через поиск и вступить.</p>
+                          <div className="onix-profile-team-create-input">
+                            <input
+                              value={createTeamName}
+                              maxLength={24}
+                              onChange={(event) => setCreateTeamName(event.target.value)}
+                              placeholder="Название команды"
+                            />
                           </div>
-                        )) : (
-                          <div className="onix-profile-v75-empty">Команды не найдены.</div>
-                        )}
+                          <button
+                            type="button"
+                            className="onix-profile-team-create-submit"
+                            onClick={createTeam}
+                            disabled={isCreatingTeam || createTeamName.trim().length < 2}
+                          >
+                            {isCreatingTeam ? 'Создаю...' : 'Создать команду'}
+                          </button>
+                        </div>
                       </div>
-                    </div>
+                    ) : (
+                      <>
+                        <div className="onix-profile-team-search">
+                          <input
+                            value={teamSearch}
+                            onChange={(event) => {
+                              const value = event.target.value;
+                              setTeamSearch(value);
+                              loadTeamDirectory(value);
+                            }}
+                            placeholder="Поиск команды по названию"
+                          />
+                        </div>
+
+                        <button type="button" className="onix-profile-team-create-button" onClick={() => setTeamDetailPanel('create')}>
+                          <span>＋</span>
+                          <div><strong>Создать свою команду</strong><em>Станьте первым участником</em></div>
+                          <b>›</b>
+                        </button>
+
+                        <div className="onix-profile-team-block">
+                          <div className="onix-profile-team-block-title"><strong>Все команды ONIX</strong><span>{teamDirectory.length}</span></div>
+                          <div className="onix-profile-team-directory">
+                            {isTeamDirectoryLoading ? (
+                              <div className="onix-profile-v75-empty">Загружаю команды...</div>
+                            ) : teamDirectory.length > 0 ? teamDirectory.map((team) => (
+                              <div key={team.teamName} className="onix-profile-team-card">
+                                <div>
+                                  <strong>{team.teamName}</strong>
+                                  <span>{team.members} участников · {formatOnix(team.totalEarned)} ONIX всего</span>
+                                  <em>{team.place ? `#${team.place} за неделю` : 'без места'} · {formatOnix(team.weeklyEarned)} за неделю</em>
+                                </div>
+                                <button type="button" onClick={() => joinTeamByName(team.teamName)}>Вступить</button>
+                              </div>
+                            )) : (
+                              <div className="onix-profile-v75-empty">Команды не найдены.</div>
+                            )}
+                          </div>
+                        </div>
+                      </>
+                    )}
                   </div>
                 )}
               </div>
