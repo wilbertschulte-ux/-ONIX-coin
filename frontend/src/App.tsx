@@ -9398,6 +9398,59 @@ div.fixed.inset-0.z-\[90\] button.bg-yellow-400 {
   }
 }
 
+
+/* Team directory layout: only the teams list scrolls, header/search/create stay fixed. */
+.onix-profile-v75-screen.is-profile-detail-mode.is-profile-team-mode .onix-profile-team-directory-page {
+  height: 100% !important;
+  min-height: 0 !important;
+  flex: 1 1 auto !important;
+  overflow: hidden !important;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 10px !important;
+}
+
+.onix-profile-team-directory-page > .onix-profile-team-search,
+.onix-profile-team-directory-page > .onix-profile-team-create-button {
+  flex: 0 0 auto !important;
+}
+
+.onix-profile-team-directory-page > .onix-profile-team-block {
+  flex: 1 1 0 !important;
+  min-height: 0 !important;
+  overflow: hidden !important;
+  display: flex !important;
+  flex-direction: column !important;
+  padding: 12px !important;
+}
+
+.onix-profile-team-directory-page > .onix-profile-team-block > .onix-profile-team-block-title {
+  flex: 0 0 auto !important;
+  margin-bottom: 10px !important;
+}
+
+.onix-profile-team-directory-page .onix-profile-team-directory {
+  flex: 1 1 0 !important;
+  min-height: 0 !important;
+  max-height: none !important;
+  overflow-x: hidden !important;
+  overflow-y: auto !important;
+  -webkit-overflow-scrolling: touch !important;
+  overscroll-behavior: contain !important;
+  padding: 0 1px calc(96px + env(safe-area-inset-bottom)) !important;
+  scrollbar-width: none !important;
+}
+
+.onix-profile-team-directory-page .onix-profile-team-directory::-webkit-scrollbar {
+  width: 0 !important;
+  height: 0 !important;
+  display: none !important;
+}
+
+.onix-profile-team-directory-page .onix-profile-team-card {
+  flex: 0 0 auto !important;
+}
+
 `;
 
 
