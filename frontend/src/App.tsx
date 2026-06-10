@@ -10233,6 +10233,52 @@ div.fixed.inset-0.z-\[90\] button.bg-yellow-400 {
   }
 }
 
+
+/* Wallet fixed header layout: only subtab content scrolls */
+.onix-wallet-screen.onix-wallet-v2 {
+  margin-top: 0 !important;
+  padding-top: 8px !important;
+  padding-bottom: calc(92px + env(safe-area-inset-bottom)) !important;
+  height: calc(100dvh - 92px) !important;
+  min-height: 0 !important;
+  max-height: calc(100dvh - 92px) !important;
+  overflow: hidden !important;
+  justify-content: flex-start !important;
+  align-items: stretch !important;
+}
+
+.onix-wallet-v2 .onix-wallet-main-card {
+  flex: 0 0 auto !important;
+  margin: 0 !important;
+}
+
+.onix-wallet-v2 .onix-wallet-tabs {
+  flex: 0 0 auto !important;
+  margin: 0 !important;
+  padding-top: 0 !important;
+  padding-bottom: 10px !important;
+}
+
+.onix-wallet-v2 > .onix-wallet-panel-card {
+  flex: 1 1 auto !important;
+  min-height: 0 !important;
+  max-height: none !important;
+  overflow-y: auto !important;
+  overflow-x: hidden !important;
+  overscroll-behavior: contain !important;
+  -webkit-overflow-scrolling: touch !important;
+  padding-bottom: 22px !important;
+}
+
+@media (max-width: 430px) {
+  .onix-wallet-screen.onix-wallet-v2 {
+    height: calc(100dvh - 86px) !important;
+    max-height: calc(100dvh - 86px) !important;
+    padding-top: 6px !important;
+    padding-bottom: calc(88px + env(safe-area-inset-bottom)) !important;
+  }
+}
+
 `;
 
 
@@ -15985,7 +16031,7 @@ body:has(.onix-home-reference-mode),
         </div>
       )}
 
-      {activeTab !== 'home' && activeTab !== 'boosts' && activeTab !== 'friends' && activeTab !== 'tasks' && (
+      {activeTab !== 'home' && activeTab !== 'boosts' && activeTab !== 'friends' && activeTab !== 'tasks' && activeTab !== 'wallet' && (
         <>
       <div className="onix-rank-panel px-5 pt-4">
         <div className="flex justify-between mb-2">
