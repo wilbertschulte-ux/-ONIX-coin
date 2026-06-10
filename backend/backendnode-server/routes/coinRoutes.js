@@ -41,7 +41,13 @@ async function findSavedTeamByName(teamName) {
   const normalizedName = cleanTeamName.toLowerCase();
 
   try {
-    return await getTeamsCollection().findOne({ normalizedName });
+    return await getTeamsCollection().findOne({
+      $or: [
+        { normalizedName },
+        { name: { $regex: new RegExp(`^${escapeRegExpValue(cleanTeamName)}$`, 'i') } },
+        { teamName: { $regex: new RegExp(`^${escapeRegExpValue(cleanTeamName)}$`, 'i') } },
+      ],
+    });
   } catch (error) {
     return Team.findOne({ normalizedName }).lean();
   }
@@ -49,10 +55,20 @@ async function findSavedTeamByName(teamName) {
 
 async function listSavedTeams(limit = 500) {
   try {
+    // Read saved teams directly from the native Mongo collection. Some older
+    // deploys wrote teams with slightly different field names, so do not rely
+    // only on the Mongoose model here.
     return await getTeamsCollection().find({}).limit(limit).toArray();
   } catch (error) {
     return Team.find({}).limit(limit).lean();
   }
+}
+
+function getSavedTeamDisplayName(team) {
+  // Support every team shape that may already exist in MongoDB after previous
+  // deploys: { name }, { teamName }, or only { normalizedName }.
+  const rawName = team?.name || team?.teamName || team?.title || team?.normalizedName || '';
+  return normalizeTeamNameValue(rawName);
 }
 
 async function upsertSavedTeam(teamName, createdByTelegramId = '') {
@@ -62,6 +78,7 @@ async function upsertSavedTeam(teamName, createdByTelegramId = '') {
   const normalizedName = cleanTeamName.toLowerCase();
   const payload = {
     name: cleanTeamName,
+    teamName: cleanTeamName,
     normalizedName,
     createdByTelegramId: String(createdByTelegramId || ''),
     updatedAt: new Date(),
@@ -73,11 +90,12 @@ async function upsertSavedTeam(teamName, createdByTelegramId = '') {
       {
         $setOnInsert: {
           name: cleanTeamName,
+          teamName: cleanTeamName,
           normalizedName,
           createdByTelegramId: String(createdByTelegramId || ''),
           createdAt: new Date(),
         },
-        $set: { updatedAt: new Date() },
+        $set: { name: cleanTeamName, teamName: cleanTeamName, updatedAt: new Date() },
       },
       { upsert: true }
     );
@@ -88,9 +106,11 @@ async function upsertSavedTeam(teamName, createdByTelegramId = '') {
       {
         $setOnInsert: {
           name: cleanTeamName,
+          teamName: cleanTeamName,
           normalizedName,
           createdByTelegramId: String(createdByTelegramId || ''),
         },
+        $set: { name: cleanTeamName, teamName: cleanTeamName },
       },
       { upsert: true, new: true }
     );
@@ -3837,7 +3857,7 @@ router.get('/teams', async (req, res) => {
     const teamsByKey = new Map();
 
     for (const team of savedTeams) {
-      const name = normalizeTeamNameValue(team.name);
+      const name = getSavedTeamDisplayName(team);
       if (!name || !matchesTeamQuery(name)) continue;
       const key = name.toLowerCase();
       teamsByKey.set(key, {
