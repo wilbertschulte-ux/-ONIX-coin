@@ -9398,12 +9398,250 @@ div.fixed.inset-0.z-\[90\] button.bg-yellow-400 {
   }
 }
 
+
+/* Wallet ONIX redesign: wallet card + inner tabs */
+.onix-wallet-screen.onix-wallet-v2 {
+  margin-top: 0 !important;
+  padding: 14px 20px calc(112px + env(safe-area-inset-bottom)) !important;
+  position: relative !important;
+  z-index: 2 !important;
+}
+
+.onix-wallet-v2 .onix-wallet-main-card,
+.onix-wallet-v2 .onix-wallet-panel-card {
+  position: relative !important;
+  overflow: hidden !important;
+  border-radius: 28px !important;
+  border: 1px solid rgba(124, 58, 237, 0.34) !important;
+  background:
+    radial-gradient(circle at 16% 12%, rgba(45, 212, 255, 0.10), transparent 38%),
+    radial-gradient(circle at 88% 0%, rgba(168, 85, 247, 0.16), transparent 42%),
+    linear-gradient(145deg, rgba(8, 10, 31, 0.88), rgba(4, 7, 22, 0.94)) !important;
+  box-shadow:
+    inset 0 0 22px rgba(124, 58, 237, 0.10),
+    0 18px 38px rgba(0, 0, 0, 0.24) !important;
+  backdrop-filter: blur(10px) !important;
+}
+
+.onix-wallet-v2 .onix-wallet-main-card::before,
+.onix-wallet-v2 .onix-wallet-panel-card::before {
+  content: '' !important;
+  position: absolute !important;
+  inset: 0 !important;
+  pointer-events: none !important;
+  background:
+    linear-gradient(90deg, transparent, rgba(255,255,255,0.045), transparent),
+    repeating-linear-gradient(90deg, rgba(124,58,237,0.05) 0 1px, transparent 1px 82px) !important;
+  opacity: 0.52 !important;
+}
+
+.onix-wallet-v2 .onix-wallet-card-content {
+  position: relative !important;
+  z-index: 1 !important;
+}
+
+.onix-wallet-v2 .onix-wallet-icon {
+  width: 56px !important;
+  height: 56px !important;
+  display: grid !important;
+  place-items: center !important;
+  border-radius: 20px !important;
+  border: 1px solid rgba(45, 212, 255, 0.20) !important;
+  background:
+    radial-gradient(circle at 42% 32%, rgba(45, 212, 255, 0.36), rgba(124, 58, 237, 0.22) 45%, rgba(5, 9, 27, 0.92) 72%) !important;
+  box-shadow: 0 0 24px rgba(45, 212, 255, 0.14) !important;
+}
+
+.onix-wallet-v2 h2,
+.onix-wallet-v2 h3,
+.onix-wallet-v2 .onix-wallet-section-title {
+  font-family: 'Exo 2', system-ui, sans-serif !important;
+  font-weight: 1000 !important;
+  color: #fff !important;
+  letter-spacing: 0.01em !important;
+}
+
+.onix-wallet-balance-card {
+  border-radius: 24px !important;
+  border: 1px solid rgba(45, 212, 255, 0.18) !important;
+  background:
+    radial-gradient(circle at 50% 0%, rgba(250, 204, 21, 0.10), transparent 40%),
+    rgba(5, 8, 24, 0.74) !important;
+  text-align: center !important;
+}
+
+.onix-wallet-balance-value {
+  font-family: 'Exo 2', system-ui, sans-serif !important;
+  font-weight: 1000 !important;
+  color: #fff !important;
+  text-shadow: 0 0 22px rgba(250, 204, 21, 0.15) !important;
+}
+
+.onix-wallet-stat-card,
+.onix-wallet-mini-card,
+.onix-wallet-request-card,
+.onix-wallet-transaction-card {
+  border-radius: 20px !important;
+  border: 1px solid rgba(124, 58, 237, 0.22) !important;
+  background: rgba(4, 7, 22, 0.72) !important;
+  box-shadow: inset 0 0 18px rgba(124, 58, 237, 0.055) !important;
+}
+
+.onix-wallet-progress-track {
+  height: 10px !important;
+  overflow: hidden !important;
+  border-radius: 999px !important;
+  border: 1px solid rgba(124, 58, 237, 0.34) !important;
+  background: rgba(3, 6, 18, 0.86) !important;
+  box-shadow: inset 0 0 10px rgba(0,0,0,0.55) !important;
+}
+
+.onix-wallet-progress-fill {
+  height: 100% !important;
+  border-radius: 999px !important;
+  background: linear-gradient(90deg, #39dfff 0%, #a855f7 54%, #facc15 100%) !important;
+  box-shadow: 0 0 14px rgba(168, 85, 247, 0.48) !important;
+}
+
+.onix-wallet-v2 input {
+  min-height: 48px !important;
+  border-radius: 18px !important;
+  border: 1px solid rgba(124, 58, 237, 0.24) !important;
+  background: rgba(4, 7, 22, 0.82) !important;
+  color: #fff !important;
+  font-family: 'Exo 2', system-ui, sans-serif !important;
+  font-weight: 800 !important;
+}
+
+.onix-wallet-v2 .onix-wallet-primary-button {
+  min-height: 54px !important;
+  border-radius: 20px !important;
+  border: 1px solid rgba(250, 204, 21, 0.26) !important;
+  background: linear-gradient(135deg, #39dfff 0%, #a855f7 58%, #d946ef 100%) !important;
+  color: #fff !important;
+  font-family: 'Exo 2', system-ui, sans-serif !important;
+  font-weight: 1000 !important;
+  box-shadow: 0 18px 36px rgba(168, 85, 247, 0.22) !important;
+}
+
+.onix-wallet-v2 .onix-wallet-primary-button:disabled {
+  border-color: rgba(148, 163, 184, 0.12) !important;
+  background: rgba(31, 41, 55, 0.72) !important;
+  color: rgba(205, 210, 231, 0.48) !important;
+  box-shadow: none !important;
+}
+
+.onix-wallet-tabs {
+  display: grid !important;
+  grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+  gap: 8px !important;
+  margin: 4px 0 14px !important;
+  padding: 0 0 10px !important;
+  border-bottom: 1px solid rgba(132, 96, 255, 0.24) !important;
+}
+
+.onix-wallet-tab {
+  position: relative !important;
+  min-height: 44px !important;
+  padding: 8px 2px 10px !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  color: rgba(205, 210, 231, 0.70) !important;
+  font-family: 'Exo 2', system-ui, sans-serif !important;
+  font-size: 11.5px !important;
+  line-height: 1.12 !important;
+  font-weight: 900 !important;
+  white-space: normal !important;
+  text-align: center !important;
+}
+
+.onix-wallet-tab.is-active {
+  color: #fff !important;
+}
+
+.onix-wallet-tab.is-active::after {
+  content: '' !important;
+  position: absolute !important;
+  left: 14% !important;
+  right: 14% !important;
+  bottom: 0 !important;
+  height: 3px !important;
+  border-radius: 999px !important;
+  background: linear-gradient(90deg, #932bff 0%, #d04cff 100%) !important;
+  box-shadow: 0 0 12px rgba(175, 70, 255, 0.75) !important;
+}
+
+.onix-wallet-panel-card {
+  padding: 18px !important;
+}
+
+.onix-wallet-chart-box {
+  height: 164px !important;
+  border-radius: 22px !important;
+  border: 1px solid rgba(45, 212, 255, 0.14) !important;
+  background:
+    radial-gradient(circle at 50% 100%, rgba(168,85,247,0.20), transparent 48%),
+    rgba(4, 7, 22, 0.72) !important;
+}
+
+.onix-wallet-chart-bar {
+  background: linear-gradient(180deg, #facc15 0%, #a855f7 52%, #39dfff 100%) !important;
+  box-shadow: 0 0 12px rgba(168, 85, 247, 0.42) !important;
+}
+
+.onix-wallet-filter-row {
+  display: flex !important;
+  gap: 8px !important;
+  overflow-x: auto !important;
+  padding-bottom: 8px !important;
+  scrollbar-width: none !important;
+}
+
+.onix-wallet-filter-row::-webkit-scrollbar { display: none !important; }
+
+.onix-wallet-filter-button {
+  flex: 0 0 auto !important;
+  border-radius: 999px !important;
+  padding: 9px 12px !important;
+  font-family: 'Exo 2', system-ui, sans-serif !important;
+  font-size: 12px !important;
+  font-weight: 900 !important;
+  border: 1px solid rgba(124,58,237,0.20) !important;
+  background: rgba(4, 7, 22, 0.72) !important;
+  color: rgba(205,210,231,0.70) !important;
+}
+
+.onix-wallet-filter-button.is-active {
+  border-color: rgba(168,85,247,0.42) !important;
+  background: linear-gradient(135deg, rgba(57,223,255,0.22), rgba(168,85,247,0.36)) !important;
+  color: #fff !important;
+}
+
+@media (max-width: 430px) {
+  .onix-wallet-screen.onix-wallet-v2 {
+    padding-left: 20px !important;
+    padding-right: 20px !important;
+  }
+
+  .onix-wallet-tab {
+    font-size: 10.8px !important;
+    min-height: 42px !important;
+  }
+
+  .onix-wallet-v2 .onix-wallet-main-card {
+    border-radius: 26px !important;
+  }
+}
+
 `;
 
 
 type Tab = 'home' | 'boosts' | 'tasks' | 'friends' | 'wallet' | 'launch';
 
 type BoostSubTab = 'tapping' | 'boosts' | 'other';
+
+type WalletSubTab = 'chart' | 'withdrawals' | 'history';
 
 type FloatingNumber = {
   id: number;
@@ -10507,6 +10745,7 @@ function App() {
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [transactionFilter, setTransactionFilter] =
     useState<TransactionFilter>('all');
+  const [walletSubTab, setWalletSubTab] = useState<WalletSubTab>('chart');
   const [adminEconomyDashboard, setAdminEconomyDashboard] =
     useState<AdminEconomyDashboard | null>(null);
   const [adminEconomyVisible, setAdminEconomyVisible] = useState(false);
@@ -17350,289 +17589,313 @@ body:has(.onix-home-reference-mode),
       )}
 
       {activeTab === 'wallet' && (
-        <div className="onix-wallet-screen px-5 mt-8 space-y-5">
-          <div className="rounded-3xl border border-yellow-400/20 bg-[#111827] p-6 shadow-xl">
-            <div className="mb-5 flex items-center gap-3">
-              <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-yellow-400 text-3xl">
-                💼
+        <div className="onix-wallet-screen onix-wallet-v2 space-y-5">
+          <div className="onix-wallet-main-card p-5 shadow-xl">
+            <div className="onix-wallet-card-content">
+              <div className="mb-5 flex items-center gap-3">
+                <div className="onix-wallet-icon text-3xl">💼</div>
+
+                <div>
+                  <h2 className="text-2xl font-bold text-white">Кошелёк</h2>
+                  <p className="text-sm text-gray-400">
+                    Баланс, выводы и экономика аккаунта
+                  </p>
+                </div>
               </div>
 
-              <div>
-                <h2 className="text-2xl font-bold text-white">Кошелёк</h2>
-                <p className="text-sm text-gray-400">
-                  Баланс, выводы и экономика аккаунта
+              <div className="onix-wallet-balance-card p-5">
+                <p className="text-sm text-gray-400">Текущий баланс</p>
+                <p className="onix-wallet-balance-value mt-2 text-5xl">
+                  {formatOnix(balance)}
                 </p>
-              </div>
-            </div>
-
-            <div className="rounded-3xl bg-[#0a0f1c] p-5 text-center">
-              <p className="text-sm text-gray-400">Текущий баланс</p>
-              <p className="mt-2 text-5xl font-bold text-yellow-400">
-                {formatOnix(balance)}
-              </p>
-              <p className="mt-2 text-lg font-bold text-emerald-400">
-                ≈ {balanceInEur.toLocaleString('ru-RU', {
-                  minimumFractionDigits: 2,
-                  maximumFractionDigits: 2,
-                })} €
-              </p>
-            </div>
-
-            <div className="mt-5 grid grid-cols-2 gap-3">
-              <div className="rounded-2xl bg-[#0a0f1c] p-4">
-                <p className="text-xs text-gray-400">Всего заработано</p>
-                <p className="mt-1 text-sm font-bold text-yellow-400">
-                  {formatOnix(totalEarned)}
+                <p className="mt-2 text-lg font-bold text-emerald-400">
+                  ≈ {balanceInEur.toLocaleString('ru-RU', {
+                    minimumFractionDigits: 2,
+                    maximumFractionDigits: 2,
+                  })} €
                 </p>
               </div>
 
-              <div className="rounded-2xl bg-[#0a0f1c] p-4">
-                <p className="text-xs text-gray-400">За неделю</p>
-                <p className="mt-1 text-sm font-bold text-emerald-400">
-                  +{formatOnix(weeklyEarned)}
+              <div className="mt-5 grid grid-cols-2 gap-3">
+                <div className="onix-wallet-stat-card p-4">
+                  <p className="text-xs text-gray-400">Всего заработано</p>
+                  <p className="mt-1 text-sm font-bold text-yellow-400">
+                    {formatOnix(totalEarned)}
+                  </p>
+                </div>
+
+                <div className="onix-wallet-stat-card p-4">
+                  <p className="text-xs text-gray-400">За неделю</p>
+                  <p className="mt-1 text-sm font-bold text-emerald-400">
+                    +{formatOnix(weeklyEarned)}
+                  </p>
+                </div>
+
+                <div className="onix-wallet-stat-card p-4">
+                  <p className="text-xs text-gray-400">Доходы в истории</p>
+                  <p className="mt-1 text-sm font-bold text-emerald-400">
+                    +{formatOnix(walletIncomeTotal)}
+                  </p>
+                </div>
+
+                <div className="onix-wallet-stat-card p-4">
+                  <p className="text-xs text-gray-400">Расходы в истории</p>
+                  <p className="mt-1 text-sm font-bold text-red-400">
+                    -{formatOnix(walletExpenseTotal)}
+                  </p>
+                </div>
+              </div>
+
+              <div className="mt-5 grid grid-cols-2 gap-3">
+                <div className="onix-wallet-mini-card p-4">
+                  <p className="text-xs text-gray-400">Курс</p>
+                  <p className="mt-1 text-sm font-bold text-white">
+                    1000 ONIX = {economyConfig.onixEurPer1000.toLocaleString('ru-RU')}€
+                  </p>
+                </div>
+
+                <div className="onix-wallet-mini-card p-4">
+                  <p className="text-xs text-gray-400">Минимальный вывод</p>
+                  <p className="mt-1 text-sm font-bold text-yellow-400">
+                    {minWithdrawOnix.toLocaleString('ru-RU')} ONIX
+                  </p>
+                </div>
+              </div>
+
+              <div className="onix-wallet-mini-card mt-5 p-4">
+                <div className="mb-3 flex items-center justify-between gap-3 text-sm">
+                  <span className="text-gray-400">Прогресс до вывода</span>
+                  <span className="font-bold text-yellow-400">
+                    {withdrawProgress.toFixed(1)}%
+                  </span>
+                </div>
+
+                <div className="onix-wallet-progress-track">
+                  <div
+                    className="onix-wallet-progress-fill transition-all"
+                    style={{ width: `${withdrawProgress}%` }}
+                  />
+                </div>
+
+                <p className="mt-3 text-sm text-gray-400">
+                  {canWithdraw
+                    ? 'Минимальная сумма набрана'
+                    : `Осталось ${formatOnix(leftToWithdraw)} ONIX`}
+                </p>
+
+                <p className="mt-1 text-xs text-gray-500">
+                  Pending-заявки: {formatOnix(walletPendingWithdrawal)} ONIX
                 </p>
               </div>
 
-              <div className="rounded-2xl bg-[#0a0f1c] p-4">
-                <p className="text-xs text-gray-400">Доходы в истории</p>
-                <p className="mt-1 text-sm font-bold text-emerald-400">
-                  +{formatOnix(walletIncomeTotal)}
+              <div className="onix-wallet-mini-card mt-5 p-4">
+                <p className="text-sm font-bold text-white">🛡 Антибот-проверка</p>
+                <p className="mt-1 text-xs text-gray-500">
+                  Перед созданием заявки введите ONIX.
                 </p>
-              </div>
 
-              <div className="rounded-2xl bg-[#0a0f1c] p-4">
-                <p className="text-xs text-gray-400">Расходы в истории</p>
-                <p className="mt-1 text-sm font-bold text-red-400">
-                  -{formatOnix(walletExpenseTotal)}
-                </p>
-              </div>
-            </div>
-
-            <div className="mt-5 grid grid-cols-2 gap-3">
-              <div className="rounded-2xl bg-[#0a0f1c] p-4">
-                <p className="text-xs text-gray-400">Курс</p>
-                <p className="mt-1 text-sm font-bold text-white">
-                  1000 ONIX = {economyConfig.onixEurPer1000.toLocaleString('ru-RU')}€
-                </p>
-              </div>
-
-              <div className="rounded-2xl bg-[#0a0f1c] p-4">
-                <p className="text-xs text-gray-400">Минимальный вывод</p>
-                <p className="mt-1 text-sm font-bold text-yellow-400">
-                  {minWithdrawOnix.toLocaleString('ru-RU')} ONIX
-                </p>
-              </div>
-            </div>
-
-            <div className="mt-5 rounded-2xl bg-[#0a0f1c] p-4">
-              <div className="mb-3 flex items-center justify-between gap-3 text-sm">
-                <span className="text-gray-400">Прогресс до вывода</span>
-                <span className="font-bold text-yellow-400">
-                  {withdrawProgress.toFixed(1)}%
-                </span>
-              </div>
-
-              <div className="h-3 overflow-hidden rounded-full bg-gray-800">
-                <div
-                  className="h-full rounded-full bg-yellow-400 transition-all"
-                  style={{ width: `${withdrawProgress}%` }}
+                <input
+                  value={withdrawalCheck}
+                  onChange={(event) => setWithdrawalCheck(event.target.value)}
+                  placeholder="Введите ONIX"
+                  className="mt-3 w-full px-4 py-3 text-sm outline-none"
                 />
               </div>
 
-              <p className="mt-3 text-sm text-gray-400">
-                {canWithdraw
-                  ? 'Минимальная сумма набрана'
-                  : `Осталось ${formatOnix(leftToWithdraw)} ONIX`}
-              </p>
-
-              <p className="mt-1 text-xs text-gray-500">
-                Pending-заявки: {formatOnix(walletPendingWithdrawal)} ONIX
-              </p>
+              <button
+                onClick={requestWithdrawal}
+                disabled={!canWithdraw || isWithdrawalLoading}
+                className="onix-wallet-primary-button mt-5 w-full py-4 text-lg active:scale-95 disabled:cursor-not-allowed"
+              >
+                {isWithdrawalLoading
+                  ? 'Создаём заявку...'
+                  : canWithdraw
+                  ? 'Создать заявку на вывод'
+                  : 'Недостаточно ONIX для вывода'}
+              </button>
             </div>
-
-            <div className="mt-5 rounded-2xl bg-[#0a0f1c] p-4">
-              <p className="text-sm font-bold text-white">🛡 Антибот-проверка</p>
-              <p className="mt-1 text-xs text-gray-500">
-                Перед созданием заявки введите ONIX.
-              </p>
-
-              <input
-                value={withdrawalCheck}
-                onChange={(event) => setWithdrawalCheck(event.target.value)}
-                placeholder="Введите ONIX"
-                className="mt-3 w-full rounded-2xl bg-[#111827] px-4 py-3 text-sm text-white outline-none"
-              />
-            </div>
-
-            <button
-              onClick={requestWithdrawal}
-              disabled={!canWithdraw || isWithdrawalLoading}
-              className={`mt-5 w-full rounded-2xl py-4 text-lg font-bold active:scale-95 ${
-                canWithdraw
-                  ? 'bg-yellow-400 text-black'
-                  : 'bg-gray-700 text-gray-400 cursor-not-allowed'
-              }`}
-            >
-              {isWithdrawalLoading
-                ? 'Создаём заявку...'
-                : canWithdraw
-                ? 'Создать заявку на вывод'
-                : 'Недостаточно ONIX для вывода'}
-            </button>
           </div>
 
-          <div className="rounded-3xl border border-yellow-400/20 bg-[#111827] p-5 shadow-xl">
-            <h3 className="text-xl font-bold text-white">📈 График заработка</h3>
-            <p className="mt-1 text-sm text-gray-400">Доходы за последние 7 дней</p>
+          <div className="onix-wallet-tabs">
+            {[
+              { id: 'chart' as const, label: 'График заработка' },
+              { id: 'withdrawals' as const, label: 'Заявки на вывод' },
+              { id: 'history' as const, label: 'История операций' },
+            ].map((tab) => (
+              <button
+                key={tab.id}
+                onClick={() => setWalletSubTab(tab.id)}
+                className={`onix-wallet-tab ${walletSubTab === tab.id ? 'is-active' : ''}`}
+              >
+                {tab.label}
+              </button>
+            ))}
+          </div>
 
-            <div className="mt-5 flex h-40 items-end gap-2 rounded-2xl bg-[#0a0f1c] p-4">
-              {earningChartDays.map((item) => (
-                <div key={item.key} className="flex h-full flex-1 flex-col items-center justify-end gap-2">
-                  <div className="flex w-full flex-1 items-end">
-                    <div
-                      className="w-full rounded-t-xl bg-yellow-400 transition-all"
-                      style={{
-                        height: `${Math.max((item.amount / maxChartAmount) * 100, item.amount > 0 ? 8 : 2)}%`,
-                      }}
-                    />
-                  </div>
-                  <p className="text-[10px] text-gray-500">{item.label}</p>
+          {walletSubTab === 'chart' && (
+            <div className="onix-wallet-panel-card shadow-xl">
+              <div className="onix-wallet-card-content">
+                <h3 className="text-xl font-bold text-white">📈 График заработка</h3>
+                <p className="mt-1 text-sm text-gray-400">Доходы за последние 7 дней</p>
+
+                <div className="onix-wallet-chart-box mt-5 flex items-end gap-2 p-4">
+                  {earningChartDays.map((item) => (
+                    <div key={item.key} className="flex h-full flex-1 flex-col items-center justify-end gap-2">
+                      <div className="flex w-full flex-1 items-end">
+                        <div
+                          className="onix-wallet-chart-bar w-full rounded-t-xl transition-all"
+                          style={{
+                            height: `${Math.max((item.amount / maxChartAmount) * 100, item.amount > 0 ? 8 : 2)}%`,
+                          }}
+                        />
+                      </div>
+                      <p className="text-[10px] font-bold text-gray-500">{item.label}</p>
+                    </div>
+                  ))}
                 </div>
-              ))}
+              </div>
             </div>
-          </div>
+          )}
 
-          <div className="rounded-3xl border border-yellow-400/20 bg-[#111827] p-5 shadow-xl">
-            <h3 className="text-xl font-bold text-white">💸 Заявки на вывод</h3>
-
-            {withdrawalRequests.length > 0 ? (
-              <div className="mt-4 space-y-3">
-                {withdrawalRequests.slice(0, 5).map((request, index) => (
-                  <div
-                    key={`${request.createdAt}-${index}`}
-                    className="rounded-2xl bg-[#0a0f1c] p-4"
-                  >
-                    <div className="flex items-center justify-between gap-3">
-                      <div>
-                        <p className="font-bold text-white">
-                          {formatOnix(request.amount)} ONIX
-                        </p>
-                        <p className="text-xs text-gray-400">
-                          ≈ {formatOnix(request.eurAmount)} €
-                        </p>
-                        {request.adminComment && (
-                          <p className="mt-1 text-xs text-gray-500">
-                            {request.adminComment}
-                          </p>
-                        )}
-                      </div>
-
-                      <span
-                        className={`rounded-full px-3 py-1 text-xs font-bold ${
-                          request.status === 'approved'
-                            ? 'bg-emerald-500/10 text-emerald-400'
-                            : request.status === 'rejected'
-                            ? 'bg-red-500/10 text-red-400'
-                            : 'bg-yellow-400/10 text-yellow-400'
-                        }`}
-                      >
-                        {request.status === 'approved'
-                          ? 'Одобрено'
-                          : request.status === 'rejected'
-                          ? 'Отклонено'
-                          : 'В обработке'}
-                      </span>
-                    </div>
+          {walletSubTab === 'withdrawals' && (
+            <div className="onix-wallet-panel-card shadow-xl">
+              <div className="onix-wallet-card-content">
+                <div className="mb-4 flex items-center justify-between gap-3">
+                  <div>
+                    <h3 className="text-xl font-bold text-white">💸 Заявки на вывод</h3>
+                    <p className="text-sm text-gray-400">
+                      {withdrawalRequests.length} заявок
+                    </p>
                   </div>
-                ))}
-              </div>
-            ) : (
-              <div className="mt-4 rounded-2xl bg-[#0a0f1c] p-5 text-center">
-                <p className="font-bold text-gray-300">Заявок пока нет</p>
-                <p className="mt-1 text-sm text-gray-500">
-                  Когда вы создадите заявку, она появится здесь.
-                </p>
-              </div>
-            )}
-          </div>
+                </div>
 
-          <div className="rounded-3xl border border-yellow-400/20 bg-[#111827] p-5 shadow-xl">
-            <div className="mb-4 flex items-center justify-between gap-3">
-              <div>
-                <h3 className="text-xl font-bold text-white">🧾 История операций</h3>
-                <p className="text-sm text-gray-400">
-                  {filteredTransactions.length} операций
-                </p>
-              </div>
-            </div>
+                {withdrawalRequests.length > 0 ? (
+                  <div className="space-y-3">
+                    {withdrawalRequests.slice(0, 8).map((request, index) => (
+                      <div
+                        key={`${request.createdAt}-${index}`}
+                        className="onix-wallet-request-card p-4"
+                      >
+                        <div className="flex items-center justify-between gap-3">
+                          <div>
+                            <p className="font-bold text-white">
+                              {formatOnix(request.amount)} ONIX
+                            </p>
+                            <p className="text-xs text-gray-400">
+                              ≈ {formatOnix(request.eurAmount)} €
+                            </p>
+                            {request.adminComment && (
+                              <p className="mt-1 text-xs text-gray-500">
+                                {request.adminComment}
+                              </p>
+                            )}
+                          </div>
 
-            <div className="mb-4 flex gap-2 overflow-x-auto pb-2">
-              {transactionFilters.map((filter) => (
-                <button
-                  key={filter.id}
-                  onClick={() => setTransactionFilter(filter.id)}
-                  className={`shrink-0 rounded-full px-3 py-2 text-xs font-bold ${
-                    transactionFilter === filter.id
-                      ? 'bg-yellow-400 text-black'
-                      : 'bg-[#0a0f1c] text-gray-400'
-                  }`}
-                >
-                  {filter.label}
-                </button>
-              ))}
-            </div>
-
-            {filteredTransactions.length > 0 ? (
-              <div className="space-y-3">
-                {filteredTransactions.slice(0, 40).map((transaction, index) => {
-                  const isIncome = Number(transaction.amount || 0) >= 0;
-
-                  return (
-                    <div
-                      key={`${transaction.createdAt || index}-${index}`}
-                      className="flex items-center justify-between gap-3 rounded-2xl bg-[#0a0f1c] p-3"
-                    >
-                      <div className="flex min-w-0 items-center gap-3">
-                        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[#111827] text-xl">
-                          {getTransactionIcon(transaction.type)}
-                        </div>
-
-                        <div className="min-w-0">
-                          <p className="truncate text-sm font-bold text-white">
-                            {transaction.title || 'Операция'}
-                          </p>
-                          <p className="text-xs text-gray-500">
-                            {formatTransactionTime(transaction.createdAt)}
-                          </p>
+                          <span
+                            className={`rounded-full px-3 py-1 text-xs font-bold ${
+                              request.status === 'approved'
+                                ? 'bg-emerald-500/10 text-emerald-400'
+                                : request.status === 'rejected'
+                                ? 'bg-red-500/10 text-red-400'
+                                : 'bg-yellow-400/10 text-yellow-400'
+                            }`}
+                          >
+                            {request.status === 'approved'
+                              ? 'Одобрено'
+                              : request.status === 'rejected'
+                              ? 'Отклонено'
+                              : 'В обработке'}
+                          </span>
                         </div>
                       </div>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="onix-wallet-mini-card p-5 text-center">
+                    <p className="font-bold text-gray-300">Заявок пока нет</p>
+                    <p className="mt-1 text-sm text-gray-500">
+                      Когда вы создадите заявку, она появится здесь.
+                    </p>
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
 
-                      <p
-                        className={`shrink-0 text-sm font-bold ${
-                          isIncome ? 'text-emerald-400' : 'text-red-400'
-                        }`}
-                      >
-                        {isIncome ? '+' : ''}
-                        {formatOnix(transaction.amount)} ONIX
-                      </p>
-                    </div>
-                  );
-                })}
+          {walletSubTab === 'history' && (
+            <div className="onix-wallet-panel-card shadow-xl">
+              <div className="onix-wallet-card-content">
+                <div className="mb-4 flex items-center justify-between gap-3">
+                  <div>
+                    <h3 className="text-xl font-bold text-white">🧾 История операций</h3>
+                    <p className="text-sm text-gray-400">
+                      {filteredTransactions.length} операций
+                    </p>
+                  </div>
+                </div>
+
+                <div className="onix-wallet-filter-row mb-4">
+                  {transactionFilters.map((filter) => (
+                    <button
+                      key={filter.id}
+                      onClick={() => setTransactionFilter(filter.id)}
+                      className={`onix-wallet-filter-button ${transactionFilter === filter.id ? 'is-active' : ''}`}
+                    >
+                      {filter.label}
+                    </button>
+                  ))}
+                </div>
+
+                {filteredTransactions.length > 0 ? (
+                  <div className="space-y-3">
+                    {filteredTransactions.slice(0, 40).map((transaction, index) => {
+                      const isIncome = Number(transaction.amount || 0) >= 0;
+
+                      return (
+                        <div
+                          key={`${transaction.createdAt || index}-${index}`}
+                          className="onix-wallet-transaction-card flex items-center justify-between gap-3 p-3"
+                        >
+                          <div className="flex min-w-0 items-center gap-3">
+                            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-purple-500/20 bg-[#050817] text-xl">
+                              {getTransactionIcon(transaction.type)}
+                            </div>
+
+                            <div className="min-w-0">
+                              <p className="truncate text-sm font-bold text-white">
+                                {transaction.title || 'Операция'}
+                              </p>
+                              <p className="text-xs text-gray-500">
+                                {formatTransactionTime(transaction.createdAt)}
+                              </p>
+                            </div>
+                          </div>
+
+                          <p
+                            className={`shrink-0 text-sm font-bold ${
+                              isIncome ? 'text-emerald-400' : 'text-red-400'
+                            }`}
+                          >
+                            {isIncome ? '+' : ''}
+                            {formatOnix(transaction.amount)} ONIX
+                          </p>
+                        </div>
+                      );
+                    })}
+                  </div>
+                ) : (
+                  <div className="onix-wallet-mini-card p-5 text-center">
+                    <p className="font-bold text-gray-300">Операций нет</p>
+                    <p className="mt-1 text-sm text-gray-500">
+                      Попробуйте выбрать другой фильтр.
+                    </p>
+                  </div>
+                )}
               </div>
-            ) : (
-              <div className="rounded-2xl bg-[#0a0f1c] p-5 text-center">
-                <p className="font-bold text-gray-300">Операций нет</p>
-                <p className="mt-1 text-sm text-gray-500">
-                  Попробуйте выбрать другой фильтр.
-                </p>
-              </div>
-            )}
-          </div>
+            </div>
+          )}
         </div>
       )}
-
-
-
 
 
 
