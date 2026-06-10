@@ -8227,6 +8227,52 @@ div.fixed.inset-0.z-\[90\] button.bg-yellow-400 {
   border: 0 !important;
 }
 
+
+/* === PROFILE BACKGROUND CLEAN FIX v85 ===
+   Remove the invisible glass/backdrop layer that blurred the arena behind Profile.
+   The global rule `.onix-profile-screen > div:first-child` was still applying
+   backdrop-filter to `.onix-profile-ref-screen`, which created the visible soft rectangle. */
+.onix-profile-arena-bg-mode .onix-profile-screen > div:first-child,
+.onix-profile-arena-bg-mode .onix-profile-ref-screen,
+.onix-profile-arena-bg-mode .onix-profile-ref-screen.onix-profile-v75-screen,
+.onix-profile-arena-bg-mode .onix-profile-v75-screen {
+  background: transparent !important;
+  background-image: none !important;
+  background-color: transparent !important;
+  border: 0 !important;
+  outline: 0 !important;
+  box-shadow: none !important;
+  filter: none !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  isolation: auto !important;
+}
+
+.onix-profile-arena-bg-mode .onix-profile-ref-screen::before,
+.onix-profile-arena-bg-mode .onix-profile-ref-screen::after,
+.onix-profile-arena-bg-mode .onix-profile-screen > div:first-child::before,
+.onix-profile-arena-bg-mode .onix-profile-screen > div:first-child::after {
+  display: none !important;
+  content: none !important;
+  opacity: 0 !important;
+  background: none !important;
+  background-image: none !important;
+  box-shadow: none !important;
+  filter: none !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+/* Keep scrolling but do not create a separate blurred/backdrop panel. */
+.onix-profile-arena-bg-mode .onix-profile-ref-screen.onix-profile-v75-screen {
+  overflow-y: auto !important;
+  overflow-x: visible !important;
+  scrollbar-width: none !important;
+}
+.onix-profile-arena-bg-mode .onix-profile-ref-screen.onix-profile-v75-screen::-webkit-scrollbar {
+  display: none !important;
+}
+
 `;
 
 
