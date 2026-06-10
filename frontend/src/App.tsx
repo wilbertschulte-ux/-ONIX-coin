@@ -18343,7 +18343,17 @@ body:has(.onix-home-reference-mode),
       )}
 
       {tutorialVisible && (
-        <div className="fixed inset-0 z-[95] flex items-center justify-center bg-black/75 px-4 backdrop-blur-sm">
+        <div
+          className="onix-tutorial-overlay bg-black/75 px-4 backdrop-blur-sm"
+          style={{
+            position: 'fixed',
+            inset: 0,
+            zIndex: 9999,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+          }}
+        >
           <div className="w-full max-w-sm rounded-[28px] border border-violet-400/35 bg-[#080b18]/95 p-6 text-center shadow-[0_0_40px_rgba(124,58,237,0.35)]">
             <div className="mx-auto mb-4 flex h-24 w-24 items-center justify-center rounded-full border border-violet-300/35 bg-gradient-to-br from-cyan-400/25 via-violet-500/35 to-fuchsia-500/25 shadow-[0_0_32px_rgba(168,85,247,0.35)]">
               {renderTutorialIcon(tutorialSteps[tutorialStep].icon)}
