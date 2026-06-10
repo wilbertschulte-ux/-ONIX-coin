@@ -76,44 +76,48 @@ async function upsertSavedTeam(teamName, createdByTelegramId = '') {
   if (!cleanTeamName) return null;
 
   const normalizedName = cleanTeamName.toLowerCase();
+  const creatorId = String(createdByTelegramId || '');
+  const now = new Date();
+
+  // Do not use $set and $setOnInsert for the same fields in one upsert.
+  // MongoDB can reject that update with a path-conflict error, which made
+  // create-team and join-team fail even though reading the team list worked.
+  const existingTeam = await findSavedTeamByName(cleanTeamName);
+
+  if (existingTeam) {
+    const idFilter = existingTeam._id ? { _id: existingTeam._id } : { normalizedName };
+    const update = {
+      normalizedName: existingTeam.normalizedName || normalizedName,
+      name: getSavedTeamDisplayName(existingTeam) || cleanTeamName,
+      teamName: getSavedTeamDisplayName(existingTeam) || cleanTeamName,
+      updatedAt: now,
+    };
+
+    if (!existingTeam.createdByTelegramId && creatorId) {
+      update.createdByTelegramId = creatorId;
+    }
+
+    await getTeamsCollection().updateOne(idFilter, { $set: update });
+    return { ...existingTeam, ...update };
+  }
+
   const payload = {
     name: cleanTeamName,
     teamName: cleanTeamName,
     normalizedName,
-    createdByTelegramId: String(createdByTelegramId || ''),
-    updatedAt: new Date(),
+    createdByTelegramId: creatorId,
+    createdAt: now,
+    updatedAt: now,
   };
 
   try {
-    await getTeamsCollection().updateOne(
-      { normalizedName },
-      {
-        $setOnInsert: {
-          name: cleanTeamName,
-          teamName: cleanTeamName,
-          normalizedName,
-          createdByTelegramId: String(createdByTelegramId || ''),
-          createdAt: new Date(),
-        },
-        $set: { name: cleanTeamName, teamName: cleanTeamName, updatedAt: new Date() },
-      },
-      { upsert: true }
-    );
+    await getTeamsCollection().insertOne(payload);
     return payload;
   } catch (error) {
-    return Team.findOneAndUpdate(
-      { normalizedName },
-      {
-        $setOnInsert: {
-          name: cleanTeamName,
-          teamName: cleanTeamName,
-          normalizedName,
-          createdByTelegramId: String(createdByTelegramId || ''),
-        },
-        $set: { name: cleanTeamName, teamName: cleanTeamName },
-      },
-      { upsert: true, new: true }
-    );
+    // If another request created the same team at the same time, keep the flow working.
+    const duplicate = await findSavedTeamByName(cleanTeamName);
+    if (duplicate) return duplicate;
+    throw error;
   }
 }
 
