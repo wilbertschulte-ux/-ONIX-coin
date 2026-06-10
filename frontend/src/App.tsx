@@ -11730,7 +11730,8 @@ function App() {
       setTeamNameInput(user.teamName || '');
       setTeamSocialDashboard(null);
       setTeamDetailPanel('overview');
-      await loadTeamDirectory(teamSearch);
+      setTeamSearch('');
+      await loadTeamDirectory('');
       showToast('Вы вышли из команды. Выберите новую команду из списка.', 'success');
     } catch (error: any) {
       showToast(error?.response?.data?.message || 'Не удалось выйти из команды', 'error');

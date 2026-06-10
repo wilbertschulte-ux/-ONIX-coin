@@ -3719,25 +3719,29 @@ function getSeasonBadgeByPlace(place) {
 // ALL EXISTING TEAMS FOR PROFILE TEAM PAGE
 router.get('/teams', async (req, res) => {
   try {
-    const q = String(req.query.q || '').trim();
+    const q = normalizeTeamNameValue(req.query.q || '');
+    const normalizedQuery = q.toLowerCase();
+    const compactQuery = normalizedQuery.replace(/\s+/g, '');
     const currentWeek = getWeekKey();
     const searchRegex = q ? new RegExp(escapeRegExpValue(q), 'i') : null;
+
+    const matchesTeamQuery = (teamName) => {
+      if (!normalizedQuery) return true;
+      const name = normalizeTeamNameValue(teamName).toLowerCase();
+      const compactName = name.replace(/\s+/g, '');
+
+      return name.includes(normalizedQuery) || compactName.includes(compactQuery);
+    };
 
     const userMatch = {
       teamName: { $nin: ['', null] },
     };
 
-    if (searchRegex) {
-      userMatch.teamName = {
-        $nin: ['', null],
-        $regex: searchRegex,
-      };
-    }
-
-    const savedTeamMatch = searchRegex ? { name: { $regex: searchRegex } } : {};
-
+    // Important: saved teams can exist without members after the creator leaves.
+    // Fetch them without a strict Mongo regex filter and do the final search in JS,
+    // so teams created earlier still appear in search/list even when nobody is inside.
     const [savedTeams, weeklyLeaderboard, userTeams] = await Promise.all([
-      Team.find(savedTeamMatch).lean(),
+      Team.find({}).limit(500).lean(),
       User.aggregate([
         {
           $match: {
@@ -3776,7 +3780,7 @@ router.get('/teams', async (req, res) => {
 
     for (const team of savedTeams) {
       const name = normalizeTeamNameValue(team.name);
-      if (!name) continue;
+      if (!name || !matchesTeamQuery(name)) continue;
       const key = name.toLowerCase();
       teamsByKey.set(key, {
         teamName: name,
@@ -3789,7 +3793,7 @@ router.get('/teams', async (req, res) => {
 
     for (const team of userTeams) {
       const name = normalizeTeamNameValue(team._id);
-      if (!name) continue;
+      if (!name || !matchesTeamQuery(name)) continue;
       const key = name.toLowerCase();
       const existing = teamsByKey.get(key) || { teamName: name };
       teamsByKey.set(key, {
