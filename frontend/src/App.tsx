@@ -9398,59 +9398,6 @@ div.fixed.inset-0.z-\[90\] button.bg-yellow-400 {
   }
 }
 
-
-/* Team directory layout: only the teams list scrolls, header/search/create stay fixed. */
-.onix-profile-v75-screen.is-profile-detail-mode.is-profile-team-mode .onix-profile-team-directory-page {
-  height: 100% !important;
-  min-height: 0 !important;
-  flex: 1 1 auto !important;
-  overflow: hidden !important;
-  display: flex !important;
-  flex-direction: column !important;
-  gap: 10px !important;
-}
-
-.onix-profile-team-directory-page > .onix-profile-team-search,
-.onix-profile-team-directory-page > .onix-profile-team-create-button {
-  flex: 0 0 auto !important;
-}
-
-.onix-profile-team-directory-page > .onix-profile-team-block {
-  flex: 1 1 0 !important;
-  min-height: 0 !important;
-  overflow: hidden !important;
-  display: flex !important;
-  flex-direction: column !important;
-  padding: 12px !important;
-}
-
-.onix-profile-team-directory-page > .onix-profile-team-block > .onix-profile-team-block-title {
-  flex: 0 0 auto !important;
-  margin-bottom: 10px !important;
-}
-
-.onix-profile-team-directory-page .onix-profile-team-directory {
-  flex: 1 1 0 !important;
-  min-height: 0 !important;
-  max-height: none !important;
-  overflow-x: hidden !important;
-  overflow-y: auto !important;
-  -webkit-overflow-scrolling: touch !important;
-  overscroll-behavior: contain !important;
-  padding: 0 1px calc(96px + env(safe-area-inset-bottom)) !important;
-  scrollbar-width: none !important;
-}
-
-.onix-profile-team-directory-page .onix-profile-team-directory::-webkit-scrollbar {
-  width: 0 !important;
-  height: 0 !important;
-  display: none !important;
-}
-
-.onix-profile-team-directory-page .onix-profile-team-card {
-  flex: 0 0 auto !important;
-}
-
 `;
 
 
@@ -14985,6 +14932,23 @@ body:has(.onix-home-reference-mode),
     },
   ];
 
+  const renderTutorialIcon = (icon: string) => {
+    const isImageIcon = /\.(png|webp|jpg|jpeg|svg)(\?.*)?$/i.test(icon) || icon.includes('/assets/');
+
+    if (isImageIcon) {
+      return (
+        <img
+          src={icon}
+          alt=""
+          className="h-16 w-16 object-contain drop-shadow-[0_0_18px_rgba(168,85,247,0.75)]"
+          draggable={false}
+        />
+      );
+    }
+
+    return <span className="text-4xl leading-none">{icon}</span>;
+  };
+
   const closeTutorial = () => {
     localStorage.setItem('onixTutorialDone', 'true');
     setTutorialVisible(false);
@@ -18379,13 +18343,13 @@ body:has(.onix-home-reference-mode),
       )}
 
       {tutorialVisible && (
-        <div className="fixed inset-0 z-[95] flex items-center justify-center bg-black/75 px-4">
-          <div className="w-full max-w-sm rounded-3xl border border-yellow-400/30 bg-[#111827] p-6 text-center shadow-2xl">
-            <div className="mx-auto mb-4 flex h-20 w-20 items-center justify-center rounded-full bg-yellow-400 text-4xl">
-              {tutorialSteps[tutorialStep].icon}
+        <div className="fixed inset-0 z-[95] flex items-center justify-center bg-black/75 px-4 backdrop-blur-sm">
+          <div className="w-full max-w-sm rounded-[28px] border border-violet-400/35 bg-[#080b18]/95 p-6 text-center shadow-[0_0_40px_rgba(124,58,237,0.35)]">
+            <div className="mx-auto mb-4 flex h-24 w-24 items-center justify-center rounded-full border border-violet-300/35 bg-gradient-to-br from-cyan-400/25 via-violet-500/35 to-fuchsia-500/25 shadow-[0_0_32px_rgba(168,85,247,0.35)]">
+              {renderTutorialIcon(tutorialSteps[tutorialStep].icon)}
             </div>
 
-            <h2 className="text-2xl font-bold text-white">
+            <h2 className="text-2xl font-extrabold text-white">
               {tutorialSteps[tutorialStep].title}
             </h2>
 
@@ -18399,8 +18363,8 @@ body:has(.onix-home-reference-mode),
                   key={index}
                   className={`h-2 rounded-full transition-all ${
                     index === tutorialStep
-                      ? 'w-8 bg-yellow-400'
-                      : 'w-2 bg-gray-700'
+                      ? 'w-8 bg-fuchsia-400 shadow-[0_0_12px_rgba(217,70,239,0.85)]'
+                      : 'w-2 bg-slate-700'
                   }`}
                 />
               ))}
@@ -18409,7 +18373,7 @@ body:has(.onix-home-reference-mode),
             <div className="mt-6 grid grid-cols-2 gap-3">
               <button
                 onClick={closeTutorial}
-                className="rounded-2xl bg-[#0a0f1c] py-4 font-bold text-gray-300 active:scale-95"
+                className="rounded-2xl border border-white/10 bg-[#0a0f1c] py-4 font-bold text-gray-300 active:scale-95"
               >
                 Пропустить
               </button>
@@ -18422,7 +18386,7 @@ body:has(.onix-home-reference-mode),
                     setTutorialStep((step) => step + 1);
                   }
                 }}
-                className="rounded-2xl bg-yellow-400 py-4 font-bold text-black active:scale-95"
+                className="rounded-2xl bg-gradient-to-r from-cyan-400 to-fuchsia-500 py-4 font-bold text-white shadow-[0_0_18px_rgba(168,85,247,0.45)] active:scale-95"
               >
                 {tutorialStep >= tutorialSteps.length - 1 ? 'Начать' : 'Дальше'}
               </button>
