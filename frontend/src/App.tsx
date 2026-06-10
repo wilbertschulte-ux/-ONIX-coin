@@ -8421,7 +8421,7 @@ div.fixed.inset-0.z-\[90\] button.bg-yellow-400 {
 .onix-profile-team-page {
   display: flex !important;
   flex-direction: column !important;
-  gap: 12px !important;
+  gap: 10px !important;
 }
 
 .onix-profile-team-hero,
@@ -8432,18 +8432,24 @@ div.fixed.inset-0.z-\[90\] button.bg-yellow-400 {
 .onix-profile-team-mission,
 .onix-profile-team-stats-grid > div {
   border: 1px solid rgba(124, 58, 237, 0.24) !important;
-  background: linear-gradient(145deg, rgba(10, 12, 35, 0.88), rgba(5, 8, 24, 0.96)) !important;
+  background: linear-gradient(145deg, rgba(10, 12, 35, 0.82), rgba(5, 8, 24, 0.90)) !important;
   box-shadow: inset 0 0 18px rgba(132, 86, 255, 0.06) !important;
 }
 
 .onix-profile-team-hero {
-  min-height: 98px !important;
+  min-height: 74px !important;
   display: flex !important;
   align-items: center !important;
   justify-content: space-between !important;
-  gap: 14px !important;
-  padding: 16px !important;
-  border-radius: 24px !important;
+  gap: 12px !important;
+  padding: 12px 14px !important;
+  border-radius: 22px !important;
+  overflow: hidden !important;
+}
+
+.onix-profile-team-hero > div {
+  min-width: 0 !important;
+  flex: 1 1 auto !important;
 }
 
 .onix-profile-team-hero p,
@@ -8457,20 +8463,42 @@ div.fixed.inset-0.z-\[90\] button.bg-yellow-400 {
   font-style: normal !important;
 }
 
+.onix-profile-team-hero p {
+  display: block !important;
+  margin: 0 0 4px !important;
+  padding: 0 !important;
+  color: rgba(218, 208, 255, 0.66) !important;
+  font-size: 13px !important;
+  line-height: 1.05 !important;
+  font-weight: 800 !important;
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+}
+
 .onix-profile-team-hero strong {
   display: block !important;
-  margin-top: 4px !important;
+  margin: 0 !important;
   color: #fff !important;
   font-family: 'Exo 2', system-ui, sans-serif !important;
-  font-size: 24px !important;
+  font-size: 22px !important;
+  line-height: 1.02 !important;
   font-weight: 1000 !important;
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
 }
 
 .onix-profile-team-hero span {
   display: block !important;
   margin-top: 4px !important;
   color: rgba(218, 208, 255, 0.70) !important;
+  font-size: 12px !important;
+  line-height: 1.05 !important;
   font-weight: 800 !important;
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
 }
 
 .onix-profile-team-hero button,
@@ -8482,33 +8510,35 @@ div.fixed.inset-0.z-\[90\] button.bg-yellow-400 {
   background: rgba(28, 19, 9, 0.78) !important;
   color: #f6c833 !important;
   font-weight: 1000 !important;
-  padding: 11px 14px !important;
+  padding: 10px 13px !important;
+  white-space: nowrap !important;
 }
 
 .onix-profile-team-stats-grid {
   display: grid !important;
   grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
-  gap: 10px !important;
+  gap: 9px !important;
 }
 
 .onix-profile-team-stats-grid > div {
-  min-height: 76px !important;
-  padding: 14px !important;
-  border-radius: 20px !important;
+  min-height: 58px !important;
+  padding: 10px 12px !important;
+  border-radius: 18px !important;
 }
 
 .onix-profile-team-stats-grid strong {
   display: block !important;
-  margin-top: 8px !important;
+  margin-top: 6px !important;
   color: #fff !important;
   font-family: 'Exo 2', system-ui, sans-serif !important;
-  font-size: 18px !important;
+  font-size: 17px !important;
+  line-height: 1.05 !important;
   font-weight: 1000 !important;
 }
 
 .onix-profile-team-prize {
   width: 100% !important;
-  min-height: 52px !important;
+  min-height: 48px !important;
   color: rgba(218, 208, 255, 0.66) !important;
   border-color: rgba(124, 58, 237, 0.22) !important;
 }
@@ -8519,8 +8549,8 @@ div.fixed.inset-0.z-\[90\] button.bg-yellow-400 {
 }
 
 .onix-profile-team-block {
-  padding: 14px !important;
-  border-radius: 24px !important;
+  padding: 12px !important;
+  border-radius: 22px !important;
 }
 
 .onix-profile-team-block-title {
@@ -8528,13 +8558,13 @@ div.fixed.inset-0.z-\[90\] button.bg-yellow-400 {
   align-items: center !important;
   justify-content: space-between !important;
   gap: 10px !important;
-  margin-bottom: 12px !important;
+  margin-bottom: 10px !important;
 }
 
 .onix-profile-team-block-title strong {
   color: #fff !important;
   font-family: 'Exo 2', system-ui, sans-serif !important;
-  font-size: 19px !important;
+  font-size: 18px !important;
   font-weight: 1000 !important;
 }
 
@@ -8543,7 +8573,7 @@ div.fixed.inset-0.z-\[90\] button.bg-yellow-400 {
 .onix-profile-team-missions {
   display: flex !important;
   flex-direction: column !important;
-  gap: 10px !important;
+  gap: 9px !important;
 }
 
 .onix-profile-team-member,
@@ -8552,17 +8582,17 @@ div.fixed.inset-0.z-\[90\] button.bg-yellow-400 {
   align-items: center !important;
   justify-content: space-between !important;
   gap: 12px !important;
-  padding: 13px !important;
-  border-radius: 20px !important;
+  padding: 12px !important;
+  border-radius: 18px !important;
 }
 
 .onix-profile-team-member em {
-  width: 34px !important;
-  height: 34px !important;
-  flex: 0 0 34px !important;
+  width: 32px !important;
+  height: 32px !important;
+  flex: 0 0 32px !important;
   display: grid !important;
   place-items: center !important;
-  border-radius: 14px !important;
+  border-radius: 13px !important;
   color: #7ef9ff !important;
   background: rgba(45, 212, 255, 0.10) !important;
   border: 1px solid rgba(45, 212, 255, 0.18) !important;
@@ -8612,8 +8642,8 @@ div.fixed.inset-0.z-\[90\] button.bg-yellow-400 {
 }
 
 .onix-profile-team-mission {
-  padding: 14px !important;
-  border-radius: 20px !important;
+  padding: 12px !important;
+  border-radius: 18px !important;
 }
 
 .onix-profile-team-mission-head {
@@ -8635,7 +8665,7 @@ div.fixed.inset-0.z-\[90\] button.bg-yellow-400 {
 }
 
 .onix-profile-team-mission button {
-  margin-top: 10px !important;
+  margin-top: 9px !important;
   width: 100% !important;
 }
 
@@ -8645,31 +8675,30 @@ div.fixed.inset-0.z-\[90\] button.bg-yellow-400 {
   background: rgba(6, 9, 27, 0.72) !important;
 }
 
-
 .onix-profile-team-podium {
   display: flex !important;
   flex-direction: column !important;
-  gap: 10px !important;
+  gap: 9px !important;
 }
 
 .onix-profile-team-podium-row {
   display: flex !important;
   align-items: center !important;
   gap: 12px !important;
-  min-height: 66px !important;
-  padding: 12px !important;
-  border-radius: 20px !important;
+  min-height: 60px !important;
+  padding: 10px 12px !important;
+  border-radius: 18px !important;
   border: 1px solid rgba(124, 58, 237, 0.24) !important;
   background: linear-gradient(145deg, rgba(10, 12, 35, 0.88), rgba(5, 8, 24, 0.96)) !important;
 }
 
 .onix-profile-team-podium-row em {
-  width: 42px !important;
-  height: 42px !important;
-  flex: 0 0 42px !important;
+  width: 38px !important;
+  height: 38px !important;
+  flex: 0 0 38px !important;
   display: grid !important;
   place-items: center !important;
-  border-radius: 16px !important;
+  border-radius: 15px !important;
   color: #050914 !important;
   background: linear-gradient(135deg, #f6c833, #fff08a) !important;
   font-style: normal !important;
@@ -8711,79 +8740,157 @@ div.fixed.inset-0.z-\[90\] button.bg-yellow-400 {
   opacity: 1 !important;
 }
 
+/* Team page: fixed one-screen layout, no vertical scroll on the team tab itself. */
+.onix-social-screen.onix-profile-screen.is-profile-subpage-mode:has(.is-profile-team-mode),
+.onix-profile-v75-screen.is-profile-detail-mode.is-profile-team-mode,
+.onix-profile-v75-screen.is-profile-detail-mode.is-profile-team-mode * {
+  overscroll-behavior: none !important;
+}
 
 .onix-profile-v75-screen.is-profile-detail-mode.is-profile-team-mode {
-  overflow: hidden !important;
+  height: calc(100dvh - 122px - env(safe-area-inset-bottom)) !important;
   max-height: calc(100dvh - 122px - env(safe-area-inset-bottom)) !important;
+  overflow: hidden !important;
   padding-bottom: calc(92px + env(safe-area-inset-bottom)) !important;
 }
 
+.onix-profile-v75-screen.is-profile-detail-mode.is-profile-team-mode > .onix-profile-v75-hero {
+  display: none !important;
+}
+
 .onix-profile-v75-screen.is-profile-detail-mode.is-profile-team-mode > .onix-profile-v75-team-panel {
-  min-height: 0 !important;
   height: calc(100dvh - 214px - env(safe-area-inset-bottom)) !important;
+  min-height: 0 !important;
   overflow: hidden !important;
   display: flex !important;
   flex-direction: column !important;
+  gap: 10px !important;
+}
+
+.onix-profile-v75-screen.is-profile-detail-mode.is-profile-team-mode .onix-profile-v75-detail-title {
+  flex: 0 0 auto !important;
+  margin-bottom: 0 !important;
 }
 
 .onix-profile-v75-screen.is-profile-detail-mode.is-profile-team-mode .onix-profile-team-page {
   min-height: 0 !important;
   flex: 1 1 auto !important;
   overflow: hidden !important;
+  gap: 9px !important;
 }
 
 .onix-profile-team-tabs {
   display: grid !important;
   grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
-  gap: 0 !important;
-  min-height: 58px !important;
-  border-bottom: 1px solid rgba(124, 58, 237, 0.28) !important;
+  gap: 8px !important;
+  margin: 0 !important;
+  padding: 0 0 10px !important;
+  border: 0 !important;
+  border-bottom: 1px solid rgba(132, 96, 255, 0.24) !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  backdrop-filter: none !important;
+  min-height: 48px !important;
+  flex: 0 0 auto !important;
 }
 
 .onix-profile-team-tab {
   position: relative !important;
+  min-height: 40px !important;
+  padding: 8px 2px 10px !important;
   border: 0 !important;
+  border-radius: 0 !important;
   background: transparent !important;
-  color: rgba(218, 208, 255, 0.68) !important;
+  box-shadow: none !important;
+  color: rgba(205, 210, 231, 0.72) !important;
   font-family: 'Exo 2', system-ui, sans-serif !important;
-  font-size: 14px !important;
-  font-weight: 1000 !important;
-  line-height: 1.05 !important;
-  padding: 0 6px 12px !important;
+  font-size: 13px !important;
+  line-height: 1.1 !important;
+  font-weight: 900 !important;
+  letter-spacing: 0.01em !important;
+  white-space: nowrap !important;
 }
 
 .onix-profile-team-tab.is-active {
-  color: #fff !important;
+  color: #ffffff !important;
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
 }
 
 .onix-profile-team-tab.is-active::after {
   content: '' !important;
   position: absolute !important;
-  left: 18px !important;
-  right: 18px !important;
+  left: 14% !important;
+  right: 14% !important;
   bottom: 0 !important;
-  height: 4px !important;
+  height: 3px !important;
   border-radius: 999px !important;
-  background: linear-gradient(90deg, #9b5cff, #ff37f5) !important;
-  box-shadow: 0 0 16px rgba(221, 64, 255, 0.72) !important;
+  background: linear-gradient(90deg, #932bff 0%, #d04cff 100%) !important;
+  box-shadow: 0 0 12px rgba(175, 70, 255, 0.75) !important;
 }
 
 .onix-profile-team-tab-content {
   min-height: 0 !important;
   flex: 1 1 auto !important;
   overflow: hidden !important;
+  display: flex !important;
+  flex-direction: column !important;
 }
 
 .onix-profile-team-tab-content .onix-profile-team-block {
+  min-height: 0 !important;
   height: 100% !important;
   overflow: hidden !important;
+  display: flex !important;
+  flex-direction: column !important;
 }
 
 .onix-profile-team-tab-content .onix-profile-team-missions,
 .onix-profile-team-tab-content .onix-profile-team-podium,
 .onix-profile-team-tab-content .onix-profile-team-members {
-  max-height: none !important;
+  min-height: 0 !important;
+  flex: 1 1 auto !important;
   overflow: hidden !important;
+}
+
+
+@media(max-width:430px){
+  .onix-profile-v75-screen.is-profile-detail-mode.is-profile-team-mode > .onix-profile-v75-team-panel {
+    height: calc(100dvh - 202px - env(safe-area-inset-bottom)) !important;
+  }
+
+  .onix-profile-team-hero {
+    min-height: 68px !important;
+    padding: 10px 12px !important;
+  }
+
+  .onix-profile-team-hero strong {
+    font-size: 20px !important;
+  }
+
+  .onix-profile-team-hero span {
+    font-size: 11px !important;
+  }
+
+  .onix-profile-team-stats-grid > div {
+    min-height: 54px !important;
+    padding: 9px 11px !important;
+  }
+
+  .onix-profile-team-stats-grid strong {
+    font-size: 16px !important;
+  }
+
+  .onix-profile-team-prize {
+    min-height: 44px !important;
+    font-size: 12px !important;
+  }
+
+  .onix-profile-team-tab {
+    font-size: 12px !important;
+  }
 }
 
 `;
