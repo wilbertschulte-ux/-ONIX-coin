@@ -9060,6 +9060,225 @@ div.fixed.inset-0.z-\[90\] button.bg-yellow-400 {
   }
 }
 
+
+/* Team overview redesign: no inline tabs, cards open separate team pages. */
+.onix-profile-v75-screen.is-profile-detail-mode.is-profile-team-mode .onix-profile-v75-team-panel {
+  overflow: hidden !important;
+}
+
+.onix-profile-v75-screen.is-profile-detail-mode.is-profile-team-mode .onix-profile-team-page {
+  height: 100% !important;
+  min-height: 0 !important;
+  overflow: hidden !important;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 10px !important;
+}
+
+.onix-profile-v75-screen.is-profile-detail-mode.is-profile-team-mode .onix-profile-team-hero {
+  min-height: 82px !important;
+  padding: 13px 16px !important;
+}
+
+.onix-profile-v75-screen.is-profile-detail-mode.is-profile-team-mode .onix-profile-team-hero p {
+  margin-bottom: 2px !important;
+  font-size: 13px !important;
+  line-height: 1.05 !important;
+}
+
+.onix-profile-v75-screen.is-profile-detail-mode.is-profile-team-mode .onix-profile-team-hero strong {
+  font-size: 21px !important;
+  line-height: 1.05 !important;
+}
+
+.onix-profile-v75-screen.is-profile-detail-mode.is-profile-team-mode .onix-profile-team-hero span {
+  margin-top: 4px !important;
+  font-size: 12px !important;
+  line-height: 1.05 !important;
+}
+
+.onix-profile-v75-screen.is-profile-detail-mode.is-profile-team-mode .onix-profile-team-stats-grid {
+  gap: 8px !important;
+}
+
+.onix-profile-v75-screen.is-profile-detail-mode.is-profile-team-mode .onix-profile-team-stats-grid > div {
+  min-height: 64px !important;
+  padding: 10px 12px !important;
+}
+
+.onix-profile-v75-screen.is-profile-detail-mode.is-profile-team-mode .onix-profile-team-prize {
+  min-height: 48px !important;
+  flex: 0 0 auto !important;
+}
+
+.onix-profile-team-action-grid {
+  display: grid !important;
+  grid-template-columns: 1fr !important;
+  gap: 9px !important;
+  flex: 0 0 auto !important;
+}
+
+.onix-profile-team-action-card {
+  width: 100% !important;
+  min-height: 62px !important;
+  display: grid !important;
+  grid-template-columns: 48px 1fr 24px !important;
+  align-items: center !important;
+  gap: 10px !important;
+  padding: 10px 14px !important;
+  border-radius: 20px !important;
+  border: 1px solid rgba(124, 58, 237, 0.28) !important;
+  background: linear-gradient(145deg, rgba(9, 11, 32, 0.84), rgba(5, 8, 24, 0.94)) !important;
+  box-shadow: inset 0 0 22px rgba(132, 86, 255, 0.06), 0 12px 28px rgba(0, 0, 0, 0.18) !important;
+  color: #fff !important;
+  text-align: left !important;
+}
+
+.onix-profile-team-action-card > span {
+  width: 42px !important;
+  height: 42px !important;
+  display: grid !important;
+  place-items: center !important;
+  border-radius: 15px !important;
+  background: rgba(21, 27, 62, 0.78) !important;
+  border: 1px solid rgba(124, 58, 237, 0.22) !important;
+  font-size: 20px !important;
+}
+
+.onix-profile-team-action-card strong {
+  display: block !important;
+  font-family: 'Exo 2', system-ui, sans-serif !important;
+  font-size: 18px !important;
+  line-height: 1.05 !important;
+  font-weight: 900 !important;
+  color: #fff !important;
+}
+
+.onix-profile-team-action-card em {
+  display: block !important;
+  margin-top: 4px !important;
+  font-size: 12px !important;
+  line-height: 1.05 !important;
+  font-style: normal !important;
+  font-weight: 800 !important;
+  color: rgba(205, 210, 231, 0.72) !important;
+}
+
+.onix-profile-team-action-card b {
+  justify-self: end !important;
+  color: rgba(220, 214, 255, 0.78) !important;
+  font-size: 28px !important;
+  line-height: 1 !important;
+}
+
+.onix-profile-team-leave-button {
+  width: 100% !important;
+  min-height: 46px !important;
+  flex: 0 0 auto !important;
+  border-radius: 18px !important;
+  border: 1px solid rgba(248, 113, 113, 0.42) !important;
+  background: linear-gradient(135deg, rgba(127, 29, 29, 0.72), rgba(69, 10, 10, 0.88)) !important;
+  color: #fecaca !important;
+  font-family: 'Exo 2', system-ui, sans-serif !important;
+  font-weight: 900 !important;
+  box-shadow: inset 0 0 18px rgba(248, 113, 113, 0.08) !important;
+}
+
+.onix-profile-v75-team-panel.is-team-detail-open .onix-profile-team-page {
+  overflow: hidden !important;
+}
+
+.onix-profile-team-detail-scroll {
+  flex: 1 1 auto !important;
+  min-height: 0 !important;
+  overflow-x: hidden !important;
+  overflow-y: auto !important;
+  -webkit-overflow-scrolling: touch !important;
+  overscroll-behavior: contain !important;
+  padding: 0 2px calc(108px + env(safe-area-inset-bottom)) !important;
+  scrollbar-width: none !important;
+}
+
+.onix-profile-team-detail-scroll::-webkit-scrollbar {
+  width: 0 !important;
+  height: 0 !important;
+  display: none !important;
+}
+
+.onix-profile-team-detail-scroll .onix-profile-team-block {
+  padding: 14px !important;
+  border-radius: 22px !important;
+}
+
+.onix-profile-team-detail-scroll .onix-profile-team-missions,
+.onix-profile-team-detail-scroll .onix-profile-team-podium,
+.onix-profile-team-detail-scroll .onix-profile-team-members {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 10px !important;
+}
+
+.onix-profile-team-directory-page {
+  overflow: hidden !important;
+}
+
+.onix-profile-team-directory-page .onix-profile-team-block {
+  flex: 1 1 auto !important;
+  min-height: 0 !important;
+  overflow: hidden !important;
+}
+
+.onix-profile-team-directory-page .onix-profile-team-directory {
+  max-height: none !important;
+  flex: 1 1 auto !important;
+  overflow-y: auto !important;
+  padding-bottom: calc(96px + env(safe-area-inset-bottom)) !important;
+  scrollbar-width: none !important;
+}
+
+.onix-profile-team-directory-page .onix-profile-team-directory::-webkit-scrollbar {
+  width: 0 !important;
+  height: 0 !important;
+  display: none !important;
+}
+
+@media(max-width:430px){
+  .onix-profile-v75-screen.is-profile-detail-mode.is-profile-team-mode .onix-profile-team-page {
+    gap: 8px !important;
+  }
+
+  .onix-profile-v75-screen.is-profile-detail-mode.is-profile-team-mode .onix-profile-team-hero {
+    min-height: 74px !important;
+    padding: 11px 13px !important;
+  }
+
+  .onix-profile-v75-screen.is-profile-detail-mode.is-profile-team-mode .onix-profile-team-stats-grid > div {
+    min-height: 58px !important;
+    padding: 9px 11px !important;
+  }
+
+  .onix-profile-team-action-card {
+    min-height: 58px !important;
+    grid-template-columns: 42px 1fr 20px !important;
+    padding: 9px 12px !important;
+    border-radius: 18px !important;
+  }
+
+  .onix-profile-team-action-card > span {
+    width: 38px !important;
+    height: 38px !important;
+    font-size: 18px !important;
+  }
+
+  .onix-profile-team-action-card strong {
+    font-size: 16px !important;
+  }
+
+  .onix-profile-team-leave-button {
+    min-height: 42px !important;
+  }
+}
+
 `;
 
 
@@ -10232,7 +10451,8 @@ function App() {
   const [friendLeaderboard, setFriendLeaderboard] = useState<FriendLeaderboardItem[]>([]);
   const [profilePanel, setProfilePanel] =
     useState<'overview' | 'achievements' | 'ranks' | 'stats' | 'invited' | 'team'>('overview');
-  const [teamPageTab, setTeamPageTab] = useState<'missions' | 'top' | 'members'>('missions');
+  const [teamDetailPanel, setTeamDetailPanel] =
+    useState<'overview' | 'missions' | 'top' | 'members'>('overview');
   const [invitedProfiles, setInvitedProfiles] = useState<InvitedProfileItem[]>([]);
   const [teamDirectory, setTeamDirectory] = useState<TeamDirectoryItem[]>([]);
   const [teamSearch, setTeamSearch] = useState('');
@@ -11371,8 +11591,29 @@ function App() {
 
   const openTeamPanel = async () => {
     setProfilePanel('team');
-    setTeamPageTab('missions');
+    setTeamDetailPanel('overview');
     await Promise.all([loadTeamSocialDashboard(), loadTeamDirectory(teamSearch)]);
+  };
+
+
+  const leaveCurrentTeam = async () => {
+    const telegramId = getTelegramId();
+
+    if (!telegramId) return;
+
+    try {
+      const response = await axios.post(`${API_URL}/leave-team`, { telegramId });
+      const user = response.data.user || {};
+
+      setTeamName(user.teamName || '');
+      setTeamNameInput(user.teamName || '');
+      setTeamSocialDashboard(null);
+      setTeamDetailPanel('overview');
+      await loadTeamDirectory(teamSearch);
+      showToast('Вы вышли из команды. Выберите новую команду из списка.', 'success');
+    } catch (error: any) {
+      showToast(error?.response?.data?.message || 'Не удалось выйти из команды', 'error');
+    }
   };
 
   const joinTeamByName = async (nextTeamName: string) => {
@@ -15950,48 +16191,88 @@ body:has(.onix-home-reference-mode),
             )}
 
             {profilePanel === 'team' && (
-              <div className="onix-profile-v75-panel onix-profile-v75-team-panel">
+              <div className={`onix-profile-v75-panel onix-profile-v75-team-panel ${teamDetailPanel !== 'overview' ? 'is-team-detail-open' : ''}`}>
                 <div className="onix-profile-v75-panel-title onix-profile-v75-detail-title">
-                  <button type="button" className="onix-profile-v75-back" onClick={() => setProfilePanel('overview')}>‹</button>
-                  <strong>👥 Команда</strong>
+                  <button
+                    type="button"
+                    className="onix-profile-v75-back"
+                    onClick={() => {
+                      if (teamDetailPanel !== 'overview') {
+                        setTeamDetailPanel('overview');
+                      } else {
+                        setProfilePanel('overview');
+                      }
+                    }}
+                  >‹</button>
+                  <strong>
+                    {teamDetailPanel === 'missions'
+                      ? '📋 Командные задания'
+                      : teamDetailPanel === 'top'
+                      ? '🏟 Топ команд'
+                      : teamDetailPanel === 'members'
+                      ? '👥 Участники'
+                      : '👥 Команда'}
+                  </strong>
                   <span>{teamName || 'ONIX'}</span>
                 </div>
 
                 {teamName && teamSocialDashboard?.team?.teamName ? (
                   <div className="onix-profile-team-page">
-                    <div className="onix-profile-team-hero">
-                      <div>
-                        <p>Текущая команда</p>
-                        <strong>{teamSocialDashboard.team.teamName}</strong>
-                        <span>{teamSocialDashboard.team.members} участников · {teamSocialDashboard.team.place ? `#${teamSocialDashboard.team.place}` : 'без места'} за неделю</span>
-                      </div>
-                      <button type="button" onClick={shareTeamInviteLink}>Ссылка</button>
-                    </div>
+                    {teamDetailPanel === 'overview' && (
+                      <>
+                        <div className="onix-profile-team-hero">
+                          <div>
+                            <p>Текущая команда</p>
+                            <strong>{teamSocialDashboard.team.teamName}</strong>
+                            <span>{teamSocialDashboard.team.members} участников · {teamSocialDashboard.team.place ? `#${teamSocialDashboard.team.place}` : 'без места'} за неделю</span>
+                          </div>
+                          <button type="button" onClick={shareTeamInviteLink}>Ссылка</button>
+                        </div>
 
-                    <div className="onix-profile-team-stats-grid">
-                      <div><span>Текущая неделя</span><strong>{formatOnix(teamSocialDashboard.teamContest?.activeTeamWeeklyEarned ?? teamSocialDashboard.team.weeklyEarned)}</strong></div>
-                      <div><span>Место сейчас</span><strong>{teamSocialDashboard.teamContest?.activeTeamPlace ? `#${teamSocialDashboard.teamContest.activeTeamPlace}` : '—'}</strong></div>
-                      <div><span>Прошлое место</span><strong>{teamSocialDashboard.teamContest?.completedTeamPlace ? `#${teamSocialDashboard.teamContest.completedTeamPlace}` : '—'}</strong></div>
-                      <div><span>Приз недели</span><strong>+{formatOnix(teamSocialDashboard.teamContest?.prize || 0)}</strong></div>
-                    </div>
+                        <div className="onix-profile-team-stats-grid">
+                          <div><span>Текущая неделя</span><strong>{formatOnix(teamSocialDashboard.teamContest?.activeTeamWeeklyEarned ?? teamSocialDashboard.team.weeklyEarned)}</strong></div>
+                          <div><span>Место сейчас</span><strong>{teamSocialDashboard.teamContest?.activeTeamPlace ? `#${teamSocialDashboard.teamContest.activeTeamPlace}` : '—'}</strong></div>
+                          <div><span>Прошлое место</span><strong>{teamSocialDashboard.teamContest?.completedTeamPlace ? `#${teamSocialDashboard.teamContest.completedTeamPlace}` : '—'}</strong></div>
+                          <div><span>Приз недели</span><strong>+{formatOnix(teamSocialDashboard.teamContest?.prize || 0)}</strong></div>
+                        </div>
 
-                    <button
-                      type="button"
-                      onClick={claimTeamPrize}
-                      disabled={!isTeamPrizeButtonActive}
-                      className={`onix-profile-team-prize ${isTeamPrizeButtonActive ? 'is-available' : ''}`}
-                    >
-                      {getTeamPrizeButtonText()}
-                    </button>
+                        <button
+                          type="button"
+                          onClick={claimTeamPrize}
+                          disabled={!isTeamPrizeButtonActive}
+                          className={`onix-profile-team-prize ${isTeamPrizeButtonActive ? 'is-available' : ''}`}
+                        >
+                          {getTeamPrizeButtonText()}
+                        </button>
 
-                    <div className="onix-profile-team-tabs" role="tablist" aria-label="Команда">
-                      <button type="button" className={`onix-profile-team-tab ${teamPageTab === 'missions' ? 'is-active' : ''}`} onClick={() => setTeamPageTab('missions')}>Задания</button>
-                      <button type="button" className={`onix-profile-team-tab ${teamPageTab === 'top' ? 'is-active' : ''}`} onClick={() => setTeamPageTab('top')}>Топ команд</button>
-                      <button type="button" className={`onix-profile-team-tab ${teamPageTab === 'members' ? 'is-active' : ''}`} onClick={() => setTeamPageTab('members')}>Участники</button>
-                    </div>
+                        <div className="onix-profile-team-action-grid">
+                          <button type="button" className="onix-profile-team-action-card" onClick={() => setTeamDetailPanel('missions')}>
+                            <span>📋</span>
+                            <div><strong>Задания</strong><em>{teamSocialDashboard.teamMissions.length} активных</em></div>
+                            <b>›</b>
+                          </button>
 
-                    <div className="onix-profile-team-tab-content">
-                      {teamPageTab === 'missions' && (
+                          <button type="button" className="onix-profile-team-action-card" onClick={() => setTeamDetailPanel('top')}>
+                            <span>🏟</span>
+                            <div><strong>Топ команд</strong><em>{teamSocialDashboard.teamContest?.activeWeek || teamSocialDashboard.week}</em></div>
+                            <b>›</b>
+                          </button>
+
+                          <button type="button" className="onix-profile-team-action-card" onClick={() => setTeamDetailPanel('members')}>
+                            <span>👥</span>
+                            <div><strong>Участники</strong><em>{teamSocialDashboard.team.members} в команде</em></div>
+                            <b>›</b>
+                          </button>
+                        </div>
+
+                        <button type="button" className="onix-profile-team-leave-button" onClick={leaveCurrentTeam}>
+                          Выйти из команды
+                        </button>
+                      </>
+                    )}
+
+                    {teamDetailPanel === 'missions' && (
+                      <div className="onix-profile-team-detail-scroll">
                         <div className="onix-profile-team-block">
                           <div className="onix-profile-team-block-title"><strong>Командные задания</strong><span>{teamSocialDashboard.week}</span></div>
                           <div className="onix-profile-team-missions">
@@ -16013,9 +16294,11 @@ body:has(.onix-home-reference-mode),
                             )}
                           </div>
                         </div>
-                      )}
+                      </div>
+                    )}
 
-                      {teamPageTab === 'top' && (
+                    {teamDetailPanel === 'top' && (
+                      <div className="onix-profile-team-detail-scroll">
                         <div className="onix-profile-team-block onix-profile-team-contest-block">
                           <div className="onix-profile-team-block-title"><strong>🏟 Топ команд</strong><span>{teamSocialDashboard.teamContest?.activeWeek || teamSocialDashboard.week}</span></div>
                           <div className="onix-profile-team-podium">
@@ -16030,9 +16313,11 @@ body:has(.onix-home-reference-mode),
                             )}
                           </div>
                         </div>
-                      )}
+                      </div>
+                    )}
 
-                      {teamPageTab === 'members' && (
+                    {teamDetailPanel === 'members' && (
+                      <div className="onix-profile-team-detail-scroll">
                         <div className="onix-profile-team-block">
                           <div className="onix-profile-team-block-title"><strong>Участники</strong><span>{teamSocialDashboard.team.members}</span></div>
                           <div className="onix-profile-team-members">
@@ -16046,11 +16331,11 @@ body:has(.onix-home-reference-mode),
                             )}
                           </div>
                         </div>
-                      )}
-                    </div>
+                      </div>
+                    )}
                   </div>
                 ) : (
-                  <div className="onix-profile-team-page">
+                  <div className="onix-profile-team-page onix-profile-team-directory-page">
                     <div className="onix-profile-team-search">
                       <input
                         value={teamSearch}

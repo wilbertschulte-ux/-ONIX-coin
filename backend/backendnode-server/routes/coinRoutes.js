@@ -3851,6 +3851,50 @@ router.post('/join-team', async (req, res) => {
   }
 });
 
+
+// LEAVE TEAM
+router.post('/leave-team', async (req, res) => {
+  try {
+    const { telegramId } = req.body;
+
+    if (!telegramId) {
+      return res.status(400).json({ message: 'Telegram ID is required' });
+    }
+
+    const user = await User.findOne({ telegramId });
+
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    normalizeUserFields(user);
+
+    const frozenResponse = ensureUserNotFrozen(user, res);
+    if (frozenResponse) return frozenResponse;
+
+    const oldTeamName = user.teamName || '';
+    user.teamName = '';
+    user.teamJoinedAt = null;
+    user.updatedAt = new Date();
+
+    addSecurityLog(user, 'team_leave', 'Выход из команды', oldTeamName || 'Без команды');
+
+    await user.save();
+
+    return res.json({
+      user: {
+        ...user.toObject({ flattenMaps: true }),
+        perkLevels: getPerkLevelsPayload(user),
+        achievements: getAchievementsPayload(user),
+        referralLimit: getReferralLimitPayload(user),
+        missions: getMissionsPayload(user),
+      },
+    });
+  } catch (error) {
+    return res.status(500).json({ error: error.message });
+  }
+});
+
 // TEAM SOCIAL DASHBOARD
 router.get('/team-dashboard/:telegramId', async (req, res) => {
   try {
