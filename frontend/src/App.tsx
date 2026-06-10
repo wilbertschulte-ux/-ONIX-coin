@@ -15714,12 +15714,6 @@ body:has(.onix-home-reference-mode),
     return true;
   });
 
-  const walletIncomeTotal = transactions
-    .filter((transaction) => Number(transaction.amount || 0) > 0)
-    .reduce((sum, transaction) => sum + Number(transaction.amount || 0), 0);
-  const walletExpenseTotal = transactions
-    .filter((transaction) => Number(transaction.amount || 0) < 0)
-    .reduce((sum, transaction) => sum + Math.abs(Number(transaction.amount || 0)), 0);
   const walletPendingWithdrawal = withdrawalRequests
     .filter((request) => request.status === 'pending')
     .reduce((sum, request) => sum + Number(request.amount || 0), 0);
