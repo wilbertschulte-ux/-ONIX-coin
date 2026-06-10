@@ -3590,6 +3590,78 @@ function getSeasonBadgeByPlace(place) {
 }
 
 
+// ALL EXISTING TEAMS FOR PROFILE TEAM PAGE
+router.get('/teams', async (req, res) => {
+  try {
+    const q = String(req.query.q || '').trim();
+    const currentWeek = getWeekKey();
+    const escapeRegExp = (value) => String(value).replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+
+    const match = {
+      teamName: { $nin: ['', null] },
+    };
+
+    if (q) {
+      match.teamName = {
+        $nin: ['', null],
+        $regex: new RegExp(escapeRegExp(q), 'i'),
+      };
+    }
+
+    const weeklyLeaderboard = await User.aggregate([
+      {
+        $match: {
+          weeklyEarnedWeek: currentWeek,
+          weeklyEarned: { $gt: 0 },
+          teamName: { $nin: ['', null] },
+        },
+      },
+      {
+        $group: {
+          _id: '$teamName',
+          weeklyEarned: { $sum: '$weeklyEarned' },
+        },
+      },
+      { $sort: { weeklyEarned: -1 } },
+    ]);
+
+    const placeByTeam = new Map(
+      weeklyLeaderboard.map((team, index) => [team._id, index + 1])
+    );
+
+    const teams = await User.aggregate([
+      { $match: match },
+      {
+        $group: {
+          _id: '$teamName',
+          members: { $sum: 1 },
+          weeklyEarned: { $sum: '$weeklyEarned' },
+          totalEarned: { $sum: '$totalEarned' },
+          totalTaps: { $sum: '$totalTaps' },
+        },
+      },
+      { $sort: { totalEarned: -1, members: -1, _id: 1 } },
+      { $limit: 100 },
+    ]);
+
+    return res.json({
+      week: currentWeek,
+      teams: teams.map((team) => ({
+        teamName: team._id,
+        members: Number(team.members || 0),
+        weeklyEarned: roundOnix(team.weeklyEarned || 0),
+        totalEarned: roundOnix(team.totalEarned || 0),
+        totalTaps: Number(team.totalTaps || 0),
+        teamCode: getTeamCode(team._id),
+        place: placeByTeam.get(team._id) || null,
+      })),
+    });
+  } catch (error) {
+    return res.status(500).json({ error: error.message });
+  }
+});
+
+
 // SET TEAM NAME
 router.post('/set-team', async (req, res) => {
   try {
