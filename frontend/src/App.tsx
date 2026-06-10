@@ -8134,6 +8134,99 @@ div.fixed.inset-0.z-\[90\] button.bg-yellow-400 {
 }
 
 
+
+/* === PROFILE BACKGROUND FINAL FIX v84 ===
+   Profile must use only the shared arena background from .onix-profile-arena-bg-mode.
+   These rules remove the old profile-specific dark/yellow rectangle layers. */
+.onix-profile-arena-bg-mode .onix-social-screen.onix-profile-screen,
+.onix-profile-arena-bg-mode .onix-social-screen.onix-profile-screen.onix-profile-v82-page,
+.onix-profile-arena-bg-mode .onix-social-screen.onix-profile-screen.onix-profile-v83-page {
+  isolation: auto !important;
+  background: transparent !important;
+  background-image: none !important;
+  background-color: transparent !important;
+  box-shadow: none !important;
+  border: 0 !important;
+  overflow-x: visible !important;
+  overflow-y: visible !important;
+}
+
+.onix-profile-arena-bg-mode .onix-profile-v82-page::before,
+.onix-profile-arena-bg-mode .onix-profile-v82-page::after,
+.onix-profile-arena-bg-mode .onix-profile-v83-page::before,
+.onix-profile-arena-bg-mode .onix-profile-v83-page::after,
+.onix-profile-arena-bg-mode .onix-social-screen.onix-profile-v82-page::before,
+.onix-profile-arena-bg-mode .onix-social-screen.onix-profile-v82-page::after,
+.onix-profile-arena-bg-mode .onix-social-screen.onix-profile-v83-page::before,
+.onix-profile-arena-bg-mode .onix-social-screen.onix-profile-v83-page::after {
+  display: none !important;
+  content: none !important;
+  opacity: 0 !important;
+  background: none !important;
+  background-image: none !important;
+  box-shadow: none !important;
+}
+
+.onix-profile-arena-bg-mode .onix-profile-ref-screen,
+.onix-profile-arena-bg-mode .onix-profile-ref-screen.onix-profile-v75-screen,
+.onix-profile-arena-bg-mode .onix-profile-v75-screen {
+  background: transparent !important;
+  background-image: none !important;
+  background-color: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+  outline: 0 !important;
+}
+
+/* Top profile player row: no old yellow/green banner, only avatar/name/rank over arena bg. */
+.onix-profile-arena-bg-mode .onix-profile-v75-hero,
+.onix-profile-arena-bg-mode .onix-profile-v82-player-card,
+.onix-profile-arena-bg-mode .onix-profile-v83-player-row,
+.onix-profile-arena-bg-mode .onix-profile-v75-hero.onix-profile-v82-player-card.onix-profile-v83-player-row {
+  background: transparent !important;
+  background-image: none !important;
+  background-color: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+  filter: none !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  border-radius: 0 !important;
+  padding: 0 !important;
+  overflow: visible !important;
+}
+
+.onix-profile-arena-bg-mode .onix-profile-v75-hero::before,
+.onix-profile-arena-bg-mode .onix-profile-v75-hero::after,
+.onix-profile-arena-bg-mode .onix-profile-v82-player-card::before,
+.onix-profile-arena-bg-mode .onix-profile-v82-player-card::after,
+.onix-profile-arena-bg-mode .onix-profile-v83-player-row::before,
+.onix-profile-arena-bg-mode .onix-profile-v83-player-row::after {
+  display: none !important;
+  content: none !important;
+  background: none !important;
+  background-image: none !important;
+  box-shadow: none !important;
+}
+
+.onix-profile-arena-bg-mode .onix-profile-v75-hero,
+.onix-profile-arena-bg-mode .onix-profile-v75-hero *,
+.onix-profile-arena-bg-mode .onix-profile-v75-user {
+  --tw-gradient-from: transparent !important;
+  --tw-gradient-to: transparent !important;
+  --tw-gradient-stops: transparent !important;
+}
+
+/* Keep stats/menu as separate glass cards, but remove any continuous old panel behind them. */
+.onix-profile-arena-bg-mode .onix-profile-v75-stats-grid,
+.onix-profile-arena-bg-mode .onix-profile-v75-menu,
+.onix-profile-arena-bg-mode .onix-profile-v75-rank-progress {
+  background: transparent !important;
+  background-image: none !important;
+  box-shadow: none !important;
+  border: 0 !important;
+}
+
 `;
 
 
