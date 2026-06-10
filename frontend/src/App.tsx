@@ -7627,6 +7627,218 @@ div.fixed.inset-0.z-\[90\] button.bg-yellow-400 {
 }
 
 
+
+/* === REFERENCE HOME SCREEN PATCH v82 === */
+/* Profile player card = home player card: avatar + badge/title + name + right rank icon */
+.onix-social-screen.onix-profile-screen.onix-profile-v82-page {
+  position: relative !important;
+  isolation: isolate !important;
+  margin-top: 0 !important;
+  padding: 12px 16px calc(84px + env(safe-area-inset-bottom)) !important;
+  background: transparent !important;
+  background-image: none !important;
+  background-color: transparent !important;
+  overflow: hidden !important;
+}
+
+/* Let the profile tab use the same shared tab background as Tasks/Upgrades */
+.onix-profile-v82-page::before {
+  content: '' !important;
+  position: fixed !important;
+  inset: 0 !important;
+  pointer-events: none !important;
+  z-index: -2 !important;
+  background-image:
+    linear-gradient(180deg, rgba(2, 4, 13, 0.10) 0%, rgba(2, 4, 13, 0.12) 55%, rgba(2, 4, 13, 0.34) 100%),
+    url(data:image/webp;base64,UklGRsQDAwBXRUJQVlA4ILgDAwCwfgqdASqtA4gGPikUiEMhoSIipHMJ+FAFCU283LxFvTb64fEZfOlg+Drf3bJjg3527/lnCsd6b/u+Nfr/TiYwmT00XyP/8107fJK/4u0xAPUvq369fCH4v9J6PnJvbr73++/5b/m/5L92/mP/7v9d32ddf/D/Yfmp7xfnn73/2v8f/pv/r/tf/////v3/wf/X/qf9T8Pv7p/tf/V/qP3x+gj+rf4j/s/5H/aft39UP+p+4fuv/c7/3/7n/hf/f5Df1//Of+n/Q/7T/9f876Uf+F/8f91/wP/1/yvpV/U/9b/8f9P/sf///yfsD/oH+A/9X+g/3H/8+Y7/xf/z/h/Cv/av+j/9/+L/zv//9C/88/yX/s/0n+2//v/Q+o//w//n/jf8r/+f9H7WP7T/zP/v/vv+J///+j9kH9S/1H/x/03/E////h+gD/2//D3oP4B/5////1PcA/f/u6fPh8q/yP+54y9lH6n/7n+Z+P7+Z0x+mf6Xmp/OPyl/S/x/7zfGH/L8bf2f+79BT89/uP/O9ef8v9vPAa6D/mf+j/dewX76/iP+t/n/9R/8/9t7jn5X/t/1Xrx+qf6r/0f6r8xfsC/nf9v/6/+O/e79//qb/zeV391/8f7kfAd/R/85/6/9V+ZH05/7H/1/3/5q/Bb9L/4f/w/13wK/0X/Df9//O/vt/rv/////vt/+vvV9FP90//WQ8W5/44HCsB2ZuQVUbBljS3P2mdu9ivJce1rK9V53nWIiIiIi8dPPB2AIiJ84x9DxZkxMxwq+bJNKZauoWVMQTDuZW/a7nF0fHbPpgPRLhw4D3UGx/EJG//OFyPOTLcepfu2BxaQER+2Kl7s1rPUm8R6GrJfWLlS1oyAj6f2L1yYwERkS2lZpj9wPNwQ3W34WPHeb4fAjXgMD/4nmzj2YD+kkwC1kCLPqCZCiCTHMKEGrWBEwMpiFGOEUMEovOx+i2KqYAGIp50UqC2UGYHZxM0GxhpAFyZDgxZbeXOp8u6dxxgEaKqEEm4hD9WJGAPUCyymAdMJ2J9KkAbEzEKBjgx0tGxgRoAV9wYWGMwG4mxWjYxEMQ9Y5KBh8hHcYxWjmUIiI0OCAQQCEGh1iDCKGKoAbTQYzITZgZC6YDMTgGxiJEUOa1hGShEAil2RMyCqCQbE9MSMDaBzhJRf0lIiJHUUERMQITItOVxBwYjMHkHObYaQ4OYmGDMBiIWULBljS2bOcam0PG+Ls17WSGhnf7urRKzk7uR2mK6Yz+7Kzbr6k7wYf1TLtPz+FWOkz5lFNuErOR5KkPpxymIuuc7m88+3Cl4l7O4y7eonIiKuWWuxbVX49IkXNEuLUc3x6QMfoojYk1VBHdgqP4Qy6ShEZGr/t4JSxWwwh8OnMH9JzQWXRdGzU1f2GvFiUD+kxk0B9CxtU48TrGyxLxv+ce1STU8Rqm2plzMPF1cVmAInvL84r6cKTv0upbgcVTc8GsR7067INM8GoyufrnW7w5AixuPjz5Te4ZB9bSEw7c5OnmjaDb9EQQBS7qzAA=) !important;
+  background-size: cover, cover !important;
+  background-position: center top, center top !important;
+  background-repeat: no-repeat, no-repeat !important;
+  opacity: 1 !important;
+}
+
+.onix-profile-v82-page::after {
+  content: '' !important;
+  position: fixed !important;
+  inset: 0 !important;
+  z-index: -1 !important;
+  pointer-events: none !important;
+  opacity: 0.24 !important;
+  background:
+    radial-gradient(circle at 50% 83%, rgba(169, 70, 255, 0.18), transparent 34%),
+    linear-gradient(180deg, rgba(0,0,0,0.02), rgba(0,0,0,0.18)) !important;
+}
+
+/* Disable previous profile background layers so only the shared background remains */
+.onix-profile-v80-page::before,
+.onix-profile-v80-page::after,
+.onix-profile-v81-page::before,
+.onix-profile-v81-page::after,
+.onix-profile-v79-page::before,
+.onix-profile-v79-page::after {
+  display: none !important;
+  content: none !important;
+  background: none !important;
+}
+
+/* Player card exactly in the main-page direction: compact row, no yellow/green rectangle */
+.onix-profile-v82-page .onix-profile-v82-player-card {
+  width: 100% !important;
+  min-height: 82px !important;
+  display: grid !important;
+  grid-template-columns: 64px minmax(0, 1fr) 64px !important;
+  gap: 14px !important;
+  align-items: center !important;
+  margin: 0 0 14px !important;
+  padding: 12px 12px !important;
+  border-radius: 26px !important;
+  border: 1px solid rgba(124, 58, 237, 0.30) !important;
+  background:
+    radial-gradient(circle at 16% 20%, rgba(168, 85, 247, 0.16), transparent 35%),
+    radial-gradient(circle at 92% 22%, rgba(45, 212, 255, 0.10), transparent 32%),
+    linear-gradient(145deg, rgba(10, 12, 35, 0.84), rgba(5, 8, 24, 0.93)) !important;
+  box-shadow:
+    inset 0 0 18px rgba(132, 86, 255, 0.06),
+    0 12px 26px rgba(0, 0, 0, 0.14) !important;
+  overflow: visible !important;
+  position: relative !important;
+}
+
+.onix-profile-v82-page .onix-profile-v82-player-card::before,
+.onix-profile-v82-page .onix-profile-v82-player-card::after {
+  display: none !important;
+  content: none !important;
+}
+
+/* Avatar like main player card */
+.onix-profile-v82-page .onix-profile-v75-avatar {
+  width: 58px !important;
+  height: 58px !important;
+  border-radius: 18px !important;
+  overflow: hidden !important;
+  display: grid !important;
+  place-items: center !important;
+  background:
+    radial-gradient(circle at 50% 50%, rgba(0, 229, 255, 0.14), transparent 60%),
+    rgba(8, 15, 23, 0.64) !important;
+  border: 1.5px solid rgba(120, 83, 255, 0.82) !important;
+  box-shadow:
+    0 0 14px rgba(120, 83, 255, 0.36),
+    inset 0 0 14px rgba(0, 229, 255, 0.06) !important;
+  filter: none !important;
+}
+
+.onix-profile-v82-page .onix-profile-v75-avatar img {
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: cover !important;
+  filter: none !important;
+  box-shadow: none !important;
+}
+
+/* Name and badge/title like main */
+.onix-profile-v82-page .onix-profile-v75-user {
+  min-width: 0 !important;
+  background: transparent !important;
+  background-image: none !important;
+  box-shadow: none !important;
+}
+
+.onix-profile-v82-page .onix-profile-v75-name {
+  max-width: 100% !important;
+  color: #ffffff !important;
+  font-family: 'Exo 2', system-ui, sans-serif !important;
+  font-size: 22px !important;
+  line-height: 1.05 !important;
+  font-weight: 1000 !important;
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  letter-spacing: -0.02em !important;
+}
+
+.onix-profile-v82-page .onix-profile-v75-title {
+  margin-top: 7px !important;
+  max-width: 100% !important;
+  color: #a855f7 !important;
+  font-family: 'Exo 2', system-ui, sans-serif !important;
+  font-size: 13px !important;
+  line-height: 1 !important;
+  font-weight: 900 !important;
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+}
+
+/* Rank icon: old RankIcon back, only right side, no card background */
+.onix-profile-v82-rank-badge {
+  width: 62px !important;
+  height: 62px !important;
+  display: grid !important;
+  place-items: center !important;
+  justify-self: end !important;
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+  overflow: visible !important;
+  filter:
+    drop-shadow(0 0 9px rgba(133, 76, 255, 0.52))
+    drop-shadow(0 0 16px rgba(45, 212, 255, 0.10)) !important;
+}
+
+.onix-profile-v82-rank-badge .onix-rank-icon,
+.onix-profile-v82-rank-badge .onix-rank-icon-lg {
+  width: 62px !important;
+  height: 62px !important;
+  background: transparent !important;
+  background-image: none !important;
+  border: 0 !important;
+  box-shadow: none !important;
+  overflow: visible !important;
+}
+
+.onix-profile-v82-rank-badge .onix-rank-icon-image {
+  width: 62px !important;
+  height: 62px !important;
+  object-fit: contain !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  filter: none !important;
+}
+
+/* Hide old CSS-only rank emblem pieces if any survive */
+.onix-profile-v82-page .onix-profile-v81-rank-emblem,
+.onix-profile-v82-page .onix-profile-v81-rank-core,
+.onix-profile-v82-page .onix-profile-v81-rank-wing {
+  display: none !important;
+}
+
+@media(max-width:430px){
+  .onix-profile-v82-page .onix-profile-v82-player-card {
+    grid-template-columns: 58px minmax(0, 1fr) 58px !important;
+    gap: 12px !important;
+    padding: 11px 10px !important;
+  }
+
+  .onix-profile-v82-page .onix-profile-v75-avatar {
+    width: 54px !important;
+    height: 54px !important;
+  }
+
+  .onix-profile-v82-rank-badge,
+  .onix-profile-v82-rank-badge .onix-rank-icon,
+  .onix-profile-v82-rank-badge .onix-rank-icon-lg,
+  .onix-profile-v82-rank-badge .onix-rank-icon-image {
+    width: 56px !important;
+    height: 56px !important;
+  }
+
+  .onix-profile-v82-page .onix-profile-v75-name {
+    font-size: 21px !important;
+  }
+}
+
+
 `;
 
 
@@ -14267,9 +14479,9 @@ body:has(.onix-home-reference-mode),
       })()}
 
       {activeTab === 'friends' && (
-        <div className="onix-social-screen onix-profile-screen onix-profile-v80-page onix-profile-v81-page px-5 mt-8 space-y-5">
+        <div className="onix-social-screen onix-profile-screen onix-profile-v82-page px-5 mt-8 space-y-5">
           <div className="onix-profile-ref-screen onix-profile-v75-screen">
-            <div className="onix-profile-v75-hero onix-profile-v80-hero onix-profile-v81-hero">
+            <div className="onix-profile-v75-hero onix-profile-v82-player-card">
               <div className="onix-profile-v75-avatar">
                 {telegramAvatarUrl ? (
                   <img src={telegramAvatarUrl} alt="Telegram avatar" draggable={false} />
@@ -14283,15 +14495,8 @@ body:has(.onix-home-reference-mode),
                 <div className="onix-profile-v75-title">{selectedTitle || rankInfo.currentRank.name}</div>
               </div>
 
-              <div
-                className={`onix-profile-v81-rank-emblem onix-profile-v81-rank-emblem-${getRankIconTier(rankInfo.currentRank.id, rankInfo.currentRank.name)}`}
-                aria-label={rankInfo.currentRank.name}
-              >
-                <span className="onix-profile-v81-rank-wing onix-profile-v81-rank-wing-left" />
-                <span className="onix-profile-v81-rank-core">
-                  <span className="onix-profile-v81-rank-gem" />
-                </span>
-                <span className="onix-profile-v81-rank-wing onix-profile-v81-rank-wing-right" />
+              <div className="onix-profile-v82-rank-badge">
+                <RankIcon rank={rankInfo.currentRank} size="lg" />
               </div>
             </div>
 
