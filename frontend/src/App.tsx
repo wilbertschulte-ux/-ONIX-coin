@@ -8230,8 +8230,8 @@ div.fixed.inset-0.z-\[90\] button.bg-yellow-400 {
 
 /* === PROFILE BACKGROUND CLEAN FIX v85 ===
    Remove the invisible glass/backdrop layer that blurred the arena behind Profile.
-   The global rule `.onix-profile-screen > div:first-child` was still applying
-   backdrop-filter to `.onix-profile-ref-screen`, which created the visible soft rectangle. */
+   The global rule onix-profile-screen child was still applying
+   backdrop-filter to onix-profile-ref-screen, which created the visible soft rectangle. */
 .onix-profile-arena-bg-mode .onix-profile-screen > div:first-child,
 .onix-profile-arena-bg-mode .onix-profile-ref-screen,
 .onix-profile-arena-bg-mode .onix-profile-ref-screen.onix-profile-v75-screen,
