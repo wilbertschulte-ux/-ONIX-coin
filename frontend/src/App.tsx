@@ -8710,6 +8710,82 @@ div.fixed.inset-0.z-\[90\] button.bg-yellow-400 {
 .onix-profile-team-prize:disabled {
   opacity: 1 !important;
 }
+
+
+.onix-profile-v75-screen.is-profile-detail-mode.is-profile-team-mode {
+  overflow: hidden !important;
+  max-height: calc(100dvh - 122px - env(safe-area-inset-bottom)) !important;
+  padding-bottom: calc(92px + env(safe-area-inset-bottom)) !important;
+}
+
+.onix-profile-v75-screen.is-profile-detail-mode.is-profile-team-mode > .onix-profile-v75-team-panel {
+  min-height: 0 !important;
+  height: calc(100dvh - 214px - env(safe-area-inset-bottom)) !important;
+  overflow: hidden !important;
+  display: flex !important;
+  flex-direction: column !important;
+}
+
+.onix-profile-v75-screen.is-profile-detail-mode.is-profile-team-mode .onix-profile-team-page {
+  min-height: 0 !important;
+  flex: 1 1 auto !important;
+  overflow: hidden !important;
+}
+
+.onix-profile-team-tabs {
+  display: grid !important;
+  grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+  gap: 0 !important;
+  min-height: 58px !important;
+  border-bottom: 1px solid rgba(124, 58, 237, 0.28) !important;
+}
+
+.onix-profile-team-tab {
+  position: relative !important;
+  border: 0 !important;
+  background: transparent !important;
+  color: rgba(218, 208, 255, 0.68) !important;
+  font-family: 'Exo 2', system-ui, sans-serif !important;
+  font-size: 14px !important;
+  font-weight: 1000 !important;
+  line-height: 1.05 !important;
+  padding: 0 6px 12px !important;
+}
+
+.onix-profile-team-tab.is-active {
+  color: #fff !important;
+}
+
+.onix-profile-team-tab.is-active::after {
+  content: '' !important;
+  position: absolute !important;
+  left: 18px !important;
+  right: 18px !important;
+  bottom: 0 !important;
+  height: 4px !important;
+  border-radius: 999px !important;
+  background: linear-gradient(90deg, #9b5cff, #ff37f5) !important;
+  box-shadow: 0 0 16px rgba(221, 64, 255, 0.72) !important;
+}
+
+.onix-profile-team-tab-content {
+  min-height: 0 !important;
+  flex: 1 1 auto !important;
+  overflow: hidden !important;
+}
+
+.onix-profile-team-tab-content .onix-profile-team-block {
+  height: 100% !important;
+  overflow: hidden !important;
+}
+
+.onix-profile-team-tab-content .onix-profile-team-missions,
+.onix-profile-team-tab-content .onix-profile-team-podium,
+.onix-profile-team-tab-content .onix-profile-team-members {
+  max-height: none !important;
+  overflow: hidden !important;
+}
+
 `;
 
 
@@ -9882,6 +9958,7 @@ function App() {
   const [friendLeaderboard, setFriendLeaderboard] = useState<FriendLeaderboardItem[]>([]);
   const [profilePanel, setProfilePanel] =
     useState<'overview' | 'achievements' | 'ranks' | 'stats' | 'invited' | 'team'>('overview');
+  const [teamPageTab, setTeamPageTab] = useState<'missions' | 'top' | 'members'>('missions');
   const [invitedProfiles, setInvitedProfiles] = useState<InvitedProfileItem[]>([]);
   const [teamDirectory, setTeamDirectory] = useState<TeamDirectoryItem[]>([]);
   const [teamSearch, setTeamSearch] = useState('');
@@ -11020,6 +11097,7 @@ function App() {
 
   const openTeamPanel = async () => {
     setProfilePanel('team');
+    setTeamPageTab('missions');
     await Promise.all([loadTeamSocialDashboard(), loadTeamDirectory(teamSearch)]);
   };
 
@@ -15468,7 +15546,7 @@ body:has(.onix-home-reference-mode),
 
       {activeTab === 'friends' && (
         <div className={`onix-social-screen onix-profile-screen onix-profile-v82-page onix-profile-v83-page px-5 mt-8 space-y-5 ${profilePanel === 'overview' ? 'is-profile-overview-mode' : 'is-profile-subpage-mode'}`}>
-          <div className={`onix-profile-ref-screen onix-profile-v75-screen ${profilePanel !== 'overview' ? 'is-profile-detail-mode' : ''}`}>
+          <div className={`onix-profile-ref-screen onix-profile-v75-screen ${profilePanel !== 'overview' ? 'is-profile-detail-mode' : ''} ${profilePanel === 'team' ? 'is-profile-team-mode' : ''}`}>
             <div className="onix-profile-v75-hero onix-profile-v82-player-card onix-profile-v83-player-row">
               <div className="onix-profile-v75-avatar">
                 {telegramAvatarUrl ? (
@@ -15632,56 +15710,70 @@ body:has(.onix-home-reference-mode),
                       {getTeamPrizeButtonText()}
                     </button>
 
-                    <div className="onix-profile-team-block onix-profile-team-contest-block">
-                      <div className="onix-profile-team-block-title"><strong>🏟 Топ команд</strong><span>{teamSocialDashboard.teamContest?.activeWeek || teamSocialDashboard.week}</span></div>
-                      <div className="onix-profile-team-podium">
-                        {(teamSocialDashboard.teamContest?.leaderboardTop3 || []).length > 0 ? (teamSocialDashboard.teamContest?.leaderboardTop3 || []).map((team) => (
-                          <div key={team.teamName} className={`onix-profile-team-podium-row place-${team.place}`}>
-                            <em>#{team.place}</em>
-                            <div><strong>{team.teamName}</strong><span>{formatOnix(team.weeklyEarned)} ONIX · {team.members} участников</span></div>
-                            <b>+{formatOnix(team.prize || 0)}</b>
-                          </div>
-                        )) : (
-                          <div className="onix-profile-v75-empty">Лидерборд появится после заработка команд.</div>
-                        )}
-                      </div>
+                    <div className="onix-profile-team-tabs" role="tablist" aria-label="Команда">
+                      <button type="button" className={`onix-profile-team-tab ${teamPageTab === 'missions' ? 'is-active' : ''}`} onClick={() => setTeamPageTab('missions')}>Задания</button>
+                      <button type="button" className={`onix-profile-team-tab ${teamPageTab === 'top' ? 'is-active' : ''}`} onClick={() => setTeamPageTab('top')}>Топ команд</button>
+                      <button type="button" className={`onix-profile-team-tab ${teamPageTab === 'members' ? 'is-active' : ''}`} onClick={() => setTeamPageTab('members')}>Участники</button>
                     </div>
 
-                    <div className="onix-profile-team-block">
-                      <div className="onix-profile-team-block-title"><strong>Участники</strong><span>{teamSocialDashboard.team.members}</span></div>
-                      <div className="onix-profile-team-members">
-                        {(teamSocialDashboard.team.membersList || []).length > 0 ? teamSocialDashboard.team.membersList.map((member, index) => (
-                          <div key={member.telegramId} className="onix-profile-team-member">
-                            <em>{index + 1}</em>
-                            <div><strong>{member.username || 'ONIX Player'}</strong><span>{formatOnix(member.weeklyEarned)} за неделю · {formatOnix(member.totalEarned)} всего</span></div>
-                          </div>
-                        )) : (
-                          <div className="onix-profile-v75-empty">Участники команды пока не найдены.</div>
-                        )}
-                      </div>
-                    </div>
-
-                    {teamSocialDashboard.teamMissions.length > 0 && (
-                      <div className="onix-profile-team-block">
-                        <div className="onix-profile-team-block-title"><strong>Командные задания</strong><span>{teamSocialDashboard.week}</span></div>
-                        <div className="onix-profile-team-missions">
-                          {teamSocialDashboard.teamMissions.map((mission) => {
-                            const progressPercent = Math.min((Number(mission.progress || 0) / Number(mission.goal || 1)) * 100, 100);
-                            return (
-                              <div key={mission.id} className="onix-profile-team-mission">
-                                <div className="onix-profile-team-mission-head"><strong>{mission.title}</strong><span>+{formatOnix(mission.reward)}</span></div>
-                                <p>{mission.description}</p>
-                                <div className="onix-task-progress">
-                                  <div className="onix-task-progress-text"><span className="onix-task-progress-status">Прогресс</span><span><strong>{formatOnix(mission.progress)}</strong> / {formatOnix(mission.goal)}</span></div>
-                                  <div className="onix-task-progress-track"><div className="onix-task-progress-fill" style={{ width: `${progressPercent}%` }} /></div>
+                    <div className="onix-profile-team-tab-content">
+                      {teamPageTab === 'missions' && (
+                        <div className="onix-profile-team-block">
+                          <div className="onix-profile-team-block-title"><strong>Командные задания</strong><span>{teamSocialDashboard.week}</span></div>
+                          <div className="onix-profile-team-missions">
+                            {teamSocialDashboard.teamMissions.length > 0 ? teamSocialDashboard.teamMissions.map((mission) => {
+                              const progressPercent = Math.min((Number(mission.progress || 0) / Number(mission.goal || 1)) * 100, 100);
+                              return (
+                                <div key={mission.id} className="onix-profile-team-mission">
+                                  <div className="onix-profile-team-mission-head"><strong>{mission.title}</strong><span>+{formatOnix(mission.reward)}</span></div>
+                                  <p>{mission.description}</p>
+                                  <div className="onix-task-progress">
+                                    <div className="onix-task-progress-text"><span className="onix-task-progress-status">Прогресс</span><span><strong>{formatOnix(mission.progress)}</strong> / {formatOnix(mission.goal)}</span></div>
+                                    <div className="onix-task-progress-track"><div className="onix-task-progress-fill" style={{ width: `${progressPercent}%` }} /></div>
+                                  </div>
+                                  <button type="button" onClick={() => claimTeamMission(mission)} disabled={!mission.isCompleted || mission.isClaimed}>{mission.isClaimed ? 'Получено' : mission.isCompleted ? 'Забрать' : 'В процессе'}</button>
                                 </div>
-                                <button type="button" onClick={() => claimTeamMission(mission)} disabled={!mission.isCompleted || mission.isClaimed}>{mission.isClaimed ? 'Получено' : mission.isCompleted ? 'Забрать' : 'В процессе'}</button>
-                              </div>
-                            );
-                          })}
+                              );
+                            }) : (
+                              <div className="onix-profile-v75-empty">Командные задания появятся позже.</div>
+                            )}
+                          </div>
                         </div>
-                      </div>
-                    )}
+                      )}
+
+                      {teamPageTab === 'top' && (
+                        <div className="onix-profile-team-block onix-profile-team-contest-block">
+                          <div className="onix-profile-team-block-title"><strong>🏟 Топ команд</strong><span>{teamSocialDashboard.teamContest?.activeWeek || teamSocialDashboard.week}</span></div>
+                          <div className="onix-profile-team-podium">
+                            {(teamSocialDashboard.teamContest?.leaderboardTop3 || []).length > 0 ? (teamSocialDashboard.teamContest?.leaderboardTop3 || []).map((team) => (
+                              <div key={team.teamName} className={`onix-profile-team-podium-row place-${team.place}`}>
+                                <em>#{team.place}</em>
+                                <div><strong>{team.teamName}</strong><span>{formatOnix(team.weeklyEarned)} ONIX · {team.members} участников</span></div>
+                                <b>+{formatOnix(team.prize || 0)}</b>
+                              </div>
+                            )) : (
+                              <div className="onix-profile-v75-empty">Лидерборд появится после заработка команд.</div>
+                            )}
+                          </div>
+                        </div>
+                      )}
+
+                      {teamPageTab === 'members' && (
+                        <div className="onix-profile-team-block">
+                          <div className="onix-profile-team-block-title"><strong>Участники</strong><span>{teamSocialDashboard.team.members}</span></div>
+                          <div className="onix-profile-team-members">
+                            {(teamSocialDashboard.team.membersList || []).length > 0 ? teamSocialDashboard.team.membersList.map((member, index) => (
+                              <div key={member.telegramId} className="onix-profile-team-member">
+                                <em>{index + 1}</em>
+                                <div><strong>{member.username || 'ONIX Player'}</strong><span>{formatOnix(member.weeklyEarned)} за неделю · {formatOnix(member.totalEarned)} всего</span></div>
+                              </div>
+                            )) : (
+                              <div className="onix-profile-v75-empty">Участники команды пока не найдены.</div>
+                            )}
+                          </div>
+                        </div>
+                      )}
+                    </div>
                   </div>
                 ) : (
                   <div className="onix-profile-team-page">
