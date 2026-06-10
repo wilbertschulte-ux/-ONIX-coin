@@ -5625,6 +5625,55 @@ body,
   filter: none !important;
 }
 
+
+.onix-wallet-v2 .onix-wallet-main-card {
+  flex: 0 0 auto !important;
+  padding: 14px !important;
+  border-radius: 24px !important;
+}
+
+.onix-wallet-v2 .onix-wallet-icon {
+  width: 46px !important;
+  height: 46px !important;
+  border-radius: 16px !important;
+}
+
+.onix-wallet-v2 .onix-wallet-mini-card {
+  padding: 11px 12px !important;
+}
+
+.onix-wallet-v2 .onix-wallet-mini-card p,
+.onix-wallet-v2 .onix-wallet-stat-card p {
+  line-height: 1.15 !important;
+}
+
+.onix-wallet-v2 .onix-wallet-progress-track {
+  height: 8px !important;
+}
+
+.onix-wallet-v2 .onix-wallet-primary-button {
+  min-height: 46px !important;
+}
+
+.onix-wallet-v2 .onix-wallet-tabs {
+  flex: 0 0 auto !important;
+  margin: 0 0 6px !important;
+}
+
+.onix-wallet-v2 > .onix-wallet-panel-card {
+  flex: 1 1 auto !important;
+  min-height: 0 !important;
+  overflow-y: auto !important;
+  overscroll-behavior: contain !important;
+  -webkit-overflow-scrolling: touch !important;
+  padding: 14px !important;
+  scrollbar-width: none !important;
+}
+
+.onix-wallet-v2 > .onix-wallet-panel-card::-webkit-scrollbar {
+  display: none !important;
+}
+
 @media (max-width: 430px) {
   .onix-upgrades-ref-wallet-onix.onix-upgrades-balance-premium-card {
     min-height: 126px !important;
@@ -5867,6 +5916,55 @@ div.fixed.inset-0.z-\[90\] button.bg-yellow-400 {
   border-radius: 0 !important;
   box-shadow: none !important;
   filter: drop-shadow(0 0 8px rgba(168, 85, 247, 0.16)) !important;
+}
+
+
+.onix-wallet-v2 .onix-wallet-main-card {
+  flex: 0 0 auto !important;
+  padding: 14px !important;
+  border-radius: 24px !important;
+}
+
+.onix-wallet-v2 .onix-wallet-icon {
+  width: 46px !important;
+  height: 46px !important;
+  border-radius: 16px !important;
+}
+
+.onix-wallet-v2 .onix-wallet-mini-card {
+  padding: 11px 12px !important;
+}
+
+.onix-wallet-v2 .onix-wallet-mini-card p,
+.onix-wallet-v2 .onix-wallet-stat-card p {
+  line-height: 1.15 !important;
+}
+
+.onix-wallet-v2 .onix-wallet-progress-track {
+  height: 8px !important;
+}
+
+.onix-wallet-v2 .onix-wallet-primary-button {
+  min-height: 46px !important;
+}
+
+.onix-wallet-v2 .onix-wallet-tabs {
+  flex: 0 0 auto !important;
+  margin: 0 0 6px !important;
+}
+
+.onix-wallet-v2 > .onix-wallet-panel-card {
+  flex: 1 1 auto !important;
+  min-height: 0 !important;
+  overflow-y: auto !important;
+  overscroll-behavior: contain !important;
+  -webkit-overflow-scrolling: touch !important;
+  padding: 14px !important;
+  scrollbar-width: none !important;
+}
+
+.onix-wallet-v2 > .onix-wallet-panel-card::-webkit-scrollbar {
+  display: none !important;
 }
 
 @media (max-width: 430px) {
@@ -6122,6 +6220,55 @@ div.fixed.inset-0.z-\[90\] button.bg-yellow-400 {
     linear-gradient(145deg, rgba(5, 18, 30, 0.94), rgba(5, 9, 24, 0.98)) !important;
 }
 
+
+.onix-wallet-v2 .onix-wallet-main-card {
+  flex: 0 0 auto !important;
+  padding: 14px !important;
+  border-radius: 24px !important;
+}
+
+.onix-wallet-v2 .onix-wallet-icon {
+  width: 46px !important;
+  height: 46px !important;
+  border-radius: 16px !important;
+}
+
+.onix-wallet-v2 .onix-wallet-mini-card {
+  padding: 11px 12px !important;
+}
+
+.onix-wallet-v2 .onix-wallet-mini-card p,
+.onix-wallet-v2 .onix-wallet-stat-card p {
+  line-height: 1.15 !important;
+}
+
+.onix-wallet-v2 .onix-wallet-progress-track {
+  height: 8px !important;
+}
+
+.onix-wallet-v2 .onix-wallet-primary-button {
+  min-height: 46px !important;
+}
+
+.onix-wallet-v2 .onix-wallet-tabs {
+  flex: 0 0 auto !important;
+  margin: 0 0 6px !important;
+}
+
+.onix-wallet-v2 > .onix-wallet-panel-card {
+  flex: 1 1 auto !important;
+  min-height: 0 !important;
+  overflow-y: auto !important;
+  overscroll-behavior: contain !important;
+  -webkit-overflow-scrolling: touch !important;
+  padding: 14px !important;
+  scrollbar-width: none !important;
+}
+
+.onix-wallet-v2 > .onix-wallet-panel-card::-webkit-scrollbar {
+  display: none !important;
+}
+
 @media (max-width: 430px) {
   .onix-tasks-ref-screen > h2:first-child {
     padding: 16px 16px 16px 52px !important;
@@ -6162,6 +6309,55 @@ div.fixed.inset-0.z-\[90\] button.bg-yellow-400 {
 /* Neutralize old tab/screen spacing that pushed tasks down */
 .onix-tasks-screen {
   padding-top: 0 !important;
+}
+
+
+.onix-wallet-v2 .onix-wallet-main-card {
+  flex: 0 0 auto !important;
+  padding: 14px !important;
+  border-radius: 24px !important;
+}
+
+.onix-wallet-v2 .onix-wallet-icon {
+  width: 46px !important;
+  height: 46px !important;
+  border-radius: 16px !important;
+}
+
+.onix-wallet-v2 .onix-wallet-mini-card {
+  padding: 11px 12px !important;
+}
+
+.onix-wallet-v2 .onix-wallet-mini-card p,
+.onix-wallet-v2 .onix-wallet-stat-card p {
+  line-height: 1.15 !important;
+}
+
+.onix-wallet-v2 .onix-wallet-progress-track {
+  height: 8px !important;
+}
+
+.onix-wallet-v2 .onix-wallet-primary-button {
+  min-height: 46px !important;
+}
+
+.onix-wallet-v2 .onix-wallet-tabs {
+  flex: 0 0 auto !important;
+  margin: 0 0 6px !important;
+}
+
+.onix-wallet-v2 > .onix-wallet-panel-card {
+  flex: 1 1 auto !important;
+  min-height: 0 !important;
+  overflow-y: auto !important;
+  overscroll-behavior: contain !important;
+  -webkit-overflow-scrolling: touch !important;
+  padding: 14px !important;
+  scrollbar-width: none !important;
+}
+
+.onix-wallet-v2 > .onix-wallet-panel-card::-webkit-scrollbar {
+  display: none !important;
 }
 
 @media (max-width: 430px) {
@@ -6269,6 +6465,55 @@ div.fixed.inset-0.z-\[90\] button.bg-yellow-400 {
     opacity: 1;
     transform: translateY(0);
   }
+}
+
+
+.onix-wallet-v2 .onix-wallet-main-card {
+  flex: 0 0 auto !important;
+  padding: 14px !important;
+  border-radius: 24px !important;
+}
+
+.onix-wallet-v2 .onix-wallet-icon {
+  width: 46px !important;
+  height: 46px !important;
+  border-radius: 16px !important;
+}
+
+.onix-wallet-v2 .onix-wallet-mini-card {
+  padding: 11px 12px !important;
+}
+
+.onix-wallet-v2 .onix-wallet-mini-card p,
+.onix-wallet-v2 .onix-wallet-stat-card p {
+  line-height: 1.15 !important;
+}
+
+.onix-wallet-v2 .onix-wallet-progress-track {
+  height: 8px !important;
+}
+
+.onix-wallet-v2 .onix-wallet-primary-button {
+  min-height: 46px !important;
+}
+
+.onix-wallet-v2 .onix-wallet-tabs {
+  flex: 0 0 auto !important;
+  margin: 0 0 6px !important;
+}
+
+.onix-wallet-v2 > .onix-wallet-panel-card {
+  flex: 1 1 auto !important;
+  min-height: 0 !important;
+  overflow-y: auto !important;
+  overscroll-behavior: contain !important;
+  -webkit-overflow-scrolling: touch !important;
+  padding: 14px !important;
+  scrollbar-width: none !important;
+}
+
+.onix-wallet-v2 > .onix-wallet-panel-card::-webkit-scrollbar {
+  display: none !important;
 }
 
 @media (max-width: 430px) {
@@ -6395,6 +6640,55 @@ div.fixed.inset-0.z-\[90\] button.bg-yellow-400 {
   font-weight: 900 !important;
 }
 
+
+.onix-wallet-v2 .onix-wallet-main-card {
+  flex: 0 0 auto !important;
+  padding: 14px !important;
+  border-radius: 24px !important;
+}
+
+.onix-wallet-v2 .onix-wallet-icon {
+  width: 46px !important;
+  height: 46px !important;
+  border-radius: 16px !important;
+}
+
+.onix-wallet-v2 .onix-wallet-mini-card {
+  padding: 11px 12px !important;
+}
+
+.onix-wallet-v2 .onix-wallet-mini-card p,
+.onix-wallet-v2 .onix-wallet-stat-card p {
+  line-height: 1.15 !important;
+}
+
+.onix-wallet-v2 .onix-wallet-progress-track {
+  height: 8px !important;
+}
+
+.onix-wallet-v2 .onix-wallet-primary-button {
+  min-height: 46px !important;
+}
+
+.onix-wallet-v2 .onix-wallet-tabs {
+  flex: 0 0 auto !important;
+  margin: 0 0 6px !important;
+}
+
+.onix-wallet-v2 > .onix-wallet-panel-card {
+  flex: 1 1 auto !important;
+  min-height: 0 !important;
+  overflow-y: auto !important;
+  overscroll-behavior: contain !important;
+  -webkit-overflow-scrolling: touch !important;
+  padding: 14px !important;
+  scrollbar-width: none !important;
+}
+
+.onix-wallet-v2 > .onix-wallet-panel-card::-webkit-scrollbar {
+  display: none !important;
+}
+
 @media (max-width: 430px) {
   .onix-tasks-ref-screen {
     padding-top: 10px !important;
@@ -6466,6 +6760,55 @@ div.fixed.inset-0.z-\[90\] button.bg-yellow-400 {
   color: #ffffff !important;
   font-family: 'Exo 2', system-ui, sans-serif !important;
   font-weight: 900 !important;
+}
+
+
+.onix-wallet-v2 .onix-wallet-main-card {
+  flex: 0 0 auto !important;
+  padding: 14px !important;
+  border-radius: 24px !important;
+}
+
+.onix-wallet-v2 .onix-wallet-icon {
+  width: 46px !important;
+  height: 46px !important;
+  border-radius: 16px !important;
+}
+
+.onix-wallet-v2 .onix-wallet-mini-card {
+  padding: 11px 12px !important;
+}
+
+.onix-wallet-v2 .onix-wallet-mini-card p,
+.onix-wallet-v2 .onix-wallet-stat-card p {
+  line-height: 1.15 !important;
+}
+
+.onix-wallet-v2 .onix-wallet-progress-track {
+  height: 8px !important;
+}
+
+.onix-wallet-v2 .onix-wallet-primary-button {
+  min-height: 46px !important;
+}
+
+.onix-wallet-v2 .onix-wallet-tabs {
+  flex: 0 0 auto !important;
+  margin: 0 0 6px !important;
+}
+
+.onix-wallet-v2 > .onix-wallet-panel-card {
+  flex: 1 1 auto !important;
+  min-height: 0 !important;
+  overflow-y: auto !important;
+  overscroll-behavior: contain !important;
+  -webkit-overflow-scrolling: touch !important;
+  padding: 14px !important;
+  scrollbar-width: none !important;
+}
+
+.onix-wallet-v2 > .onix-wallet-panel-card::-webkit-scrollbar {
+  display: none !important;
 }
 
 @media (max-width: 430px) {
@@ -6594,6 +6937,55 @@ div.fixed.inset-0.z-\[90\] button.bg-yellow-400 {
   flex: 0 0 auto !important;
 }
 
+
+.onix-wallet-v2 .onix-wallet-main-card {
+  flex: 0 0 auto !important;
+  padding: 14px !important;
+  border-radius: 24px !important;
+}
+
+.onix-wallet-v2 .onix-wallet-icon {
+  width: 46px !important;
+  height: 46px !important;
+  border-radius: 16px !important;
+}
+
+.onix-wallet-v2 .onix-wallet-mini-card {
+  padding: 11px 12px !important;
+}
+
+.onix-wallet-v2 .onix-wallet-mini-card p,
+.onix-wallet-v2 .onix-wallet-stat-card p {
+  line-height: 1.15 !important;
+}
+
+.onix-wallet-v2 .onix-wallet-progress-track {
+  height: 8px !important;
+}
+
+.onix-wallet-v2 .onix-wallet-primary-button {
+  min-height: 46px !important;
+}
+
+.onix-wallet-v2 .onix-wallet-tabs {
+  flex: 0 0 auto !important;
+  margin: 0 0 6px !important;
+}
+
+.onix-wallet-v2 > .onix-wallet-panel-card {
+  flex: 1 1 auto !important;
+  min-height: 0 !important;
+  overflow-y: auto !important;
+  overscroll-behavior: contain !important;
+  -webkit-overflow-scrolling: touch !important;
+  padding: 14px !important;
+  scrollbar-width: none !important;
+}
+
+.onix-wallet-v2 > .onix-wallet-panel-card::-webkit-scrollbar {
+  display: none !important;
+}
+
 @media (max-width: 430px) {
   .onix-upgrades-ref-screen,
   .onix-tasks-ref-screen {
@@ -6639,6 +7031,55 @@ div.fixed.inset-0.z-\[90\] button.bg-yellow-400 {
 .onix-tasks-ref-panel-achievements > .mt-8,
 .onix-achievements-scroll-list {
   min-height: 0 !important;
+}
+
+
+.onix-wallet-v2 .onix-wallet-main-card {
+  flex: 0 0 auto !important;
+  padding: 14px !important;
+  border-radius: 24px !important;
+}
+
+.onix-wallet-v2 .onix-wallet-icon {
+  width: 46px !important;
+  height: 46px !important;
+  border-radius: 16px !important;
+}
+
+.onix-wallet-v2 .onix-wallet-mini-card {
+  padding: 11px 12px !important;
+}
+
+.onix-wallet-v2 .onix-wallet-mini-card p,
+.onix-wallet-v2 .onix-wallet-stat-card p {
+  line-height: 1.15 !important;
+}
+
+.onix-wallet-v2 .onix-wallet-progress-track {
+  height: 8px !important;
+}
+
+.onix-wallet-v2 .onix-wallet-primary-button {
+  min-height: 46px !important;
+}
+
+.onix-wallet-v2 .onix-wallet-tabs {
+  flex: 0 0 auto !important;
+  margin: 0 0 6px !important;
+}
+
+.onix-wallet-v2 > .onix-wallet-panel-card {
+  flex: 1 1 auto !important;
+  min-height: 0 !important;
+  overflow-y: auto !important;
+  overscroll-behavior: contain !important;
+  -webkit-overflow-scrolling: touch !important;
+  padding: 14px !important;
+  scrollbar-width: none !important;
+}
+
+.onix-wallet-v2 > .onix-wallet-panel-card::-webkit-scrollbar {
+  display: none !important;
 }
 
 @media (max-width: 430px) {
@@ -6811,6 +7252,55 @@ div.fixed.inset-0.z-\[90\] button.bg-yellow-400 {
     0 0 10px rgba(24, 232, 255, 0.55),
     0 0 16px rgba(168, 85, 247, 0.58),
     0 0 24px rgba(246, 200, 51, 0.16) !important;
+}
+
+
+.onix-wallet-v2 .onix-wallet-main-card {
+  flex: 0 0 auto !important;
+  padding: 14px !important;
+  border-radius: 24px !important;
+}
+
+.onix-wallet-v2 .onix-wallet-icon {
+  width: 46px !important;
+  height: 46px !important;
+  border-radius: 16px !important;
+}
+
+.onix-wallet-v2 .onix-wallet-mini-card {
+  padding: 11px 12px !important;
+}
+
+.onix-wallet-v2 .onix-wallet-mini-card p,
+.onix-wallet-v2 .onix-wallet-stat-card p {
+  line-height: 1.15 !important;
+}
+
+.onix-wallet-v2 .onix-wallet-progress-track {
+  height: 8px !important;
+}
+
+.onix-wallet-v2 .onix-wallet-primary-button {
+  min-height: 46px !important;
+}
+
+.onix-wallet-v2 .onix-wallet-tabs {
+  flex: 0 0 auto !important;
+  margin: 0 0 6px !important;
+}
+
+.onix-wallet-v2 > .onix-wallet-panel-card {
+  flex: 1 1 auto !important;
+  min-height: 0 !important;
+  overflow-y: auto !important;
+  overscroll-behavior: contain !important;
+  -webkit-overflow-scrolling: touch !important;
+  padding: 14px !important;
+  scrollbar-width: none !important;
+}
+
+.onix-wallet-v2 > .onix-wallet-panel-card::-webkit-scrollbar {
+  display: none !important;
 }
 
 @media (max-width: 430px) {
@@ -9402,9 +9892,15 @@ div.fixed.inset-0.z-\[90\] button.bg-yellow-400 {
 /* Wallet ONIX redesign: wallet card + inner tabs */
 .onix-wallet-screen.onix-wallet-v2 {
   margin-top: 0 !important;
-  padding: 14px 20px calc(112px + env(safe-area-inset-bottom)) !important;
+  padding: 10px 20px calc(98px + env(safe-area-inset-bottom)) !important;
   position: relative !important;
   z-index: 2 !important;
+  height: calc(100dvh - 210px) !important;
+  min-height: 520px !important;
+  overflow: hidden !important;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 12px !important;
 }
 
 .onix-wallet-v2 .onix-wallet-main-card,
@@ -9462,19 +9958,59 @@ div.fixed.inset-0.z-\[90\] button.bg-yellow-400 {
 }
 
 .onix-wallet-balance-card {
+  min-height: 118px !important;
+  padding: 14px 16px !important;
   border-radius: 24px !important;
-  border: 1px solid rgba(45, 212, 255, 0.18) !important;
+  border: 1px solid rgba(250, 204, 21, 0.22) !important;
   background:
-    radial-gradient(circle at 50% 0%, rgba(250, 204, 21, 0.10), transparent 40%),
-    rgba(5, 8, 24, 0.74) !important;
+    radial-gradient(circle at 50% 15%, rgba(250, 204, 21, 0.16), transparent 45%),
+    radial-gradient(circle at 50% 100%, rgba(168, 85, 247, 0.18), transparent 58%),
+    rgba(5, 8, 24, 0.80) !important;
   text-align: center !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
 }
 
 .onix-wallet-balance-value {
-  font-family: 'Exo 2', system-ui, sans-serif !important;
+  margin: 2px 0 0 !important;
+  font-family: 'Orbitron', 'Exo 2', system-ui, sans-serif !important;
+  font-size: clamp(32px, 8.8vw, 50px) !important;
+  line-height: 0.92 !important;
   font-weight: 1000 !important;
-  color: #fff !important;
-  text-shadow: 0 0 22px rgba(250, 204, 21, 0.15) !important;
+  letter-spacing: -0.055em !important;
+  white-space: nowrap !important;
+  color: #f6c833 !important;
+  background: linear-gradient(180deg, #fff4a3 0%, #f6c833 48%, #b98116 100%) !important;
+  -webkit-background-clip: text !important;
+  background-clip: text !important;
+  -webkit-text-fill-color: transparent !important;
+  text-shadow:
+    0 0 7px rgba(246, 200, 51, 0.70),
+    0 0 14px rgba(246, 200, 51, 0.30),
+    0 0 22px rgba(168, 85, 247, 0.30) !important;
+  filter: drop-shadow(0 0 6px rgba(246, 200, 51, 0.22)) !important;
+}
+
+.onix-wallet-balance-label {
+  margin: 0 0 8px !important;
+  font-family: 'Orbitron', 'Exo 2', system-ui, sans-serif !important;
+  font-size: 12px !important;
+  font-weight: 1000 !important;
+  line-height: 1 !important;
+  letter-spacing: 0.12em !important;
+  color: #f6c833 !important;
+  -webkit-text-fill-color: #f6c833 !important;
+  text-transform: uppercase !important;
+  text-shadow: 0 0 8px rgba(246, 200, 51, 0.55) !important;
+}
+
+.onix-wallet-balance-eur {
+  margin-top: 8px !important;
+  font-family: 'Exo 2', system-ui, sans-serif !important;
+  font-size: 14px !important;
+  font-weight: 900 !important;
+  color: rgba(209, 213, 232, 0.82) !important;
 }
 
 .onix-wallet-stat-card,
@@ -9577,7 +10113,7 @@ div.fixed.inset-0.z-\[90\] button.bg-yellow-400 {
 }
 
 .onix-wallet-chart-box {
-  height: 164px !important;
+  height: 150px !important;
   border-radius: 22px !important;
   border: 1px solid rgba(45, 212, 255, 0.14) !important;
   background:
@@ -9618,6 +10154,55 @@ div.fixed.inset-0.z-\[90\] button.bg-yellow-400 {
   color: #fff !important;
 }
 
+
+.onix-wallet-v2 .onix-wallet-main-card {
+  flex: 0 0 auto !important;
+  padding: 14px !important;
+  border-radius: 24px !important;
+}
+
+.onix-wallet-v2 .onix-wallet-icon {
+  width: 46px !important;
+  height: 46px !important;
+  border-radius: 16px !important;
+}
+
+.onix-wallet-v2 .onix-wallet-mini-card {
+  padding: 11px 12px !important;
+}
+
+.onix-wallet-v2 .onix-wallet-mini-card p,
+.onix-wallet-v2 .onix-wallet-stat-card p {
+  line-height: 1.15 !important;
+}
+
+.onix-wallet-v2 .onix-wallet-progress-track {
+  height: 8px !important;
+}
+
+.onix-wallet-v2 .onix-wallet-primary-button {
+  min-height: 46px !important;
+}
+
+.onix-wallet-v2 .onix-wallet-tabs {
+  flex: 0 0 auto !important;
+  margin: 0 0 6px !important;
+}
+
+.onix-wallet-v2 > .onix-wallet-panel-card {
+  flex: 1 1 auto !important;
+  min-height: 0 !important;
+  overflow-y: auto !important;
+  overscroll-behavior: contain !important;
+  -webkit-overflow-scrolling: touch !important;
+  padding: 14px !important;
+  scrollbar-width: none !important;
+}
+
+.onix-wallet-v2 > .onix-wallet-panel-card::-webkit-scrollbar {
+  display: none !important;
+}
+
 @media (max-width: 430px) {
   .onix-wallet-screen.onix-wallet-v2 {
     padding-left: 20px !important;
@@ -9629,8 +10214,22 @@ div.fixed.inset-0.z-\[90\] button.bg-yellow-400 {
     min-height: 42px !important;
   }
 
+  .onix-wallet-screen.onix-wallet-v2 {
+    height: calc(100dvh - 198px) !important;
+    min-height: 500px !important;
+    padding-top: 8px !important;
+  }
+
   .onix-wallet-v2 .onix-wallet-main-card {
-    border-radius: 26px !important;
+    border-radius: 24px !important;
+  }
+
+  .onix-wallet-balance-card {
+    min-height: 104px !important;
+  }
+
+  .onix-wallet-balance-value {
+    font-size: clamp(30px, 8.3vw, 44px) !important;
   }
 }
 
@@ -15557,7 +16156,7 @@ body:has(.onix-home-reference-mode),
               тапы, майнинг, задания, команды, сезоны и приглашения друзей.
             </p>
 
-            <div className="mt-5 grid grid-cols-2 gap-3">
+            <div className="mt-3 grid grid-cols-2 gap-3">
               <div className="rounded-2xl bg-[#0a0f1c] p-4">
                 <p className="text-xs text-gray-400">Игроков</p>
                 <p className="mt-1 font-bold text-yellow-400">
@@ -17117,7 +17716,7 @@ body:has(.onix-home-reference-mode),
             )}
 
 
-            <div className="mt-5 grid grid-cols-2 gap-3">
+            <div className="mt-3 grid grid-cols-2 gap-3">
               <div className="rounded-2xl bg-[#0a0f1c] p-4">
                 <p className="text-xs text-gray-400">Место в топе</p>
                 <p className="mt-1 text-lg font-bold text-yellow-400">
@@ -17592,61 +18191,33 @@ body:has(.onix-home-reference-mode),
         <div className="onix-wallet-screen onix-wallet-v2 space-y-5">
           <div className="onix-wallet-main-card p-5 shadow-xl">
             <div className="onix-wallet-card-content">
-              <div className="mb-5 flex items-center gap-3">
-                <div className="onix-wallet-icon text-3xl">💼</div>
+              <div className="mb-3 flex items-center gap-3">
+                <div className="onix-wallet-icon text-2xl">💼</div>
 
                 <div>
                   <h2 className="text-2xl font-bold text-white">Кошелёк</h2>
                   <p className="text-sm text-gray-400">
-                    Баланс, выводы и экономика аккаунта
+                    Баланс и вывод ONIX
                   </p>
                 </div>
               </div>
 
-              <div className="onix-wallet-balance-card p-5">
-                <p className="text-sm text-gray-400">Текущий баланс</p>
-                <p className="onix-wallet-balance-value mt-2 text-5xl">
-                  {formatOnix(balance)}
-                </p>
-                <p className="mt-2 text-lg font-bold text-emerald-400">
-                  ≈ {balanceInEur.toLocaleString('ru-RU', {
-                    minimumFractionDigits: 2,
-                    maximumFractionDigits: 2,
-                  })} €
-                </p>
-              </div>
-
-              <div className="mt-5 grid grid-cols-2 gap-3">
-                <div className="onix-wallet-stat-card p-4">
-                  <p className="text-xs text-gray-400">Всего заработано</p>
-                  <p className="mt-1 text-sm font-bold text-yellow-400">
-                    {formatOnix(totalEarned)}
+              <div className="onix-wallet-balance-card">
+                <div className="w-full min-w-0">
+                  <p className="onix-wallet-balance-label">Баланс ONIX</p>
+                  <p className="onix-wallet-balance-value">
+                    {formatOnix(balance)}
                   </p>
-                </div>
-
-                <div className="onix-wallet-stat-card p-4">
-                  <p className="text-xs text-gray-400">За неделю</p>
-                  <p className="mt-1 text-sm font-bold text-emerald-400">
-                    +{formatOnix(weeklyEarned)}
-                  </p>
-                </div>
-
-                <div className="onix-wallet-stat-card p-4">
-                  <p className="text-xs text-gray-400">Доходы в истории</p>
-                  <p className="mt-1 text-sm font-bold text-emerald-400">
-                    +{formatOnix(walletIncomeTotal)}
-                  </p>
-                </div>
-
-                <div className="onix-wallet-stat-card p-4">
-                  <p className="text-xs text-gray-400">Расходы в истории</p>
-                  <p className="mt-1 text-sm font-bold text-red-400">
-                    -{formatOnix(walletExpenseTotal)}
+                  <p className="onix-wallet-balance-eur">
+                    ≈ {balanceInEur.toLocaleString('ru-RU', {
+                      minimumFractionDigits: 2,
+                      maximumFractionDigits: 2,
+                    })} € · всего {formatOnix(totalEarned)}
                   </p>
                 </div>
               </div>
 
-              <div className="mt-5 grid grid-cols-2 gap-3">
+              <div className="mt-3 grid grid-cols-2 gap-3">
                 <div className="onix-wallet-mini-card p-4">
                   <p className="text-xs text-gray-400">Курс</p>
                   <p className="mt-1 text-sm font-bold text-white">
@@ -17662,57 +18233,6 @@ body:has(.onix-home-reference-mode),
                 </div>
               </div>
 
-              <div className="onix-wallet-mini-card mt-5 p-4">
-                <div className="mb-3 flex items-center justify-between gap-3 text-sm">
-                  <span className="text-gray-400">Прогресс до вывода</span>
-                  <span className="font-bold text-yellow-400">
-                    {withdrawProgress.toFixed(1)}%
-                  </span>
-                </div>
-
-                <div className="onix-wallet-progress-track">
-                  <div
-                    className="onix-wallet-progress-fill transition-all"
-                    style={{ width: `${withdrawProgress}%` }}
-                  />
-                </div>
-
-                <p className="mt-3 text-sm text-gray-400">
-                  {canWithdraw
-                    ? 'Минимальная сумма набрана'
-                    : `Осталось ${formatOnix(leftToWithdraw)} ONIX`}
-                </p>
-
-                <p className="mt-1 text-xs text-gray-500">
-                  Pending-заявки: {formatOnix(walletPendingWithdrawal)} ONIX
-                </p>
-              </div>
-
-              <div className="onix-wallet-mini-card mt-5 p-4">
-                <p className="text-sm font-bold text-white">🛡 Антибот-проверка</p>
-                <p className="mt-1 text-xs text-gray-500">
-                  Перед созданием заявки введите ONIX.
-                </p>
-
-                <input
-                  value={withdrawalCheck}
-                  onChange={(event) => setWithdrawalCheck(event.target.value)}
-                  placeholder="Введите ONIX"
-                  className="mt-3 w-full px-4 py-3 text-sm outline-none"
-                />
-              </div>
-
-              <button
-                onClick={requestWithdrawal}
-                disabled={!canWithdraw || isWithdrawalLoading}
-                className="onix-wallet-primary-button mt-5 w-full py-4 text-lg active:scale-95 disabled:cursor-not-allowed"
-              >
-                {isWithdrawalLoading
-                  ? 'Создаём заявку...'
-                  : canWithdraw
-                  ? 'Создать заявку на вывод'
-                  : 'Недостаточно ONIX для вывода'}
-              </button>
             </div>
           </div>
 
@@ -17768,6 +18288,58 @@ body:has(.onix-home-reference-mode),
                     </p>
                   </div>
                 </div>
+
+                <div className="onix-wallet-mini-card mb-3 p-3">
+                  <div className="mb-3 flex items-center justify-between gap-3 text-sm">
+                    <span className="text-gray-400">Прогресс до вывода</span>
+                    <span className="font-bold text-yellow-400">
+                      {withdrawProgress.toFixed(1)}%
+                    </span>
+                  </div>
+
+                  <div className="onix-wallet-progress-track">
+                    <div
+                      className="onix-wallet-progress-fill transition-all"
+                      style={{ width: `${withdrawProgress}%` }}
+                    />
+                  </div>
+
+                  <p className="mt-3 text-sm text-gray-400">
+                    {canWithdraw
+                      ? 'Минимальная сумма набрана'
+                      : `Осталось ${formatOnix(leftToWithdraw)} ONIX`}
+                  </p>
+
+                  <p className="mt-1 text-xs text-gray-500">
+                    Pending-заявки: {formatOnix(walletPendingWithdrawal)} ONIX
+                  </p>
+                </div>
+
+                <div className="onix-wallet-mini-card mb-3 p-3">
+                  <p className="text-sm font-bold text-white">🛡 Антибот-проверка</p>
+                  <p className="mt-1 text-xs text-gray-500">
+                    Перед созданием заявки введите ONIX.
+                  </p>
+
+                  <input
+                    value={withdrawalCheck}
+                    onChange={(event) => setWithdrawalCheck(event.target.value)}
+                    placeholder="Введите ONIX"
+                    className="mt-3 w-full px-4 py-3 text-sm outline-none"
+                  />
+                </div>
+
+                <button
+                  onClick={requestWithdrawal}
+                  disabled={!canWithdraw || isWithdrawalLoading}
+                  className="onix-wallet-primary-button mb-4 w-full py-3 text-base active:scale-95 disabled:cursor-not-allowed"
+                >
+                  {isWithdrawalLoading
+                    ? 'Создаём заявку...'
+                    : canWithdraw
+                    ? 'Создать заявку на вывод'
+                    : 'Недостаточно ONIX для вывода'}
+                </button>
 
                 {withdrawalRequests.length > 0 ? (
                   <div className="space-y-3">
@@ -17962,7 +18534,7 @@ body:has(.onix-home-reference-mode),
             <h2 className="mt-4 text-3xl font-black text-white">ONIX COIN</h2>
             <p className="mt-2 text-sm text-gray-400">Мой результат</p>
 
-            <div className="mt-5 grid grid-cols-2 gap-3">
+            <div className="mt-3 grid grid-cols-2 gap-3">
               <div className="rounded-2xl bg-[#0a0f1c] p-4">
                 <p className="text-xs text-gray-400">Баланс</p>
                 <p className="font-bold text-yellow-400">{formatOnix(balance)}</p>
@@ -19128,7 +19700,7 @@ body:has(.onix-home-reference-mode),
               Делись ссылкой и получай ONIX за новых игроков
             </p>
 
-            <div className="mt-5 grid grid-cols-2 gap-3">
+            <div className="mt-3 grid grid-cols-2 gap-3">
               <div className="rounded-2xl bg-[#0a0f1c] p-4">
                 <p className="text-xs text-gray-400">Ты получишь</p>
                 <p className="mt-1 font-bold text-yellow-400">+{formatOnix(economyConfig.referralReward)}</p>
