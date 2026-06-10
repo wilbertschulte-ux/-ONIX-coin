@@ -8918,6 +8918,148 @@ div.fixed.inset-0.z-\[90\] button.bg-yellow-400 {
 }
 
 
+
+/* Team page final layout: the top part stays fixed, only the content below the team tabs scrolls. */
+.onix-profile-v75-screen.is-profile-detail-mode.is-profile-team-mode,
+.onix-profile-v75-screen.is-profile-detail-mode.is-profile-team-mode > .onix-profile-v75-team-panel,
+.onix-profile-v75-screen.is-profile-detail-mode.is-profile-team-mode .onix-profile-team-page {
+  min-height: 0 !important;
+  overflow: hidden !important;
+}
+
+.onix-profile-v75-screen.is-profile-detail-mode.is-profile-team-mode .onix-profile-team-page {
+  height: 100% !important;
+  flex: 1 1 auto !important;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 8px !important;
+}
+
+.onix-profile-v75-screen.is-profile-detail-mode.is-profile-team-mode .onix-profile-team-tab-content {
+  flex: 1 1 0 !important;
+  min-height: 145px !important;
+  overflow-x: hidden !important;
+  overflow-y: auto !important;
+  -webkit-overflow-scrolling: touch !important;
+  overscroll-behavior: contain !important;
+  padding: 0 2px calc(104px + env(safe-area-inset-bottom)) !important;
+  scrollbar-width: none !important;
+}
+
+.onix-profile-v75-screen.is-profile-detail-mode.is-profile-team-mode .onix-profile-team-tab-content::-webkit-scrollbar {
+  width: 0 !important;
+  height: 0 !important;
+  display: none !important;
+}
+
+.onix-profile-v75-screen.is-profile-detail-mode.is-profile-team-mode .onix-profile-team-tab-content .onix-profile-team-block {
+  width: 100% !important;
+  min-height: auto !important;
+  max-height: none !important;
+  overflow: visible !important;
+  padding: 14px !important;
+  border-radius: 22px !important;
+  background: linear-gradient(145deg, rgba(8, 10, 30, 0.72), rgba(4, 7, 22, 0.82)) !important;
+  border: 1px solid rgba(124, 58, 237, 0.20) !important;
+  box-shadow: inset 0 0 24px rgba(132, 86, 255, 0.05) !important;
+}
+
+.onix-profile-v75-screen.is-profile-detail-mode.is-profile-team-mode .onix-profile-team-block-title {
+  margin-bottom: 12px !important;
+}
+
+.onix-profile-v75-screen.is-profile-detail-mode.is-profile-team-mode .onix-profile-team-block-title strong {
+  font-size: 20px !important;
+  line-height: 1.05 !important;
+}
+
+.onix-profile-v75-screen.is-profile-detail-mode.is-profile-team-mode .onix-profile-team-missions,
+.onix-profile-v75-screen.is-profile-detail-mode.is-profile-team-mode .onix-profile-team-podium,
+.onix-profile-v75-screen.is-profile-detail-mode.is-profile-team-mode .onix-profile-team-members {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 10px !important;
+  min-height: 0 !important;
+  max-height: none !important;
+  overflow: visible !important;
+}
+
+.onix-profile-v75-screen.is-profile-detail-mode.is-profile-team-mode .onix-profile-team-mission,
+.onix-profile-v75-screen.is-profile-detail-mode.is-profile-team-mode .onix-profile-team-member,
+.onix-profile-v75-screen.is-profile-detail-mode.is-profile-team-mode .onix-profile-team-podium-row {
+  width: 100% !important;
+  min-height: 84px !important;
+  height: auto !important;
+  padding: 14px !important;
+  border-radius: 20px !important;
+  background: linear-gradient(145deg, rgba(10, 12, 35, 0.88), rgba(5, 8, 24, 0.96)) !important;
+  border: 1px solid rgba(124, 58, 237, 0.22) !important;
+  box-shadow: inset 0 0 18px rgba(132, 86, 255, 0.06) !important;
+}
+
+.onix-profile-v75-screen.is-profile-detail-mode.is-profile-team-mode .onix-profile-team-mission {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 8px !important;
+}
+
+.onix-profile-v75-screen.is-profile-detail-mode.is-profile-team-mode .onix-profile-team-mission-head {
+  align-items: flex-start !important;
+  gap: 12px !important;
+}
+
+.onix-profile-v75-screen.is-profile-detail-mode.is-profile-team-mode .onix-profile-team-mission strong,
+.onix-profile-v75-screen.is-profile-detail-mode.is-profile-team-mode .onix-profile-team-member strong,
+.onix-profile-v75-screen.is-profile-detail-mode.is-profile-team-mode .onix-profile-team-podium-row strong {
+  font-size: 17px !important;
+  line-height: 1.12 !important;
+}
+
+.onix-profile-v75-screen.is-profile-detail-mode.is-profile-team-mode .onix-profile-team-mission p {
+  margin: 0 !important;
+  font-size: 13px !important;
+  line-height: 1.22 !important;
+}
+
+.onix-profile-v75-screen.is-profile-detail-mode.is-profile-team-mode .onix-profile-team-mission .onix-task-progress {
+  margin-top: 2px !important;
+}
+
+.onix-profile-v75-screen.is-profile-detail-mode.is-profile-team-mode .onix-profile-team-mission button {
+  min-height: 38px !important;
+  margin-top: 2px !important;
+  padding: 8px 12px !important;
+  border-radius: 16px !important;
+  font-size: 13px !important;
+}
+
+.onix-profile-v75-screen.is-profile-detail-mode.is-profile-team-mode .onix-profile-team-member {
+  display: flex !important;
+  align-items: center !important;
+}
+
+.onix-profile-v75-screen.is-profile-detail-mode.is-profile-team-mode .onix-profile-team-podium-row {
+  min-height: 70px !important;
+}
+
+@media(max-width:430px){
+  .onix-profile-v75-screen.is-profile-detail-mode.is-profile-team-mode .onix-profile-team-tab-content {
+    min-height: 135px !important;
+    padding-bottom: calc(112px + env(safe-area-inset-bottom)) !important;
+  }
+
+  .onix-profile-v75-screen.is-profile-detail-mode.is-profile-team-mode .onix-profile-team-tab-content .onix-profile-team-block {
+    padding: 12px !important;
+  }
+
+  .onix-profile-v75-screen.is-profile-detail-mode.is-profile-team-mode .onix-profile-team-mission,
+  .onix-profile-v75-screen.is-profile-detail-mode.is-profile-team-mode .onix-profile-team-member,
+  .onix-profile-v75-screen.is-profile-detail-mode.is-profile-team-mode .onix-profile-team-podium-row {
+    padding: 12px !important;
+    border-radius: 18px !important;
+  }
+}
+
 `;
 
 
