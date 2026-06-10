@@ -4137,10 +4137,39 @@ body .onix-nav button.onix-nav-active *,
 }
 
 .onix-profile-arena-bg-mode .onix-social-screen,
-.onix-profile-arena-bg-mode .onix-profile-ref-screen,
-.onix-profile-arena-bg-mode .onix-nav {
+.onix-profile-arena-bg-mode .onix-profile-ref-screen {
   position: relative !important;
   z-index: 2 !important;
+}
+
+/* Profile must keep the same fixed bottom menu as every other tab.
+   Do not make .onix-nav relative here, otherwise it jumps under the Telegram header. */
+.onix-profile-arena-bg-mode .onix-nav {
+  position: fixed !important;
+  left: 50% !important;
+  right: auto !important;
+  top: auto !important;
+  bottom: calc(10px + env(safe-area-inset-bottom)) !important;
+  transform: translateX(-50%) !important;
+  z-index: 999 !important;
+}
+
+/* Let the shared arena background from .onix-profile-arena-bg-mode stay visible on Profile. */
+.onix-profile-arena-bg-mode .onix-social-screen.onix-profile-screen,
+.onix-profile-arena-bg-mode .onix-profile-ref-screen,
+.onix-profile-arena-bg-mode .onix-profile-v75-screen {
+  background: transparent !important;
+  background-image: none !important;
+  background-color: transparent !important;
+}
+
+.onix-profile-arena-bg-mode .onix-profile-screen::before,
+.onix-profile-arena-bg-mode .onix-profile-screen::after,
+.onix-profile-arena-bg-mode .onix-social-screen::before,
+.onix-profile-arena-bg-mode .onix-social-screen::after {
+  display: none !important;
+  content: none !important;
+  background: none !important;
 }
 
 /* Make coin area sit naturally on generated glowing platform */
