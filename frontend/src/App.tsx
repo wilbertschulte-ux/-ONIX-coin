@@ -16507,6 +16507,93 @@ body:not(.onix-body-home-lock) {
   }
 }
 
+
+/* === WALLET DETAIL PAGES SCROLL FIX v9 ===
+   Detail pages opened from Wallet must behave like Profile detail pages:
+   header/back button stays visible, the large content card below it scrolls fully
+   above the fixed bottom navigation. */
+.onix-wallet-page-mode .onix-wallet-screen.onix-wallet-v2.is-wallet-detail-mode {
+  position: relative !important;
+  display: flex !important;
+  flex-direction: column !important;
+  box-sizing: border-box !important;
+  height: calc(var(--oc-app-height, 100dvh) - 84px) !important;
+  max-height: calc(var(--oc-app-height, 100dvh) - 84px) !important;
+  min-height: 0 !important;
+  overflow: hidden !important;
+  padding: 0 20px 0 !important;
+  margin: 0 !important;
+  touch-action: none !important;
+}
+
+.onix-wallet-page-mode .onix-wallet-screen.onix-wallet-v2.is-wallet-detail-mode .onix-wallet-detail-page {
+  position: relative !important;
+  display: flex !important;
+  flex-direction: column !important;
+  flex: 1 1 auto !important;
+  min-height: 0 !important;
+  height: 100% !important;
+  overflow: hidden !important;
+  padding: 0 !important;
+  margin: 0 !important;
+}
+
+.onix-wallet-page-mode .onix-wallet-screen.onix-wallet-v2.is-wallet-detail-mode .onix-wallet-detail-title {
+  flex: 0 0 auto !important;
+  margin: 0 0 10px !important;
+  padding: 8px 0 !important;
+  z-index: 20 !important;
+}
+
+.onix-wallet-page-mode .onix-wallet-screen.onix-wallet-v2.is-wallet-detail-mode .onix-wallet-detail-page > .onix-wallet-panel-card {
+  flex: 1 1 auto !important;
+  min-height: 0 !important;
+  height: auto !important;
+  max-height: none !important;
+  overflow-y: auto !important;
+  overflow-x: hidden !important;
+  -webkit-overflow-scrolling: touch !important;
+  overscroll-behavior-y: contain !important;
+  touch-action: pan-y !important;
+  pointer-events: auto !important;
+  scrollbar-width: none !important;
+  margin: 0 0 calc(96px + env(safe-area-inset-bottom)) !important;
+  padding: 20px 20px calc(32px + env(safe-area-inset-bottom)) !important;
+  border-radius: 28px !important;
+  transform: translateZ(0) !important;
+}
+
+.onix-wallet-page-mode .onix-wallet-screen.onix-wallet-v2.is-wallet-detail-mode .onix-wallet-detail-page > .onix-wallet-panel-card::-webkit-scrollbar {
+  display: none !important;
+}
+
+.onix-wallet-page-mode .onix-wallet-screen.onix-wallet-v2.is-wallet-detail-mode .onix-wallet-card-content {
+  display: block !important;
+  min-height: max-content !important;
+  height: auto !important;
+  max-height: none !important;
+  overflow: visible !important;
+  padding-bottom: 8px !important;
+}
+
+.onix-wallet-page-mode .onix-wallet-screen.onix-wallet-v2.is-wallet-detail-mode .onix-wallet-transaction-card,
+.onix-wallet-page-mode .onix-wallet-screen.onix-wallet-v2.is-wallet-detail-mode .onix-wallet-request-card {
+  flex-shrink: 0 !important;
+}
+
+@media (max-width: 430px) {
+  .onix-wallet-page-mode .onix-wallet-screen.onix-wallet-v2.is-wallet-detail-mode {
+    height: calc(var(--oc-app-height, 100dvh) - 82px) !important;
+    max-height: calc(var(--oc-app-height, 100dvh) - 82px) !important;
+    padding-left: 20px !important;
+    padding-right: 20px !important;
+  }
+
+  .onix-wallet-page-mode .onix-wallet-screen.onix-wallet-v2.is-wallet-detail-mode .onix-wallet-detail-page > .onix-wallet-panel-card {
+    padding: 18px 18px calc(36px + env(safe-area-inset-bottom)) !important;
+  }
+}
+
 `;
 
     window.open(url, '_blank');
