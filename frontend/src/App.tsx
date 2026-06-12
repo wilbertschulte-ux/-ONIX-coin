@@ -17572,7 +17572,7 @@ body:not(.onix-body-home-lock) {
         </div>
       )}
 
-      {activeTab !== 'home' && activeTab !== 'boosts' && activeTab !== 'friends' && activeTab !== 'tasks' && activeTab !== 'wallet' && (
+      {activeTab !== 'home' && activeTab !== 'boosts' && activeTab !== 'friends' && activeTab !== 'tasks' && activeTab !== 'wallet' && activeTab !== 'launch' && (
         <>
       <div className="onix-rank-panel px-5 pt-4">
         <div className="flex justify-between mb-2">
