@@ -15848,6 +15848,102 @@ body:has(.onix-home-reference-mode),
   }
 }
 
+
+/* === WALLET SCROLL REAL FIX v5 ===
+   Stop using nested locked scroll containers for the wallet.
+   The Tasks tab scrolls because the main app/page is the scroller, not a tiny inner box.
+   This makes Wallet behave the same: the content below the wallet tabs is full-size
+   and the page scrolls naturally above the fixed bottom navigation. */
+.onix-app-bg.onix-wallet-page-mode {
+  height: auto !important;
+  min-height: var(--oc-app-height, 100dvh) !important;
+  max-height: none !important;
+  overflow-y: auto !important;
+  overflow-x: hidden !important;
+  -webkit-overflow-scrolling: touch !important;
+  touch-action: pan-y !important;
+  padding-bottom: calc(124px + env(safe-area-inset-bottom)) !important;
+}
+
+.onix-wallet-page-mode .onix-wallet-screen.onix-wallet-v2 {
+  display: block !important;
+  height: auto !important;
+  min-height: 0 !important;
+  max-height: none !important;
+  overflow: visible !important;
+  padding: 0 20px 0 !important;
+  margin: 0 !important;
+  touch-action: pan-y !important;
+}
+
+.onix-wallet-page-mode .onix-wallet-screen.onix-wallet-v2 .onix-wallet-main-card {
+  position: relative !important;
+  top: auto !important;
+  z-index: 40 !important;
+  margin: 0 0 14px !important;
+}
+
+.onix-wallet-page-mode .onix-wallet-screen.onix-wallet-v2 .onix-wallet-tabs {
+  position: sticky !important;
+  top: 0 !important;
+  z-index: 90 !important;
+  margin: 0 0 18px !important;
+  padding: 8px 0 12px !important;
+  min-height: 54px !important;
+  background: linear-gradient(180deg, rgba(3, 6, 18, 0.94) 0%, rgba(3, 6, 18, 0.78) 72%, rgba(3, 6, 18, 0.00) 100%) !important;
+  backdrop-filter: blur(8px) !important;
+}
+
+.onix-wallet-page-mode .onix-wallet-screen.onix-wallet-v2 .onix-wallet-subtab-scroll {
+  display: block !important;
+  position: relative !important;
+  z-index: 38 !important;
+  height: auto !important;
+  min-height: auto !important;
+  max-height: none !important;
+  overflow: visible !important;
+  padding: 0 0 calc(32px + env(safe-area-inset-bottom)) !important;
+  margin: 0 !important;
+  touch-action: pan-y !important;
+  pointer-events: auto !important;
+}
+
+.onix-wallet-page-mode .onix-wallet-screen.onix-wallet-v2 .onix-wallet-subtab-scroll > .onix-wallet-panel-card {
+  display: block !important;
+  width: 100% !important;
+  height: auto !important;
+  min-height: auto !important;
+  max-height: none !important;
+  overflow: visible !important;
+  margin: 0 0 22px !important;
+  padding: 20px !important;
+  border-radius: 28px !important;
+}
+
+.onix-wallet-page-mode .onix-wallet-screen.onix-wallet-v2 .onix-wallet-subtab-scroll > .onix-wallet-panel-card .onix-wallet-card-content {
+  display: block !important;
+  height: auto !important;
+  min-height: auto !important;
+  max-height: none !important;
+  overflow: visible !important;
+}
+
+.onix-wallet-page-mode .onix-wallet-screen.onix-wallet-v2 .onix-wallet-chart-box {
+  height: 330px !important;
+  min-height: 330px !important;
+}
+
+@media (max-width: 430px) {
+  .onix-wallet-page-mode .onix-wallet-screen.onix-wallet-v2 {
+    padding-left: 20px !important;
+    padding-right: 20px !important;
+  }
+
+  .onix-wallet-page-mode .onix-wallet-screen.onix-wallet-v2 .onix-wallet-subtab-scroll > .onix-wallet-panel-card {
+    padding: 18px !important;
+  }
+}
+
 `;
 
     window.open(url, '_blank');
@@ -16605,7 +16701,7 @@ body:has(.onix-home-reference-mode),
   }
 
   return (
-    <div className={`onix-app-bg min-h-screen text-white ${activeTab === 'home' ? 'onix-home-reference-mode' : ''} ${activeTab === 'friends' ? 'onix-profile-arena-bg-mode' : ''}`}>
+    <div className={`onix-app-bg min-h-screen text-white ${activeTab === 'home' ? 'onix-home-reference-mode' : ''} ${activeTab === 'friends' ? 'onix-profile-arena-bg-mode' : ''} ${activeTab === 'wallet' ? 'onix-wallet-page-mode' : ''}`}>
       <style>{ONIX_THEME_STYLE}</style>
       <div className="onix-toast-layer">
         {toastMessages.map((toast) => (
