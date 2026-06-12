@@ -15492,6 +15492,167 @@ body:has(.onix-home-reference-mode),
   }
 }
 
+
+/* === WALLET SCROLL HOTFIX v2 ===
+   The wallet header and tabs stay fixed; only the content below tabs scrolls.
+   Uses Telegram viewport CSS vars so Nicegram/Telegram do not clip the panel. */
+.onix-wallet-screen.onix-wallet-v2 {
+  box-sizing: border-box !important;
+  height: calc(var(--oc-app-height, 100vh) - 88px) !important;
+  max-height: calc(var(--oc-app-height, 100vh) - 88px) !important;
+  min-height: 0 !important;
+  padding: 8px 20px 0 !important;
+  margin: 0 !important;
+  overflow: hidden !important;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 8px !important;
+  touch-action: pan-y !important;
+}
+
+.onix-wallet-screen.onix-wallet-v2 .onix-wallet-main-card {
+  flex: 0 0 auto !important;
+  margin: 0 !important;
+  padding: 10px 12px !important;
+  border-radius: 22px !important;
+}
+
+.onix-wallet-screen.onix-wallet-v2 .onix-wallet-main-card .mb-3.flex {
+  margin-bottom: 6px !important;
+}
+
+.onix-wallet-screen.onix-wallet-v2 .onix-wallet-icon {
+  width: 38px !important;
+  height: 38px !important;
+  border-radius: 13px !important;
+  font-size: 18px !important;
+}
+
+.onix-wallet-screen.onix-wallet-v2 h2 {
+  font-size: 21px !important;
+  line-height: 1 !important;
+}
+
+.onix-wallet-screen.onix-wallet-v2 .onix-wallet-main-card p.text-sm.text-gray-400 {
+  font-size: 11px !important;
+  line-height: 1.05 !important;
+}
+
+.onix-wallet-screen.onix-wallet-v2 .onix-wallet-balance-card {
+  min-height: 62px !important;
+  padding: 7px 10px !important;
+  border-radius: 18px !important;
+}
+
+.onix-wallet-screen.onix-wallet-v2 .onix-wallet-balance-label {
+  margin-bottom: 3px !important;
+  font-size: 9.5px !important;
+  letter-spacing: 0.16em !important;
+}
+
+.onix-wallet-screen.onix-wallet-v2 .onix-wallet-balance-value {
+  font-size: clamp(22px, 6vw, 31px) !important;
+  line-height: 0.92 !important;
+}
+
+.onix-wallet-screen.onix-wallet-v2 .onix-wallet-balance-eur {
+  margin-top: 3px !important;
+  font-size: 10.5px !important;
+  line-height: 1.05 !important;
+}
+
+.onix-wallet-screen.onix-wallet-v2 .onix-wallet-main-card .mt-3.grid {
+  margin-top: 7px !important;
+  gap: 8px !important;
+}
+
+.onix-wallet-screen.onix-wallet-v2 .onix-wallet-main-card .onix-wallet-mini-card {
+  min-height: 42px !important;
+  padding: 7px 9px !important;
+  border-radius: 16px !important;
+}
+
+.onix-wallet-screen.onix-wallet-v2 .onix-wallet-main-card .onix-wallet-mini-card p.text-xs {
+  font-size: 10px !important;
+}
+
+.onix-wallet-screen.onix-wallet-v2 .onix-wallet-main-card .onix-wallet-mini-card p.text-sm {
+  font-size: 11.5px !important;
+  line-height: 1.05 !important;
+}
+
+.onix-wallet-screen.onix-wallet-v2 .onix-wallet-tabs {
+  flex: 0 0 auto !important;
+  margin: 0 !important;
+  padding: 0 0 8px !important;
+  min-height: 48px !important;
+}
+
+.onix-wallet-screen.onix-wallet-v2 .onix-wallet-tab {
+  min-height: 38px !important;
+  padding: 5px 2px 9px !important;
+}
+
+.onix-wallet-screen.onix-wallet-v2 .onix-wallet-subtab-scroll {
+  position: relative !important;
+  z-index: 30 !important;
+  flex: 1 1 0 !important;
+  min-height: 0 !important;
+  height: auto !important;
+  max-height: none !important;
+  overflow-y: auto !important;
+  overflow-x: hidden !important;
+  overscroll-behavior-y: contain !important;
+  -webkit-overflow-scrolling: touch !important;
+  touch-action: pan-y !important;
+  pointer-events: auto !important;
+  padding: 0 0 calc(116px + env(safe-area-inset-bottom)) !important;
+  scrollbar-width: none !important;
+}
+
+.onix-wallet-screen.onix-wallet-v2 .onix-wallet-subtab-scroll::-webkit-scrollbar {
+  display: none !important;
+}
+
+.onix-wallet-screen.onix-wallet-v2 .onix-wallet-subtab-scroll > .onix-wallet-panel-card {
+  display: block !important;
+  width: 100% !important;
+  min-height: max-content !important;
+  height: auto !important;
+  max-height: none !important;
+  overflow: visible !important;
+  margin: 0 0 14px !important;
+  padding: 18px !important;
+  border-radius: 26px !important;
+}
+
+.onix-wallet-screen.onix-wallet-v2 .onix-wallet-subtab-scroll > .onix-wallet-panel-card .onix-wallet-card-content {
+  display: block !important;
+  min-height: max-content !important;
+  height: auto !important;
+  max-height: none !important;
+  overflow: visible !important;
+}
+
+.onix-wallet-screen.onix-wallet-v2 .onix-wallet-chart-box {
+  height: 260px !important;
+  min-height: 260px !important;
+}
+
+@media (max-width: 430px) {
+  .onix-wallet-screen.onix-wallet-v2 {
+    height: calc(var(--oc-app-height, 100vh) - 84px) !important;
+    max-height: calc(var(--oc-app-height, 100vh) - 84px) !important;
+    padding-left: 20px !important;
+    padding-right: 20px !important;
+    gap: 7px !important;
+  }
+
+  .onix-wallet-screen.onix-wallet-v2 .onix-wallet-subtab-scroll > .onix-wallet-panel-card {
+    padding: 16px !important;
+  }
+}
+
 `;
 
     window.open(url, '_blank');
