@@ -15327,6 +15327,171 @@ body:has(.onix-home-reference-mode),
     radial-gradient(ellipse at 50% 58%, rgba(6, 182, 212, 0.08), transparent 36%) !important;
 }
 
+
+/* Wallet final layout: like Tasks screen - fixed header/tabs, full scrolling content area */
+.onix-wallet-screen.onix-wallet-v2 {
+  padding-top: 6px !important;
+  padding-bottom: calc(86px + env(safe-area-inset-bottom)) !important;
+  height: calc(100dvh - 92px) !important;
+  max-height: calc(100dvh - 92px) !important;
+  min-height: 0 !important;
+  overflow: hidden !important;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 10px !important;
+}
+
+.onix-wallet-v2 .onix-wallet-main-card {
+  flex: 0 0 auto !important;
+  padding: 10px 12px !important;
+  border-radius: 24px !important;
+}
+
+.onix-wallet-v2 .onix-wallet-main-card .mb-3 {
+  margin-bottom: 7px !important;
+}
+
+.onix-wallet-v2 .onix-wallet-icon {
+  width: 40px !important;
+  height: 40px !important;
+  border-radius: 14px !important;
+  font-size: 19px !important;
+}
+
+.onix-wallet-v2 h2 {
+  font-size: 23px !important;
+  line-height: 1 !important;
+}
+
+.onix-wallet-v2 .onix-wallet-main-card p.text-sm.text-gray-400 {
+  font-size: 12px !important;
+  line-height: 1.05 !important;
+}
+
+.onix-wallet-balance-card {
+  min-height: 74px !important;
+  padding: 8px 10px !important;
+  border-radius: 20px !important;
+}
+
+.onix-wallet-balance-label {
+  margin-bottom: 4px !important;
+  font-size: 10px !important;
+}
+
+.onix-wallet-balance-value {
+  font-size: clamp(24px, 6.5vw, 36px) !important;
+  line-height: 0.92 !important;
+}
+
+.onix-wallet-balance-eur {
+  margin-top: 4px !important;
+  font-size: 11.5px !important;
+  line-height: 1.05 !important;
+}
+
+.onix-wallet-v2 .onix-wallet-main-card .mt-3.grid {
+  margin-top: 7px !important;
+  gap: 8px !important;
+}
+
+.onix-wallet-v2 .onix-wallet-main-card .onix-wallet-mini-card {
+  min-height: 46px !important;
+  padding: 8px 10px !important;
+  border-radius: 17px !important;
+}
+
+.onix-wallet-v2 .onix-wallet-main-card .onix-wallet-mini-card p.text-xs {
+  font-size: 10.5px !important;
+}
+
+.onix-wallet-v2 .onix-wallet-main-card .onix-wallet-mini-card p.text-sm {
+  font-size: 12px !important;
+  line-height: 1.08 !important;
+}
+
+.onix-wallet-v2 .onix-wallet-tabs {
+  flex: 0 0 auto !important;
+  margin: 0 !important;
+  padding: 0 0 9px !important;
+  min-height: 50px !important;
+}
+
+.onix-wallet-tab {
+  min-height: 40px !important;
+  padding: 6px 2px 9px !important;
+}
+
+.onix-wallet-subtab-scroll {
+  flex: 1 1 auto !important;
+  min-height: 0 !important;
+  overflow-y: auto !important;
+  overflow-x: hidden !important;
+  overscroll-behavior: contain !important;
+  -webkit-overflow-scrolling: touch !important;
+  padding: 0 0 calc(122px + env(safe-area-inset-bottom)) !important;
+  scrollbar-width: none !important;
+}
+
+.onix-wallet-subtab-scroll::-webkit-scrollbar {
+  display: none !important;
+}
+
+.onix-wallet-subtab-scroll > .onix-wallet-panel-card {
+  width: 100% !important;
+  min-height: auto !important;
+  height: auto !important;
+  max-height: none !important;
+  overflow: visible !important;
+  padding: 18px !important;
+  border-radius: 26px !important;
+}
+
+.onix-wallet-subtab-scroll > .onix-wallet-panel-card .onix-wallet-card-content {
+  min-height: 0 !important;
+}
+
+.onix-wallet-chart-box {
+  height: 260px !important;
+  min-height: 260px !important;
+}
+
+.onix-wallet-v2 .onix-wallet-request-card,
+.onix-wallet-v2 .onix-wallet-transaction-card {
+  min-height: 72px !important;
+}
+
+@media (max-width: 430px) {
+  .onix-wallet-screen.onix-wallet-v2 {
+    padding-left: 20px !important;
+    padding-right: 20px !important;
+    height: calc(100dvh - 88px) !important;
+    max-height: calc(100dvh - 88px) !important;
+    gap: 9px !important;
+  }
+
+  .onix-wallet-v2 h2 {
+    font-size: 22px !important;
+  }
+
+  .onix-wallet-balance-card {
+    min-height: 70px !important;
+  }
+
+  .onix-wallet-balance-value {
+    font-size: clamp(23px, 6.2vw, 33px) !important;
+  }
+
+  .onix-wallet-subtab-scroll > .onix-wallet-panel-card {
+    padding: 16px !important;
+  }
+
+  .onix-wallet-chart-box {
+    height: 250px !important;
+    min-height: 250px !important;
+  }
+}
+
 `;
 
     window.open(url, '_blank');
@@ -18444,7 +18609,8 @@ body:has(.onix-home-reference-mode),
           </div>
 
           {walletSubTab === 'chart' && (
-            <div className="onix-wallet-panel-card shadow-xl">
+            <div className="onix-wallet-subtab-scroll">
+              <div className="onix-wallet-panel-card shadow-xl">
               <div className="onix-wallet-card-content">
                 <h3 className="text-xl font-bold text-white">📈 График заработка</h3>
                 <p className="mt-1 text-sm text-gray-400">Доходы за последние 7 дней</p>
@@ -18465,11 +18631,13 @@ body:has(.onix-home-reference-mode),
                   ))}
                 </div>
               </div>
+              </div>
             </div>
           )}
 
           {walletSubTab === 'withdrawals' && (
-            <div className="onix-wallet-panel-card shadow-xl">
+            <div className="onix-wallet-subtab-scroll">
+              <div className="onix-wallet-panel-card shadow-xl">
               <div className="onix-wallet-card-content">
                 <div className="mb-4 flex items-center justify-between gap-3">
                   <div>
@@ -18582,11 +18750,13 @@ body:has(.onix-home-reference-mode),
                   </div>
                 )}
               </div>
+              </div>
             </div>
           )}
 
           {walletSubTab === 'history' && (
-            <div className="onix-wallet-panel-card shadow-xl">
+            <div className="onix-wallet-subtab-scroll">
+              <div className="onix-wallet-panel-card shadow-xl">
               <div className="onix-wallet-card-content">
                 <div className="mb-4 flex items-center justify-between gap-3">
                   <div>
@@ -18654,6 +18824,7 @@ body:has(.onix-home-reference-mode),
                     </p>
                   </div>
                 )}
+              </div>
               </div>
             </div>
           )}
