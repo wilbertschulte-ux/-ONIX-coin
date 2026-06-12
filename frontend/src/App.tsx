@@ -11548,6 +11548,34 @@ function App() {
   const [transactionFilter, setTransactionFilter] =
     useState<TransactionFilter>('all');
   const [walletSubTab, setWalletSubTab] = useState<WalletSubTab>('chart');
+  const walletScrollTouchYRef = React.useRef<number | null>(null);
+
+  const handleWalletSubtabTouchStart = (event: React.TouchEvent<HTMLDivElement>) => {
+    walletScrollTouchYRef.current = event.touches[0]?.clientY ?? null;
+  };
+
+  const handleWalletSubtabTouchMove = (event: React.TouchEvent<HTMLDivElement>) => {
+    const touch = event.touches[0];
+    const lastY = walletScrollTouchYRef.current;
+
+    if (!touch || lastY === null) return;
+
+    const element = event.currentTarget;
+    const maxScrollTop = Math.max(0, element.scrollHeight - element.clientHeight);
+    const deltaY = lastY - touch.clientY;
+
+    walletScrollTouchYRef.current = touch.clientY;
+
+    if (maxScrollTop <= 0 || Math.abs(deltaY) < 1) return;
+
+    const nextScrollTop = Math.max(0, Math.min(maxScrollTop, element.scrollTop + deltaY));
+
+    if (nextScrollTop !== element.scrollTop) {
+      element.scrollTop = nextScrollTop;
+      event.preventDefault();
+      event.stopPropagation();
+    }
+  };
   const [adminEconomyDashboard, setAdminEconomyDashboard] =
     useState<AdminEconomyDashboard | null>(null);
   const [adminEconomyVisible, setAdminEconomyVisible] = useState(false);
@@ -16055,6 +16083,121 @@ body:not(.onix-body-home-lock) {
   }
 }
 
+
+/* === WALLET SCROLL FORCE FIX v7 ===
+   Final wallet behavior: the app itself is locked like the working Tasks tab,
+   while only the lower area under Wallet tabs is a real scroll container.
+   Extra JS touch handlers on this same element also force scrolling in Nicegram. */
+.onix-app-bg.onix-wallet-page-mode {
+  height: var(--oc-app-height, 100dvh) !important;
+  max-height: var(--oc-app-height, 100dvh) !important;
+  min-height: 0 !important;
+  overflow: hidden !important;
+  padding-bottom: 0 !important;
+  touch-action: none !important;
+}
+
+.onix-app-bg.onix-wallet-page-mode > .onix-wallet-screen.onix-wallet-v2,
+.onix-wallet-page-mode .onix-wallet-screen.onix-wallet-v2 {
+  position: relative !important;
+  display: flex !important;
+  flex-direction: column !important;
+  box-sizing: border-box !important;
+  height: calc(var(--oc-app-height, 100dvh) - 84px) !important;
+  max-height: calc(var(--oc-app-height, 100dvh) - 84px) !important;
+  min-height: 0 !important;
+  overflow: hidden !important;
+  padding: 0 20px 0 !important;
+  margin: 0 !important;
+  gap: 8px !important;
+  touch-action: none !important;
+}
+
+.onix-wallet-page-mode .onix-wallet-screen.onix-wallet-v2 .onix-wallet-main-card {
+  position: relative !important;
+  top: auto !important;
+  z-index: 40 !important;
+  flex: 0 0 auto !important;
+  margin: 0 !important;
+  padding: 10px 12px !important;
+  border-radius: 22px !important;
+}
+
+.onix-wallet-page-mode .onix-wallet-screen.onix-wallet-v2 .onix-wallet-tabs {
+  position: relative !important;
+  top: auto !important;
+  z-index: 39 !important;
+  flex: 0 0 auto !important;
+  min-height: 52px !important;
+  margin: 0 !important;
+  padding: 0 0 10px !important;
+  background: transparent !important;
+  backdrop-filter: none !important;
+  touch-action: manipulation !important;
+}
+
+.onix-wallet-page-mode .onix-wallet-screen.onix-wallet-v2 .onix-wallet-subtab-scroll {
+  position: relative !important;
+  z-index: 38 !important;
+  flex: 1 1 auto !important;
+  min-height: 0 !important;
+  height: auto !important;
+  max-height: none !important;
+  overflow-y: scroll !important;
+  overflow-x: hidden !important;
+  -webkit-overflow-scrolling: touch !important;
+  overscroll-behavior-y: contain !important;
+  touch-action: pan-y !important;
+  pointer-events: auto !important;
+  padding: 0 0 calc(132px + env(safe-area-inset-bottom)) !important;
+  margin: 0 !important;
+  scrollbar-width: none !important;
+  transform: translateZ(0) !important;
+}
+
+.onix-wallet-page-mode .onix-wallet-screen.onix-wallet-v2 .onix-wallet-subtab-scroll::-webkit-scrollbar {
+  display: none !important;
+}
+
+.onix-wallet-page-mode .onix-wallet-screen.onix-wallet-v2 .onix-wallet-subtab-scroll > .onix-wallet-panel-card {
+  display: block !important;
+  width: 100% !important;
+  height: auto !important;
+  min-height: auto !important;
+  max-height: none !important;
+  overflow: visible !important;
+  margin: 0 0 22px !important;
+  padding: 20px !important;
+  border-radius: 28px !important;
+}
+
+.onix-wallet-page-mode .onix-wallet-screen.onix-wallet-v2 .onix-wallet-subtab-scroll > .onix-wallet-panel-card .onix-wallet-card-content {
+  display: block !important;
+  height: auto !important;
+  min-height: auto !important;
+  max-height: none !important;
+  overflow: visible !important;
+}
+
+.onix-wallet-page-mode .onix-wallet-screen.onix-wallet-v2 .onix-wallet-chart-box {
+  height: 330px !important;
+  min-height: 330px !important;
+}
+
+@media (max-width: 430px) {
+  .onix-app-bg.onix-wallet-page-mode > .onix-wallet-screen.onix-wallet-v2,
+  .onix-wallet-page-mode .onix-wallet-screen.onix-wallet-v2 {
+    height: calc(var(--oc-app-height, 100dvh) - 82px) !important;
+    max-height: calc(var(--oc-app-height, 100dvh) - 82px) !important;
+    padding-left: 20px !important;
+    padding-right: 20px !important;
+  }
+
+  .onix-wallet-page-mode .onix-wallet-screen.onix-wallet-v2 .onix-wallet-subtab-scroll > .onix-wallet-panel-card {
+    padding: 18px !important;
+  }
+}
+
 `;
 
     window.open(url, '_blank');
@@ -19172,7 +19315,7 @@ body:not(.onix-body-home-lock) {
           </div>
 
           {walletSubTab === 'chart' && (
-            <div className="onix-wallet-subtab-scroll">
+            <div className="onix-wallet-subtab-scroll" onTouchStart={handleWalletSubtabTouchStart} onTouchMove={handleWalletSubtabTouchMove}>
               <div className="onix-wallet-panel-card shadow-xl">
               <div className="onix-wallet-card-content">
                 <h3 className="text-xl font-bold text-white">📈 График заработка</h3>
@@ -19199,7 +19342,7 @@ body:not(.onix-body-home-lock) {
           )}
 
           {walletSubTab === 'withdrawals' && (
-            <div className="onix-wallet-subtab-scroll">
+            <div className="onix-wallet-subtab-scroll" onTouchStart={handleWalletSubtabTouchStart} onTouchMove={handleWalletSubtabTouchMove}>
               <div className="onix-wallet-panel-card shadow-xl">
               <div className="onix-wallet-card-content">
                 <div className="mb-4 flex items-center justify-between gap-3">
@@ -19318,7 +19461,7 @@ body:not(.onix-body-home-lock) {
           )}
 
           {walletSubTab === 'history' && (
-            <div className="onix-wallet-subtab-scroll">
+            <div className="onix-wallet-subtab-scroll" onTouchStart={handleWalletSubtabTouchStart} onTouchMove={handleWalletSubtabTouchMove}>
               <div className="onix-wallet-panel-card shadow-xl">
               <div className="onix-wallet-card-content">
                 <div className="mb-4 flex items-center justify-between gap-3">
