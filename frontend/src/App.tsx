@@ -15653,6 +15653,97 @@ body:has(.onix-home-reference-mode),
   }
 }
 
+/* === WALLET NATURAL SCROLL FIX v3 ===
+   Nicegram can ignore nested scroll containers inside a locked flex page.
+   Make the wallet screen itself the scroll container, then keep the wallet card
+   and the tab menu sticky. The content below the menu scrolls as one full page,
+   so cards are not trapped in a small inner window. */
+.onix-wallet-screen.onix-wallet-v2 {
+  display: block !important;
+  height: calc(var(--oc-app-height, 100dvh) - 84px) !important;
+  max-height: calc(var(--oc-app-height, 100dvh) - 84px) !important;
+  min-height: 0 !important;
+  overflow-y: auto !important;
+  overflow-x: hidden !important;
+  overscroll-behavior-y: contain !important;
+  -webkit-overflow-scrolling: touch !important;
+  touch-action: pan-y !important;
+  padding: 0 20px calc(128px + env(safe-area-inset-bottom)) !important;
+  margin: 0 !important;
+  scrollbar-width: none !important;
+}
+
+.onix-wallet-screen.onix-wallet-v2::-webkit-scrollbar {
+  display: none !important;
+}
+
+.onix-wallet-screen.onix-wallet-v2 .onix-wallet-main-card {
+  position: sticky !important;
+  top: 0 !important;
+  z-index: 80 !important;
+  margin: 0 0 8px !important;
+}
+
+.onix-wallet-screen.onix-wallet-v2 .onix-wallet-tabs {
+  position: sticky !important;
+  top: 292px !important;
+  z-index: 79 !important;
+  margin: 0 0 14px !important;
+  padding: 0 0 10px !important;
+  background: linear-gradient(180deg, rgba(3, 6, 18, 0.92), rgba(3, 6, 18, 0.72) 72%, rgba(3, 6, 18, 0.00)) !important;
+  backdrop-filter: blur(5px) !important;
+}
+
+.onix-wallet-screen.onix-wallet-v2 .onix-wallet-subtab-scroll {
+  display: block !important;
+  height: auto !important;
+  max-height: none !important;
+  min-height: 0 !important;
+  overflow: visible !important;
+  padding: 0 0 18px !important;
+  touch-action: pan-y !important;
+}
+
+.onix-wallet-screen.onix-wallet-v2 .onix-wallet-subtab-scroll > .onix-wallet-panel-card {
+  min-height: auto !important;
+  height: auto !important;
+  max-height: none !important;
+  overflow: visible !important;
+  margin: 0 0 24px !important;
+  padding: 20px !important;
+  border-radius: 28px !important;
+}
+
+.onix-wallet-screen.onix-wallet-v2 .onix-wallet-subtab-scroll > .onix-wallet-panel-card .onix-wallet-card-content {
+  min-height: auto !important;
+  height: auto !important;
+  max-height: none !important;
+  overflow: visible !important;
+}
+
+.onix-wallet-screen.onix-wallet-v2 .onix-wallet-chart-box {
+  height: 300px !important;
+  min-height: 300px !important;
+}
+
+@media (max-width: 430px) {
+  .onix-wallet-screen.onix-wallet-v2 {
+    height: calc(var(--oc-app-height, 100dvh) - 82px) !important;
+    max-height: calc(var(--oc-app-height, 100dvh) - 82px) !important;
+    padding-left: 20px !important;
+    padding-right: 20px !important;
+    padding-bottom: calc(132px + env(safe-area-inset-bottom)) !important;
+  }
+
+  .onix-wallet-screen.onix-wallet-v2 .onix-wallet-tabs {
+    top: 286px !important;
+  }
+
+  .onix-wallet-screen.onix-wallet-v2 .onix-wallet-subtab-scroll > .onix-wallet-panel-card {
+    padding: 18px !important;
+  }
+}
+
 `;
 
     window.open(url, '_blank');
