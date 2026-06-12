@@ -229,8 +229,8 @@ const MAX_PAID_REFERRALS_PER_HOUR = getNumberEnv('MAX_PAID_REFERRALS_PER_HOUR', 
 const DEFAULT_ENERGY = 500;
 const DEFAULT_MAX_ENERGY = 500;
 const DEFAULT_TAP_POWER = 1;
-const DEFAULT_ENERGY_RECHARGE = 0.5;
-const DEFAULT_MINER_INCOME = 0.5;
+const DEFAULT_ENERGY_RECHARGE = 1;
+const DEFAULT_MINER_INCOME = 1;
 
 const PERKS = {
   offline_pro: {
@@ -804,7 +804,7 @@ function getMinerIncome(user) {
   const baseIncome = Number(user.autoclickers || DEFAULT_MINER_INCOME);
   const multiplier = 1 + 0.05 * minerLevel + 0.03 * luckyLevel;
 
-  return roundOnix(baseIncome * multiplier);
+  return Math.max(1, roundOnix(baseIncome * multiplier));
 }
 
 function getReferralRewardForUser(user) {
@@ -1219,7 +1219,15 @@ function applyRankBonuses(user) {
 
 
 function roundOnix(value) {
-  return Math.round(Number(value || 0) * 100) / 100;
+  const numericValue = Number(value || 0);
+  if (!Number.isFinite(numericValue)) return 0;
+  return numericValue < 0 ? Math.ceil(numericValue) : Math.floor(numericValue);
+}
+
+function roundCurrency(value) {
+  const numericValue = Number(value || 0);
+  if (!Number.isFinite(numericValue)) return 0;
+  return Math.round(numericValue * 100) / 100;
 }
 
 function addTransaction(user, type, amount, title, status = 'completed') {
@@ -1407,13 +1415,21 @@ function normalizeUserFields(user) {
   if (!user.tapTimestamps) user.tapTimestamps = [];
 
   if (user.balance === undefined || user.balance === null) user.balance = 0;
+  user.balance = roundOnix(user.balance);
   if (user.energy === undefined || user.energy === null) user.energy = DEFAULT_ENERGY;
+  user.energy = Math.max(0, roundOnix(user.energy));
   if (user.maxEnergy === undefined || user.maxEnergy === null) user.maxEnergy = DEFAULT_MAX_ENERGY;
+  user.maxEnergy = Math.max(DEFAULT_MAX_ENERGY, roundOnix(user.maxEnergy));
   if (user.tapPower === undefined || user.tapPower === null) user.tapPower = DEFAULT_TAP_POWER;
+  user.tapPower = Math.max(1, roundOnix(user.tapPower));
   if (user.energyRecharge === undefined || user.energyRecharge === null) user.energyRecharge = DEFAULT_ENERGY_RECHARGE;
+  user.energyRecharge = Math.max(1, roundOnix(user.energyRecharge));
   if (user.autoclickers === undefined || user.autoclickers === null) user.autoclickers = DEFAULT_MINER_INCOME;
+  user.autoclickers = Math.max(1, roundOnix(user.autoclickers));
   if (user.totalEarned === undefined || user.totalEarned === null) user.totalEarned = 0;
+  user.totalEarned = roundOnix(user.totalEarned);
   if (user.weeklyEarned === undefined || user.weeklyEarned === null) user.weeklyEarned = 0;
+  user.weeklyEarned = roundOnix(user.weeklyEarned);
   if (user.weeklyEarnedWeek === undefined || user.weeklyEarnedWeek === null) {
     user.weeklyEarnedWeek = getWeekKey();
   }
@@ -2178,7 +2194,7 @@ router.get('/admin-withdrawals', async (req, res) => {
           username: user.username || 'Пользователь',
           requestIndex: index,
           amount: roundOnix(request.amount || 0),
-          eurAmount: roundOnix(request.eurAmount || 0),
+          eurAmount: roundCurrency(request.eurAmount || 0),
           status: request.status || 'pending',
           adminComment: request.adminComment || '',
           createdAt: request.createdAt || 0,
@@ -2786,8 +2802,8 @@ router.get('/admin-economy-dashboard', async (req, res) => {
         pendingWithdrawOnix: roundOnix(totals.pendingWithdrawOnix),
         createdOnix: roundOnix(totals.createdOnix),
         spentOnix: roundOnix(totals.spentOnix),
-        totalBalanceEur: roundOnix(totals.totalBalance * rate),
-        pendingWithdrawEur: roundOnix(totals.pendingWithdrawOnix * rate),
+        totalBalanceEur: roundCurrency(totals.totalBalance * rate),
+        pendingWithdrawEur: roundCurrency(totals.pendingWithdrawOnix * rate),
       },
       transactionTypes: Object.entries(transactionTypes)
         .map(([type, data]) => ({
@@ -3714,12 +3730,12 @@ router.post('/buy-upgrade', async (req, res) => {
 
     if (type === 'recharge') {
       user.rechargeLevel = Number(user.rechargeLevel || 1) + 1;
-      user.energyRecharge = roundOnix(Number(user.energyRecharge || DEFAULT_ENERGY_RECHARGE) + 0.25);
+      user.energyRecharge = Math.max(1, roundOnix(Number(user.energyRecharge || DEFAULT_ENERGY_RECHARGE) + 1));
     }
 
     if (type === 'miner') {
       user.minerLevel = Number(user.minerLevel || 1) + 1;
-      user.autoclickers = roundOnix(Number(user.autoclickers || DEFAULT_MINER_INCOME) + 0.5);
+      user.autoclickers = Math.max(1, roundOnix(Number(user.autoclickers || DEFAULT_MINER_INCOME) + 1));
     }
 
     user.totalUpgradesBought = Number(user.totalUpgradesBought || 0) + 1;
@@ -4571,7 +4587,7 @@ router.post('/request-withdrawal', async (req, res) => {
 
     user.balance = roundOnix(Number(user.balance || 0) - withdrawAmount);
 
-    const eurAmount = roundOnix(withdrawAmount * getOnixEurRate());
+    const eurAmount = roundCurrency(withdrawAmount * getOnixEurRate());
 
     user.withdrawalRequests.unshift({
       amount: withdrawAmount,

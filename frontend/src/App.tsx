@@ -11513,9 +11513,15 @@ const ACHIEVEMENTS: Achievement[] = [
   },
 ];
 
+function toWholeOnix(value: number) {
+  const numericValue = Number(value || 0);
+  if (!Number.isFinite(numericValue)) return 0;
+  return numericValue < 0 ? Math.ceil(numericValue) : Math.floor(numericValue);
+}
+
 function formatOnix(value: number) {
-  return Number(value || 0).toLocaleString('ru-RU', {
-    maximumFractionDigits: 2,
+  return toWholeOnix(value).toLocaleString('ru-RU', {
+    maximumFractionDigits: 0,
   });
 }
 
@@ -11889,8 +11895,8 @@ function App() {
   const [energy, setEnergy] = useState(500);
   const [maxEnergy, setMaxEnergy] = useState(500);
   const [tapPower, setTapPower] = useState(1);
-  const [energyRecharge, setEnergyRecharge] = useState(0.5);
-  const [autoclickers, setAutoclickers] = useState(0.5);
+  const [energyRecharge, setEnergyRecharge] = useState(1);
+  const [autoclickers, setAutoclickers] = useState(1);
   const [level, setLevel] = useState(1);
   const [totalEarned, setTotalEarned] = useState(0);
   const [activeTab, setActiveTab] = useState<Tab>('home');
@@ -12183,8 +12189,8 @@ function App() {
         setEnergy(user.energy ?? 500);
         setMaxEnergy(user.maxEnergy ?? 500);
         setTapPower(user.tapPower ?? 1);
-        setEnergyRecharge(user.energyRecharge ?? 0.5);
-        setAutoclickers(user.autoclickers ?? 0.5);
+        setEnergyRecharge(toWholeOnix(user.energyRecharge ?? 1));
+        setAutoclickers(toWholeOnix(user.autoclickers ?? 1));
         setTotalEarned(user.totalEarned || 0);
         setLevel(user.level || 1);
         setReferralsCount(user.referralsCount || 0);
@@ -12472,8 +12478,8 @@ function App() {
         setEnergy(user.energy || 0);
         setMaxEnergy(user.maxEnergy ?? 500);
         setTapPower(user.tapPower ?? 1);
-        setEnergyRecharge(user.energyRecharge ?? 0.5);
-        setAutoclickers(user.autoclickers ?? 0.5);
+        setEnergyRecharge(toWholeOnix(user.energyRecharge ?? 1));
+        setAutoclickers(toWholeOnix(user.autoclickers ?? 1));
         setTotalEarned(user.totalEarned || 0);
         setLevel(user.level || 1);
         setReferralsCount(user.referralsCount || 0);
@@ -12532,8 +12538,8 @@ function App() {
       setEnergy(user.energy || 0);
       setMaxEnergy(user.maxEnergy ?? 500);
       setTapPower(user.tapPower ?? 1);
-      setEnergyRecharge(user.energyRecharge ?? 0.5);
-      setAutoclickers(user.autoclickers ?? 0.5);
+      setEnergyRecharge(toWholeOnix(user.energyRecharge ?? 1));
+      setAutoclickers(toWholeOnix(user.autoclickers ?? 1));
       setTotalEarned(user.totalEarned || 0);
       setLevel(user.level || 1);
       setReferralsCount(user.referralsCount || 0);
@@ -12670,8 +12676,8 @@ function App() {
       setEnergy(user.energy || 0);
       setMaxEnergy(user.maxEnergy ?? 500);
       setTapPower(user.tapPower ?? 1);
-      setEnergyRecharge(user.energyRecharge ?? 0.5);
-      setAutoclickers(user.autoclickers ?? 0.5);
+      setEnergyRecharge(toWholeOnix(user.energyRecharge ?? 1));
+      setAutoclickers(toWholeOnix(user.autoclickers ?? 1));
       setTotalEarned(user.totalEarned || 0);
       setLevel(user.level || 1);
       setReferralsCount(user.referralsCount || 0);
@@ -12765,8 +12771,8 @@ function App() {
       setEnergy(user.energy || 0);
       setMaxEnergy(user.maxEnergy ?? 500);
       setTapPower(user.tapPower ?? 1);
-      setEnergyRecharge(user.energyRecharge ?? 0.5);
-      setAutoclickers(user.autoclickers ?? 0.5);
+      setEnergyRecharge(toWholeOnix(user.energyRecharge ?? 1));
+      setAutoclickers(toWholeOnix(user.autoclickers ?? 1));
       setTotalEarned(user.totalEarned || 0);
       setLevel(user.level || 1);
       setReferralsCount(user.referralsCount || 0);
@@ -12820,8 +12826,8 @@ function App() {
       setEnergy(user.energy || 0);
       setMaxEnergy(user.maxEnergy ?? 500);
       setTapPower(user.tapPower ?? 1);
-      setEnergyRecharge(user.energyRecharge ?? 0.5);
-      setAutoclickers(user.autoclickers ?? 0.5);
+      setEnergyRecharge(toWholeOnix(user.energyRecharge ?? 1));
+      setAutoclickers(toWholeOnix(user.autoclickers ?? 1));
       setTotalEarned(user.totalEarned || 0);
       setLevel(user.level || 1);
       setReferralsCount(user.referralsCount || 0);
@@ -12880,8 +12886,8 @@ function App() {
       setEnergy(user.energy || 0);
       setMaxEnergy(user.maxEnergy ?? 500);
       setTapPower(user.tapPower ?? 1);
-      setEnergyRecharge(user.energyRecharge ?? 0.5);
-      setAutoclickers(user.autoclickers ?? 0.5);
+      setEnergyRecharge(toWholeOnix(user.energyRecharge ?? 1));
+      setAutoclickers(toWholeOnix(user.autoclickers ?? 1));
       setTotalEarned(user.totalEarned || 0);
       setLevel(user.level || 1);
       setReferralsCount(user.referralsCount || 0);
@@ -13011,8 +13017,8 @@ function App() {
       setEnergy(user.energy || 0);
       setMaxEnergy(user.maxEnergy ?? 500);
       setTapPower(user.tapPower ?? 1);
-      setEnergyRecharge(user.energyRecharge ?? 0.5);
-      setAutoclickers(user.autoclickers ?? 0.5);
+      setEnergyRecharge(toWholeOnix(user.energyRecharge ?? 1));
+      setAutoclickers(toWholeOnix(user.autoclickers ?? 1));
       setTotalEarned(user.totalEarned || 0);
       setLevel(user.level || 1);
       setReferralsCount(user.referralsCount || 0);
@@ -17325,13 +17331,13 @@ body:not(.onix-body-home-lock) {
 
   const minerBaseMultiplier = 1 + 0.05 * minerPlusLevel + 0.03 * luckyMinerLevel;
   const minerIncomePerSecond = Number(
-    (autoclickers * minerBaseMultiplier * miningMultiplier).toFixed(2)
+    Math.max(1, autoclickers * minerBaseMultiplier * miningMultiplier).toFixed(0)
   );
   const minerIncomePerHour = minerIncomePerSecond * 60 * 60;
 
   const effectiveTapEnergyCost = Math.max(
     1,
-    Number((tapPower * Math.max(0.7, 1 - 0.1 * energySaverLevel)).toFixed(2))
+    Math.max(1, Math.floor(tapPower * Math.max(0.7, 1 - 0.1 * energySaverLevel)))
   );
   const baseDailyPreview = getDailyReward(level);
   const effectiveDailyPreview = Math.round(
@@ -17351,7 +17357,7 @@ body:not(.onix-body-home-lock) {
 
   const minerUpgradeProgress = Math.min((balance / nextMinerCost) * 100, 100);
   const nextMinerIncomePerSecond = Number(
-    ((autoclickers + 0.5) * minerBaseMultiplier * miningMultiplier).toFixed(2)
+    Math.max(1, (autoclickers + 1) * minerBaseMultiplier * miningMultiplier).toFixed(0)
   );
   const minerIncomeIncrease = nextMinerIncomePerSecond - minerIncomePerSecond;
 
@@ -17413,7 +17419,7 @@ body:not(.onix-body-home-lock) {
       currentLabel: 'Сейчас',
       currentValue: `+${formatOnix(energyRecharge)} энергии/сек`,
       nextLabel: 'После апгрейда',
-      nextValue: `+${formatOnix(energyRecharge + 0.25)} энергии/сек`,
+      nextValue: `+${formatOnix(energyRecharge + 1)} энергии/сек`,
     },
   ];
 
@@ -17781,7 +17787,7 @@ body:not(.onix-body-home-lock) {
         <p className="text-gray-400 text-sm">Баланс $ONIX</p>
 
         <p className="onix-balance-number text-6xl font-black tracking-tighter">
-          {balance.toLocaleString('ru-RU')}
+          {formatOnix(balance)}
         </p>
 
         {isBoostActive && (
@@ -17850,7 +17856,7 @@ body:not(.onix-body-home-lock) {
           </div>
 
           <div className="onix-ref-v5-balance">
-            <p className="onix-ref-v5-balance-value">{balance.toLocaleString('ru-RU')}</p>
+            <p className="onix-ref-v5-balance-value">{formatOnix(balance)}</p>
             <p className="onix-ref-v5-balance-label">Баланс $ONIX</p>
           </div>
 
@@ -20061,7 +20067,7 @@ body:not(.onix-body-home-lock) {
                   <span className="onix-wallet-section-icon-v3">💸</span>
                   <div className="onix-wallet-section-text-v3">
                     <strong>Заявки на вывод</strong>
-                    <p>{withdrawalRequests.length} заявок · прогресс {withdrawProgress.toFixed(1)}%</p>
+                    <p>{withdrawalRequests.length} заявок · прогресс {Math.floor(withdrawProgress).toString()}%</p>
                   </div>
                   <b className="onix-wallet-section-arrow-v3">›</b>
                 </button>
@@ -20131,7 +20137,7 @@ body:not(.onix-body-home-lock) {
                       <div className="mb-3 flex items-center justify-between gap-3 text-sm">
                         <span className="text-gray-400">Прогресс до вывода</span>
                         <span className="font-bold text-yellow-400">
-                          {withdrawProgress.toFixed(1)}%
+                          {Math.floor(withdrawProgress).toString()}%
                         </span>
                       </div>
 
@@ -21662,7 +21668,7 @@ body:not(.onix-body-home-lock) {
             </p>
 
             <p className="text-4xl font-bold text-yellow-400 mb-6">
-              +{offlineRewardAmount.toLocaleString('ru-RU')} ONIX
+              +{formatOnix(offlineRewardAmount)} ONIX
             </p>
 
             <button
