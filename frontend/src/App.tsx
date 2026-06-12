@@ -11469,6 +11469,12 @@ function App() {
     if (activeTab !== 'home') {
       html.classList.remove('onix-html-home-lock');
       body.classList.remove('onix-body-home-lock');
+      html.style.overflow = '';
+      body.style.overflow = '';
+      body.style.touchAction = '';
+      body.style.position = '';
+      body.style.width = '';
+      body.style.height = '';
       return;
     }
 
@@ -15924,6 +15930,111 @@ body:has(.onix-home-reference-mode),
   display: block !important;
   height: auto !important;
   min-height: auto !important;
+  max-height: none !important;
+  overflow: visible !important;
+}
+
+.onix-wallet-page-mode .onix-wallet-screen.onix-wallet-v2 .onix-wallet-chart-box {
+  height: 330px !important;
+  min-height: 330px !important;
+}
+
+@media (max-width: 430px) {
+  .onix-wallet-page-mode .onix-wallet-screen.onix-wallet-v2 {
+    padding-left: 20px !important;
+    padding-right: 20px !important;
+  }
+
+  .onix-wallet-page-mode .onix-wallet-screen.onix-wallet-v2 .onix-wallet-subtab-scroll > .onix-wallet-panel-card {
+    padding: 18px !important;
+  }
+}
+
+/* === WALLET REAL PAGE SCROLL FIX v6 ===
+   Use the same reliable model as the Tasks page: no nested scroll window.
+   The wallet, tab bar and active tab content live in the normal document flow,
+   and the document/app scrolls above the fixed bottom navigation. */
+html:not(.onix-html-home-lock),
+body:not(.onix-body-home-lock),
+#root {
+  overflow-y: auto !important;
+  overflow-x: hidden !important;
+  height: auto !important;
+  max-height: none !important;
+  position: static !important;
+  touch-action: auto !important;
+  -webkit-overflow-scrolling: touch !important;
+}
+
+body:not(.onix-body-home-lock) {
+  min-height: 100dvh !important;
+}
+
+.onix-app-bg.onix-wallet-page-mode {
+  display: block !important;
+  height: auto !important;
+  min-height: 100dvh !important;
+  max-height: none !important;
+  overflow: visible !important;
+  padding-bottom: calc(132px + env(safe-area-inset-bottom)) !important;
+  touch-action: pan-y !important;
+}
+
+.onix-wallet-page-mode .onix-wallet-screen.onix-wallet-v2 {
+  display: block !important;
+  height: auto !important;
+  min-height: 0 !important;
+  max-height: none !important;
+  overflow: visible !important;
+  padding: 8px 20px 0 !important;
+  margin: 0 !important;
+}
+
+.onix-wallet-page-mode .onix-wallet-screen.onix-wallet-v2 .onix-wallet-main-card {
+  position: relative !important;
+  top: auto !important;
+  z-index: 30 !important;
+  margin: 0 0 14px !important;
+}
+
+.onix-wallet-page-mode .onix-wallet-screen.onix-wallet-v2 .onix-wallet-tabs {
+  position: sticky !important;
+  top: 0 !important;
+  z-index: 80 !important;
+  min-height: 58px !important;
+  margin: 0 0 18px !important;
+  padding: 10px 0 12px !important;
+  background: linear-gradient(180deg, rgba(3, 6, 18, 0.96), rgba(3, 6, 18, 0.80) 78%, rgba(3, 6, 18, 0.00)) !important;
+  backdrop-filter: blur(8px) !important;
+}
+
+.onix-wallet-page-mode .onix-wallet-screen.onix-wallet-v2 .onix-wallet-subtab-scroll {
+  display: block !important;
+  height: auto !important;
+  min-height: 0 !important;
+  max-height: none !important;
+  overflow: visible !important;
+  padding: 0 0 calc(150px + env(safe-area-inset-bottom)) !important;
+  margin: 0 !important;
+  touch-action: pan-y !important;
+}
+
+.onix-wallet-page-mode .onix-wallet-screen.onix-wallet-v2 .onix-wallet-subtab-scroll > .onix-wallet-panel-card {
+  display: block !important;
+  width: 100% !important;
+  height: auto !important;
+  min-height: fit-content !important;
+  max-height: none !important;
+  overflow: visible !important;
+  margin: 0 0 24px !important;
+  padding: 20px !important;
+  border-radius: 28px !important;
+}
+
+.onix-wallet-page-mode .onix-wallet-screen.onix-wallet-v2 .onix-wallet-subtab-scroll > .onix-wallet-panel-card .onix-wallet-card-content {
+  display: block !important;
+  height: auto !important;
+  min-height: fit-content !important;
   max-height: none !important;
   overflow: visible !important;
 }
