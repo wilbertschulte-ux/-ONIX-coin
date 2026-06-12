@@ -10688,6 +10688,184 @@ div.fixed.inset-0.z-\[90\] button.bg-yellow-400 {
   }
 }
 
+
+/* === ONIX launch compact cards/detail pages v3 === */
+.onix-launch-menu-v3 {
+  padding-top: 10px !important;
+  padding-bottom: 118px !important;
+}
+
+.onix-launch-menu-v3 .onix-launch-menu-list-v3 {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 14px !important;
+}
+
+.onix-launch-action-card-v3 {
+  width: 100% !important;
+  min-height: 94px !important;
+  display: grid !important;
+  grid-template-columns: 58px minmax(0, 1fr) auto 18px !important;
+  align-items: center !important;
+  gap: 14px !important;
+  padding: 16px 18px !important;
+  border-radius: 25px !important;
+  text-align: left !important;
+  background:
+    radial-gradient(circle at 88% 18%, rgba(246, 200, 51, 0.16), transparent 26%),
+    radial-gradient(circle at 14% 12%, rgba(45, 212, 255, 0.12), transparent 28%),
+    linear-gradient(145deg, rgba(12, 17, 38, 0.86), rgba(5, 8, 24, 0.94)) !important;
+  border: 1px solid rgba(154, 95, 255, 0.42) !important;
+  box-shadow:
+    0 14px 34px rgba(0, 0, 0, 0.34),
+    inset 0 0 26px rgba(255, 255, 255, 0.025),
+    0 0 22px rgba(124, 58, 237, 0.16) !important;
+  backdrop-filter: blur(14px) saturate(1.08) !important;
+  color: #fff !important;
+}
+
+.onix-launch-action-icon-v3 {
+  width: 58px !important;
+  height: 58px !important;
+  border-radius: 19px !important;
+  display: grid !important;
+  place-items: center !important;
+  font-size: 26px !important;
+  background:
+    radial-gradient(circle at 50% 35%, rgba(246, 200, 51, 0.62), rgba(168, 85, 247, 0.34) 62%, rgba(45, 212, 255, 0.10)) !important;
+  border: 1px solid rgba(216, 180, 254, 0.36) !important;
+  box-shadow: 0 0 24px rgba(168, 85, 247, 0.24) !important;
+}
+
+.onix-launch-action-text-v3 {
+  min-width: 0 !important;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 4px !important;
+}
+
+.onix-launch-action-text-v3 strong {
+  font-family: 'Orbitron', 'Exo 2', system-ui, sans-serif !important;
+  font-size: 19px !important;
+  font-weight: 950 !important;
+  color: #fff !important;
+  line-height: 1.05 !important;
+  letter-spacing: 0.015em !important;
+  text-shadow: 0 0 18px rgba(168, 85, 247, 0.42) !important;
+}
+
+.onix-launch-action-text-v3 em {
+  font-style: normal !important;
+  font-size: 12px !important;
+  line-height: 1.25 !important;
+  color: rgba(222, 226, 239, 0.68) !important;
+}
+
+.onix-launch-action-badge-v3 {
+  padding: 9px 12px !important;
+  border-radius: 999px !important;
+  border: 1px solid rgba(246, 200, 51, 0.34) !important;
+  background: rgba(33, 24, 8, 0.62) !important;
+  color: #f6d84b !important;
+  font-family: 'Orbitron', 'Exo 2', system-ui, sans-serif !important;
+  font-size: 12px !important;
+  font-weight: 900 !important;
+  white-space: nowrap !important;
+}
+
+.onix-launch-action-arrow-v3 {
+  color: rgba(222, 226, 239, 0.62) !important;
+  font-size: 34px !important;
+  line-height: 1 !important;
+}
+
+.onix-launch-detail-page-v3 {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 14px !important;
+  min-height: calc(var(--oc-app-height, 100vh) - 126px) !important;
+  padding-bottom: 126px !important;
+}
+
+.onix-launch-detail-title-v3 {
+  position: sticky !important;
+  top: 0 !important;
+  z-index: 32 !important;
+  min-height: 86px !important;
+  display: grid !important;
+  grid-template-columns: 64px minmax(0, 1fr) auto !important;
+  align-items: center !important;
+  gap: 12px !important;
+  padding: 12px 14px !important;
+  border-radius: 26px !important;
+  background:
+    radial-gradient(circle at 92% 12%, rgba(246, 200, 51, 0.14), transparent 24%),
+    linear-gradient(145deg, rgba(12, 17, 38, 0.94), rgba(5, 8, 24, 0.98)) !important;
+  border: 1px solid rgba(154, 95, 255, 0.48) !important;
+  box-shadow: 0 14px 34px rgba(0,0,0,0.36), 0 0 24px rgba(124,58,237,0.18) !important;
+  backdrop-filter: blur(16px) !important;
+}
+
+.onix-launch-detail-title-v3 strong {
+  min-width: 0 !important;
+  font-family: 'Orbitron', 'Exo 2', system-ui, sans-serif !important;
+  font-size: 20px !important;
+  font-weight: 950 !important;
+  color: #fff !important;
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+}
+
+.onix-launch-detail-title-v3 span {
+  padding: 9px 13px !important;
+  border-radius: 999px !important;
+  background: rgba(33, 24, 8, 0.62) !important;
+  border: 1px solid rgba(246, 200, 51, 0.32) !important;
+  color: #f6d84b !important;
+  font-family: 'Orbitron', 'Exo 2', system-ui, sans-serif !important;
+  font-size: 12px !important;
+  font-weight: 900 !important;
+}
+
+.onix-launch-detail-icon-v3 {
+  width: 58px !important;
+  height: 58px !important;
+  border-radius: 19px !important;
+  display: grid !important;
+  place-items: center !important;
+  font-size: 28px !important;
+  background: radial-gradient(circle at 50% 35%, rgba(246, 200, 51, 0.72), rgba(168, 85, 247, 0.34) 64%, rgba(45, 212, 255, 0.12)) !important;
+  border: 1px solid rgba(216, 180, 254, 0.36) !important;
+  box-shadow: 0 0 24px rgba(168, 85, 247, 0.24) !important;
+}
+
+.onix-launch-menu-v3.is-launch-detail-mode {
+  overflow-y: auto !important;
+  -webkit-overflow-scrolling: touch !important;
+  touch-action: pan-y !important;
+}
+
+@media (max-width: 390px) {
+  .onix-launch-action-card-v3 {
+    grid-template-columns: 52px minmax(0, 1fr) auto 16px !important;
+    gap: 10px !important;
+    padding: 14px !important;
+  }
+  .onix-launch-action-icon-v3 {
+    width: 52px !important;
+    height: 52px !important;
+    font-size: 24px !important;
+  }
+  .onix-launch-action-text-v3 strong {
+    font-size: 17px !important;
+  }
+  .onix-launch-action-badge-v3 {
+    font-size: 11px !important;
+    padding: 8px 10px !important;
+  }
+}
+
 `;
 
 
@@ -10696,6 +10874,8 @@ type Tab = 'home' | 'boosts' | 'tasks' | 'friends' | 'wallet' | 'launch';
 type BoostSubTab = 'tapping' | 'boosts' | 'other';
 
 type WalletPanel = 'overview' | 'chart' | 'withdrawals' | 'history';
+
+type LaunchPanel = 'overview' | 'about' | 'faq' | 'roadmap' | 'legal';
 
 type FloatingNumber = {
   id: number;
@@ -11806,6 +11986,7 @@ function App() {
   const [transactionFilter, setTransactionFilter] =
     useState<TransactionFilter>('all');
   const [walletPanel, setWalletPanel] = useState<WalletPanel>('overview');
+  const [launchPanel, setLaunchPanel] = useState<LaunchPanel>('overview');
   const [adminEconomyDashboard, setAdminEconomyDashboard] =
     useState<AdminEconomyDashboard | null>(null);
   const [adminEconomyVisible, setAdminEconomyVisible] = useState(false);
@@ -17716,154 +17897,203 @@ body:not(.onix-body-home-lock) {
         </div>
       )}
 
-      {activeTab === 'launch' && (
-        <div className="onix-launch-screen onix-launch-v2 px-5 mt-0 space-y-4">
-          <div className="onix-launch-hero-card rounded-3xl border border-yellow-400/20 bg-[#111827] p-6 text-left shadow-xl">
-            <div className="mb-5 flex items-center gap-3">
-              <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-yellow-400 text-3xl">
-                🚀
+      {activeTab === 'launch' && (() => {
+        const launchCards = [
+          {
+            id: 'about' as const,
+            icon: '🚀',
+            title: 'ONIX COIN',
+            subtitle: 'Что это за mini app',
+            badge: `v${appVersionInfo?.version || '1.0.0'}`,
+          },
+          {
+            id: 'faq' as const,
+            icon: '❓',
+            title: 'FAQ',
+            subtitle: 'Ответы на частые вопросы',
+            badge: '5',
+          },
+          {
+            id: 'roadmap' as const,
+            icon: '🗺',
+            title: 'Roadmap',
+            subtitle: 'Планы развития ONIX',
+            badge: 'Beta',
+          },
+          {
+            id: 'legal' as const,
+            icon: '📄',
+            title: 'Privacy policy / Terms',
+            subtitle: 'Правила и данные',
+            badge: 'ONIX',
+          },
+        ];
+
+        const faqItems = [
+          {
+            q: 'Как заработать ONIX?',
+            a: 'Тапайте монету, забирайте оффлайн-майнинг, выполняйте задания, приглашайте друзей и участвуйте в сезонах.',
+          },
+          {
+            q: 'Как работает энергия?',
+            a: 'Каждый тап тратит энергию. Энергия восстанавливается со временем и улучшается через апгрейды.',
+          },
+          {
+            q: 'Как получить реферальный бонус?',
+            a: 'Новый игрок получает стартовый бонус. Пригласивший получает бонус после активности приглашённого игрока.',
+          },
+          {
+            q: 'Как работают сезоны?',
+            a: 'Каждую неделю считается рейтинг по заработанным ONIX. Лучшие игроки и команды получают призы.',
+          },
+          {
+            q: 'Можно ли вывести ONIX?',
+            a: 'Заявки на вывод доступны после достижения минимальной суммы. Перед выводом действует антибот-проверка.',
+          },
+        ];
+
+        const roadmapItems = [
+          ['✅', 'Tap-to-earn core', 'Тапы, энергия, апгрейды и майнинг'],
+          ['✅', 'Seasons & teams', 'Сезонные призы, команды и рейтинги'],
+          ['✅', 'Growth tools', 'Промокоды, welcome bonus и share card'],
+          ['🟡', 'Public beta', 'Тест с реальными игроками и балансировка экономики'],
+        ];
+
+        const launchTitle =
+          launchPanel === 'about'
+            ? 'ONIX COIN'
+            : launchPanel === 'faq'
+            ? 'FAQ'
+            : launchPanel === 'roadmap'
+            ? 'Roadmap'
+            : launchPanel === 'legal'
+            ? 'Privacy / Terms'
+            : 'Запуск';
+
+        return (
+          <div className={`onix-launch-screen onix-launch-v2 onix-launch-menu-v3 px-5 mt-0 ${launchPanel !== 'overview' ? 'is-launch-detail-mode' : ''}`}>
+            {launchPanel === 'overview' ? (
+              <div className="onix-launch-menu-list-v3">
+                {launchCards.map((card) => (
+                  <button
+                    key={card.id}
+                    type="button"
+                    className="onix-launch-action-card-v3"
+                    onClick={() => setLaunchPanel(card.id)}
+                  >
+                    <span className="onix-launch-action-icon-v3">{card.icon}</span>
+                    <span className="onix-launch-action-text-v3">
+                      <strong>{card.title}</strong>
+                      <em>{card.subtitle}</em>
+                    </span>
+                    <span className="onix-launch-action-badge-v3">{card.badge}</span>
+                    <b className="onix-launch-action-arrow-v3">›</b>
+                  </button>
+                ))}
               </div>
-
-              <div>
-                <h2 className="text-2xl font-black text-white">ONIX COIN</h2>
-                <p className="text-sm text-gray-400">
-                  Tap. Mine. Invite. Compete.
-                </p>
-              </div>
-            </div>
-
-            <p className="text-sm leading-6 text-gray-300">
-              ONIX COIN — это Telegram Mini App, где игроки зарабатывают ONIX за
-              тапы, майнинг, задания, команды, сезоны и приглашения друзей.
-            </p>
-
-            <div className="mt-3 grid grid-cols-2 gap-3">
-              <div className="rounded-2xl bg-[#0a0f1c] p-4">
-                <p className="text-xs text-gray-400">Игроков</p>
-                <p className="mt-1 font-bold text-yellow-400">
-                  {backendHealth?.users ?? '—'}
-                </p>
-              </div>
-
-              <div className="rounded-2xl bg-[#0a0f1c] p-4">
-                <p className="text-xs text-gray-400">Версия</p>
-                <p className="mt-1 font-bold text-yellow-400">
-                  v{appVersionInfo?.version || '1.0.0'}
-                </p>
-              </div>
-            </div>
-
-            <button
-              onClick={shareReferralLink}
-              className="mt-5 w-full rounded-2xl bg-yellow-400 py-4 text-lg font-bold text-black active:scale-95"
-            >
-              📣 Пригласить в ONIX COIN
-            </button>
-          </div>
-
-          <div className="onix-launch-panel rounded-3xl border border-yellow-400/20 bg-[#111827] p-5 text-left shadow-xl">
-            <h3 className="mb-4 text-xl font-bold text-white">❓ FAQ</h3>
-
-            <div className="space-y-3">
-              {[
-                {
-                  q: 'Как заработать ONIX?',
-                  a: 'Тапайте монету, забирайте оффлайн-майнинг, выполняйте задания, приглашайте друзей и участвуйте в сезонах.',
-                },
-                {
-                  q: 'Как работает энергия?',
-                  a: 'Каждый тап тратит энергию. Энергия восстанавливается со временем и улучшается через апгрейды.',
-                },
-                {
-                  q: 'Как получить реферальный бонус?',
-                  a: 'Новый игрок получает стартовый бонус. Пригласивший получает бонус после активности приглашённого игрока.',
-                },
-                {
-                  q: 'Как работают сезоны?',
-                  a: 'Каждую неделю считается рейтинг по заработанным ONIX. Лучшие игроки и команды получают призы.',
-                },
-                {
-                  q: 'Можно ли вывести ONIX?',
-                  a: 'Заявки на вывод доступны после достижения минимальной суммы. Перед выводом действует антибот-проверка.',
-                },
-              ].map((item) => (
-                <div key={item.q} className="rounded-2xl bg-[#0a0f1c] p-4">
-                  <p className="font-bold text-white">{item.q}</p>
-                  <p className="mt-2 text-sm leading-6 text-gray-400">{item.a}</p>
+            ) : (
+              <div className="onix-launch-detail-page-v3">
+                <div className="onix-launch-detail-title-v3">
+                  <button type="button" className="onix-profile-v75-back" onClick={() => setLaunchPanel('overview')}>‹</button>
+                  <strong>{launchTitle}</strong>
+                  <span>ONIX</span>
                 </div>
-              ))}
-            </div>
-          </div>
 
-          <div className="onix-launch-panel rounded-3xl border border-yellow-400/20 bg-[#111827] p-5 text-left shadow-xl">
-            <h3 className="mb-4 text-xl font-bold text-white">🗺 Roadmap</h3>
+                {launchPanel === 'about' && (
+                  <div className="onix-launch-panel rounded-3xl p-5 text-left shadow-xl">
+                    <div className="mb-5 flex items-center gap-3">
+                      <div className="onix-launch-detail-icon-v3">🚀</div>
+                      <div>
+                        <h2 className="text-2xl font-black text-white">ONIX COIN</h2>
+                        <p className="text-sm text-gray-400">Tap. Mine. Invite. Compete.</p>
+                      </div>
+                    </div>
 
-            <div className="space-y-3">
-              {[
-                ['✅', 'Tap-to-earn core', 'Тапы, энергия, апгрейды и майнинг'],
-                ['✅', 'Seasons & teams', 'Сезонные призы, команды и рейтинги'],
-                ['✅', 'Growth tools', 'Промокоды, welcome bonus и share card'],
-                ['🟡', 'Public beta', 'Тест с реальными игроками и балансировка экономики'],
-                ['🔜', 'Listing preparation', 'Подготовка к будущему листингу и внешним интеграциям'],
-              ].map(([icon, title, text]) => (
-                <div key={title} className="flex gap-3 rounded-2xl bg-[#0a0f1c] p-4">
-                  <div className="text-2xl">{icon}</div>
-                  <div>
-                    <p className="font-bold text-white">{title}</p>
-                    <p className="mt-1 text-sm text-gray-400">{text}</p>
+                    <p className="text-sm leading-6 text-gray-300">
+                      ONIX COIN — это Telegram Mini App, где игроки зарабатывают ONIX за
+                      тапы, майнинг, задания, команды, сезоны и приглашения друзей.
+                    </p>
+
+                    <div className="mt-4 grid grid-cols-2 gap-3">
+                      <div className="rounded-2xl p-4">
+                        <p className="text-xs text-gray-400">Игроков</p>
+                        <p className="mt-1 font-bold text-yellow-400">{backendHealth?.users ?? '—'}</p>
+                      </div>
+                      <div className="rounded-2xl p-4">
+                        <p className="text-xs text-gray-400">Версия</p>
+                        <p className="mt-1 font-bold text-yellow-400">v{appVersionInfo?.version || '1.0.0'}</p>
+                      </div>
+                    </div>
+
+                    <button
+                      onClick={shareReferralLink}
+                      className="mt-5 w-full rounded-2xl bg-yellow-400 py-4 text-lg font-bold text-black active:scale-95"
+                    >
+                      📣 Пригласить в ONIX COIN
+                    </button>
                   </div>
-                </div>
-              ))}
-            </div>
+                )}
+
+                {launchPanel === 'faq' && (
+                  <div className="onix-launch-panel rounded-3xl p-5 text-left shadow-xl">
+                    <h3 className="mb-4 text-xl font-bold text-white">❓ FAQ</h3>
+                    <div className="space-y-3">
+                      {faqItems.map((item) => (
+                        <div key={item.q} className="rounded-2xl p-4">
+                          <p className="font-bold text-white">{item.q}</p>
+                          <p className="mt-2 text-sm leading-6 text-gray-400">{item.a}</p>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {launchPanel === 'roadmap' && (
+                  <div className="onix-launch-panel rounded-3xl p-5 text-left shadow-xl">
+                    <h3 className="mb-4 text-xl font-bold text-white">🗺 Roadmap</h3>
+                    <div className="space-y-3">
+                      {roadmapItems.map(([icon, title, text]) => (
+                        <div key={title} className="flex gap-3 rounded-2xl p-4">
+                          <div className="text-2xl">{icon}</div>
+                          <div>
+                            <p className="font-bold text-white">{title}</p>
+                            <p className="mt-1 text-sm text-gray-400">{text}</p>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {launchPanel === 'legal' && (
+                  <div className="onix-launch-panel rounded-3xl p-5 text-left shadow-xl">
+                    <h3 className="mb-4 text-xl font-bold text-white">📄 Privacy Policy / Terms</h3>
+                    <div className="space-y-3 text-sm leading-6 text-gray-400">
+                      <p>
+                        ONIX COIN использует Telegram ID, username и игровые действия
+                        только для работы приложения, рейтингов, прогресса, заданий,
+                        антиабуза и заявок на вывод.
+                      </p>
+                      <p>
+                        Запрещены боты, мультиаккаунты, накрутка рефералов, обход
+                        лимитов и любые попытки нарушить экономику игры.
+                      </p>
+                      <p>
+                        Администратор может заморозить подозрительный аккаунт, отклонить
+                        вывод или скорректировать баланс при нарушениях.
+                      </p>
+                      <p>
+                        ONIX внутри приложения является игровой единицей. Условия вывода
+                        и будущие интеграции могут изменяться во время публичного теста.
+                      </p>
+                    </div>
+                  </div>
+                )}
+              </div>
+            )}
           </div>
-
-          <div className="onix-launch-panel rounded-3xl border border-yellow-400/20 bg-[#111827] p-5 text-left shadow-xl">
-            <h3 className="mb-4 text-xl font-bold text-white">📄 Privacy Policy / Terms</h3>
-
-            <div className="space-y-3 text-sm leading-6 text-gray-400">
-              <p>
-                ONIX COIN использует Telegram ID, username и игровые действия
-                только для работы приложения, рейтингов, прогресса, заданий,
-                антиабуза и заявок на вывод.
-              </p>
-
-              <p>
-                Запрещены боты, мультиаккаунты, накрутка рефералов, обход
-                лимитов и любые попытки нарушить экономику игры.
-              </p>
-
-              <p>
-                Администратор может заморозить подозрительный аккаунт, отклонить
-                вывод или скорректировать баланс при нарушениях.
-              </p>
-
-              <p>
-                ONIX внутри приложения является игровой единицей. Условия вывода
-                и будущие интеграции могут изменяться во время публичного теста.
-              </p>
-            </div>
-          </div>
-
-          <div className="onix-launch-panel onix-launch-coming-card rounded-3xl border border-yellow-400/20 bg-gradient-to-br from-yellow-400/20 to-[#111827] p-6 text-center shadow-xl">
-            <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-yellow-400 text-3xl">
-              💎
-            </div>
-
-            <h3 className="text-2xl font-black text-white">Coming soon: listing</h3>
-            <p className="mt-3 text-sm leading-6 text-gray-300">
-              Публичный тест поможет проверить экономику, антиабуз и активность
-              игроков перед следующими этапами развития ONIX COIN.
-            </p>
-
-            <div className="mt-5 rounded-2xl bg-[#0a0f1c] p-4">
-              <p className="text-xs text-gray-400">Статус</p>
-              <p className="mt-1 font-bold text-yellow-400">
-                Public beta preparation
-              </p>
-            </div>
-          </div>
-        </div>
-      )}
+        );
+      })()}
 
 
       {activeTab === 'boosts' && (() => {
