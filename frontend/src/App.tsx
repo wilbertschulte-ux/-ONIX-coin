@@ -10565,6 +10565,129 @@ div.fixed.inset-0.z-\[90\] button.bg-yellow-400 {
   }
 }
 
+
+/* === ONIX launch tab redesign v1 === */
+.onix-launch-v2 {
+  height: var(--oc-app-height, 100vh) !important;
+  max-height: var(--oc-app-height, 100vh) !important;
+  overflow-y: auto !important;
+  -webkit-overflow-scrolling: touch !important;
+  overscroll-behavior: contain !important;
+  padding-top: 10px !important;
+  padding-bottom: 118px !important;
+  scroll-padding-top: 10px !important;
+}
+
+.onix-launch-v2 .onix-launch-hero-card {
+  position: sticky !important;
+  top: 0 !important;
+  z-index: 30 !important;
+  margin-top: 0 !important;
+  padding: 18px !important;
+  border-radius: 28px !important;
+  background:
+    radial-gradient(circle at 88% 12%, rgba(246, 200, 51, 0.20), transparent 28%),
+    radial-gradient(circle at 16% 2%, rgba(45, 212, 255, 0.16), transparent 30%),
+    radial-gradient(circle at 52% 100%, rgba(168, 85, 247, 0.18), transparent 38%),
+    linear-gradient(145deg, rgba(13, 18, 39, 0.94), rgba(8, 10, 28, 0.98)) !important;
+  border: 1px solid rgba(154, 95, 255, 0.52) !important;
+  box-shadow:
+    0 18px 48px rgba(0, 0, 0, 0.48),
+    0 0 34px rgba(168, 85, 247, 0.28),
+    inset 0 0 28px rgba(255, 255, 255, 0.035) !important;
+  backdrop-filter: blur(18px) saturate(1.08) !important;
+}
+
+.onix-launch-v2 .onix-launch-hero-card .mb-5 {
+  margin-bottom: 14px !important;
+}
+
+.onix-launch-v2 .onix-launch-hero-card .h-14 {
+  width: 56px !important;
+  height: 56px !important;
+  border-radius: 18px !important;
+  background:
+    radial-gradient(circle at 50% 35%, rgba(255, 232, 103, 0.95), rgba(246, 200, 51, 0.62) 44%, rgba(168, 85, 247, 0.34) 74%, rgba(45, 212, 255, 0.12)) !important;
+  color: #070914 !important;
+  box-shadow:
+    0 0 26px rgba(246, 200, 51, 0.34),
+    0 0 32px rgba(168, 85, 247, 0.26),
+    inset 0 0 16px rgba(255, 255, 255, 0.18) !important;
+}
+
+.onix-launch-v2 .onix-launch-hero-card h2 {
+  font-family: 'Orbitron', 'Exo 2', system-ui, sans-serif !important;
+  color: #fff !important;
+  letter-spacing: 0.03em !important;
+  text-shadow: 0 0 22px rgba(168, 85, 247, 0.45) !important;
+}
+
+.onix-launch-v2 .onix-launch-hero-card p {
+  color: rgba(222, 226, 239, 0.82) !important;
+}
+
+.onix-launch-v2 .onix-launch-hero-card .grid .rounded-2xl {
+  background:
+    linear-gradient(180deg, rgba(8, 12, 31, 0.86), rgba(5, 8, 24, 0.95)) !important;
+  border: 1px solid rgba(154, 95, 255, 0.26) !important;
+  box-shadow: inset 0 0 22px rgba(255, 255, 255, 0.025) !important;
+}
+
+.onix-launch-v2 .onix-launch-hero-card button {
+  border-radius: 20px !important;
+  background: linear-gradient(135deg, #2dd4ff, #a855f7 52%, #f6c833) !important;
+  color: #fff !important;
+  border: 1px solid rgba(216, 180, 254, 0.6) !important;
+  text-shadow: 0 0 12px rgba(0, 0, 0, 0.35) !important;
+  box-shadow:
+    0 0 28px rgba(168, 85, 247, 0.42),
+    0 0 18px rgba(45, 212, 255, 0.22),
+    inset 0 0 16px rgba(255, 255, 255, 0.13) !important;
+}
+
+.onix-launch-v2 .onix-launch-panel {
+  background:
+    radial-gradient(circle at 92% 8%, rgba(168, 85, 247, 0.14), transparent 30%),
+    linear-gradient(180deg, rgba(12, 17, 38, 0.76), rgba(5, 8, 24, 0.92)) !important;
+  border: 1px solid rgba(154, 95, 255, 0.34) !important;
+  box-shadow:
+    0 16px 42px rgba(0, 0, 0, 0.34),
+    0 0 28px rgba(124, 58, 237, 0.14),
+    inset 0 0 24px rgba(255, 255, 255, 0.025) !important;
+  backdrop-filter: blur(12px) !important;
+}
+
+.onix-launch-v2 .onix-launch-panel h3 {
+  font-family: 'Orbitron', 'Exo 2', system-ui, sans-serif !important;
+  letter-spacing: 0.02em !important;
+  color: #fff !important;
+}
+
+.onix-launch-v2 .onix-launch-panel .rounded-2xl,
+.onix-launch-v2 .onix-launch-panel .flex {
+  background: linear-gradient(180deg, rgba(8, 12, 31, 0.82), rgba(5, 8, 24, 0.94)) !important;
+  border: 1px solid rgba(154, 95, 255, 0.18) !important;
+}
+
+.onix-launch-v2 .onix-launch-coming-card {
+  margin-bottom: 10px !important;
+}
+
+@media (max-width: 390px) {
+  .onix-launch-v2 {
+    padding-left: 16px !important;
+    padding-right: 16px !important;
+  }
+
+  .onix-launch-v2 .onix-launch-hero-card {
+    padding: 16px !important;
+  }
+
+  .onix-launch-v2 .onix-launch-hero-card .text-2xl {
+    font-size: 1.28rem !important;
+  }
+}
+
 `;
 
 
@@ -17594,8 +17717,8 @@ body:not(.onix-body-home-lock) {
       )}
 
       {activeTab === 'launch' && (
-        <div className="onix-launch-screen px-5 mt-8 space-y-5">
-          <div className="rounded-3xl border border-yellow-400/20 bg-[#111827] p-6 text-left shadow-xl">
+        <div className="onix-launch-screen onix-launch-v2 px-5 mt-0 space-y-4">
+          <div className="onix-launch-hero-card rounded-3xl border border-yellow-400/20 bg-[#111827] p-6 text-left shadow-xl">
             <div className="mb-5 flex items-center gap-3">
               <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-yellow-400 text-3xl">
                 🚀
@@ -17638,7 +17761,7 @@ body:not(.onix-body-home-lock) {
             </button>
           </div>
 
-          <div className="rounded-3xl border border-yellow-400/20 bg-[#111827] p-5 text-left shadow-xl">
+          <div className="onix-launch-panel rounded-3xl border border-yellow-400/20 bg-[#111827] p-5 text-left shadow-xl">
             <h3 className="mb-4 text-xl font-bold text-white">❓ FAQ</h3>
 
             <div className="space-y-3">
@@ -17672,7 +17795,7 @@ body:not(.onix-body-home-lock) {
             </div>
           </div>
 
-          <div className="rounded-3xl border border-yellow-400/20 bg-[#111827] p-5 text-left shadow-xl">
+          <div className="onix-launch-panel rounded-3xl border border-yellow-400/20 bg-[#111827] p-5 text-left shadow-xl">
             <h3 className="mb-4 text-xl font-bold text-white">🗺 Roadmap</h3>
 
             <div className="space-y-3">
@@ -17694,7 +17817,7 @@ body:not(.onix-body-home-lock) {
             </div>
           </div>
 
-          <div className="rounded-3xl border border-yellow-400/20 bg-[#111827] p-5 text-left shadow-xl">
+          <div className="onix-launch-panel rounded-3xl border border-yellow-400/20 bg-[#111827] p-5 text-left shadow-xl">
             <h3 className="mb-4 text-xl font-bold text-white">📄 Privacy Policy / Terms</h3>
 
             <div className="space-y-3 text-sm leading-6 text-gray-400">
@@ -17721,7 +17844,7 @@ body:not(.onix-body-home-lock) {
             </div>
           </div>
 
-          <div className="rounded-3xl border border-yellow-400/20 bg-gradient-to-br from-yellow-400/20 to-[#111827] p-6 text-center shadow-xl">
+          <div className="onix-launch-panel onix-launch-coming-card rounded-3xl border border-yellow-400/20 bg-gradient-to-br from-yellow-400/20 to-[#111827] p-6 text-center shadow-xl">
             <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-yellow-400 text-3xl">
               💎
             </div>
