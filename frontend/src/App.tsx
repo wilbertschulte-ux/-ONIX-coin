@@ -17956,7 +17956,6 @@ body:not(.onix-body-home-lock) {
           ['✅', 'Tap-to-earn core', 'Тапы, энергия, апгрейды и майнинг'],
           ['✅', 'Seasons & teams', 'Сезонные призы, команды и рейтинги'],
           ['✅', 'Growth tools', 'Промокоды, welcome bonus и share card'],
-          ['🟡', 'Public beta', 'Тест с реальными игроками и балансировка экономики'],
         ];
 
         const launchTitle =
