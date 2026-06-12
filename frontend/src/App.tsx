@@ -10430,6 +10430,141 @@ div.fixed.inset-0.z-\[90\] button.bg-yellow-400 {
   }
 }
 
+
+/* Wallet sections final layout: profile-like full width action blocks */
+.onix-wallet-screen.onix-wallet-v2 .onix-wallet-section-cards-v3 {
+  width: 100% !important;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 12px !important;
+  margin-top: 14px !important;
+  padding-bottom: calc(110px + env(safe-area-inset-bottom)) !important;
+}
+
+.onix-wallet-screen.onix-wallet-v2 .onix-wallet-section-card-v3 {
+  appearance: none !important;
+  -webkit-appearance: none !important;
+  width: 100% !important;
+  min-height: 88px !important;
+  display: grid !important;
+  grid-template-columns: 54px minmax(0, 1fr) 24px !important;
+  align-items: center !important;
+  gap: 14px !important;
+  padding: 15px 16px !important;
+  border-radius: 24px !important;
+  border: 1px solid rgba(132, 96, 255, 0.34) !important;
+  background:
+    radial-gradient(circle at 12% 12%, rgba(45, 212, 255, 0.12), transparent 36%),
+    radial-gradient(circle at 90% 0%, rgba(168, 85, 247, 0.22), transparent 44%),
+    linear-gradient(145deg, rgba(8, 10, 31, 0.92), rgba(4, 7, 22, 0.96)) !important;
+  box-shadow:
+    inset 0 0 22px rgba(124, 58, 237, 0.10),
+    0 16px 32px rgba(0, 0, 0, 0.24) !important;
+  color: #fff !important;
+  text-align: left !important;
+  overflow: hidden !important;
+  position: relative !important;
+}
+
+.onix-wallet-screen.onix-wallet-v2 .onix-wallet-section-card-v3::before {
+  content: '' !important;
+  position: absolute !important;
+  inset: 0 !important;
+  pointer-events: none !important;
+  background:
+    linear-gradient(90deg, transparent, rgba(255,255,255,0.045), transparent),
+    repeating-linear-gradient(90deg, rgba(124,58,237,0.055) 0 1px, transparent 1px 78px) !important;
+  opacity: 0.55 !important;
+}
+
+.onix-wallet-screen.onix-wallet-v2 .onix-wallet-section-icon-v3,
+.onix-wallet-screen.onix-wallet-v2 .onix-wallet-section-text-v3,
+.onix-wallet-screen.onix-wallet-v2 .onix-wallet-section-arrow-v3 {
+  position: relative !important;
+  z-index: 1 !important;
+}
+
+.onix-wallet-screen.onix-wallet-v2 .onix-wallet-section-icon-v3 {
+  width: 54px !important;
+  height: 54px !important;
+  display: grid !important;
+  place-items: center !important;
+  border-radius: 18px !important;
+  border: 1px solid rgba(45, 212, 255, 0.22) !important;
+  background:
+    radial-gradient(circle at 42% 32%, rgba(45, 212, 255, 0.28), rgba(124, 58, 237, 0.22) 45%, rgba(5, 9, 27, 0.94) 74%) !important;
+  box-shadow: 0 0 22px rgba(168, 85, 247, 0.16) !important;
+  font-size: 24px !important;
+  line-height: 1 !important;
+}
+
+.onix-wallet-screen.onix-wallet-v2 .onix-wallet-section-text-v3 {
+  min-width: 0 !important;
+  display: block !important;
+}
+
+.onix-wallet-screen.onix-wallet-v2 .onix-wallet-section-text-v3 strong {
+  display: block !important;
+  font-family: 'Exo 2', system-ui, sans-serif !important;
+  font-size: 19px !important;
+  line-height: 1.08 !important;
+  font-weight: 1000 !important;
+  color: #fff !important;
+  letter-spacing: 0.01em !important;
+  white-space: normal !important;
+}
+
+.onix-wallet-screen.onix-wallet-v2 .onix-wallet-section-text-v3 p {
+  margin: 5px 0 0 !important;
+  font-family: 'Exo 2', system-ui, sans-serif !important;
+  font-size: 13px !important;
+  line-height: 1.2 !important;
+  font-weight: 800 !important;
+  color: rgba(205, 210, 231, 0.68) !important;
+}
+
+.onix-wallet-screen.onix-wallet-v2 .onix-wallet-section-arrow-v3 {
+  justify-self: end !important;
+  color: rgba(250, 204, 21, 0.75) !important;
+  font-size: 30px !important;
+  line-height: 1 !important;
+  font-weight: 900 !important;
+}
+
+.onix-wallet-screen.onix-wallet-v2 .onix-wallet-section-card-v3:active {
+  transform: scale(0.985) !important;
+}
+
+@media (max-width: 430px) {
+  .onix-wallet-screen.onix-wallet-v2 .onix-wallet-section-cards-v3 {
+    gap: 11px !important;
+    margin-top: 12px !important;
+  }
+
+  .onix-wallet-screen.onix-wallet-v2 .onix-wallet-section-card-v3 {
+    min-height: 82px !important;
+    grid-template-columns: 50px minmax(0, 1fr) 22px !important;
+    gap: 12px !important;
+    padding: 13px 14px !important;
+    border-radius: 22px !important;
+  }
+
+  .onix-wallet-screen.onix-wallet-v2 .onix-wallet-section-icon-v3 {
+    width: 50px !important;
+    height: 50px !important;
+    border-radius: 17px !important;
+    font-size: 22px !important;
+  }
+
+  .onix-wallet-screen.onix-wallet-v2 .onix-wallet-section-text-v3 strong {
+    font-size: 17px !important;
+  }
+
+  .onix-wallet-screen.onix-wallet-v2 .onix-wallet-section-text-v3 p {
+    font-size: 12px !important;
+  }
+}
+
 `;
 
 
@@ -19473,32 +19608,32 @@ body:not(.onix-body-home-lock) {
                 </div>
               </div>
 
-              <div className="onix-wallet-nav-cards">
-                <button type="button" className="onix-wallet-nav-card" onClick={() => setWalletPanel('chart')}>
-                  <span>📈</span>
-                  <div>
+              <div className="onix-wallet-section-cards-v3">
+                <button type="button" className="onix-wallet-section-card-v3" onClick={() => setWalletPanel('chart')}>
+                  <span className="onix-wallet-section-icon-v3">📈</span>
+                  <div className="onix-wallet-section-text-v3">
                     <strong>График заработка</strong>
                     <p>Доходы за последние 7 дней</p>
                   </div>
-                  <b>›</b>
+                  <b className="onix-wallet-section-arrow-v3">›</b>
                 </button>
 
-                <button type="button" className="onix-wallet-nav-card" onClick={() => setWalletPanel('withdrawals')}>
-                  <span>💸</span>
-                  <div>
+                <button type="button" className="onix-wallet-section-card-v3" onClick={() => setWalletPanel('withdrawals')}>
+                  <span className="onix-wallet-section-icon-v3">💸</span>
+                  <div className="onix-wallet-section-text-v3">
                     <strong>Заявки на вывод</strong>
                     <p>{withdrawalRequests.length} заявок · прогресс {withdrawProgress.toFixed(1)}%</p>
                   </div>
-                  <b>›</b>
+                  <b className="onix-wallet-section-arrow-v3">›</b>
                 </button>
 
-                <button type="button" className="onix-wallet-nav-card" onClick={() => setWalletPanel('history')}>
-                  <span>🧾</span>
-                  <div>
+                <button type="button" className="onix-wallet-section-card-v3" onClick={() => setWalletPanel('history')}>
+                  <span className="onix-wallet-section-icon-v3">🧾</span>
+                  <div className="onix-wallet-section-text-v3">
                     <strong>История операций</strong>
                     <p>{filteredTransactions.length} операций</p>
                   </div>
-                  <b>›</b>
+                  <b className="onix-wallet-section-arrow-v3">›</b>
                 </button>
               </div>
             </>
