@@ -7350,6 +7350,44 @@ div.fixed.inset-0.z-\[90\] button.bg-yellow-400 {
 .onix-admin-hub-grid button span{grid-row:1 / span 2!important;width:44px!important;height:44px!important;display:grid!important;place-items:center!important;border-radius:16px!important;border:1px solid rgba(45,212,255,.18)!important;background:radial-gradient(circle at 45% 35%,rgba(45,212,255,.22),rgba(9,42,66,.90) 70%)!important;font-size:22px!important;}
 .onix-admin-hub-grid button strong{display:block!important;font-family:'Exo 2',system-ui,sans-serif!important;font-size:16px!important;font-weight:1000!important;color:#fff!important;line-height:1.05!important;}
 .onix-admin-hub-grid button em{display:block!important;margin-top:4px!important;font-style:normal!important;color:rgba(218,208,255,.64)!important;font-size:12px!important;font-weight:800!important;}
+.onix-admin-hub-page{display:flex!important;flex-direction:column!important;max-height:calc(var(--oc-app-height, 100dvh) - 190px)!important;overflow:hidden!important;}
+.onix-admin-sticky-top{flex:0 0 auto!important;position:sticky!important;top:0!important;z-index:6!important;padding-bottom:8px!important;background:linear-gradient(180deg,rgba(4,6,18,.98),rgba(4,6,18,.86) 78%,rgba(4,6,18,0))!important;}
+.onix-admin-hub-scroll,.onix-admin-detail-scroll{min-height:0!important;overflow-y:auto!important;-webkit-overflow-scrolling:touch!important;touch-action:pan-y!important;overscroll-behavior:contain!important;padding-bottom:110px!important;}
+.onix-admin-detail-scroll{display:block!important;}
+.onix-admin-section-card{border-radius:24px!important;border:1px solid rgba(124,58,237,.28)!important;background:linear-gradient(145deg,rgba(14,16,45,.96),rgba(5,8,24,.98))!important;box-shadow:inset 0 0 20px rgba(132,86,255,.08),0 0 24px rgba(45,212,255,.06)!important;padding:16px!important;}
+.onix-admin-section-head{display:flex!important;align-items:center!important;justify-content:space-between!important;gap:12px!important;margin-bottom:12px!important;}
+.onix-admin-section-head strong{font-family:'Exo 2',system-ui,sans-serif!important;font-size:20px!important;font-weight:1000!important;color:#fff!important;}
+.onix-admin-section-head span{border-radius:999px!important;border:1px solid rgba(246,200,51,.3)!important;background:rgba(28,19,9,.72)!important;color:#f6c833!important;padding:8px 10px!important;font-size:12px!important;font-weight:1000!important;}
+.onix-admin-muted,.onix-admin-empty{color:rgba(218,208,255,.68)!important;font-size:13px!important;font-weight:800!important;line-height:1.35!important;}
+.onix-admin-empty{text-align:center!important;padding:18px!important;border-radius:18px!important;background:rgba(5,8,24,.72)!important;}
+.onix-admin-list{display:grid!important;gap:10px!important;margin-top:12px!important;}
+.onix-admin-row{width:100%!important;display:flex!important;align-items:center!important;justify-content:space-between!important;gap:12px!important;border-radius:18px!important;border:1px solid rgba(124,58,237,.20)!important;background:rgba(5,8,24,.82)!important;padding:12px!important;color:#fff!important;text-align:left!important;}
+.onix-admin-row.as-button{appearance:none!important;border:1px solid rgba(124,58,237,.24)!important;}
+.onix-admin-row.is-column{display:block!important;}
+.onix-admin-row strong{display:block!important;color:#fff!important;font-weight:1000!important;}
+.onix-admin-row em{display:block!important;margin-top:3px!important;color:rgba(218,208,255,.62)!important;font-style:normal!important;font-size:12px!important;font-weight:800!important;}
+.onix-admin-row p{margin:8px 0 0!important;color:rgba(218,208,255,.7)!important;font-size:12px!important;}
+.onix-admin-row b{color:#f6c833!important;font-weight:1000!important;white-space:nowrap!important;}
+.onix-admin-row-top{display:flex!important;align-items:center!important;justify-content:space-between!important;gap:12px!important;}
+.onix-admin-actions{display:grid!important;grid-template-columns:1fr 1fr!important;gap:8px!important;margin-top:10px!important;}
+.onix-admin-actions button,.onix-admin-secondary,.onix-admin-primary{border:0!important;border-radius:16px!important;padding:12px!important;font-weight:1000!important;active:scale(.98)!important;}
+.onix-admin-actions button,.onix-admin-secondary{background:rgba(10,12,35,.96)!important;color:#fff!important;border:1px solid rgba(124,58,237,.22)!important;}
+.onix-admin-primary{width:100%!important;margin-top:12px!important;background:linear-gradient(135deg,#2dd4ff,#c026d3)!important;color:#fff!important;box-shadow:0 0 22px rgba(192,38,211,.22)!important;}
+.onix-admin-secondary{width:100%!important;margin-top:10px!important;display:block!important;}
+.onix-admin-input{width:100%!important;border-radius:16px!important;border:1px solid rgba(124,58,237,.22)!important;background:rgba(5,8,24,.92)!important;color:#fff!important;padding:12px!important;outline:none!important;font-weight:900!important;}
+.onix-admin-textarea{min-height:92px!important;resize:none!important;}
+.onix-admin-search-line{display:grid!important;grid-template-columns:1fr auto!important;gap:8px!important;}
+.onix-admin-search-line button{border:0!important;border-radius:16px!important;background:linear-gradient(135deg,#2dd4ff,#c026d3)!important;color:#fff!important;font-weight:1000!important;padding:0 16px!important;}
+.onix-admin-metrics-grid{display:grid!important;grid-template-columns:1fr 1fr!important;gap:10px!important;margin:12px 0!important;}
+.onix-admin-metrics-grid div{border-radius:16px!important;border:1px solid rgba(124,58,237,.18)!important;background:rgba(5,8,24,.82)!important;padding:12px!important;}
+.onix-admin-metrics-grid span{display:block!important;color:rgba(218,208,255,.58)!important;font-size:12px!important;font-weight:800!important;}
+.onix-admin-metrics-grid strong{display:block!important;color:#f6c833!important;font-size:16px!important;font-weight:1000!important;margin-top:4px!important;}
+.onix-admin-user-card{margin-top:12px!important;border-radius:20px!important;border:1px solid rgba(45,212,255,.18)!important;background:rgba(8,18,39,.82)!important;padding:14px!important;display:grid!important;gap:10px!important;}
+.onix-admin-user-card > strong{font-size:18px!important;color:#fff!important;}
+.onix-admin-user-card > span{color:rgba(218,208,255,.62)!important;font-size:12px!important;font-weight:800!important;}
+.onix-admin-config-grid{display:grid!important;grid-template-columns:1fr 1fr!important;gap:8px!important;margin-top:12px!important;}
+.onix-admin-config-grid label{color:rgba(218,208,255,.68)!important;font-size:11px!important;font-weight:900!important;}
+
 .onix-profile-v75-panel-title{display:flex!important;align-items:center!important;justify-content:space-between!important;margin-bottom:12px!important;gap:10px!important}.onix-profile-v75-panel-title strong{font-family:'Exo 2',system-ui,sans-serif!important;font-size:20px!important;color:#fff!important;font-weight:1000!important}.onix-profile-v75-panel-title span{padding:8px 12px!important;border-radius:999px!important;color:#f6c833!important;border:1px solid rgba(246,200,51,.22)!important;background:rgba(28,19,9,.70)!important;font-weight:900!important;}
 .onix-profile-v75-list{display:flex!important;flex-direction:column!important;gap:12px!important;max-height:420px!important;overflow-y:auto!important;scrollbar-width:none!important}.onix-profile-v75-list::-webkit-scrollbar{display:none!important;}
 .onix-profile-v75-achievement,.onix-profile-v75-rank-row{padding:14px!important;border-radius:20px!important;border:1px solid rgba(124,58,237,.22)!important;background:rgba(6,9,27,.72)!important;}.onix-profile-v75-achievement.is-done,.onix-profile-v75-rank-row.is-passed{opacity:.62!important;}.onix-profile-v75-rank-row.is-current{opacity:1!important;border-color:rgba(246,200,51,.42)!important;}
@@ -12093,6 +12131,7 @@ function App() {
   const [totalUpgradesBought, setTotalUpgradesBought] = useState(0);
   const [offlineClaimsCount, setOfflineClaimsCount] = useState(0);
   const [adminPanelVisible, setAdminPanelVisible] = useState(false);
+  const [adminHubPage, setAdminHubPage] = useState<'overview' | 'prizes' | 'withdrawals' | 'economy' | 'search' | 'suspicious' | 'logs' | 'launch' | 'admin2'>('overview');
   const [adminPrizePreview, setAdminPrizePreview] =
     useState<AdminPrizePreviewResponse | null>(null);
   const [isAdminLoading, setIsAdminLoading] = useState(false);
@@ -13174,7 +13213,8 @@ function App() {
       });
 
       setAdminPrizePreview(response.data);
-      setAdminPanelVisible(true);
+      setAdminPanelVisible(false);
+      setAdminHubPage('prizes');
     } catch (error: any) {
       showToast(error?.response?.data?.message || 'Не удалось загрузить preview');
     } finally {
@@ -13611,7 +13651,8 @@ function App() {
       });
 
       setAdminSecurityLogs(response.data.logs || []);
-      setAdminSecurityLogsVisible(true);
+      setAdminSecurityLogsVisible(false);
+      setAdminHubPage('logs');
     } catch (error: any) {
       showToast(error?.response?.data?.message || 'Не удалось загрузить логи', 'error');
     } finally {
@@ -13676,7 +13717,8 @@ function App() {
       });
 
       setAdminOperations(operationsResponse.data);
-      setAdmin2Visible(true);
+      setAdmin2Visible(false);
+      setAdminHubPage('admin2');
     } catch (error: any) {
       showToast(error?.response?.data?.message || 'Не удалось открыть админку 2.0', 'error');
     } finally {
@@ -16983,7 +17025,8 @@ body:not(.onix-body-home-lock) {
       });
 
       setAdminEconomyDashboard(response.data);
-      setAdminEconomyVisible(true);
+      setAdminEconomyVisible(false);
+      setAdminHubPage('economy');
     } catch (error: any) {
       showToast(error?.response?.data?.message || 'Не удалось загрузить экономику', 'error');
     } finally {
@@ -17004,7 +17047,8 @@ body:not(.onix-body-home-lock) {
       });
 
       setSuspiciousUsers(response.data.users || []);
-      setSuspiciousUsersVisible(true);
+      setSuspiciousUsersVisible(false);
+      setAdminHubPage('suspicious');
     } catch (error: any) {
       showToast(error?.response?.data?.message || 'Не удалось загрузить список', 'error');
     } finally {
@@ -17048,7 +17092,8 @@ body:not(.onix-body-home-lock) {
       });
 
       setAdminWithdrawals(response.data.requests || []);
-      setAdminWithdrawalsVisible(true);
+      setAdminWithdrawalsVisible(false);
+      setAdminHubPage('withdrawals');
     } catch (error: any) {
       showToast(error?.response?.data?.message || 'Не удалось загрузить заявки', 'error');
     } finally {
@@ -19025,60 +19070,236 @@ body:not(.onix-body-home-lock) {
             </div>
 
             {profilePanel === 'admin' && isAdmin() && (
-              <div className="onix-profile-v75-panel onix-admin-hub-panel">
-                <div className="onix-profile-v75-panel-title onix-profile-v75-detail-title">
-                  <button type="button" className="onix-profile-v75-back" onClick={() => setProfilePanel('overview')}>‹</button>
-                  <strong>🛠️ Админ-панель</strong>
-                  <span>только ты</span>
-                </div>
-
-                <div className="onix-admin-hub-hero">
-                  <div>
-                    <p>ONIX CONTROL</p>
-                    <h3>Панель управления ботом</h3>
-                    <span>Доступ открыт только для Telegram ID администратора.</span>
+              <div className="onix-profile-v75-panel onix-admin-hub-panel onix-admin-hub-page">
+                <div className="onix-admin-sticky-top">
+                  <div className="onix-profile-v75-panel-title onix-profile-v75-detail-title">
+                    <button
+                      type="button"
+                      className="onix-profile-v75-back"
+                      onClick={() => {
+                        if (adminHubPage !== 'overview') {
+                          setAdminHubPage('overview');
+                        } else {
+                          setProfilePanel('overview');
+                        }
+                      }}
+                    >‹</button>
+                    <strong>
+                      {adminHubPage === 'prizes'
+                        ? '🏆 Призы недели'
+                        : adminHubPage === 'withdrawals'
+                        ? '💸 Заявки на вывод'
+                        : adminHubPage === 'economy'
+                        ? '📊 Экономика'
+                        : adminHubPage === 'search'
+                        ? '🔎 Поиск игрока'
+                        : adminHubPage === 'suspicious'
+                        ? '🚨 Suspicious'
+                        : adminHubPage === 'logs'
+                        ? '🧾 Security logs'
+                        : adminHubPage === 'launch'
+                        ? '🚀 Launch checklist'
+                        : adminHubPage === 'admin2'
+                        ? '🧰 Админка 2.0'
+                        : '🛠️ Админ-панель'}
+                    </strong>
+                    <span>{adminHubPage === 'overview' ? 'только ты' : 'назад'}</span>
                   </div>
-                  <b>ADMIN</b>
+
+                  <div className="onix-admin-hub-hero">
+                    <div>
+                      <p>ONIX CONTROL</p>
+                      <h3>{adminHubPage === 'overview' ? 'Панель управления ботом' : 'Раздел управления'}</h3>
+                      <span>Доступ открыт только для Telegram ID администратора.</span>
+                    </div>
+                    <b>ADMIN</b>
+                  </div>
                 </div>
 
-                <div className="onix-admin-hub-grid">
-                  <button type="button" onClick={loadAdminPrizePreview} disabled={isAdminLoading}>
-                    <span>🏆</span><strong>Призы недели</strong><em>preview / выдача топ-3</em>
-                  </button>
-                  <button type="button" onClick={loadAdminWithdrawals} disabled={isAdminLoading}>
-                    <span>💸</span><strong>Заявки на вывод</strong><em>approve / reject</em>
-                  </button>
-                  <button type="button" onClick={loadAdminEconomyDashboard} disabled={isAdminLoading}>
-                    <span>📊</span><strong>Экономика</strong><em>балансы, выводы, конфиг</em>
-                  </button>
-                  <button type="button" onClick={() => setAdminSearchVisible(true)} disabled={isAdminLoading}>
-                    <span>🔎</span><strong>Поиск игрока</strong><em>профиль, баланс, бан</em>
-                  </button>
-                  <button type="button" onClick={loadSuspiciousUsers} disabled={isAdminLoading}>
-                    <span>🚨</span><strong>Suspicious</strong><em>подозрительные аккаунты</em>
-                  </button>
-                  <button type="button" onClick={loadAdminSecurityLogs} disabled={isAdminLoading}>
-                    <span>🧾</span><strong>Security logs</strong><em>журнал событий</em>
-                  </button>
-                  <button
-                    type="button"
-                    onClick={async () => {
-                      try {
-                        const response = await axios.get(`${API_URL}/health`);
-                        setBackendHealth(response.data);
-                      } catch {
-                        setBackendHealth({ ok: false });
-                      }
-                      setLaunchChecklistVisible(true);
-                    }}
-                    disabled={isAdminLoading}
-                  >
-                    <span>🚀</span><strong>Launch checklist</strong><em>проверка backend</em>
-                  </button>
-                  <button type="button" onClick={openAdmin2Panel} disabled={isAdminLoading}>
-                    <span>🧰</span><strong>Админка 2.0</strong><em>broadcast / config / export</em>
-                  </button>
-                </div>
+                {adminHubPage === 'overview' && (
+                  <div className="onix-admin-hub-grid onix-admin-hub-scroll">
+                    <button type="button" onClick={loadAdminPrizePreview} disabled={isAdminLoading}>
+                      <span>🏆</span><strong>Призы недели</strong><em>preview / выдача топ-3</em>
+                    </button>
+                    <button type="button" onClick={loadAdminWithdrawals} disabled={isAdminLoading}>
+                      <span>💸</span><strong>Заявки на вывод</strong><em>approve / reject</em>
+                    </button>
+                    <button type="button" onClick={loadAdminEconomyDashboard} disabled={isAdminLoading}>
+                      <span>📊</span><strong>Экономика</strong><em>балансы, выводы, конфиг</em>
+                    </button>
+                    <button type="button" onClick={() => { setAdminSearchVisible(false); setAdminHubPage('search'); }} disabled={isAdminLoading}>
+                      <span>🔎</span><strong>Поиск игрока</strong><em>профиль, баланс, бан</em>
+                    </button>
+                    <button type="button" onClick={loadSuspiciousUsers} disabled={isAdminLoading}>
+                      <span>🚨</span><strong>Suspicious</strong><em>подозрительные аккаунты</em>
+                    </button>
+                    <button type="button" onClick={loadAdminSecurityLogs} disabled={isAdminLoading}>
+                      <span>🧾</span><strong>Security logs</strong><em>журнал событий</em>
+                    </button>
+                    <button
+                      type="button"
+                      onClick={async () => {
+                        try {
+                          const response = await axios.get(`${API_URL}/health`);
+                          setBackendHealth(response.data);
+                        } catch {
+                          setBackendHealth({ ok: false });
+                        }
+                        setLaunchChecklistVisible(false);
+                        setAdminHubPage('launch');
+                      }}
+                      disabled={isAdminLoading}
+                    >
+                      <span>🚀</span><strong>Launch checklist</strong><em>проверка backend</em>
+                    </button>
+                    <button type="button" onClick={openAdmin2Panel} disabled={isAdminLoading}>
+                      <span>🧰</span><strong>Админка 2.0</strong><em>broadcast / config / export</em>
+                    </button>
+                  </div>
+                )}
+
+                {adminHubPage !== 'overview' && (
+                  <div className="onix-admin-detail-scroll">
+                    {adminHubPage === 'prizes' && (
+                      <div className="onix-admin-section-card">
+                        <div className="onix-admin-section-head"><strong>🏆 Призы недели</strong><span>{adminPrizePreview?.week || '—'}</span></div>
+                        <p className="onix-admin-muted">{adminPrizePreview?.alreadyAwarded ? 'Призы за эту неделю уже выданы' : 'Preview топ-3 перед выдачей.'}</p>
+                        <div className="onix-admin-list">
+                          {(adminPrizePreview?.preview || []).map((item) => (
+                            <div key={`${item.place}-${item.telegramId}`} className="onix-admin-row">
+                              <div><strong>#{item.place} {item.username}</strong><em>week: {formatOnix(item.weeklyEarned)} ONIX</em></div>
+                              <b>+{formatOnix(item.prize)}</b>
+                            </div>
+                          ))}
+                          {adminPrizePreview && adminPrizePreview.preview.length === 0 && <p className="onix-admin-empty">Нет игроков для выдачи призов.</p>}
+                          {!adminPrizePreview && <p className="onix-admin-empty">Нажми обновить, чтобы загрузить preview.</p>}
+                        </div>
+                        <button type="button" className="onix-admin-primary" onClick={awardWeeklyPrizes} disabled={isAdminLoading || !adminPrizePreview || adminPrizePreview.alreadyAwarded || adminPrizePreview.preview.length === 0}>{adminPrizePreview?.alreadyAwarded ? 'Уже выдано' : 'Выдать призы топ-3'}</button>
+                        <button type="button" className="onix-admin-secondary" onClick={loadAdminPrizePreview} disabled={isAdminLoading}>Обновить preview</button>
+                      </div>
+                    )}
+
+                    {adminHubPage === 'withdrawals' && (
+                      <div className="onix-admin-section-card">
+                        <div className="onix-admin-section-head"><strong>💸 Заявки на вывод</strong><span>{adminWithdrawals.length}</span></div>
+                        <textarea value={adminWithdrawalComment} onChange={(event) => setAdminWithdrawalComment(event.target.value)} placeholder="Комментарий админа" className="onix-admin-input onix-admin-textarea" />
+                        <div className="onix-admin-list">
+                          {adminWithdrawals.map((request) => (
+                            <div key={`${request.userTelegramId}-${request.requestIndex}`} className="onix-admin-row is-column">
+                              <div className="onix-admin-row-top"><strong>{request.username}</strong><b>{formatOnix(request.amount)} ONIX</b></div>
+                              <em>ID: {request.userTelegramId} · ≈ {formatOnix(request.eurAmount)} €</em>
+                              <div className="onix-admin-actions"><button type="button" onClick={() => reviewWithdrawal(request, 'rejected')} disabled={isAdminLoading}>Отклонить</button><button type="button" onClick={() => reviewWithdrawal(request, 'approved')} disabled={isAdminLoading}>Одобрить</button></div>
+                            </div>
+                          ))}
+                          {adminWithdrawals.length === 0 && <p className="onix-admin-empty">Pending-заявок нет.</p>}
+                        </div>
+                        <button type="button" className="onix-admin-secondary" onClick={loadAdminWithdrawals} disabled={isAdminLoading}>Обновить список</button>
+                      </div>
+                    )}
+
+                    {adminHubPage === 'economy' && (
+                      <div className="onix-admin-section-card">
+                        <div className="onix-admin-section-head"><strong>📊 Экономика</strong><span>dashboard</span></div>
+                        {adminEconomyDashboard ? (
+                          <div className="onix-admin-metrics-grid">
+                            <div><span>Игроков</span><strong>{formatOnix(adminEconomyDashboard.totals.users)}</strong></div>
+                            <div><span>Баланс</span><strong>{formatOnix(adminEconomyDashboard.totals.totalBalance)}</strong></div>
+                            <div><span>Выводы</span><strong>{formatOnix(adminEconomyDashboard.totals.pendingWithdrawals)}</strong></div>
+                            <div><span>Suspicious</span><strong>{formatOnix(adminEconomyDashboard.totals.suspiciousUsers)}</strong></div>
+                          </div>
+                        ) : <p className="onix-admin-empty">Нажми обновить, чтобы загрузить dashboard.</p>}
+                        <button type="button" className="onix-admin-secondary" onClick={loadAdminEconomyDashboard} disabled={isAdminLoading}>Обновить экономику</button>
+                      </div>
+                    )}
+
+                    {adminHubPage === 'search' && (
+                      <div className="onix-admin-section-card">
+                        <div className="onix-admin-section-head"><strong>🔎 Поиск игрока</strong><span>{adminSearchResults.length}</span></div>
+                        <div className="onix-admin-search-line"><input value={adminSearchQuery} onChange={(event) => setAdminSearchQuery(event.target.value)} placeholder="username или Telegram ID" className="onix-admin-input" /><button type="button" onClick={searchAdminUsers} disabled={isAdminLoading}>Найти</button></div>
+                        <div className="onix-admin-list">
+                          {adminSearchResults.map((user) => (
+                            <button key={user.telegramId} type="button" className="onix-admin-row as-button" onClick={() => loadAdminUserProfile(user.telegramId)}>
+                              <div><strong>{user.username}</strong><em>ID: {user.telegramId}</em></div><b>{formatOnix(user.balance)}</b>
+                            </button>
+                          ))}
+                          {adminSearchResults.length === 0 && <p className="onix-admin-empty">Введите запрос и нажмите Найти.</p>}
+                        </div>
+                        {adminSelectedUser && (
+                          <div className="onix-admin-user-card">
+                            <strong>{adminSelectedUser.username}</strong><span>ID: {adminSelectedUser.telegramId}</span>
+                            <div className="onix-admin-metrics-grid"><div><span>Баланс</span><strong>{formatOnix(adminSelectedUser.balance)}</strong></div><div><span>Всего</span><strong>{formatOnix(adminSelectedUser.totalEarned)}</strong></div></div>
+                            <input value={adminAdjustAmount} onChange={(event) => setAdminAdjustAmount(event.target.value)} placeholder="Сумма +/-" className="onix-admin-input" />
+                            <input value={adminActionReason} onChange={(event) => setAdminActionReason(event.target.value)} placeholder="Причина" className="onix-admin-input" />
+                            <div className="onix-admin-actions"><button type="button" onClick={adjustAdminUserBalance} disabled={isAdminLoading}>Изменить баланс</button><button type="button" onClick={toggleAdminUserBan} disabled={isAdminLoading}>{adminSelectedUser.isFrozen ? 'Разбанить' : 'Забанить'}</button></div>
+                          </div>
+                        )}
+                      </div>
+                    )}
+
+                    {adminHubPage === 'suspicious' && (
+                      <div className="onix-admin-section-card">
+                        <div className="onix-admin-section-head"><strong>🚨 Suspicious</strong><span>{suspiciousUsers.length}</span></div>
+                        <div className="onix-admin-list">
+                          {suspiciousUsers.map((user) => (
+                            <div key={user.telegramId} className="onix-admin-row is-column"><div className="onix-admin-row-top"><strong>{user.username}</strong><b>{user.isFrozen ? 'Frozen' : 'Active'}</b></div><em>ID: {user.telegramId} · {user.suspiciousReasons?.join(', ') || '—'}</em><button type="button" className="onix-admin-secondary" onClick={() => toggleFreezeUser(user)} disabled={isAdminLoading}>{user.isFrozen ? 'Разморозить' : 'Заморозить'}</button></div>
+                          ))}
+                          {suspiciousUsers.length === 0 && <p className="onix-admin-empty">Подозрительных аккаунтов нет.</p>}
+                        </div>
+                        <button type="button" className="onix-admin-secondary" onClick={loadSuspiciousUsers} disabled={isAdminLoading}>Обновить</button>
+                      </div>
+                    )}
+
+                    {adminHubPage === 'logs' && (
+                      <div className="onix-admin-section-card">
+                        <div className="onix-admin-section-head"><strong>🧾 Security logs</strong><span>{adminSecurityLogs.length}</span></div>
+                        <div className="onix-admin-list">
+                          {adminSecurityLogs.map((log, index) => (<div key={`${log.createdAt}-${index}`} className="onix-admin-row is-column"><strong>{log.type}</strong><em>{log.telegramId || '—'} · {formatTransactionTime(log.createdAt)}</em><p>{log.details || log.title || '—'}</p></div>))}
+                          {adminSecurityLogs.length === 0 && <p className="onix-admin-empty">Журнал пуст или ещё не загружен.</p>}
+                        </div>
+                        <button type="button" className="onix-admin-secondary" onClick={loadAdminSecurityLogs} disabled={isAdminLoading}>Обновить logs</button>
+                      </div>
+                    )}
+
+                    {adminHubPage === 'launch' && (
+                      <div className="onix-admin-section-card">
+                        <div className="onix-admin-section-head"><strong>🚀 Launch checklist</strong><span>{backendHealth?.ok ? 'OK' : 'CHECK'}</span></div>
+                        <div className="onix-admin-list">
+                          {[
+                            ['Backend health', backendHealth?.ok ? `OK · users: ${backendHealth.users || 0}` : 'Проверь Render logs'],
+                            ['Telegram Mini App', 'Проверить кнопку запуска и /start'],
+                            ['Кошелёк и вывод', 'Проверить создание заявки и админку вывода'],
+                            ['Рефералка', 'Проверить бонусы и лимиты'],
+                            ['Cron сезона', 'GitHub Actions / cron должен вызывать weekly prizes'],
+                            ['Антиабуз', 'Проверить suspicious, ban/unban и security logs'],
+                          ].map(([title, text]) => <div key={title} className="onix-admin-row is-column"><strong>{title}</strong><em>{text}</em></div>)}
+                        </div>
+                      </div>
+                    )}
+
+                    {adminHubPage === 'admin2' && (
+                      <div className="onix-admin-section-card">
+                        <div className="onix-admin-section-head"><strong>🧰 Админка 2.0</strong><span>config</span></div>
+                        <div className="onix-admin-metrics-grid"><div><span>Frontend</span><strong>v1.0.0</strong></div><div><span>Backend</span><strong>v{appVersionInfo?.version || '—'}</strong></div></div>
+                        <button type="button" className="onix-admin-secondary" onClick={downloadMongoBackup}>Backup JSON</button>
+                        <button type="button" className="onix-admin-secondary" onClick={loadAdminFrontendErrors} disabled={isAdminLoading}>Error logs</button>
+                        <div className="onix-admin-config-grid">
+                          {[
+                            ['ONIX_EUR_PER_1000', 'Курс /1000'],
+                            ['MIN_WITHDRAW_ONIX', 'Мин. вывод'],
+                            ['REFERRAL_REWARD', 'Реферал'],
+                            ['REFERRED_USER_REWARD', 'Новый игрок'],
+                            ['WELCOME_BONUS', 'Welcome'],
+                            ['CHEST_COST', 'Сундук'],
+                          ].map(([key, label]) => <label key={key}>{label}<input value={adminEconomyConfigDraft[key] || ''} onChange={(event) => setAdminEconomyConfigDraft((current) => ({ ...current, [key]: event.target.value }))} className="onix-admin-input" /></label>)}
+                        </div>
+                        <button type="button" className="onix-admin-primary" onClick={saveAdminEconomyConfig} disabled={isAdminLoading}>Сохранить runtime config</button>
+                        <textarea value={adminBroadcastMessage} onChange={(event) => setAdminBroadcastMessage(event.target.value)} placeholder="Текст рассылки" className="onix-admin-input onix-admin-textarea" />
+                        <div className="onix-admin-actions"><button type="button" onClick={() => sendAdminBroadcast(true)} disabled={isAdminLoading}>Dry run</button><button type="button" onClick={() => sendAdminBroadcast(false)} disabled={isAdminLoading}>Отправить</button></div>
+                        {adminBroadcastResult && <p className="onix-admin-muted">Получателей: {adminBroadcastResult.recipients || 0} · отправлено: {adminBroadcastResult.sent || 0} · ошибок: {adminBroadcastResult.failed || 0}</p>}
+                      </div>
+                    )}
+                  </div>
+                )}
               </div>
             )}
 
