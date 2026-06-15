@@ -10944,6 +10944,111 @@ div.fixed.inset-0.z-\[90\] button.bg-yellow-400 {
   }
 }
 
+
+
+/* === ONIX BOOST ICONS FINAL LAYOUT FIX === */
+/* Показываем PNG-иконки как полноценные ONIX-плашки, а не как маленькие картинки внутри старой рамки. */
+.onix-upgrades-ref-list {
+  gap: 14px !important;
+  padding-bottom: 118px !important;
+}
+
+.onix-upgrade-ref-card {
+  min-height: 98px !important;
+  padding: 13px 13px 13px 14px !important;
+  gap: 13px !important;
+  border-radius: 22px !important;
+  background:
+    linear-gradient(135deg, rgba(17, 24, 48, 0.98), rgba(7, 10, 24, 0.98)) !important;
+  border: 1px solid rgba(136, 92, 246, 0.30) !important;
+  box-shadow:
+    0 16px 30px rgba(0, 0, 0, 0.34),
+    inset 0 0 22px rgba(122, 77, 255, 0.10) !important;
+}
+
+.onix-upgrade-ref-icon--image {
+  width: 76px !important;
+  height: 76px !important;
+  flex: 0 0 76px !important;
+  padding: 0 !important;
+  overflow: hidden !important;
+  border-radius: 19px !important;
+  background: rgba(4, 7, 18, 0.84) !important;
+  border: 1px solid rgba(76, 214, 255, 0.35) !important;
+  box-shadow:
+    0 0 18px rgba(31, 178, 255, 0.18),
+    0 0 24px rgba(168, 85, 247, 0.16),
+    inset 0 0 16px rgba(255, 255, 255, 0.04) !important;
+}
+
+.onix-upgrade-ref-icon--image img {
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: cover !important;
+  object-position: center !important;
+  display: block !important;
+  border-radius: 18px !important;
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+  filter: none !important;
+}
+
+.onix-upgrade-ref-main {
+  min-width: 0 !important;
+  padding-top: 1px !important;
+}
+
+.onix-upgrade-ref-title {
+  line-height: 1.02 !important;
+}
+
+.onix-upgrade-ref-subtitle {
+  line-height: 1.16 !important;
+}
+
+.onix-upgrade-ref-buy {
+  flex: 0 0 auto !important;
+  min-width: 96px !important;
+}
+
+.onix-upgrades-balance-premium-icon {
+  overflow: hidden !important;
+  background:
+    radial-gradient(circle at 35% 28%, rgba(98, 245, 255, 0.22), rgba(125, 52, 255, 0.24) 44%, rgba(8, 12, 28, 0.96) 100%) !important;
+  border: 1px solid rgba(112, 220, 255, 0.22) !important;
+}
+
+.onix-upgrades-balance-premium-icon img {
+  width: 76px !important;
+  height: 76px !important;
+  object-fit: contain !important;
+  display: block !important;
+  filter: drop-shadow(0 0 16px rgba(92, 225, 255, 0.20)) !important;
+}
+
+@media (max-width: 390px) {
+  .onix-upgrade-ref-card {
+    min-height: 92px !important;
+    gap: 10px !important;
+    padding: 12px 10px !important;
+  }
+
+  .onix-upgrade-ref-icon--image {
+    width: 68px !important;
+    height: 68px !important;
+    flex-basis: 68px !important;
+    border-radius: 17px !important;
+  }
+
+  .onix-upgrade-ref-icon--image img {
+    border-radius: 16px !important;
+  }
+
+  .onix-upgrade-ref-buy {
+    min-width: 86px !important;
+  }
+}
 `;
 
 
@@ -18430,7 +18535,7 @@ body:not(.onix-body-home-lock) {
                 <div className="onix-upgrades-balance-premium-bg" />
 
                 <div className="onix-upgrades-balance-premium-content">
-                  <div className="onix-upgrades-balance-premium-icon">🪙</div>
+                  <div className="onix-upgrades-balance-premium-icon"><img src={onixLogoCrystal} alt="$ONIX" draggable={false} /></div>
 
                   <div className="onix-upgrades-balance-premium-info">
                     <div
