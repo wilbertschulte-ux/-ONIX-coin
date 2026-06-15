@@ -8,6 +8,19 @@ import onixBoostCoinMultiplierIcon from './assets/onix-boost-icons/boost-coin-mu
 import onixBoostEnergyRechargeIcon from './assets/onix-boost-icons/boost-energy-recharge.png';
 import onixBoostMaxEnergyIcon from './assets/onix-boost-icons/boost-max-energy.png';
 import onixBoostEnergyIcon from './assets/onix-boost-icons/boost-energy.png';
+import onixBoostTapX2Icon from './assets/onix-boost-icons/boost_tap_x2.png';
+import onixBoostMiningX2Icon from './assets/onix-boost-icons/boost_mining_x2.png';
+import onixBoostEnergy100Icon from './assets/onix-boost-icons/energy_100.png';
+import onixBoostEnergySaverIcon from './assets/onix-boost-icons/energy_saver.png';
+import onixBoostEnergyMaxProIcon from './assets/onix-boost-icons/energy_max_pro.png';
+import onixBoostOfflineProIcon from './assets/onix-boost-icons/offline_pro.png';
+import onixBoostDailyPlusIcon from './assets/onix-boost-icons/daily_plus.png';
+import onixBoostMasterIcon from './assets/onix-boost-icons/boost_master.png';
+import onixBoostEngineerIcon from './assets/onix-boost-icons/engineer.png';
+import onixBoostMinerPlusIcon from './assets/onix-boost-icons/miner_plus.png';
+import onixBoostLuckyMinerIcon from './assets/onix-boost-icons/lucky_miner.png';
+import onixBoostReferralProIcon from './assets/onix-boost-icons/referral_pro.png';
+import onixBoostStreakShieldIcon from './assets/onix-boost-icons/streak_shield.png';
 
 const tg = window.Telegram?.WebApp;
 
@@ -22,6 +35,19 @@ const onixBoostIcons = {
   recharge: onixBoostEnergyRechargeIcon,
   maxEnergy: onixBoostMaxEnergyIcon,
   energy: onixBoostEnergyIcon,
+  boostTapX2: onixBoostTapX2Icon,
+  boostMiningX2: onixBoostMiningX2Icon,
+  energy100: onixBoostEnergy100Icon,
+  energySaver: onixBoostEnergySaverIcon,
+  energyMaxPro: onixBoostEnergyMaxProIcon,
+  offlinePro: onixBoostOfflineProIcon,
+  dailyPlus: onixBoostDailyPlusIcon,
+  boostMaster: onixBoostMasterIcon,
+  engineer: onixBoostEngineerIcon,
+  minerPlus: onixBoostMinerPlusIcon,
+  luckyMiner: onixBoostLuckyMinerIcon,
+  referralPro: onixBoostReferralProIcon,
+  streakShield: onixBoostStreakShieldIcon,
 } as const;
 
 
@@ -18206,7 +18232,7 @@ body:not(.onix-body-home-lock) {
         const boostsCards = [
           ...boostCards.map((boost) => ({
             id: boost.type,
-            icon: boost.type === 'tap' ? '🚀' : '⛏️',
+            icon: boost.type === 'tap' ? onixBoostIcons.boostTapX2 : onixBoostIcons.boostMiningX2,
             accent: boost.isActive ? 'emerald' : 'gold',
             title: boost.title,
             level: null,
@@ -18219,7 +18245,7 @@ body:not(.onix-body-home-lock) {
           })),
           {
             id: 'energy-refill',
-            icon: onixBoostIcons.energy,
+            icon: onixBoostIcons.energy100,
             accent: 'emerald',
             title: 'Энергия',
             level: null,
@@ -18247,7 +18273,7 @@ body:not(.onix-body-home-lock) {
         const otherCards = [
           {
             id: 'energy-saver',
-            icon: '🛡️',
+            icon: onixBoostIcons.energySaver,
             accent: 'violet',
             title: 'Energy Saver',
             level: energySaverLevel,
@@ -18260,7 +18286,7 @@ body:not(.onix-body-home-lock) {
           },
           {
             id: 'energy-max-pro',
-            icon: '💠',
+            icon: onixBoostIcons.energyMaxPro,
             accent: 'pink',
             title: 'Energy Max Pro',
             level: energyMaxProLevel,
@@ -18273,7 +18299,7 @@ body:not(.onix-body-home-lock) {
           },
           {
             id: 'offline-pro',
-            icon: '🧲',
+            icon: onixBoostIcons.offlinePro,
             accent: 'violet',
             title: 'Offline Pro',
             level: offlineProLevel,
@@ -18286,7 +18312,7 @@ body:not(.onix-body-home-lock) {
           },
           {
             id: 'daily-plus',
-            icon: '🎁',
+            icon: onixBoostIcons.dailyPlus,
             accent: 'gold',
             title: 'Daily Plus',
             level: dailyPlusLevel,
@@ -18299,7 +18325,7 @@ body:not(.onix-body-home-lock) {
           },
           {
             id: 'boost-master',
-            icon: '🧪',
+            icon: onixBoostIcons.boostMaster,
             accent: 'cyan',
             title: 'Boost Master',
             level: boostMasterLevel,
@@ -18312,7 +18338,7 @@ body:not(.onix-body-home-lock) {
           },
           {
             id: 'engineer',
-            icon: '🛠️',
+            icon: onixBoostIcons.engineer,
             accent: 'pink',
             title: 'Engineer',
             level: engineerLevel,
@@ -18325,7 +18351,7 @@ body:not(.onix-body-home-lock) {
           },
           {
             id: 'miner-plus',
-            icon: '⚙️',
+            icon: onixBoostIcons.minerPlus,
             accent: 'gold',
             title: 'Miner Plus',
             level: minerPlusLevel,
@@ -18338,7 +18364,7 @@ body:not(.onix-body-home-lock) {
           },
           {
             id: 'lucky-miner',
-            icon: '🍀',
+            icon: onixBoostIcons.luckyMiner,
             accent: 'emerald',
             title: 'Lucky Miner',
             level: luckyMinerLevel,
@@ -18351,7 +18377,7 @@ body:not(.onix-body-home-lock) {
           },
           {
             id: 'referral-pro',
-            icon: '👥',
+            icon: onixBoostIcons.referralPro,
             accent: 'cyan',
             title: 'Referral Pro',
             level: referralProLevel,
@@ -18364,7 +18390,7 @@ body:not(.onix-body-home-lock) {
           },
           {
             id: 'streak-shield',
-            icon: '🔥',
+            icon: onixBoostIcons.streakShield,
             accent: 'violet',
             title: 'Streak Shield',
             level: streakShieldLevel,
