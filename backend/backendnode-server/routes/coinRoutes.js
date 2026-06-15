@@ -983,7 +983,7 @@ const ACHIEVEMENTS = [
     title: 'Коллекционер перков',
     description: 'Купите все постоянные перки',
     reward: 75000,
-    goal: 4,
+    goal: 10,
   },
   {
     id: 'rank_gold',
@@ -3456,17 +3456,6 @@ router.post('/create', async (req, res) => {
 
           const economyConfig = getEconomyConfig();
 
-    if (String(withdrawalCheck || '').trim().toUpperCase() !== 'ONIX') {
-      addSuspiciousReason(user, 'Не прошёл антибот-проверку перед выводом');
-      await user.save();
-
-      return res.status(400).json({
-        message: 'Введите ONIX в поле антибот-проверки',
-      });
-    }
-
-    user.lastWithdrawalCheckAt = Date.now();
-
           refUser.referralsCount += 1;
           incrementMissionStat(refUser, 'weeklyReferrals');
           refUser.lastReferralUsername = username || 'новый пользователь';
@@ -4083,10 +4072,16 @@ router.post('/set-team', async (req, res) => {
 
     normalizeUserFields(user);
 
+    const frozenResponse = ensureUserNotFrozen(user, res);
+    if (frozenResponse) return frozenResponse;
+
     user.teamName = cleanTeamName;
     if (!user.teamJoinedAt) user.teamJoinedAt = Date.now();
     user.updatedAt = new Date();
 
+    addSecurityLog(user, 'team_legacy_set', 'Legacy set-team redirected to saved team', cleanTeamName);
+
+    await upsertSavedTeam(cleanTeamName, telegramId);
     await user.save();
 
     return res.json({

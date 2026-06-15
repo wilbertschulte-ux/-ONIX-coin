@@ -11035,6 +11035,7 @@ type EconomyConfig = {
   referralReward: number;
   referredUserReward: number;
   maxPaidReferralsPerDay: number;
+  chestCost: number;
 };
 
 type AdminPrizePreview = {
@@ -11408,7 +11409,7 @@ const ACHIEVEMENTS: Achievement[] = [
     title: 'Коллекционер перков',
     description: 'Купите все постоянные перки',
     reward: 75000,
-    goal: 4,
+    goal: 10,
     progress: 0,
     isCompleted: false,
   },
@@ -11883,6 +11884,7 @@ function App() {
     referralReward: 75000,
     referredUserReward: 15000,
     maxPaidReferralsPerDay: 10,
+    chestCost: 50000,
   });
   const [username, setUsername] = useState('Пользователь');
   const [selectedTitle, setSelectedTitle] = useState('ONIX Player');
@@ -12050,7 +12052,6 @@ function App() {
   const [seasonPrizePopup, setSeasonPrizePopup] =
     useState<SeasonPrizePopup | null>(null);
   const [teamName, setTeamName] = useState('');
-  const [teamNameInput, setTeamNameInput] = useState('');
   const [teamSocialDashboard, setTeamSocialDashboard] =
     useState<TeamSocialDashboard | null>(null);
   const [friendLeaderboard, setFriendLeaderboard] = useState<FriendLeaderboardItem[]>([]);
@@ -12122,6 +12123,7 @@ function App() {
           referredUserReward: Number(response.data.referredUserReward) || 15000,
           maxPaidReferralsPerDay:
             Number(response.data.maxPaidReferralsPerDay) || 10,
+          chestCost: Number(response.data.chestCost) || 50000,
         });
       } catch (error) {
         console.log('Ошибка загрузки конфига экономики:', error);
@@ -13065,7 +13067,6 @@ function App() {
     setPerkLevels(normalizePerkLevels(user.perkLevels));
     setLastChestReward(user.chestStats?.lastReward || '');
     setTeamName(user.teamName || '');
-    setTeamNameInput((currentValue) => currentValue || user.teamName || '');
     setLeague(user.league || 'Bronze');
     if (user.missions) setMissions(user.missions);
   };
@@ -13213,7 +13214,6 @@ function App() {
       const user = response.data.user || {};
 
       setTeamName(user.teamName || '');
-      setTeamNameInput(user.teamName || '');
       setTeamSocialDashboard(null);
       setTeamDetailPanel('overview');
       setTeamSearch('');
@@ -13245,7 +13245,6 @@ function App() {
       const user = response.data.user;
 
       setTeamName(user.teamName || '');
-      setTeamNameInput(user.teamName || '');
       setCreateTeamName('');
       setTeamDetailPanel('overview');
       setTeamSocialDashboard({
@@ -13278,7 +13277,6 @@ function App() {
       const user = response.data.user;
 
       setTeamName(user.teamName || '');
-      setTeamNameInput(user.teamName || '');
       setTeamSocialDashboard({
         team: response.data.team,
         teamMissions: response.data.teamMissions || [],
@@ -13357,7 +13355,6 @@ function App() {
       const user = response.data.user;
 
       setTeamName(user.teamName || '');
-      setTeamNameInput(user.teamName || '');
       setTeamSocialDashboard({
         team: response.data.team,
         teamMissions: response.data.teamMissions || [],
@@ -17206,8 +17203,8 @@ body:not(.onix-body-home-lock) {
       badges.push({ icon: '🔥', label: 'Streak' });
     }
 
-    if (ownedPerks.length >= 4) {
-      badges.push({ icon: '🧩', label: 'Perks' });
+    if (ownedPerks.length >= 10) {
+      badges.push({ icon: '🧩', label: 'All Perks' });
     }
 
     if (currentUserPlace && currentUserPlace <= 3) {
@@ -17228,7 +17225,7 @@ body:not(.onix-body-home-lock) {
     if (currentUserPlace && currentUserPlace <= 10) titles.push('Season Hunter');
     if (rankInfo.currentRank.threshold >= 5000000) titles.push('Diamond');
     if (totalBoostsUsed >= 10) titles.push('Boost Master');
-    if (ownedPerks.length >= 4) titles.push('Perk Collector');
+    if (ownedPerks.length >= 10) titles.push('Perk Collector');
 
     return titles;
   };
@@ -17239,27 +17236,6 @@ body:not(.onix-body-home-lock) {
     if (value === 'Silver') return '🥈';
 
     return '🥉';
-  };
-
-  const saveTeamName = async () => {
-    const telegramId = getTelegramId();
-
-    try {
-      const response = await axios.post(`${API_URL}/set-team`, {
-        telegramId,
-        teamName: teamNameInput,
-      });
-
-      const user = response.data.user;
-
-      setTeamName(user.teamName || '');
-      setTeamNameInput(user.teamName || '');
-      showToast('✅ Команда обновлена', 'success');
-      loadTeamSocialDashboard();
-      loadFriendLeaderboard();
-    } catch (error: any) {
-      showToast(error?.response?.data?.message || 'Не удалось сохранить команду', 'error');
-    }
   };
 
   const selectProfileTitle = async (title: string) => {
@@ -18194,6 +18170,18 @@ body:not(.onix-body-home-lock) {
             disabled: balance < energyRefillCost || Math.floor(energy) >= Math.floor(maxEnergy),
             priceLabel: Math.floor(energy) >= Math.floor(maxEnergy) ? 'FULL' : undefined,
             action: () => refillEnergy(energyRefillCost),
+          },
+          {
+            id: 'onix-chest',
+            icon: '🎁',
+            accent: 'pink',
+            title: 'Сундук ONIX',
+            level: null,
+            subtitle: lastChestReward ? `Последний приз: ${lastChestReward}` : 'Случайный приз и секретная daily-миссия',
+            price: Number(economyConfig.chestCost || 50000),
+            priceType: 'onix',
+            disabled: balance < Number(economyConfig.chestCost || 50000),
+            action: openChest,
           },
         ];
 
@@ -19455,30 +19443,6 @@ body:not(.onix-body-home-lock) {
                   </span>
                 )}
               </div>
-            </div>
-
-            <div className="mt-5 rounded-2xl bg-[#0a0f1c] p-4 text-left">
-              <p className="mb-3 text-sm font-bold text-white">👥 Команда игрока</p>
-
-              <div className="flex gap-2">
-                <input
-                  value={teamNameInput}
-                  onChange={(event) => setTeamNameInput(event.target.value)}
-                  placeholder="Название команды"
-                  className="min-w-0 flex-1 rounded-2xl bg-[#111827] px-4 py-3 text-sm text-white outline-none"
-                />
-
-                <button
-                  onClick={saveTeamName}
-                  className="rounded-2xl bg-yellow-400 px-4 py-3 text-sm font-bold text-black active:scale-95"
-                >
-                  OK
-                </button>
-              </div>
-
-              <p className="mt-2 text-xs text-gray-500">
-                Текущая команда: {teamName || 'не выбрана'}
-              </p>
             </div>
 
             {teamSocialDashboard && teamName && (
