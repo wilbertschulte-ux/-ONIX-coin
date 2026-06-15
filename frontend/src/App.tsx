@@ -18983,7 +18983,7 @@ body:not(.onix-body-home-lock) {
                 <span>Всего заработано</span>
                 <strong>{Math.floor(totalEarned).toLocaleString('ru-RU')}</strong>
               </div>
-              <button type="button" className="onix-profile-v75-stat" onClick={() => { setProfilePanel('invited'); loadInvitedProfiles(); }}>
+              <button type="button" className="onix-profile-v75-stat" onClick={() => { setProfilePanel('invited'); loadInvitedProfiles(); loadFriendLeaderboard(); }}>
                 <span>Приглашено</span>
                 <strong>{referralsCount}</strong>
               </button>
