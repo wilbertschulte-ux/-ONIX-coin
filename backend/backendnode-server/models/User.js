@@ -36,12 +36,12 @@ const userSchema = new mongoose.Schema(
 
     energyRecharge: {
       type: Number,
-      default: 0.5,
+      default: 1,
     },
 
     autoclickers: {
       type: Number,
-      default: 0.5,
+      default: 1,
     },
 
     level: {

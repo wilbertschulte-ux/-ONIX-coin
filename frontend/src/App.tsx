@@ -18119,7 +18119,7 @@ body:not(.onix-body-home-lock) {
             id: 'miner',
             icon: onixBoostIcons.miner,
             accent: 'gold',
-            title: 'Множитель монеты',
+            title: 'Майнер',
             level: minerLevel,
             subtitle: `+${formatOnix(minerIncomePerSecond)} ONIX в сек`,
             price: nextMinerCost,
@@ -18159,8 +18159,14 @@ body:not(.onix-body-home-lock) {
         const dailyPlusCost = dailyPlusLevel >= 3 ? 0 : getPerkCost(200000, dailyPlusLevel + 1);
         const engineerCost = engineerLevel >= 3 ? 0 : getPerkCost(250000, engineerLevel + 1);
         const offlineProCost = offlineProLevel >= 3 ? 0 : getPerkCost(100000, offlineProLevel + 1);
+        const minerPlusCost = minerPlusLevel >= 3 ? 0 : getPerkCost(250000, minerPlusLevel + 1);
+        const luckyMinerCost = luckyMinerLevel >= 3 ? 0 : getPerkCost(300000, luckyMinerLevel + 1);
+        const referralProCost = referralProLevel >= 3 ? 0 : getPerkCost(300000, referralProLevel + 1);
+        const streakShieldCost = streakShieldLevel >= 1 ? 0 : getPerkCost(220000, streakShieldLevel + 1);
 
         const energyRefillCost = getEnergyRefillCost();
+
+        const boostDurationMultiplier = 1 + 0.2 * boostMasterLevel;
 
         const boostsCards = [
           ...boostCards.map((boost) => ({
@@ -18169,7 +18175,7 @@ body:not(.onix-body-home-lock) {
             accent: boost.isActive ? 'emerald' : 'gold',
             title: boost.title,
             level: null,
-            subtitle: `${boost.multiplier} • ${boost.durationMinutes} мин${boost.isActive ? ` • ${boostTimeLeft}` : ''}`,
+            subtitle: `${boost.multiplier} • ${Math.round(boost.durationMinutes * boostDurationMultiplier)} мин${boost.isActive ? ` • ${boostTimeLeft}` : ''}`,
             price: boost.cost,
             priceType: 'onix',
             disabled: (isAnyBoostActive && !boost.isActive) || (!boost.isActive && balance < boost.cost),
@@ -18269,6 +18275,58 @@ body:not(.onix-body-home-lock) {
             disabled: engineerLevel >= 3 || balance < engineerCost,
             priceLabel: engineerLevel >= 3 ? 'MAX' : undefined,
             action: () => buyPerk('engineer'),
+          },
+          {
+            id: 'miner-plus',
+            icon: '⚙️',
+            accent: 'gold',
+            title: 'Miner Plus',
+            level: minerPlusLevel,
+            subtitle: `+${minerPlusLevel * 5}% к доходу майнера`,
+            price: minerPlusCost,
+            priceType: 'onix',
+            disabled: minerPlusLevel >= 3 || balance < minerPlusCost,
+            priceLabel: minerPlusLevel >= 3 ? 'MAX' : undefined,
+            action: () => buyPerk('miner_plus'),
+          },
+          {
+            id: 'lucky-miner',
+            icon: '🍀',
+            accent: 'emerald',
+            title: 'Lucky Miner',
+            level: luckyMinerLevel,
+            subtitle: `+${luckyMinerLevel * 3}% к доходу майнера`,
+            price: luckyMinerCost,
+            priceType: 'onix',
+            disabled: luckyMinerLevel >= 3 || balance < luckyMinerCost,
+            priceLabel: luckyMinerLevel >= 3 ? 'MAX' : undefined,
+            action: () => buyPerk('lucky_miner'),
+          },
+          {
+            id: 'referral-pro',
+            icon: '👥',
+            accent: 'cyan',
+            title: 'Referral Pro',
+            level: referralProLevel,
+            subtitle: `+${referralProLevel * 5}% к реферальной награде`,
+            price: referralProCost,
+            priceType: 'onix',
+            disabled: referralProLevel >= 3 || balance < referralProCost,
+            priceLabel: referralProLevel >= 3 ? 'MAX' : undefined,
+            action: () => buyPerk('referral_pro'),
+          },
+          {
+            id: 'streak-shield',
+            icon: '🔥',
+            accent: 'violet',
+            title: 'Streak Shield',
+            level: streakShieldLevel,
+            subtitle: streakShieldLevel >= 1 ? 'Daily streak защищён' : 'Защищает daily streak',
+            price: streakShieldCost,
+            priceType: 'onix',
+            disabled: streakShieldLevel >= 1 || balance < streakShieldCost,
+            priceLabel: streakShieldLevel >= 1 ? 'MAX' : undefined,
+            action: () => buyPerk('streak_shield'),
           },
         ];
 

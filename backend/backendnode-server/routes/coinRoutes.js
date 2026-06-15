@@ -231,6 +231,9 @@ const DEFAULT_MAX_ENERGY = 500;
 const DEFAULT_TAP_POWER = 1;
 const DEFAULT_ENERGY_RECHARGE = 1;
 const DEFAULT_MINER_INCOME = 1;
+const TEMP_TAP_BOOST_COST = 15000;
+const TEMP_MINING_BOOST_COST = 20000;
+const TEMP_ENERGY_REFILL_COST = 25000;
 
 const PERKS = {
   offline_pro: {
@@ -828,8 +831,10 @@ function getBoostDurationMultiplier(user) {
 
 function getMaxEnergyWithPerks(user) {
   const level = getPerkLevel(user, 'energy_max_pro');
+  const energyLevel = Math.max(1, Number(user.energyLevel || 1));
+  const upgradedEnergy = DEFAULT_MAX_ENERGY + (energyLevel - 1) * 500;
 
-  return Number(user.maxEnergy || DEFAULT_MAX_ENERGY) + level * 500;
+  return upgradedEnergy + level * 500;
 }
 function getNumberEnv(name, fallback) {
   if (Object.prototype.hasOwnProperty.call(ECONOMY_OVERRIDES, name)) {
@@ -1396,12 +1401,16 @@ function getDailyRewardWithStreak(level, streakDay) {
   return Math.round(getDailyReward(level) * getDailyStreakMultiplier(streakDay));
 }
 
-function getTapBoostCost(tapPower) {
-  return Math.max(2500, Math.round(Number(tapPower || DEFAULT_TAP_POWER) * 500 * 0.7));
+function getTapBoostCost(_tapPower) {
+  return TEMP_TAP_BOOST_COST;
 }
 
-function getMiningBoostCost(autoclickers) {
-  return Math.max(2500, Math.round(Number(autoclickers || DEFAULT_MINER_INCOME) * 900 * 0.7));
+function getMiningBoostCost(_autoclickers) {
+  return TEMP_MINING_BOOST_COST;
+}
+
+function getEnergyRefillCost() {
+  return TEMP_ENERGY_REFILL_COST;
 }
 
 
@@ -1445,6 +1454,11 @@ function normalizeUserFields(user) {
   if (user.minerLevel === undefined || user.minerLevel === null) user.minerLevel = 1;
   if (user.energyLevel === undefined || user.energyLevel === null) user.energyLevel = 1;
   if (user.rechargeLevel === undefined || user.rechargeLevel === null) user.rechargeLevel = 1;
+
+  // Keep max energy deterministic: base + energy upgrades + Energy Max Pro.
+  // This prevents Energy Max Pro from stacking on top of an already boosted maxEnergy.
+  user.maxEnergy = getMaxEnergyWithPerks(user);
+  user.energy = Math.min(Number(user.energy || 0), Number(user.maxEnergy || DEFAULT_MAX_ENERGY));
 
   if (user.totalTaps === undefined || user.totalTaps === null) user.totalTaps = 0;
   if (user.totalBoostsUsed === undefined || user.totalBoostsUsed === null) user.totalBoostsUsed = 0;
@@ -3724,7 +3738,7 @@ router.post('/buy-upgrade', async (req, res) => {
 
     if (type === 'energy') {
       user.energyLevel = Number(user.energyLevel || 1) + 1;
-      user.maxEnergy = Number(user.maxEnergy || DEFAULT_MAX_ENERGY) + 500;
+      user.maxEnergy = getMaxEnergyWithPerks(user);
       user.energy = Math.min(Number(user.energy || 0), Number(user.maxEnergy || DEFAULT_MAX_ENERGY));
     }
 
@@ -5292,6 +5306,66 @@ router.post('/mine-tick', async (req, res) => {
   }
 });
 
+
+// REFILL ENERGY — fills energy to max for a fixed ONIX price
+router.post('/refill-energy', async (req, res) => {
+  try {
+    const { telegramId } = req.body;
+
+    if (!telegramId) {
+      return res.status(400).json({ message: 'Telegram ID is required' });
+    }
+
+    const user = await User.findOne({ telegramId });
+
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    normalizeUserFields(user);
+
+    const frozenResponse = ensureUserNotFrozen(user, res);
+    if (frozenResponse) return frozenResponse;
+
+    const maxEnergy = Number(user.maxEnergy || DEFAULT_MAX_ENERGY);
+    const currentEnergy = Number(user.energy || 0);
+
+    if (currentEnergy >= maxEnergy) {
+      return res.status(400).json({ message: 'Энергия уже полная' });
+    }
+
+    const cost = getEnergyRefillCost();
+
+    if (Number(user.balance || 0) < cost) {
+      return res.status(400).json({ message: 'Недостаточно ONIX' });
+    }
+
+    user.balance = roundOnix(Number(user.balance || 0) - cost);
+    user.energy = maxEnergy;
+    addTransaction(user, 'expense_boost', -cost, 'Пополнение энергии до 100%');
+    user.updatedAt = new Date();
+    user.lastSeenAt = Date.now();
+
+    await user.save();
+
+    return res.json({
+      user: {
+        ...user.toObject({ flattenMaps: true }),
+        perkLevels: getPerkLevelsPayload(user),
+        achievements: getAchievementsPayload(user),
+        referralLimit: getReferralLimitPayload(user),
+        missions: getMissionsPayload(user),
+      },
+      achievements: getAchievementsPayload(user),
+      referralLimit: getReferralLimitPayload(user),
+      missions: getMissionsPayload(user),
+      refill: { cost, energy: user.energy, maxEnergy },
+    });
+  } catch (error) {
+    return res.status(500).json({ error: error.message });
+  }
+});
+
 // ACTIVATE BOOST
 router.post('/activate-boost', async (req, res) => {
   try {
@@ -5355,7 +5429,8 @@ router.post('/activate-boost', async (req, res) => {
       type === 'tap' ? 'Буст тапа ×2' : 'Буст майнинга ×2'
     );
     user.activeBoost = type;
-    user.boostEndTime = now + Math.round(durationConfig[type] * getBoostDurationMultiplier(user));
+    const effectiveDurationMs = Math.round(durationConfig[type] * getBoostDurationMultiplier(user));
+    user.boostEndTime = now + effectiveDurationMs;
     user.totalBoostsUsed = Number(user.totalBoostsUsed || 0) + 1;
     const achievementBonuses = applyAchievements(user);
     const rankBonuses = applyRankBonuses(user);
@@ -5382,7 +5457,7 @@ router.post('/activate-boost', async (req, res) => {
         type,
         cost,
         boostEndTime: user.boostEndTime,
-        durationMs: durationConfig[type],
+        durationMs: effectiveDurationMs,
       },
     });
   } catch (error) {
