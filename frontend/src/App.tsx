@@ -7336,6 +7336,20 @@ div.fixed.inset-0.z-\[90\] button.bg-yellow-400 {
 .onix-profile-v75-menu button.is-active{border-color:rgba(168,85,247,.58)!important;box-shadow:0 0 20px rgba(168,85,247,.20)!important;}
 .onix-profile-v75-menu button span{font-size:24px!important}.onix-profile-v75-menu button strong{text-align:left!important;font-family:'Exo 2',system-ui,sans-serif!important;font-size:17px!important;font-weight:1000!important}.onix-profile-v75-menu button em{font-style:normal!important;color:rgba(218,208,255,.72)!important;font-weight:800!important}.onix-profile-v75-menu button b{font-size:26px!important;color:rgba(218,208,255,.62)!important;}
 .onix-profile-v75-panel{margin-top:12px!important;padding:14px!important;border-radius:24px!important;border:1px solid rgba(168,85,247,.32)!important;background:linear-gradient(145deg,rgba(10,12,35,.94),rgba(5,8,24,.97))!important;box-shadow:inset 0 0 18px rgba(132,86,255,.08)!important;}
+
+.onix-admin-hub-panel{padding:14px!important;}
+.onix-admin-hub-hero{display:flex!important;align-items:center!important;justify-content:space-between!important;gap:14px!important;margin-bottom:14px!important;padding:18px!important;border-radius:22px!important;border:1px solid rgba(246,200,51,.24)!important;background:radial-gradient(circle at 12% 0%,rgba(45,212,255,.18),transparent 38%),linear-gradient(145deg,rgba(19,15,48,.96),rgba(6,9,27,.98))!important;box-shadow:0 0 28px rgba(168,85,247,.18),inset 0 0 18px rgba(45,212,255,.06)!important;}
+.onix-admin-hub-hero p{margin:0 0 6px!important;color:#7ef9ff!important;font-size:11px!important;font-weight:1000!important;letter-spacing:.18em!important;text-transform:uppercase!important;}
+.onix-admin-hub-hero h3{margin:0!important;color:#fff!important;font-family:'Exo 2',system-ui,sans-serif!important;font-size:20px!important;font-weight:1000!important;line-height:1.05!important;}
+.onix-admin-hub-hero span{display:block!important;margin-top:6px!important;color:rgba(218,208,255,.70)!important;font-size:12px!important;font-weight:800!important;}
+.onix-admin-hub-hero b{flex:0 0 auto!important;border-radius:999px!important;border:1px solid rgba(246,200,51,.35)!important;background:rgba(28,19,9,.78)!important;color:#f6c833!important;padding:10px 12px!important;font-size:12px!important;font-weight:1000!important;box-shadow:0 0 18px rgba(246,200,51,.12)!important;}
+.onix-admin-hub-grid{display:grid!important;grid-template-columns:1fr!important;gap:10px!important;}
+.onix-admin-hub-grid button{min-height:72px!important;display:grid!important;grid-template-columns:44px minmax(0,1fr)!important;align-items:center!important;gap:12px!important;text-align:left!important;padding:13px 15px!important;border-radius:20px!important;border:1px solid rgba(124,58,237,.26)!important;background:linear-gradient(145deg,rgba(10,12,35,.94),rgba(5,8,24,.98))!important;color:#fff!important;box-shadow:inset 0 0 18px rgba(132,86,255,.07)!important;}
+.onix-admin-hub-grid button:active{transform:scale(.985)!important;}
+.onix-admin-hub-grid button:disabled{opacity:.55!important;}
+.onix-admin-hub-grid button span{grid-row:1 / span 2!important;width:44px!important;height:44px!important;display:grid!important;place-items:center!important;border-radius:16px!important;border:1px solid rgba(45,212,255,.18)!important;background:radial-gradient(circle at 45% 35%,rgba(45,212,255,.22),rgba(9,42,66,.90) 70%)!important;font-size:22px!important;}
+.onix-admin-hub-grid button strong{display:block!important;font-family:'Exo 2',system-ui,sans-serif!important;font-size:16px!important;font-weight:1000!important;color:#fff!important;line-height:1.05!important;}
+.onix-admin-hub-grid button em{display:block!important;margin-top:4px!important;font-style:normal!important;color:rgba(218,208,255,.64)!important;font-size:12px!important;font-weight:800!important;}
 .onix-profile-v75-panel-title{display:flex!important;align-items:center!important;justify-content:space-between!important;margin-bottom:12px!important;gap:10px!important}.onix-profile-v75-panel-title strong{font-family:'Exo 2',system-ui,sans-serif!important;font-size:20px!important;color:#fff!important;font-weight:1000!important}.onix-profile-v75-panel-title span{padding:8px 12px!important;border-radius:999px!important;color:#f6c833!important;border:1px solid rgba(246,200,51,.22)!important;background:rgba(28,19,9,.70)!important;font-weight:900!important;}
 .onix-profile-v75-list{display:flex!important;flex-direction:column!important;gap:12px!important;max-height:420px!important;overflow-y:auto!important;scrollbar-width:none!important}.onix-profile-v75-list::-webkit-scrollbar{display:none!important;}
 .onix-profile-v75-achievement,.onix-profile-v75-rank-row{padding:14px!important;border-radius:20px!important;border:1px solid rgba(124,58,237,.22)!important;background:rgba(6,9,27,.72)!important;}.onix-profile-v75-achievement.is-done,.onix-profile-v75-rank-row.is-passed{opacity:.62!important;}.onix-profile-v75-rank-row.is-current{opacity:1!important;border-color:rgba(246,200,51,.42)!important;}
@@ -11311,7 +11325,7 @@ function formatMissionResetTime(ms: number) {
 
 const DEFAULT_ONIX_EUR_PER_1000 = 0.68;
 const DEFAULT_MIN_WITHDRAW_ONIX = 750000;
-const ADMIN_TELEGRAM_ID = String(import.meta.env.VITE_ADMIN_TELEGRAM_ID || '');
+const ADMIN_TELEGRAM_ID = String(import.meta.env.VITE_ADMIN_TELEGRAM_ID || '7887214643');
 
 const ACHIEVEMENTS: Achievement[] = [
   {
@@ -12056,7 +12070,7 @@ function App() {
     useState<TeamSocialDashboard | null>(null);
   const [friendLeaderboard, setFriendLeaderboard] = useState<FriendLeaderboardItem[]>([]);
   const [profilePanel, setProfilePanel] =
-    useState<'overview' | 'achievements' | 'ranks' | 'stats' | 'invited' | 'team'>('overview');
+    useState<'overview' | 'achievements' | 'ranks' | 'stats' | 'invited' | 'team' | 'admin'>('overview');
   const [teamDetailPanel, setTeamDetailPanel] =
     useState<'overview' | 'missions' | 'top' | 'members' | 'create'>('overview');
   const [invitedProfiles, setInvitedProfiles] = useState<InvitedProfileItem[]>([]);
@@ -19003,7 +19017,70 @@ body:not(.onix-body-home-lock) {
               <button type="button" className={profilePanel === 'stats' ? 'is-active' : ''} onClick={() => setProfilePanel(profilePanel === 'stats' ? 'overview' : 'stats')}>
                 <span>📊</span><strong>Статистика</strong><em>{formatOnix(totalTaps)} тапов</em><b>›</b>
               </button>
+              {isAdmin() && (
+                <button type="button" className={profilePanel === 'admin' ? 'is-active' : ''} onClick={() => setProfilePanel(profilePanel === 'admin' ? 'overview' : 'admin')}>
+                  <span>🛠️</span><strong>Админ-панель</strong><em>ONIX admin</em><b>›</b>
+                </button>
+              )}
             </div>
+
+            {profilePanel === 'admin' && isAdmin() && (
+              <div className="onix-profile-v75-panel onix-admin-hub-panel">
+                <div className="onix-profile-v75-panel-title onix-profile-v75-detail-title">
+                  <button type="button" className="onix-profile-v75-back" onClick={() => setProfilePanel('overview')}>‹</button>
+                  <strong>🛠️ Админ-панель</strong>
+                  <span>только ты</span>
+                </div>
+
+                <div className="onix-admin-hub-hero">
+                  <div>
+                    <p>ONIX CONTROL</p>
+                    <h3>Панель управления ботом</h3>
+                    <span>Доступ открыт только для Telegram ID администратора.</span>
+                  </div>
+                  <b>ADMIN</b>
+                </div>
+
+                <div className="onix-admin-hub-grid">
+                  <button type="button" onClick={loadAdminPrizePreview} disabled={isAdminLoading}>
+                    <span>🏆</span><strong>Призы недели</strong><em>preview / выдача топ-3</em>
+                  </button>
+                  <button type="button" onClick={loadAdminWithdrawals} disabled={isAdminLoading}>
+                    <span>💸</span><strong>Заявки на вывод</strong><em>approve / reject</em>
+                  </button>
+                  <button type="button" onClick={loadAdminEconomyDashboard} disabled={isAdminLoading}>
+                    <span>📊</span><strong>Экономика</strong><em>балансы, выводы, конфиг</em>
+                  </button>
+                  <button type="button" onClick={() => setAdminSearchVisible(true)} disabled={isAdminLoading}>
+                    <span>🔎</span><strong>Поиск игрока</strong><em>профиль, баланс, бан</em>
+                  </button>
+                  <button type="button" onClick={loadSuspiciousUsers} disabled={isAdminLoading}>
+                    <span>🚨</span><strong>Suspicious</strong><em>подозрительные аккаунты</em>
+                  </button>
+                  <button type="button" onClick={loadAdminSecurityLogs} disabled={isAdminLoading}>
+                    <span>🧾</span><strong>Security logs</strong><em>журнал событий</em>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={async () => {
+                      try {
+                        const response = await axios.get(`${API_URL}/health`);
+                        setBackendHealth(response.data);
+                      } catch {
+                        setBackendHealth({ ok: false });
+                      }
+                      setLaunchChecklistVisible(true);
+                    }}
+                    disabled={isAdminLoading}
+                  >
+                    <span>🚀</span><strong>Launch checklist</strong><em>проверка backend</em>
+                  </button>
+                  <button type="button" onClick={openAdmin2Panel} disabled={isAdminLoading}>
+                    <span>🧰</span><strong>Админка 2.0</strong><em>broadcast / config / export</em>
+                  </button>
+                </div>
+              </div>
+            )}
 
             {profilePanel === 'achievements' && (
               <div className="onix-profile-v75-panel">
