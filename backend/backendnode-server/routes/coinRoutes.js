@@ -180,7 +180,7 @@ router.use((req, res, next) => {
 
     if (!updateBucket(globalKey, globalMaxRequests) || !updateBucket(key, routeMaxRequests)) {
       return res.status(429).json({
-        message: 'Слишком много запросов. Попробуйте позже.',
+        message: 'Zu viele Anfragen. Versuch es später erneut.',
       });
     }
 
@@ -318,22 +318,22 @@ function getTeamMissionDefinitions() {
   return [
     {
       id: 'team_earn_250k',
-      title: 'Командный заработок',
-      description: 'Команда должна заработать 250 000 ONIX за неделю',
+      title: 'Team-Einkommen',
+      description: 'Das Team muss 250.000 ONIX pro Woche verdienen',
       goal: 250000,
       reward: 25000,
     },
     {
       id: 'team_members_3',
-      title: 'Собрать команду',
-      description: 'В команде должно быть 3 участника',
+      title: 'Team zusammenstellen',
+      description: 'Das Team muss 3 Mitglieder haben',
       goal: 3,
       reward: 15000,
     },
     {
       id: 'team_taps_1000',
-      title: 'Командные тапы',
-      description: 'Команда должна сделать 1 000 тапов всего',
+      title: 'Team-Taps',
+      description: 'Das Team muss insgesamt 1.000 Taps machen',
       goal: 1000,
       reward: 20000,
     },
@@ -388,12 +388,12 @@ async function getTeamLeaderboardForWeek(week, limit = 0) {
 function getTeamContestRewardTitle(place) {
   const cleanPlace = Number(place || 0);
 
-  if (cleanPlace === 1) return '1 место';
-  if (cleanPlace === 2) return '2 место';
-  if (cleanPlace === 3) return '3 место';
-  if (cleanPlace >= 4) return 'приз за участие';
+  if (cleanPlace === 1) return '1. Platz';
+  if (cleanPlace === 2) return '2. Platz';
+  if (cleanPlace === 3) return '3. Platz';
+  if (cleanPlace >= 4) return 'Teilnahmepreis';
 
-  return 'нет места';
+  return 'kein Platz';
 }
 
 async function getTeamContestPayload(user) {
@@ -504,7 +504,7 @@ async function getTeamStats(teamName) {
     membersList: members
       .map((member) => ({
         telegramId: member.telegramId,
-        username: member.username || 'Пользователь',
+        username: member.username || 'Spieler',
         weeklyEarned: roundOnix(member.weeklyEarned || 0),
         totalEarned: roundOnix(member.totalEarned || 0),
         totalTaps: Number(member.totalTaps || 0),
@@ -598,8 +598,8 @@ function getDailyMissions(user) {
   const missions = [
     {
       id: 'daily_taps',
-      title: 'Тапер дня',
-      description: `Сделайте ${100 * difficulty} тапов сегодня`,
+      title: 'Tapper des Tages',
+      description: `Mache heute ${100 * difficulty} Taps`,
       goal: 100 * difficulty,
       progress: Number(stats.dailyTaps || 0),
       reward: 10000 * difficulty,
@@ -608,8 +608,8 @@ function getDailyMissions(user) {
     },
     {
       id: 'daily_upgrade',
-      title: 'Прокачка дня',
-      description: 'Купите 1 улучшение сегодня',
+      title: 'Upgrade des Tages',
+      description: 'Kaufe heute 1 Upgrade',
       goal: 1,
       progress: Number(stats.dailyUpgrades || 0),
       reward: 15000 * difficulty,
@@ -618,8 +618,8 @@ function getDailyMissions(user) {
     },
     {
       id: 'daily_offline',
-      title: 'Забрать майнер',
-      description: 'Заберите оффлайн-доход сегодня',
+      title: 'Miner abholen',
+      description: 'Hole heute Offline-Einkommen ab',
       goal: 1,
       progress: Number(stats.dailyOfflineClaims || 0),
       reward: 12000 * difficulty,
@@ -628,8 +628,8 @@ function getDailyMissions(user) {
     },
     {
       id: 'secret_daily_chest',
-      title: 'Секрет: удача ONIX',
-      description: 'Откройте 1 сундук сегодня',
+      title: 'Geheim: ONIX-Glück',
+      description: 'Öffne heute 1 Truhe',
       goal: 1,
       progress: Number(stats.dailyChests || 0),
       reward: 25000 * difficulty,
@@ -654,8 +654,8 @@ function getWeeklyMissions(user) {
   const missions = [
     {
       id: 'weekly_taps',
-      title: 'Тапер недели',
-      description: `Сделайте ${1000 * difficulty} тапов за неделю`,
+      title: 'Tapper der Woche',
+      description: `Mache ${1000 * difficulty} Taps pro Woche`,
       goal: 1000 * difficulty,
       progress: Number(stats.weeklyTaps || 0),
       reward: 50000 * difficulty,
@@ -664,8 +664,8 @@ function getWeeklyMissions(user) {
     },
     {
       id: 'weekly_earn',
-      title: 'Заработок недели',
-      description: `Заработайте ${100000 * difficulty} ONIX за неделю`,
+      title: 'Wochenverdienst',
+      description: `Verdiene ${100000 * difficulty} ONIX pro Woche`,
       goal: 100000 * difficulty,
       progress: Number(user.weeklyEarned || 0),
       reward: 75000 * difficulty,
@@ -674,8 +674,8 @@ function getWeeklyMissions(user) {
     },
     {
       id: 'weekly_upgrades',
-      title: 'Инженер недели',
-      description: `Купите ${3 * difficulty} улучшений за неделю`,
+      title: 'Ingenieur der Woche',
+      description: `Kaufe ${3 * difficulty} Upgrades pro Woche`,
       goal: 3 * difficulty,
       progress: Number(stats.weeklyUpgrades || 0),
       reward: 60000 * difficulty,
@@ -684,8 +684,8 @@ function getWeeklyMissions(user) {
     },
     {
       id: 'secret_weekly_referral',
-      title: 'Секрет: рекрутер',
-      description: 'Пригласите 1 активного друга за неделю',
+      title: 'Geheim: Rekrutierer',
+      description: 'Lade 1 aktiven Freund pro Woche ein',
       goal: 1,
       progress: Number(stats.weeklyReferrals || 0),
       reward: 100000 * difficulty,
@@ -910,155 +910,155 @@ function getOnixEurRate() {
 const ACHIEVEMENTS = [
   {
     id: 'first_tap',
-    title: 'Первый тап',
-    description: 'Сделайте первый тап по монете',
+    title: 'Erster Tap',
+    description: 'Tippe zum ersten Mal auf die Münze',
     reward: 500,
     goal: 1,
   },
   {
     id: 'taps_100',
-    title: '100 тапов',
-    description: 'Сделайте 100 тапов',
+    title: '100 Taps',
+    description: 'Mache 100 Taps',
     reward: 2500,
     goal: 100,
   },
   {
     id: 'taps_1000',
-    title: '1 000 тапов',
-    description: 'Сделайте 1 000 тапов',
+    title: '1.000 Taps',
+    description: 'Mache 1.000 Taps',
     reward: 10000,
     goal: 1000,
   },
   {
     id: 'first_upgrade',
-    title: 'Первое улучшение',
-    description: 'Купите любое улучшение',
+    title: 'Erstes Upgrade',
+    description: 'Kaufe ein beliebiges Upgrade',
     reward: 2500,
     goal: 1,
   },
   {
     id: 'miner_level_5',
-    title: 'Майнер ур. 5',
-    description: 'Прокачайте майнер до 5 уровня',
+    title: 'Miner Lvl. 5',
+    description: 'Bringe den Miner auf Level 5',
     reward: 10000,
     goal: 5,
   },
   {
     id: 'first_boost',
-    title: 'Первый буст',
-    description: 'Активируйте любой временный буст',
+    title: 'Erster Boost',
+    description: 'Aktiviere einen temporären Boost',
     reward: 5000,
     goal: 1,
   },
   {
     id: 'first_offline_claim',
-    title: 'Первый оффлайн-доход',
-    description: 'Заберите оффлайн-доход майнера',
+    title: 'Erstes Offline-Einkommen',
+    description: 'Hole das Offline-Einkommen des Miners ab',
     reward: 5000,
     goal: 1,
   },
   {
     id: 'first_friend',
-    title: 'Первый друг',
-    description: 'Пригласите первого друга',
+    title: 'Erster Freund',
+    description: 'Lade deinen ersten Freund ein',
     reward: 25000,
     goal: 1,
   },
   {
     id: 'taps_10000',
-    title: '10 000 тапов',
-    description: 'Сделайте 10 000 тапов',
+    title: '10.000 Taps',
+    description: 'Mache 10.000 Taps',
     reward: 50000,
     goal: 10000,
   },
   {
     id: 'weekly_100k',
-    title: '100 000 ONIX за неделю',
-    description: 'Заработайте 100 000 ONIX за неделю',
+    title: '100.000 ONIX pro Woche',
+    description: 'Verdiene 100.000 ONIX in einer Woche',
     reward: 25000,
     goal: 100000,
   },
   {
     id: 'all_perks',
-    title: 'Коллекционер перков',
-    description: 'Купите все постоянные перки',
+    title: 'Perk-Sammler',
+    description: 'Kaufe alle permanenten Perks',
     reward: 75000,
     goal: 10,
   },
   {
     id: 'rank_gold',
-    title: 'Золотой ранг',
-    description: 'Достигните Gold I',
+    title: 'Gold-Rang',
+    description: 'Erreiche Gold I',
     reward: 50000,
     goal: 750000,
   },
   {
     id: 'rank_diamond',
-    title: 'Diamond игрок',
-    description: 'Достигните Diamond',
+    title: 'Diamond-Spieler',
+    description: 'Erreiche Diamond',
     reward: 250000,
     goal: 5000000,
   },
   {
     id: 'friends_5',
-    title: '5 друзей',
-    description: 'Пригласите 5 друзей',
+    title: '5 Freunde',
+    description: 'Lade 5 Freunde ein',
     reward: 100000,
     goal: 5,
   },
   {
     id: 'streak_7',
-    title: '7 дней подряд',
-    description: 'Дойдите до 7 дня daily streak',
+    title: '7 Tage in Folge',
+    description: 'Erreiche Tag 7 der Daily-Streak',
     reward: 50000,
     goal: 7,
   },
   {
     id: 'taps_50000',
-    title: '50 000 тапов',
-    description: 'Сделайте 50 000 тапов',
+    title: '50.000 Taps',
+    description: 'Mache 50.000 Taps',
     reward: 150000,
     goal: 50000,
   },
   {
     id: 'taps_100000',
-    title: '100 000 тапов',
-    description: 'Сделайте 100 000 тапов',
+    title: '100.000 Taps',
+    description: 'Mache 100.000 Taps',
     reward: 300000,
     goal: 100000,
   },
   {
     id: 'earned_1m',
-    title: 'Миллионер ONIX',
-    description: 'Заработайте 1 000 000 ONIX всего',
+    title: 'ONIX-Millionär',
+    description: 'Verdiene insgesamt 1.000.000 ONIX',
     reward: 100000,
     goal: 1000000,
   },
   {
     id: 'friends_10',
-    title: '10 друзей',
-    description: 'Пригласите 10 друзей',
+    title: '10 Freunde',
+    description: 'Lade 10 Freunde ein',
     reward: 200000,
     goal: 10,
   },
   {
     id: 'upgrade_master',
-    title: 'Мастер апгрейдов',
-    description: 'Купите 25 улучшений',
+    title: 'Upgrade-Meister',
+    description: 'Kaufe 25 Upgrades',
     reward: 100000,
     goal: 25,
   },
   {
     id: 'boost_master',
     title: 'Boost Master',
-    description: 'Используйте 10 бустов',
+    description: 'Nutze 10 Boosts',
     reward: 75000,
     goal: 10,
   },
   {
     id: 'offline_master',
-    title: 'Оффлайн мастер',
-    description: 'Заберите оффлайн-доход 10 раз',
+    title: 'Offline-Meister',
+    description: 'Hole 10-mal Offline-Einkommen ab',
     reward: 75000,
     goal: 10,
   },
@@ -1125,7 +1125,7 @@ function applyAchievements(user) {
         user,
         'income_achievement',
         achievement.reward,
-        `Достижение: ${achievement.title}`
+        `Erfolg: ${achievement.title}`
       );
 
       awarded.push({
@@ -1207,7 +1207,7 @@ function applyRankBonuses(user) {
           user,
           'income_rank',
           rank.bonus,
-          `Бонус ранга ${rank.name}`
+          `Rangbonus ${rank.name}`
         );
         awarded.push({
           id: rank.id,
@@ -1581,7 +1581,7 @@ router.get('/cron-award-weekly-prizes', async (req, res) => {
         user.seasonBadges.push(seasonBadge);
       }
 
-      addTransaction(user, 'income_season_prize', prize, `Приз сезона: ${place} место`);
+      addTransaction(user, 'income_season_prize', prize, `Saisonpreis: Platz ${place}`);
 
       applyRankBonuses(user);
       user.level = calculateLevel(user.totalEarned);
@@ -1594,7 +1594,7 @@ router.get('/cron-award-weekly-prizes', async (req, res) => {
       winners.push({
         place,
         telegramId: user.telegramId,
-        username: user.username || 'Пользователь',
+        username: user.username || 'Spieler',
         weeklyEarned: roundOnix(user.weeklyEarned || 0),
         prize,
       });
@@ -1653,7 +1653,7 @@ router.get('/admin-weekly-prize-preview', async (req, res) => {
       preview: topUsers.map((user, index) => ({
         place: index + 1,
         telegramId: user.telegramId,
-        username: user.username || 'Пользователь',
+        username: user.username || 'Spieler',
         weeklyEarned: roundOnix(user.weeklyEarned || 0),
         totalEarned: roundOnix(user.totalEarned || 0),
         balance: roundOnix(user.balance || 0),
@@ -1735,7 +1735,7 @@ router.post('/admin-award-weekly-prizes', async (req, res) => {
         user,
         'income_season_prize',
         prize,
-        `Приз сезона: ${place} место`
+        `Saisonpreis: Platz ${place}`
       );
 
       const rankBonuses = applyRankBonuses(user);
@@ -1749,7 +1749,7 @@ router.post('/admin-award-weekly-prizes', async (req, res) => {
       winners.push({
         place,
         telegramId: user.telegramId,
-        username: user.username || 'Пользователь',
+        username: user.username || 'Spieler',
         weeklyEarned: roundOnix(user.weeklyEarned || 0),
         prize,
         rankBonuses,
@@ -1877,7 +1877,7 @@ router.get('/admin-search-users', async (req, res) => {
     return res.json({
       users: users.map((user) => ({
         telegramId: user.telegramId,
-        username: user.username || 'Пользователь',
+        username: user.username || 'Spieler',
         balance: roundOnix(user.balance || 0),
         totalEarned: roundOnix(user.totalEarned || 0),
         weeklyEarned: roundOnix(user.weeklyEarned || 0),
@@ -1915,7 +1915,7 @@ router.get('/admin-user-profile/:targetTelegramId', async (req, res) => {
     return res.json({
       user: {
         telegramId: user.telegramId,
-        username: user.username || 'Пользователь',
+        username: user.username || 'Spieler',
         balance: roundOnix(user.balance || 0),
         totalEarned: roundOnix(user.totalEarned || 0),
         weeklyEarned: roundOnix(user.weeklyEarned || 0),
@@ -1954,7 +1954,7 @@ router.post('/admin-adjust-balance', async (req, res) => {
     const delta = Number(amount);
 
     if (!Number.isFinite(delta) || delta === 0) {
-      return res.status(400).json({ message: 'Введите корректную сумму' });
+      return res.status(400).json({ message: 'Gib einen gültigen Betrag ein' });
     }
 
     const user = await User.findOne({ telegramId: targetTelegramId });
@@ -1982,7 +1982,7 @@ router.post('/admin-adjust-balance', async (req, res) => {
     addSecurityLog(
       user,
       'admin_balance',
-      delta > 0 ? 'Баланс увеличен админом' : 'Баланс уменьшен админом',
+      delta > 0 ? 'Guthaben увеличен админом' : 'Guthaben уменьшен админом',
       `${delta > 0 ? '+' : ''}${delta} ONIX. ${reason || ''}`.trim()
     );
 
@@ -1996,7 +1996,7 @@ router.post('/admin-adjust-balance', async (req, res) => {
     return res.json({
       user: {
         telegramId: user.telegramId,
-        username: user.username || 'Пользователь',
+        username: user.username || 'Spieler',
         balance: roundOnix(user.balance || 0),
         totalEarned: roundOnix(user.totalEarned || 0),
         securityLogs: user.securityLogs || [],
@@ -2047,7 +2047,7 @@ router.post('/admin-ban-user', async (req, res) => {
     return res.json({
       user: {
         telegramId: user.telegramId,
-        username: user.username || 'Пользователь',
+        username: user.username || 'Spieler',
         isFrozen: Boolean(user.isFrozen),
         frozenReason: user.frozenReason || '',
         securityLogs: user.securityLogs || [],
@@ -2081,7 +2081,7 @@ router.get('/admin-security-logs', async (req, res) => {
       (user.securityLogs || []).slice(0, 20).forEach((log) => {
         logs.push({
           telegramId: user.telegramId,
-          username: user.username || 'Пользователь',
+          username: user.username || 'Spieler',
           isFrozen: Boolean(user.isFrozen),
           isSuspicious: Boolean(user.isSuspicious),
           type: log.type || 'info',
@@ -2123,7 +2123,7 @@ router.get('/admin-suspicious-users', async (req, res) => {
     return res.json({
       users: users.map((user) => ({
         telegramId: user.telegramId,
-        username: user.username || 'Пользователь',
+        username: user.username || 'Spieler',
         balance: roundOnix(user.balance || 0),
         totalEarned: roundOnix(user.totalEarned || 0),
         weeklyEarned: roundOnix(user.weeklyEarned || 0),
@@ -2156,7 +2156,7 @@ router.post('/admin-freeze-user', async (req, res) => {
     }
 
     user.isFrozen = Boolean(freeze);
-    user.frozenReason = freeze ? String(reason || 'Аккаунт заморожен администратором') : '';
+    user.frozenReason = freeze ? String(reason || 'Konto eingefroren администратором') : '';
     user.updatedAt = new Date();
 
     if (freeze) {
@@ -2169,7 +2169,7 @@ router.post('/admin-freeze-user', async (req, res) => {
       message: freeze ? 'User frozen' : 'User unfrozen',
       user: {
         telegramId: user.telegramId,
-        username: user.username || 'Пользователь',
+        username: user.username || 'Spieler',
         isFrozen: user.isFrozen,
         frozenReason: user.frozenReason,
       },
@@ -2205,7 +2205,7 @@ router.get('/admin-withdrawals', async (req, res) => {
 
         requests.push({
           userTelegramId: user.telegramId,
-          username: user.username || 'Пользователь',
+          username: user.username || 'Spieler',
           requestIndex: index,
           amount: roundOnix(request.amount || 0),
           eurAmount: roundCurrency(request.eurAmount || 0),
@@ -2311,7 +2311,7 @@ router.post('/admin-review-withdrawal', async (req, res) => {
       message: `Withdrawal ${action}`,
       user: {
         telegramId: user.telegramId,
-        username: user.username || 'Пользователь',
+        username: user.username || 'Spieler',
         balance: roundOnix(user.balance || 0),
       },
       request,
@@ -2442,7 +2442,7 @@ router.get('/admin-frontend-errors', async (req, res) => {
       (user.frontendErrorLogs || []).forEach((log) => {
         logs.push({
           telegramId: user.telegramId,
-          username: user.username || 'Пользователь',
+          username: user.username || 'Spieler',
           message: log.message || '',
           stack: log.stack || '',
           appVersion: log.appVersion || '',
@@ -2661,7 +2661,7 @@ router.get('/admin-operations', async (req, res) => {
       (user.withdrawalRequests || []).forEach((request) => {
         withdrawals.push({
           telegramId: user.telegramId,
-          username: user.username || 'Пользователь',
+          username: user.username || 'Spieler',
           ...(typeof request.toObject === 'function' ? request.toObject() : request),
         });
       });
@@ -2669,7 +2669,7 @@ router.get('/admin-operations', async (req, res) => {
       (user.transactions || []).slice(0, 30).forEach((transaction) => {
         transactions.push({
           telegramId: user.telegramId,
-          username: user.username || 'Пользователь',
+          username: user.username || 'Spieler',
           ...(typeof transaction.toObject === 'function' ? transaction.toObject() : transaction),
         });
       });
@@ -2856,7 +2856,7 @@ router.post('/claim-welcome-bonus', async (req, res) => {
     if (frozenResponse) return frozenResponse;
 
     if (user.welcomeBonusClaimed) {
-      return res.status(400).json({ message: 'Welcome bonus уже получен' });
+      return res.status(400).json({ message: 'Willkommensbonus bereits erhalten' });
     }
 
     const reward = getWelcomeBonusAmount();
@@ -2905,14 +2905,14 @@ router.post('/apply-promo', async (req, res) => {
     const cleanCode = String(code || '').trim().toUpperCase();
 
     if (!cleanCode) {
-      return res.status(400).json({ message: 'Введите промокод' });
+      return res.status(400).json({ message: 'Gib einen Promocode ein' });
     }
 
     const promoCodes = getPromoCodesConfig();
     const reward = promoCodes[cleanCode];
 
     if (!reward) {
-      return res.status(400).json({ message: 'Промокод не найден' });
+      return res.status(400).json({ message: 'Promocode nicht gefunden' });
     }
 
     const user = await User.findOne({ telegramId });
@@ -2927,14 +2927,14 @@ router.post('/apply-promo', async (req, res) => {
     if (frozenResponse) return frozenResponse;
 
     if (user.usedPromoCodes.includes(cleanCode)) {
-      return res.status(400).json({ message: 'Вы уже использовали этот промокод' });
+      return res.status(400).json({ message: 'Du hast diesen Promocode bereits verwendet' });
     }
 
     user.usedPromoCodes.push(cleanCode);
     user.balance = roundOnix(Number(user.balance || 0) + reward);
     addEarnings(user, reward);
 
-    addTransaction(user, 'income_promo', reward, `Промокод ${cleanCode}`);
+    addTransaction(user, 'income_promo', reward, `Promocode ${cleanCode}`);
 
     addSecurityLog(user, 'promo', 'Promo code used', `${cleanCode}: +${reward} ONIX`);
 
@@ -3133,7 +3133,7 @@ router.get('/leaderboard/weekly', async (req, res) => {
       leaderboard: users.map((user, index) => ({
         place: index + 1,
         telegramId: user.telegramId,
-        username: user.username || 'Пользователь',
+        username: user.username || 'Spieler',
         weeklyEarned: roundOnix(user.weeklyEarned || 0),
         totalEarned: roundOnix(user.totalEarned || 0),
       })),
@@ -3370,7 +3370,7 @@ router.post('/create', async (req, res) => {
     if (!user) {
       user = new User({
         telegramId,
-        username: username || 'Пользователь',
+        username: username || 'Spieler',
         referredBy: referredBy || null,
         completedTasks: [],
         completedAchievements: [],
@@ -3458,13 +3458,13 @@ router.post('/create', async (req, res) => {
 
           refUser.referralsCount += 1;
           incrementMissionStat(refUser, 'weeklyReferrals');
-          refUser.lastReferralUsername = username || 'новый пользователь';
+          refUser.lastReferralUsername = username || 'neuer Spieler';
           refUser.updatedAt = new Date();
 
-          user.referredByUsername = refUser.username || 'пользователя';
+          user.referredByUsername = refUser.username || 'Spielers';
 
           // Реферальный бонус пригласившему теперь начисляется не сразу,
-          // а после активности нового игрока: 100 тапов.
+          // а после активности нового игрока: 100 Taps.
           user.referredByBonusPaid = false;
 
           user.balance = roundOnix(Number(user.balance || 0) + economyConfig.referredUserReward);
@@ -3474,7 +3474,7 @@ router.post('/create', async (req, res) => {
             user,
             'income_referral',
             economyConfig.referredUserReward,
-            'Бонус за вход по ссылке'
+            'Bonus für Einstieg über Link'
           );
 
           applyAchievements(user);
@@ -3700,24 +3700,24 @@ router.post('/buy-upgrade', async (req, res) => {
 
     if (Number(user.balance || 0) < cost) {
       return res.status(400).json({
-        message: 'Недостаточно ONIX',
+        message: 'Nicht genug ONIX',
       });
     }
 
     user.balance = roundOnix(Number(user.balance || 0) - cost);
 
     const upgradeTitles = {
-      tap: 'Улучшение силы тапа',
-      energy: 'Улучшение энергии',
-      recharge: 'Улучшение восстановления',
-      miner: 'Улучшение майнера',
+      tap: 'Tap-Stärke-Upgrade',
+      energy: 'Energie-Upgrade',
+      recharge: 'Regenerations-Upgrade',
+      miner: 'Miner-Upgrade',
     };
 
     addTransaction(
       user,
       'expense_upgrade',
       -cost,
-      upgradeTitles[type] || 'Покупка улучшения'
+      upgradeTitles[type] || 'Upgrade-Kauf'
     );
 
     if (type === 'tap') {
@@ -3827,7 +3827,7 @@ function addSuspiciousReason(user, reason) {
 function ensureUserNotFrozen(user, res) {
   if (user.isFrozen) {
     return res.status(403).json({
-      message: user.frozenReason || 'Аккаунт заморожен',
+      message: user.frozenReason || 'Konto eingefroren',
     });
   }
 
@@ -3874,13 +3874,13 @@ async function tryPayQualifiedReferralBonus(user) {
     Number(refUser.balance || 0) + referralReward
   );
   addEarnings(refUser, referralReward);
-  refUser.lastReferralUsername = user.username || 'новый пользователь';
+  refUser.lastReferralUsername = user.username || 'neuer Spieler';
 
   addTransaction(
     refUser,
     'income_referral',
     referralReward,
-    `Реферальный бонус за активного друга: ${user.username || 'новый пользователь'}`
+    `Empfehlungsbonus für aktiven Freund: ${user.username || 'neuer Spieler'}`
   );
 
   applyAchievements(refUser);
@@ -3895,7 +3895,7 @@ async function tryPayQualifiedReferralBonus(user) {
 
   return {
     referrerTelegramId: refUser.telegramId,
-    referrerUsername: refUser.username || 'Пользователь',
+    referrerUsername: refUser.username || 'Spieler',
     reward: referralReward,
   };
 }
@@ -4061,7 +4061,7 @@ router.post('/set-team', async (req, res) => {
     const cleanTeamName = String(teamName || '').trim().slice(0, 24);
 
     if (!cleanTeamName) {
-      return res.status(400).json({ message: 'Введите название команды' });
+      return res.status(400).json({ message: 'Gib einen Teamnamen ein' });
     }
 
     const user = await User.findOne({ telegramId });
@@ -4111,7 +4111,7 @@ router.post('/create-team', async (req, res) => {
     const cleanTeamName = normalizeTeamNameValue(teamName);
 
     if (cleanTeamName.length < 2) {
-      return res.status(400).json({ message: 'Введите название команды минимум 2 символа' });
+      return res.status(400).json({ message: 'Gib einen Teamnamen mit mindestens 2 Zeichen ein' });
     }
 
     const existingTeamMember = await User.findOne({
@@ -4121,7 +4121,7 @@ router.post('/create-team', async (req, res) => {
     const existingSavedTeam = await findSavedTeamByName(cleanTeamName);
 
     if (existingTeamMember || existingSavedTeam) {
-      return res.status(409).json({ message: 'Команда с таким названием уже существует' });
+      return res.status(409).json({ message: 'Ein Team mit diesem Namen existiert bereits' });
     }
 
     const user = await User.findOne({ telegramId });
@@ -4181,7 +4181,7 @@ router.post('/join-team', async (req, res) => {
       .slice(0, 24);
 
     if (!cleanTeamName) {
-      return res.status(400).json({ message: 'Команда не найдена' });
+      return res.status(400).json({ message: 'Team nicht gefunden' });
     }
 
     const user = await User.findOne({ telegramId });
@@ -4319,30 +4319,30 @@ router.post('/claim-team-mission', async (req, res) => {
     if (frozenResponse) return frozenResponse;
 
     if (!user.teamName) {
-      return res.status(400).json({ message: 'Сначала вступите в команду' });
+      return res.status(400).json({ message: 'Tritt zuerst einem Team bei' });
     }
 
     const missions = await getTeamMissionsPayload(user);
     const mission = missions.find((item) => item.id === missionId);
 
     if (!mission) {
-      return res.status(404).json({ message: 'Командное задание не найдено' });
+      return res.status(404).json({ message: 'Team-Aufgabe nicht gefunden' });
     }
 
     if (!mission.isCompleted) {
-      return res.status(400).json({ message: 'Командное задание ещё не выполнено' });
+      return res.status(400).json({ message: 'Team-Aufgabe ist noch nicht erledigt' });
     }
 
     const claimKey = `${getWeekKey()}_${mission.id}`;
 
     if (user.teamMissionClaims.includes(claimKey)) {
-      return res.status(400).json({ message: 'Награда уже получена' });
+      return res.status(400).json({ message: 'Belohnung bereits erhalten' });
     }
 
     user.teamMissionClaims.push(claimKey);
     user.balance = roundOnix(Number(user.balance || 0) + mission.reward);
     addEarnings(user, mission.reward);
-    addTransaction(user, 'income_team_mission', mission.reward, `Командное задание: ${mission.title}`);
+    addTransaction(user, 'income_team_mission', mission.reward, `Team-Aufgabe: ${mission.title}`);
 
     const achievementBonuses = applyAchievements(user);
     const rankBonuses = applyRankBonuses(user);
@@ -4393,7 +4393,7 @@ router.post('/claim-team-prize', async (req, res) => {
     if (frozenResponse) return frozenResponse;
 
     if (!user.teamName) {
-      return res.status(400).json({ message: 'Сначала вступите в команду' });
+      return res.status(400).json({ message: 'Tritt zuerst einem Team bei' });
     }
 
     const teamContest = await getTeamContestPayload(user);
@@ -4403,21 +4403,21 @@ router.post('/claim-team-prize', async (req, res) => {
 
     if (teamContest.joinedAfterCompletedContest) {
       return res.status(400).json({
-        message: 'Вы вступили в команду после окончания прошлого состязания',
+        message: 'Du bist dem Team nach Ende des letzten Wettbewerbs beigetreten',
         teamContest,
       });
     }
 
     if (!prize || !teamContest.completedTeamPlace) {
       return res.status(400).json({
-        message: 'Команда не участвовала в прошлом состязании',
+        message: 'Das Team hat am letzten Wettbewerb nicht teilgenommen',
         teamContest,
       });
     }
 
     if (user.teamPrizeClaims.includes(claimKey)) {
       return res.status(400).json({
-        message: 'Командный приз уже получен',
+        message: 'Team-Preis bereits erhalten',
         teamContest,
       });
     }
@@ -4429,7 +4429,7 @@ router.post('/claim-team-prize', async (req, res) => {
       user,
       'income_team_prize',
       prize,
-      `Командное состязание ${teamContest.completedWeek}: ${teamContest.rewardTitle} (${user.teamName})`
+      `Team-Wettbewerb ${teamContest.completedWeek}: ${teamContest.rewardTitle} (${user.teamName})`
     );
 
     const achievementBonuses = applyAchievements(user);
@@ -4476,7 +4476,7 @@ router.get('/friends-leaderboard/:telegramId', async (req, res) => {
       friends: users.map((user, index) => ({
         place: index + 1,
         telegramId: user.telegramId,
-        username: user.username || 'Пользователь',
+        username: user.username || 'Spieler',
         totalEarned: roundOnix(user.totalEarned || 0),
         weeklyEarned: roundOnix(user.weeklyEarned || 0),
         referralsCount: Number(user.referralsCount || 0),
@@ -4509,7 +4509,7 @@ router.post('/select-title', async (req, res) => {
     ];
 
     if (!allowedTitles.includes(title)) {
-      return res.status(400).json({ message: 'Недоступный титул' });
+      return res.status(400).json({ message: 'Titel nicht verfügbar' });
     }
 
     const user = await User.findOne({ telegramId });
@@ -4553,7 +4553,7 @@ router.post('/request-withdrawal', async (req, res) => {
 
     if (withdrawAmount < economyConfig.minWithdrawOnix) {
       return res.status(400).json({
-        message: `Минимальный вывод ${economyConfig.minWithdrawOnix} ONIX`,
+        message: `Mindestauszahlung ${economyConfig.minWithdrawOnix} ONIX`,
       });
     }
 
@@ -4574,7 +4574,7 @@ router.post('/request-withdrawal', async (req, res) => {
 
     if (hasPendingWithdrawal) {
       return res.status(400).json({
-        message: 'У вас уже есть заявка на вывод в обработке',
+        message: 'Du hast bereits einen Auszahlungsantrag in Bearbeitung',
       });
     }
 
@@ -4586,12 +4586,12 @@ router.post('/request-withdrawal', async (req, res) => {
       Date.now() - Number(lastWithdrawal.createdAt || 0) < withdrawalCooldownMs
     ) {
       return res.status(400).json({
-        message: 'Создавать заявку на вывод можно не чаще 1 раза в 24 часа',
+        message: 'Ein Auszahlungsantrag ist höchstens einmal alle 24 Stunden möglich',
       });
     }
 
     if (Number(user.balance || 0) < withdrawAmount) {
-      return res.status(400).json({ message: 'Недостаточно ONIX для вывода' });
+      return res.status(400).json({ message: 'Nicht genug ONIX für Auszahlung' });
     }
 
     user.balance = roundOnix(Number(user.balance || 0) - withdrawAmount);
@@ -4611,7 +4611,7 @@ router.post('/request-withdrawal', async (req, res) => {
       user,
       'withdrawal_pending',
       -withdrawAmount,
-      `Заявка на вывод ≈ ${eurAmount}€`,
+      `Auszahlungsantrag ≈ ${eurAmount}€`,
       'pending'
     );
 
@@ -4670,7 +4670,7 @@ router.post('/buy-perk', async (req, res) => {
 
     if (currentLevel >= perk.maxLevel) {
       return res.status(400).json({
-        message: 'Перк уже максимального уровня',
+        message: 'Perk ist bereits auf Maximallevel',
       });
     }
 
@@ -4678,7 +4678,7 @@ router.post('/buy-perk', async (req, res) => {
 
     if (Number(user.balance || 0) < cost) {
       return res.status(400).json({
-        message: 'Недостаточно ONIX',
+        message: 'Nicht genug ONIX',
       });
     }
 
@@ -4698,7 +4698,7 @@ router.post('/buy-perk', async (req, res) => {
       user,
       'expense_perk',
       -cost,
-      `Перк: ${perk.title} ур. ${nextLevel}`
+      `Perk: ${perk.title} Lvl. ${nextLevel}`
     );
 
     const achievementBonuses = applyAchievements(user);
@@ -4759,7 +4759,7 @@ router.post('/open-chest', async (req, res) => {
 
     if (Number(user.balance || 0) < chestCost) {
       return res.status(400).json({
-        message: 'Недостаточно ONIX',
+        message: 'Nicht genug ONIX',
       });
     }
 
@@ -4769,20 +4769,20 @@ router.post('/open-chest', async (req, res) => {
 
     if (roll < 0.45) {
       rewardAmount = 25000;
-      rewardTitle = 'Сундук: малый бонус';
+      rewardTitle = 'Truhe: kleiner Bonus';
     } else if (roll < 0.75) {
       rewardAmount = 60000;
-      rewardTitle = 'Сундук: хороший бонус';
+      rewardTitle = 'Truhe: guter Bonus';
     } else if (roll < 0.93) {
       rewardAmount = 125000;
-      rewardTitle = 'Сундук: редкий бонус';
+      rewardTitle = 'Truhe: seltener Bonus';
     } else {
       rewardAmount = 300000;
-      rewardTitle = 'Сундук: джекпот';
+      rewardTitle = 'Truhe: Jackpot';
     }
 
     user.balance = roundOnix(Number(user.balance || 0) - chestCost);
-    addTransaction(user, 'expense_chest', -chestCost, 'Открытие сундука');
+    addTransaction(user, 'expense_chest', -chestCost, 'Truhe geöffnet');
 
     user.balance = roundOnix(Number(user.balance || 0) + rewardAmount);
     addEarnings(user, rewardAmount);
@@ -4876,18 +4876,18 @@ router.post('/claim-mission', async (req, res) => {
     const mission = visibleMissions.find((item) => item.id === missionId);
 
     if (!mission) {
-      return res.status(404).json({ message: 'Миссия не найдена' });
+      return res.status(404).json({ message: 'Mission nicht gefunden' });
     }
 
     if (!mission.isCompleted) {
-      return res.status(400).json({ message: 'Миссия ещё не выполнена' });
+      return res.status(400).json({ message: 'Mission noch nicht erledigt' });
     }
 
     const claimedList =
       missionType === 'daily' ? user.claimedDailyMissions : user.claimedWeeklyMissions;
 
     if (claimedList.includes(mission.id)) {
-      return res.status(400).json({ message: 'Награда уже получена' });
+      return res.status(400).json({ message: 'Belohnung bereits erhalten' });
     }
 
     claimedList.push(mission.id);
@@ -4899,7 +4899,7 @@ router.post('/claim-mission', async (req, res) => {
       user,
       missionType === 'daily' ? 'income_daily_mission' : 'income_weekly_mission',
       mission.reward,
-      `${missionType === 'daily' ? 'Daily' : 'Weekly'} миссия: ${mission.title}`
+      `${missionType === 'daily' ? 'Daily' : 'Weekly'} Mission: ${mission.title}`
     );
 
     const achievementBonuses = applyAchievements(user);
@@ -5000,7 +5000,7 @@ router.post('/claim-task', async (req, res) => {
       user.lastDailyClaimDay = todayKey;
       user.dailyStreak = nextStreak;
 
-      addTransaction(user, 'income_daily', reward, `Ежедневная награда · День ${nextStreak}/7`);
+      addTransaction(user, 'income_daily', reward, `Tägliche Belohnung · Tag ${nextStreak}/7`);
 
       const rankBonuses = applyRankBonuses(user);
       user.level = calculateLevel(user.totalEarned);
@@ -5052,14 +5052,14 @@ router.post('/claim-task', async (req, res) => {
 
       if (!isSubscribed) {
         return res.status(400).json({
-          message: 'Сначала подпишитесь на канал',
+          message: 'Abonniere zuerst den Kanal',
         });
       }
 
       user.balance = roundOnix(Number(user.balance || 0) + 25000);
       addEarnings(user, 25000);
       user.completedTasks.push('channel');
-      addTransaction(user, 'income_task', 25000, 'Задание: подписка на канал');
+      addTransaction(user, 'income_task', 25000, 'Aufgabe: Kanal abonnieren');
 
       const rankBonuses = applyRankBonuses(user);
       user.level = calculateLevel(user.totalEarned);
@@ -5089,7 +5089,7 @@ router.post('/claim-task', async (req, res) => {
 
       if (user.referralsCount < 1) {
         return res.status(400).json({
-          message: 'Сначала пригласите друга',
+          message: 'Lade zuerst einen Freund ein',
         });
       }
 
@@ -5102,7 +5102,7 @@ router.post('/claim-task', async (req, res) => {
         user,
         'income_task',
         economyConfig.referralReward,
-        'Задание: пригласить друга'
+        'Aufgabe: Freund einladen'
       );
 
       const rankBonuses = applyRankBonuses(user);
@@ -5165,7 +5165,7 @@ router.post('/claim-offline-income', async (req, res) => {
 
     user.balance = roundOnix(Number(user.balance || 0) + claimedAmount);
     addEarnings(user, claimedAmount);
-    addTransaction(user, 'income_offline', claimedAmount, 'Оффлайн-майнинг');
+    addTransaction(user, 'income_offline', claimedAmount, 'Offline-Mining');
     user.offlineClaimsCount = Number(user.offlineClaimsCount || 0) + 1;
     incrementMissionStat(user, 'dailyOfflineClaims');
     incrementMissionStat(user, 'weeklyOfflineClaims');
@@ -5326,18 +5326,18 @@ router.post('/refill-energy', async (req, res) => {
     const currentEnergy = Number(user.energy || 0);
 
     if (currentEnergy >= maxEnergy) {
-      return res.status(400).json({ message: 'Энергия уже полная' });
+      return res.status(400).json({ message: 'Energie ist bereits voll' });
     }
 
     const cost = getEnergyRefillCost();
 
     if (Number(user.balance || 0) < cost) {
-      return res.status(400).json({ message: 'Недостаточно ONIX' });
+      return res.status(400).json({ message: 'Nicht genug ONIX' });
     }
 
     user.balance = roundOnix(Number(user.balance || 0) - cost);
     user.energy = maxEnergy;
-    addTransaction(user, 'expense_boost', -cost, 'Пополнение энергии до 100%');
+    addTransaction(user, 'expense_boost', -cost, 'Energie auf 100 % aufgefüllt');
     user.updatedAt = new Date();
     user.lastSeenAt = Date.now();
 
@@ -5421,7 +5421,7 @@ router.post('/activate-boost', async (req, res) => {
       user,
       'expense_boost',
       -cost,
-      type === 'tap' ? 'Буст тапа ×2' : 'Буст майнинга ×2'
+      type === 'tap' ? 'Tap-Boost ×2' : 'Mining-Boost ×2'
     );
     user.activeBoost = type;
     const effectiveDurationMs = Math.round(durationConfig[type] * getBoostDurationMultiplier(user));

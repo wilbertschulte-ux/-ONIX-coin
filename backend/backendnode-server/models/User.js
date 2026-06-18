@@ -11,7 +11,7 @@ const userSchema = new mongoose.Schema(
 
     username: {
       type: String,
-      default: 'Пользователь',
+      default: 'Spieler',
     },
 
     balance: {

@@ -11,7 +11,7 @@ declare global {
   }
 }
 
-// Инициализация Telegram WebApp
+// Telegram WebApp initialization
 const tg = window.Telegram?.WebApp
 
 if (tg) {

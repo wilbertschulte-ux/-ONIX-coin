@@ -35,7 +35,7 @@ function getStartKeyboard() {
     inline_keyboard: [
       [
         {
-          text: "🚀 Открыть ONIX COIN",
+          text: "🚀 ONIX COIN öffnen",
           web_app: {
             url: WEB_APP_URL,
           },
@@ -60,11 +60,11 @@ app.post("/api/telegram/webhook", async (req, res) => {
       await sendTelegramMessage(
         chatId,
         [
-          "⚡ <b>Добро пожаловать в ONIX COIN!</b>",
+          "⚡ <b>Willkommen bei ONIX COIN!</b>",
           "",
-          "Тапай монету, прокачивай майнер, выполняй задания, приглашай друзей и поднимайся в рейтинге.",
+          "Tippe auf die Münze, verbessere deinen Miner, erledige Aufgaben, lade Freunde ein und steige im Ranking auf.",
           "",
-          "Нажми кнопку ниже, чтобы открыть приложение 👇",
+          "Drücke unten auf den Button, um die App zu öffnen 👇",
         ].join("\n"),
         getStartKeyboard()
       );
@@ -74,7 +74,7 @@ app.post("/api/telegram/webhook", async (req, res) => {
 
     await sendTelegramMessage(
       chatId,
-      "🚀 Нажми кнопку ниже, чтобы открыть ONIX COIN.",
+      "🚀 Drücke unten auf den Button, um ONIX COIN zu öffnen.",
       getStartKeyboard()
     );
 

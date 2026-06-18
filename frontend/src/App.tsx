@@ -10948,7 +10948,7 @@ div.fixed.inset-0.z-\[90\] button.bg-yellow-400 {
 
 
 /* === ONIX BOOST ICONS FINAL LAYOUT FIX === */
-/* Показываем PNG-иконки как полноценные ONIX-плашки, а не как маленькие картинки внутри старой рамки. */
+/* Show PNG icons as full ONIX tiles, not small pictures inside the old frame. */
 .onix-upgrades-ref-list {
   gap: 14px !important;
   padding-bottom: 118px !important;
@@ -11052,7 +11052,7 @@ div.fixed.inset-0.z-\[90\] button.bg-yellow-400 {
 }
 
 /* === ONIX BOOST ICONS CLEAN v86 === */
-/* Фикс после проверки на телефоне: убраны чёрные квадраты, иконки увеличены и выровнены по сетке. */
+/* Mobile check fix: black squares removed, icons enlarged and aligned to grid. */
 .onix-upgrades-ref-list {
   gap: 15px !important;
   padding-bottom: 122px !important;
@@ -11644,10 +11644,10 @@ function formatMissionResetTime(ms: number) {
   const seconds = totalSeconds % 60;
 
   if (days > 0) {
-    return `${days}д ${hours}ч ${minutes}м`;
+    return `${days}T ${hours}Std. ${minutes}Min.`;
   }
 
-  return `${hours}ч ${minutes}м ${seconds}с`;
+  return `${hours}Std. ${minutes}Min. ${seconds}Sek.`;
 }
 
 const DEFAULT_ONIX_EUR_PER_1000 = 0.68;
@@ -11657,8 +11657,8 @@ const ADMIN_TELEGRAM_ID = String(import.meta.env.VITE_ADMIN_TELEGRAM_ID || '7887
 const ACHIEVEMENTS: Achievement[] = [
   {
     id: 'first_tap',
-    title: 'Первый тап',
-    description: 'Сделайте первый тап по монете',
+    title: 'Erster Tap',
+    description: 'Tippe zum ersten Mal auf die Münze',
     reward: 500,
     goal: 1,
     progress: 0,
@@ -11666,8 +11666,8 @@ const ACHIEVEMENTS: Achievement[] = [
   },
   {
     id: 'taps_100',
-    title: '100 тапов',
-    description: 'Сделайте 100 тапов',
+    title: '100 Taps',
+    description: 'Mache 100 Taps',
     reward: 2500,
     goal: 100,
     progress: 0,
@@ -11675,8 +11675,8 @@ const ACHIEVEMENTS: Achievement[] = [
   },
   {
     id: 'taps_1000',
-    title: '1 000 тапов',
-    description: 'Сделайте 1 000 тапов',
+    title: '1.000 Taps',
+    description: 'Mache 1.000 Taps',
     reward: 10000,
     goal: 1000,
     progress: 0,
@@ -11684,8 +11684,8 @@ const ACHIEVEMENTS: Achievement[] = [
   },
   {
     id: 'first_upgrade',
-    title: 'Первое улучшение',
-    description: 'Купите любое улучшение',
+    title: 'Erstes Upgrade',
+    description: 'Kaufe ein beliebiges Upgrade',
     reward: 2500,
     goal: 1,
     progress: 0,
@@ -11693,8 +11693,8 @@ const ACHIEVEMENTS: Achievement[] = [
   },
   {
     id: 'miner_level_5',
-    title: 'Майнер ур. 5',
-    description: 'Прокачайте майнер до 5 уровня',
+    title: 'Miner Lvl. 5',
+    description: 'Bringe den Miner auf Level 5',
     reward: 10000,
     goal: 5,
     progress: 0,
@@ -11702,8 +11702,8 @@ const ACHIEVEMENTS: Achievement[] = [
   },
   {
     id: 'first_boost',
-    title: 'Первый буст',
-    description: 'Активируйте любой временный буст',
+    title: 'Erster Boost',
+    description: 'Aktiviere einen temporären Boost',
     reward: 5000,
     goal: 1,
     progress: 0,
@@ -11711,8 +11711,8 @@ const ACHIEVEMENTS: Achievement[] = [
   },
   {
     id: 'first_offline_claim',
-    title: 'Первый оффлайн-доход',
-    description: 'Заберите оффлайн-доход майнера',
+    title: 'Erstes Offline-Einkommen',
+    description: 'Hole das Offline-Einkommen des Miners ab',
     reward: 5000,
     goal: 1,
     progress: 0,
@@ -11720,8 +11720,8 @@ const ACHIEVEMENTS: Achievement[] = [
   },
   {
     id: 'first_friend',
-    title: 'Первый друг',
-    description: 'Пригласите первого друга',
+    title: 'Erster Freund',
+    description: 'Lade deinen ersten Freund ein',
     reward: 25000,
     goal: 1,
     progress: 0,
@@ -11729,8 +11729,8 @@ const ACHIEVEMENTS: Achievement[] = [
   },
   {
     id: 'taps_10000',
-    title: '10 000 тапов',
-    description: 'Сделайте 10 000 тапов',
+    title: '10.000 Taps',
+    description: 'Mache 10.000 Taps',
     reward: 50000,
     goal: 10000,
     progress: 0,
@@ -11738,8 +11738,8 @@ const ACHIEVEMENTS: Achievement[] = [
   },
   {
     id: 'weekly_100k',
-    title: '100 000 ONIX за неделю',
-    description: 'Заработайте 100 000 ONIX за неделю',
+    title: '100.000 ONIX pro Woche',
+    description: 'Verdiene 100.000 ONIX in einer Woche',
     reward: 25000,
     goal: 100000,
     progress: 0,
@@ -11747,8 +11747,8 @@ const ACHIEVEMENTS: Achievement[] = [
   },
   {
     id: 'all_perks',
-    title: 'Коллекционер перков',
-    description: 'Купите все постоянные перки',
+    title: 'Perk-Sammler',
+    description: 'Kaufe alle permanenten Perks',
     reward: 75000,
     goal: 10,
     progress: 0,
@@ -11756,8 +11756,8 @@ const ACHIEVEMENTS: Achievement[] = [
   },
   {
     id: 'rank_gold',
-    title: 'Золотой ранг',
-    description: 'Достигните Gold I',
+    title: 'Gold-Rang',
+    description: 'Erreiche Gold I',
     reward: 50000,
     goal: 750000,
     progress: 0,
@@ -11765,8 +11765,8 @@ const ACHIEVEMENTS: Achievement[] = [
   },
   {
     id: 'rank_diamond',
-    title: 'Diamond игрок',
-    description: 'Достигните Diamond',
+    title: 'Diamond-Spieler',
+    description: 'Erreiche Diamond',
     reward: 250000,
     goal: 5000000,
     progress: 0,
@@ -11774,8 +11774,8 @@ const ACHIEVEMENTS: Achievement[] = [
   },
   {
     id: 'friends_5',
-    title: '5 друзей',
-    description: 'Пригласите 5 друзей',
+    title: '5 Freunde',
+    description: 'Lade 5 Freunde ein',
     reward: 100000,
     goal: 5,
     progress: 0,
@@ -11783,8 +11783,8 @@ const ACHIEVEMENTS: Achievement[] = [
   },
   {
     id: 'streak_7',
-    title: '7 дней подряд',
-    description: 'Дойдите до 7 дня daily streak',
+    title: '7 Tage in Folge',
+    description: 'Erreiche Tag 7 der Daily-Streak',
     reward: 50000,
     goal: 7,
     progress: 0,
@@ -11792,8 +11792,8 @@ const ACHIEVEMENTS: Achievement[] = [
   },
   {
     id: 'taps_50000',
-    title: '50 000 тапов',
-    description: 'Сделайте 50 000 тапов',
+    title: '50.000 Taps',
+    description: 'Mache 50.000 Taps',
     reward: 150000,
     goal: 50000,
     progress: 0,
@@ -11801,8 +11801,8 @@ const ACHIEVEMENTS: Achievement[] = [
   },
   {
     id: 'taps_100000',
-    title: '100 000 тапов',
-    description: 'Сделайте 100 000 тапов',
+    title: '100.000 Taps',
+    description: 'Mache 100.000 Taps',
     reward: 300000,
     goal: 100000,
     progress: 0,
@@ -11810,8 +11810,8 @@ const ACHIEVEMENTS: Achievement[] = [
   },
   {
     id: 'earned_1m',
-    title: 'Миллионер ONIX',
-    description: 'Заработайте 1 000 000 ONIX всего',
+    title: 'ONIX-Millionär',
+    description: 'Verdiene insgesamt 1.000.000 ONIX',
     reward: 100000,
     goal: 1000000,
     progress: 0,
@@ -11819,8 +11819,8 @@ const ACHIEVEMENTS: Achievement[] = [
   },
   {
     id: 'friends_10',
-    title: '10 друзей',
-    description: 'Пригласите 10 друзей',
+    title: '10 Freunde',
+    description: 'Lade 10 Freunde ein',
     reward: 200000,
     goal: 10,
     progress: 0,
@@ -11828,8 +11828,8 @@ const ACHIEVEMENTS: Achievement[] = [
   },
   {
     id: 'upgrade_master',
-    title: 'Мастер апгрейдов',
-    description: 'Купите 25 улучшений',
+    title: 'Upgrade-Meister',
+    description: 'Kaufe 25 Upgrades',
     reward: 100000,
     goal: 25,
     progress: 0,
@@ -11838,7 +11838,7 @@ const ACHIEVEMENTS: Achievement[] = [
   {
     id: 'boost_master',
     title: 'Boost Master',
-    description: 'Используйте 10 бустов',
+    description: 'Nutze 10 Boosts',
     reward: 75000,
     goal: 10,
     progress: 0,
@@ -11846,8 +11846,8 @@ const ACHIEVEMENTS: Achievement[] = [
   },
   {
     id: 'offline_master',
-    title: 'Оффлайн мастер',
-    description: 'Заберите оффлайн-доход 10 раз',
+    title: 'Offline-Meister',
+    description: 'Hole 10-mal Offline-Einkommen ab',
     reward: 75000,
     goal: 10,
     progress: 0,
@@ -11977,31 +11977,31 @@ function getRankIconTier(rankId: string, rankName = '') {
   const id = String(rankId || '').toLowerCase();
   const name = String(rankName || '').toLowerCase();
 
-  if (id.includes('legend') || id.includes('master') || name.includes('legend') || name.includes('master') || name.includes('grand') || name.includes('гранд')) {
+  if (id.includes('legend') || id.includes('master') || name.includes('legend') || name.includes('master') || name.includes('grand') || name.includes('grand')) {
     return 'grandmaster';
   }
 
-  if (id.includes('diamond') || name.includes('diamond') || name.includes('алмаз')) {
+  if (id.includes('diamond') || name.includes('diamond') || name.includes('diamond')) {
     return 'diamond';
   }
 
-  if (id.includes('platinum') || name.includes('platinum') || name.includes('платин')) {
+  if (id.includes('platinum') || name.includes('platinum') || name.includes('platinum')) {
     return 'platinum';
   }
 
-  if (id.includes('gold') || name.includes('gold') || name.includes('золот')) {
+  if (id.includes('gold') || name.includes('gold') || name.includes('gold')) {
     return 'gold';
   }
 
-  if (id.includes('silver') || name.includes('silver') || name.includes('сереб')) {
+  if (id.includes('silver') || name.includes('silver') || name.includes('silver')) {
     return 'silver';
   }
 
-  if (id.includes('bronze_1') || name.includes('нович')) {
+  if (id.includes('bronze_1') || name.includes('newbie')) {
     return 'novice';
   }
 
-  if (id.includes('bronze') || name.includes('bronze') || name.includes('бронз')) {
+  if (id.includes('bronze') || name.includes('bronze') || name.includes('bronze')) {
     return 'bronze';
   }
 
@@ -12160,11 +12160,11 @@ class AppErrorBoundary extends React.Component<
             </div>
 
             <h1 className="text-2xl font-bold text-white">
-              Что-то пошло не так
+              Etwas ist schiefgelaufen
             </h1>
 
             <p className="mt-3 text-sm text-gray-400">
-              Ошибка уже сохранена в логах. Обновите приложение.
+              Der Fehler wurde protokolliert. Aktualisiere die App.
             </p>
 
             <p className="mt-2 break-words text-xs text-gray-600">
@@ -12175,7 +12175,7 @@ class AppErrorBoundary extends React.Component<
               onClick={() => window.location.reload()}
               className="mt-5 w-full rounded-2xl bg-yellow-400 py-4 font-bold text-black"
             >
-              Обновить
+              Aktualisieren
             </button>
           </div>
         </div>
@@ -12227,7 +12227,7 @@ function App() {
     maxPaidReferralsPerDay: 10,
     chestCost: 50000,
   });
-  const [username, setUsername] = useState('Пользователь');
+  const [username, setUsername] = useState('Spieler');
   const [selectedTitle, setSelectedTitle] = useState('ONIX Player');
   const [achievementCategory, setAchievementCategory] =
     useState<AchievementCategory>('all');
@@ -12468,7 +12468,7 @@ function App() {
           chestCost: Number(response.data.chestCost) || 50000,
         });
       } catch (error) {
-        console.log('Ошибка загрузки конфига экономики:', error);
+        console.log('Fehler beim Laden der Economy-Konfiguration:', error);
       }
     };
 
@@ -12489,7 +12489,7 @@ function App() {
           username:
             `${window.Telegram?.WebApp?.initDataUnsafe?.user?.first_name || ''} ${
               window.Telegram?.WebApp?.initDataUnsafe?.user?.last_name || ''
-            }`.trim() || 'Пользователь',
+            }`.trim() || 'Spieler',
           referredBy: startParam,
         });
 
@@ -12528,7 +12528,7 @@ function App() {
         }
 
         setBalance(user.balance || 0);
-        setUsername(user.username || 'Пользователь');
+        setUsername(user.username || 'Spieler');
         setWeeklyEarned(Number(user.weeklyEarned || 0));
         setEnergy(user.energy ?? 500);
         setMaxEnergy(user.maxEnergy ?? 500);
@@ -12574,11 +12574,11 @@ function App() {
 
         if (newRefs > oldRefs) {
           showToast(
-            `👥 По вашей ссылке перешёл ${
-              user.lastReferralUsername || 'новый пользователь'
-            }. Бонус +${formatOnix(
+            `👥 Über deinen Link ist beigetreten ${
+              user.lastReferralUsername || 'neuer Spieler'
+            }. Bonus +${formatOnix(
               economyConfig.referralReward
-            )} ONIX придёт, когда друг сделает 100 тапов.`,
+            )} ONIX kommt, wenn dein Freund 100 Taps macht.`,
             'info'
           );
         }
@@ -12594,8 +12594,8 @@ function App() {
           !localStorage.getItem(`referralWelcomeShown_${user.telegramId}`)
         ) {
           showToast(
-            `🎁 Вы получили +${formatOnix(economyConfig.referredUserReward)} ONIX за вход по ссылке пользователя ${
-              user.referredByUsername || 'друга'
+            `🎁 Du hast erhalten +${formatOnix(economyConfig.referredUserReward)} ONIX für den Einstieg über den Link von ${
+              user.referredByUsername || 'Freund'
             }!`
           );
 
@@ -12609,7 +12609,7 @@ function App() {
       applyUserStats(user);
         applyUserStats(user);
       } catch (error) {
-        console.log('Ошибка загрузки пользователя:', error);
+        console.log('Fehler beim Laden des Spielers:', error);
       } finally {
         setIsAppLoading(false);
 
@@ -12629,7 +12629,7 @@ function App() {
 
         setSeasonHistory(response.data.seasons || []);
       } catch (error) {
-        console.log('Ошибка загрузки истории сезонов:', error);
+        console.log('Fehler beim Laden des Saisonverlaufs:', error);
       }
     };
 
@@ -12643,7 +12643,7 @@ function App() {
 
         setTeamLeaderboard(response.data.teams || []);
       } catch (error) {
-        console.log('Ошибка загрузки командного рейтинга:', error);
+        console.log('Fehler beim Laden des Team-Rankings:', error);
       }
     };
 
@@ -12665,7 +12665,7 @@ function App() {
           setSeasonPrizePopup(response.data.prize);
         }
       } catch (error) {
-        console.log('Ошибка загрузки сезонного popup:', error);
+        console.log('Fehler beim Laden des Saison-Popups:', error);
       }
     };
 
@@ -12689,7 +12689,7 @@ function App() {
         setCurrentUserPlace(response.data.currentUserPlace || null);
         setWeeklyEarned(Number(response.data.currentUserWeeklyEarned || weeklyEarned));
       } catch (error) {
-        console.log('Ошибка загрузки лидерборда:', error);
+        console.log('Fehler beim Laden des Leaderboards:', error);
       }
     };
 
@@ -12817,7 +12817,7 @@ function App() {
         const user = response.data.user;
 
         setBalance(user.balance || 0);
-        setUsername(user.username || 'Пользователь');
+        setUsername(user.username || 'Spieler');
         setWeeklyEarned(Number(user.weeklyEarned || 0));
         setEnergy(user.energy || 0);
         setMaxEnergy(user.maxEnergy ?? 500);
@@ -12844,7 +12844,7 @@ function App() {
       applyUserStats(user);
         applyUserStats(user);
       } catch (error) {
-        console.log('Ошибка майнинга:', error);
+        console.log('Mining-Fehler:', error);
       } finally {
         isRequestRunning = false;
       }
@@ -12857,7 +12857,7 @@ function App() {
     const telegramId = getTelegramId();
 
     if (!telegramId) {
-      showToast('Не удалось получить Telegram ID');
+      showToast('Telegram-ID konnte nicht abgerufen werden');
       return;
     }
 
@@ -12877,7 +12877,7 @@ function App() {
       const points = response.data.points ?? user.tapPower ?? tapPower ?? 1;
 
       setBalance(user.balance || 0);
-      setUsername(user.username || 'Пользователь');
+      setUsername(user.username || 'Spieler');
       setWeeklyEarned(Number(user.weeklyEarned || 0));
       setEnergy(user.energy || 0);
       setMaxEnergy(user.maxEnergy ?? 500);
@@ -12926,16 +12926,16 @@ function App() {
       } catch {}
     } catch (error: any) {
       if (error?.response?.status === 429) {
-        console.log('Слишком много тапов');
+        console.log('Zu viele Taps');
         return;
       }
 
       if (error?.response?.status === 400) {
-        console.log(error?.response?.data?.message || 'Ошибка тапа');
+        console.log(error?.response?.data?.message || 'Tap-Fehler');
         return;
       }
 
-      console.log('Ошибка тапа:', error);
+      console.log('Tap-Fehler:', error);
     }
   };
 
@@ -12966,7 +12966,7 @@ function App() {
       showRewardPopupFromResponse(response.data);
       showToast(`🎁 Welcome bonus: +${formatOnix(response.data.reward)} ONIX`, 'success');
     } catch (error: any) {
-      showToast(error?.response?.data?.message || 'Welcome bonus недоступен', 'error');
+      showToast(error?.response?.data?.message || 'Willkommensbonus nicht verfügbar', 'error');
     }
   };
 
@@ -12984,11 +12984,11 @@ function App() {
       setPromoCodeInput('');
       setPromoModalVisible(false);
       showToast(
-        `🎟 Промокод активирован: +${formatOnix(response.data.promo.reward)} ONIX`,
+        `🎟 Promocode aktiviert: +${formatOnix(response.data.promo.reward)} ONIX`,
         'success'
       );
     } catch (error: any) {
-      showToast(error?.response?.data?.message || 'Не удалось активировать промокод', 'error');
+      showToast(error?.response?.data?.message || 'Promocode konnte nicht aktiviert werden', 'error');
     }
   };
 
@@ -13002,7 +13002,7 @@ function App() {
     const telegramId = getTelegramId();
 
     if (!telegramId) {
-      showToast('Не удалось получить Telegram ID');
+      showToast('Telegram-ID konnte nicht abgerufen werden');
       return;
     }
 
@@ -13015,7 +13015,7 @@ function App() {
       const user = response.data.user;
 
       setBalance(user.balance || 0);
-      setUsername(user.username || 'Пользователь');
+      setUsername(user.username || 'Spieler');
       setWeeklyEarned(Number(user.weeklyEarned || 0));
       setEnergy(user.energy || 0);
       setMaxEnergy(user.maxEnergy ?? 500);
@@ -13048,7 +13048,7 @@ function App() {
         WebApp.HapticFeedback?.notificationOccurred('success');
       } catch {}
     } catch (error: any) {
-      showToast(error?.response?.data?.message || 'Не удалось купить улучшение');
+      showToast(error?.response?.data?.message || 'Upgrade konnte nicht gekauft werden');
     }
   };
 
@@ -13057,7 +13057,7 @@ function App() {
     const telegramId = getTelegramId();
 
     if (!telegramId) {
-      showToast('Не удалось получить Telegram ID', 'error');
+      showToast('Telegram-ID konnte nicht abgerufen werden', 'error');
       return;
     }
 
@@ -13089,7 +13089,7 @@ function App() {
       refreshAfterAction();
       refreshAfterAction();
     } catch (error: any) {
-      showToast(error?.response?.data?.message || 'Не удалось открыть сундук', 'error');
+      showToast(error?.response?.data?.message || 'Truhe konnte nicht geöffnet werden', 'error');
     }
   };
 
@@ -13097,7 +13097,7 @@ function App() {
     const telegramId = getTelegramId();
 
     if (!telegramId) {
-      showToast('Не удалось получить Telegram ID');
+      showToast('Telegram-ID konnte nicht abgerufen werden');
       return;
     }
 
@@ -13110,7 +13110,7 @@ function App() {
       const user = response.data.user;
 
       setBalance(user.balance || 0);
-      setUsername(user.username || 'Пользователь');
+      setUsername(user.username || 'Spieler');
       setWeeklyEarned(Number(user.weeklyEarned || 0));
       setEnergy(user.energy || 0);
       setMaxEnergy(user.maxEnergy ?? 500);
@@ -13140,7 +13140,7 @@ function App() {
         WebApp.HapticFeedback?.notificationOccurred('success');
       } catch {}
     } catch (error: any) {
-      showToast(error?.response?.data?.message || 'Не удалось купить перк');
+      showToast(error?.response?.data?.message || 'Perk konnte nicht gekauft werden');
     }
   };
 
@@ -13152,7 +13152,7 @@ function App() {
     const telegramId = getTelegramId();
 
     if (!telegramId) {
-      showToast('Не удалось получить Telegram ID');
+      showToast('Telegram-ID konnte nicht abgerufen werden');
       return;
     }
 
@@ -13165,7 +13165,7 @@ function App() {
       const user = response.data.user;
 
       setBalance(user.balance || 0);
-      setUsername(user.username || 'Пользователь');
+      setUsername(user.username || 'Spieler');
       setWeeklyEarned(Number(user.weeklyEarned || 0));
       setEnergy(user.energy || 0);
       setMaxEnergy(user.maxEnergy ?? 500);
@@ -13198,9 +13198,9 @@ function App() {
         WebApp.HapticFeedback?.notificationOccurred('success');
       } catch {}
 
-      showToast(`⚡ ${type === 'tap' ? 'Тап' : 'Майнинг'} ×2 активирован!`);
+      showToast(`⚡ ${type === 'tap' ? 'Tap' : 'Mining'} ×2 aktiviert!`);
     } catch (error: any) {
-      showToast(error?.response?.data?.message || 'Не удалось активировать буст');
+      showToast(error?.response?.data?.message || 'Boost konnte nicht aktiviert werden');
     }
   };
 
@@ -13208,12 +13208,12 @@ function App() {
     const telegramId = getTelegramId();
 
     if (!telegramId) {
-      showToast('Не удалось получить Telegram ID', 'error');
+      showToast('Telegram-ID konnte nicht abgerufen werden', 'error');
       return;
     }
 
     if (Number(energy || 0) >= Number(maxEnergy || 0)) {
-      showToast('Энергия уже полная', 'info');
+      showToast('Energie ist bereits voll', 'info');
       return;
     }
 
@@ -13225,7 +13225,7 @@ function App() {
       const user = response.data.user || response.data;
 
       setBalance(user.balance || 0);
-      setUsername(user.username || 'Пользователь');
+      setUsername(user.username || 'Spieler');
       setWeeklyEarned(Number(user.weeklyEarned || 0));
       setEnergy(user.energy || 0);
       setMaxEnergy(user.maxEnergy ?? 500);
@@ -13253,9 +13253,9 @@ function App() {
         WebApp.HapticFeedback?.notificationOccurred('success');
       } catch {}
 
-      showToast('🔋 Энергия полностью восстановлена!', 'success');
+      showToast('🔋 Energie vollständig wiederhergestellt!', 'success');
     } catch (error: any) {
-      showToast(error?.response?.data?.message || 'Не удалось восстановить энергию', 'error');
+      showToast(error?.response?.data?.message || 'Energie konnte nicht wiederhergestellt werden', 'error');
     }
   };
 
@@ -13268,7 +13268,7 @@ function App() {
   };
 
   const getReferralShareText = () =>
-    'Присоединяйся к $ONIX coin ⚡ Получи стартовый бонус 15 000 ONIX!';
+    'Mach mit bei $ONIX coin ⚡ Hol dir 15.000 ONIX Startbonus!';
 
   const showCopySuccess = () => {
     setCopySuccessVisible(true);
@@ -13317,7 +13317,7 @@ function App() {
     const minutes = Math.floor((totalSeconds % 3600) / 60);
     const seconds = totalSeconds % 60;
 
-    return `${hours}ч ${minutes}м ${seconds}с`;
+    return `${hours}Std. ${minutes}Min. ${seconds}Sek.`;
   };
 
   const formatOfflineTime = (seconds: number) => {
@@ -13326,14 +13326,14 @@ function App() {
     const secs = seconds % 60;
 
     if (hours > 0) {
-      return `${hours}ч ${minutes}м`;
+      return `${hours}Std. ${minutes}Min.`;
     }
 
     if (minutes > 0) {
-      return `${minutes}м ${secs}с`;
+      return `${minutes}Min. ${secs}Sek.`;
     }
 
-    return `${secs}с`;
+    return `${secs}Sek.`;
   };
 
   const claimOfflineReward = async () => {
@@ -13342,7 +13342,7 @@ function App() {
     const telegramId = getTelegramId();
 
     if (!telegramId) {
-      showToast('Не удалось получить Telegram ID');
+      showToast('Telegram-ID konnte nicht abgerufen werden');
       return;
     }
 
@@ -13356,7 +13356,7 @@ function App() {
       const user = response.data.user;
 
       setBalance(user.balance || 0);
-      setUsername(user.username || 'Пользователь');
+      setUsername(user.username || 'Spieler');
       setWeeklyEarned(Number(user.weeklyEarned || 0));
       setEnergy(user.energy || 0);
       setMaxEnergy(user.maxEnergy ?? 500);
@@ -13392,7 +13392,7 @@ function App() {
         WebApp.HapticFeedback?.notificationOccurred('success');
       } catch {}
     } catch (error: any) {
-      showToast(error?.response?.data?.message || 'Не удалось забрать доход майнера');
+      showToast(error?.response?.data?.message || 'Miner-Ertrag konnte nicht abgeholt werden');
     } finally {
       setIsClaimingOfflineReward(false);
     }
@@ -13432,7 +13432,7 @@ function App() {
     if (!referralBonus || !Number(referralBonus.reward || 0)) return;
 
     showToast(
-      `👥 Реферальный бонус начислен пригласившему: +${formatOnix(
+      `👥 Empfehlungsbonus wurde dem Einladenden gutgeschrieben: +${formatOnix(
         referralBonus.reward
       )} ONIX`,
       'success'
@@ -13451,7 +13451,7 @@ function App() {
         if (Number(bonus.bonus || 0) > 0) {
           items.push({
             icon: '🏆',
-            title: `Новый ранг: ${bonus.name || 'Ранг'}`,
+            title: `Neuer Rang: ${bonus.name || 'Rang'}`,
             amount: Number(bonus.bonus || 0),
           });
         }
@@ -13464,7 +13464,7 @@ function App() {
           if (Number(achievement.reward || 0) > 0) {
             items.push({
               icon: '✅',
-              title: `Достижение: ${achievement.title || 'Выполнено'}`,
+              title: `Erfolg: ${achievement.title || 'Abgeschlossen'}`,
               amount: Number(achievement.reward || 0),
             });
           }
@@ -13505,7 +13505,7 @@ function App() {
       setAdminPanelVisible(false);
       setAdminHubPage('prizes');
     } catch (error: any) {
-      showToast(error?.response?.data?.message || 'Не удалось загрузить preview');
+      showToast(error?.response?.data?.message || 'Vorschau konnte nicht geladen werden');
     } finally {
       setIsAdminLoading(false);
     }
@@ -13521,7 +13521,7 @@ function App() {
       const response = await axios.get(`${API_URL}/team-dashboard/${telegramId}`);
       setTeamSocialDashboard(response.data);
     } catch (error) {
-      console.log('Ошибка загрузки команды:', error);
+      console.log('Fehler beim Laden des Teams:', error);
     }
   };
 
@@ -13533,7 +13533,7 @@ function App() {
       });
       setTeamDirectory(response.data.teams || []);
     } catch (error) {
-      console.log('Ошибка загрузки списка команд:', error);
+      console.log('Fehler beim Laden der Teamliste:', error);
       setTeamDirectory([]);
     } finally {
       setIsTeamDirectoryLoading(false);
@@ -13561,9 +13561,9 @@ function App() {
       setTeamDetailPanel('overview');
       setTeamSearch('');
       await loadTeamDirectory('');
-      showToast('Вы вышли из команды. Выберите новую команду из списка.', 'success');
+      showToast('Du hast das Team verlassen. Wähle ein neues Team aus der Liste.', 'success');
     } catch (error: any) {
-      showToast(error?.response?.data?.message || 'Не удалось выйти из команды', 'error');
+      showToast(error?.response?.data?.message || 'Team konnte nicht verlassen werden', 'error');
     }
   };
 
@@ -13574,7 +13574,7 @@ function App() {
     if (!telegramId) return;
 
     if (nextTeamName.length < 2) {
-      showToast('Введите название команды минимум 2 символа', 'error');
+      showToast('Gib einen Teamnamen mit mindestens 2 Zeichen ein', 'error');
       return;
     }
 
@@ -13598,9 +13598,9 @@ function App() {
         week: response.data.week || '',
       });
       await loadTeamDirectory(teamSearch);
-      showToast(`👥 Команда ${user.teamName} создана`, 'success');
+      showToast(`👥 Team ${user.teamName} erstellt`, 'success');
     } catch (error: any) {
-      showToast(error?.response?.data?.message || 'Не удалось создать команду', 'error');
+      showToast(error?.response?.data?.message || 'Team konnte nicht erstellt werden', 'error');
     } finally {
       setIsCreatingTeam(false);
     }
@@ -13628,9 +13628,9 @@ function App() {
         week: response.data.week || '',
       });
       await loadTeamDirectory(teamSearch);
-      showToast(`👥 Вы вступили в команду ${user.teamName}`, 'success');
+      showToast(`👥 Du bist dem Team ${user.teamName} beigetreten`, 'success');
     } catch (error: any) {
-      showToast(error?.response?.data?.message || 'Не удалось вступить в команду', 'error');
+      showToast(error?.response?.data?.message || 'Teambeitritt fehlgeschlagen', 'error');
     }
   };
 
@@ -13643,7 +13643,7 @@ function App() {
       const response = await axios.get(`${API_URL}/friends-leaderboard/${telegramId}`);
       setFriendLeaderboard(response.data.friends || []);
     } catch (error) {
-      console.log('Ошибка загрузки рейтинга друзей:', error);
+      console.log('Fehler beim Laden des Freunde-Rankings:', error);
     }
   };
 
@@ -13656,7 +13656,7 @@ function App() {
       const response = await axios.get(`${API_URL}/referrals/${telegramId}`);
       setInvitedProfiles(response.data.referrals || []);
     } catch (error) {
-      console.log('Ошибка загрузки приглашенных:', error);
+      console.log('Fehler beim Laden der Eingeladenen:', error);
       setInvitedProfiles([]);
     }
   };
@@ -13671,7 +13671,7 @@ function App() {
 
   const shareTeamInviteLink = () => {
     const link = getTeamInviteLink();
-    const text = `Вступай в мою команду ${teamName || 'ONIX'} в ONIX COIN ⚡`;
+    const text = `Tritt meinem Team bei ${teamName || 'ONIX'} bei ONIX COIN ⚡`;
 
     const shareUrl = `https://t.me/share/url?url=${encodeURIComponent(
       link
@@ -13706,9 +13706,9 @@ function App() {
         week: response.data.week || '',
       });
 
-      showToast(`👥 Вы вступили в команду ${user.teamName}`, 'success');
+      showToast(`👥 Du bist dem Team ${user.teamName} beigetreten`, 'success');
     } catch (error: any) {
-      showToast(error?.response?.data?.message || 'Не удалось вступить в команду', 'error');
+      showToast(error?.response?.data?.message || 'Teambeitritt fehlgeschlagen', 'error');
     }
   };
 
@@ -13727,10 +13727,10 @@ function App() {
 
       syncGrowthUser(user, response.data);
       showRewardPopupFromResponse(response.data);
-      showToast(`✅ Командная миссия: +${formatOnix(response.data.reward.amount)} ONIX`, 'success');
+      showToast(`✅ Team-Mission: +${formatOnix(response.data.reward.amount)} ONIX`, 'success');
       await loadTeamSocialDashboard();
     } catch (error: any) {
-      showToast(error?.response?.data?.message || 'Не удалось забрать награду', 'error');
+      showToast(error?.response?.data?.message || 'Belohnung konnte nicht abgeholt werden', 'error');
     }
   };
 
@@ -13744,7 +13744,7 @@ function App() {
 
       syncGrowthUser(response.data.user, response.data);
       showRewardPopupFromResponse(response.data);
-      showToast(`🏆 Командный приз: +${formatOnix(response.data.prize)} ONIX`, 'success');
+      showToast(`🏆 Team-Preis: +${formatOnix(response.data.prize)} ONIX`, 'success');
       await loadTeamSocialDashboard();
     } catch (error: any) {
       if (error?.response?.data?.teamContest) {
@@ -13755,30 +13755,30 @@ function App() {
         } : prev);
       }
 
-      showToast(error?.response?.data?.message || 'Не удалось забрать командный приз', 'error');
+      showToast(error?.response?.data?.message || 'Team-Preis konnte nicht abgeholt werden', 'error');
     }
   };
 
   const getTeamPrizeButtonText = () => {
     const contest = teamSocialDashboard?.teamContest;
 
-    if (!contest) return 'Загрузка состязания...';
+    if (!contest) return 'Wettbewerb wird geladen...';
 
     const msToNextPrize = Math.max(Number(contest.nextPrizeAvailableAt || 0) - missionClock, 0);
 
     if (contest.canClaim) {
-      return `Забрать командный приз +${formatOnix(contest.prize)} ONIX`;
+      return `Team-Preis abholen +${formatOnix(contest.prize)} ONIX`;
     }
 
     if (contest.hasClaimed) {
-      return `Следующий приз через ${formatMissionResetTime(msToNextPrize)}`;
+      return `Nächster Preis in ${formatMissionResetTime(msToNextPrize)}`;
     }
 
     if (contest.joinedAfterCompletedContest) {
-      return `Приз после текущего состязания через ${formatMissionResetTime(msToNextPrize)}`;
+      return `Preis nach aktuellem Wettbewerb in ${formatMissionResetTime(msToNextPrize)}`;
     }
 
-    return `Состязание закончится через ${formatMissionResetTime(msToNextPrize)}`;
+    return `Wettbewerb endet in ${formatMissionResetTime(msToNextPrize)}`;
   };
 
   const isTeamPrizeButtonActive = Boolean(teamSocialDashboard?.teamContest?.canClaim);
@@ -13792,7 +13792,7 @@ function App() {
       const response = await axios.get(`${API_URL}/missions/${telegramId}`);
       setMissions(response.data);
     } catch (error) {
-      console.log('Ошибка загрузки миссий:', error);
+      console.log('Fehler beim Laden der Missionen:', error);
     }
   };
 
@@ -13819,9 +13819,9 @@ function App() {
       applyUserStats(user);
       setMissions(response.data.missions || user.missions || { daily: [], weekly: [], difficulty: 1, dailyKey: '', weeklyKey: '' });
 
-      showToast(`✅ Миссия выполнена: +${formatOnix(response.data.missionReward.reward)} ONIX`, 'success');
+      showToast(`✅ Mission abgeschlossen: +${formatOnix(response.data.missionReward.reward)} ONIX`, 'success');
     } catch (error: any) {
-      showToast(error?.response?.data?.message || 'Не удалось забрать миссию', 'error');
+      showToast(error?.response?.data?.message || 'Mission konnte nicht abgeholt werden', 'error');
     }
   };
 
@@ -13971,7 +13971,7 @@ function App() {
       setAdminFrontendErrors(response.data.logs || []);
       showToast('✅ Frontend errors обновлены', 'success');
     } catch (error: any) {
-      showToast(error?.response?.data?.message || 'Не удалось загрузить frontend errors', 'error');
+      showToast(error?.response?.data?.message || 'Frontend-Fehler konnten nicht geladen werden', 'error');
     } finally {
       setIsAdminLoading(false);
     }
@@ -14009,7 +14009,7 @@ function App() {
       setAdmin2Visible(false);
       setAdminHubPage('admin2');
     } catch (error: any) {
-      showToast(error?.response?.data?.message || 'Не удалось открыть админку 2.0', 'error');
+      showToast(error?.response?.data?.message || 'Admin 2.0 konnte nicht geöffnet werden', 'error');
     } finally {
       setIsAdminLoading(false);
     }
@@ -14037,7 +14037,7 @@ function App() {
         CHEST_COST: String(response.data.config.chestCost || current.CHEST_COST),
       }));
     } catch (error: any) {
-      showToast(error?.response?.data?.message || 'Не удалось сохранить config', 'error');
+      showToast(error?.response?.data?.message || 'Konfiguration konnte nicht gespeichert werden', 'error');
     } finally {
       setIsAdminLoading(false);
     }
@@ -14063,7 +14063,7 @@ function App() {
         'success'
       );
     } catch (error: any) {
-      showToast(error?.response?.data?.message || 'Не удалось выполнить рассылку', 'error');
+      showToast(error?.response?.data?.message || 'Broadcast konnte nicht gesendet werden', 'error');
     } finally {
       setIsAdminLoading(false);
     }
@@ -17427,12 +17427,12 @@ body:not(.onix-body-home-lock) {
     if (!canWithdraw || isWithdrawalLoading) return;
 
     if (withdrawalCheck.trim().toUpperCase() !== 'ONIX') {
-      showToast('Введите ONIX в поле антибот-проверки', 'error');
+      showToast('Gib ONIX in die Anti-Bot-Prüfung ein', 'error');
       return;
     }
 
     const confirmed = window.confirm(
-      `Создать заявку на вывод ${formatOnix(minWithdrawOnix)} ONIX?`
+      `Auszahlungsantrag erstellen ${formatOnix(minWithdrawOnix)} ONIX?`
     );
 
     if (!confirmed) return;
@@ -17452,10 +17452,10 @@ body:not(.onix-body-home-lock) {
       setTransactions(user.transactions || []);
       setWithdrawalRequests(user.withdrawalRequests || []);
       setWithdrawalCheck('');
-      showToast('✅ Заявка на вывод создана', 'success');
+      showToast('✅ Auszahlungsantrag erstellt', 'success');
       refreshAfterAction();
     } catch (error: any) {
-      showToast(error?.response?.data?.message || 'Не удалось создать заявку', 'error');
+      showToast(error?.response?.data?.message || 'Antrag konnte nicht erstellt werden', 'error');
     } finally {
       setIsWithdrawalLoading(false);
     }
@@ -17598,9 +17598,9 @@ body:not(.onix-body-home-lock) {
       const user = response.data.user;
 
       setSelectedTitle(user.selectedTitle || title);
-      showToast('✅ Титул обновлён', 'success');
+      showToast('✅ Titel aktualisiert', 'success');
     } catch (error: any) {
-      showToast(error?.response?.data?.message || 'Не удалось выбрать титул', 'error');
+      showToast(error?.response?.data?.message || 'Titel konnte nicht gewählt werden', 'error');
     }
   };
 
@@ -17622,18 +17622,18 @@ body:not(.onix-body-home-lock) {
   const completedAchievementsList = achievements.filter((item) => item.isCompleted);
   const pendingAchievementsList = achievements.filter((item) => !item.isCompleted);
   const profileStats = [
-    { label: 'Баланс ONIX', value: formatOnix(balance) },
-    { label: 'Всего заработано', value: formatOnix(totalEarned) },
-    { label: 'Тапов всего', value: formatOnix(totalTaps) },
-    { label: 'Доход майнера / сек', value: formatOnix(autoclickers) },
-    { label: 'Сила тапа', value: formatOnix(tapPower) },
-    { label: 'Макс. энергия', value: formatOnix(maxEnergy) },
-    { label: 'Восстановление энергии', value: `+${formatOnix(energyRecharge)}/сек` },
-    { label: 'Бустов использовано', value: formatOnix(totalBoostsUsed) },
-    { label: 'Улучшений куплено', value: formatOnix(totalUpgradesBought) },
-    { label: 'Оффлайн сборов', value: formatOnix(offlineClaimsCount) },
-    { label: 'Приглашено', value: formatOnix(referralsCount) },
-    { label: 'Команда', value: teamName || '—' },
+    { label: 'ONIX-Guthaben', value: formatOnix(balance) },
+    { label: 'Insgesamt verdient', value: formatOnix(totalEarned) },
+    { label: 'Taps gesamt', value: formatOnix(totalTaps) },
+    { label: 'Miner-Ertrag / Sek.', value: formatOnix(autoclickers) },
+    { label: 'Tap-Stärke', value: formatOnix(tapPower) },
+    { label: 'Max. Energie', value: formatOnix(maxEnergy) },
+    { label: 'Energie-Regeneration', value: `+${formatOnix(energyRecharge)}/Sek.` },
+    { label: 'Genutzte Boosts', value: formatOnix(totalBoostsUsed) },
+    { label: 'Gekaufte Upgrades', value: formatOnix(totalUpgradesBought) },
+    { label: 'Offline-Abholungen', value: formatOnix(offlineClaimsCount) },
+    { label: 'Eingeladen', value: formatOnix(referralsCount) },
+    { label: 'Team', value: teamName || '—' },
   ];
   const activeBoostValue = normalizeBoost(activeBoost);
   const normalizedBoostEndTime = Number(boostEndTime || 0);
@@ -17700,50 +17700,50 @@ body:not(.onix-body-home-lock) {
     {
       type: 'tap',
       icon: '🎯',
-      title: 'Сила тапа',
-      description: 'Больше ONIX за каждый тап',
+      title: 'Tap-Stärke',
+      description: 'Mehr ONIX pro Tap',
       level: tapLevel,
       cost: nextTapCost,
-      currentLabel: 'Сейчас',
-      currentValue: `+${formatOnix(tapPower)} ONIX/тап`,
-      nextLabel: 'После апгрейда',
-      nextValue: `+${formatOnix(tapPower + 1)} ONIX/тап`,
+      currentLabel: 'Aktuell',
+      currentValue: `+${formatOnix(tapPower)} ONIX/Tap`,
+      nextLabel: 'Nach Upgrade',
+      nextValue: `+${formatOnix(tapPower + 1)} ONIX/Tap`,
     },
     {
       type: 'miner',
       icon: '⛏️',
-      title: 'Майнер',
-      description: 'Пассивный доход ONIX',
+      title: 'Miner',
+      description: 'Passives ONIX-Einkommen',
       level: minerLevel,
       cost: nextMinerCost,
-      currentLabel: 'Сейчас',
-      currentValue: `+${formatOnix(minerIncomePerSecond)} ONIX/сек`,
-      nextLabel: 'После апгрейда',
-      nextValue: `+${formatOnix(nextMinerIncomePerSecond)} ONIX/сек`,
+      currentLabel: 'Aktuell',
+      currentValue: `+${formatOnix(minerIncomePerSecond)} ONIX/Sek.`,
+      nextLabel: 'Nach Upgrade',
+      nextValue: `+${formatOnix(nextMinerIncomePerSecond)} ONIX/Sek.`,
     },
     {
       type: 'energy',
       icon: '🔋',
-      title: 'Энергия',
-      description: 'Больше максимальной энергии',
+      title: 'Energie',
+      description: 'Mehr maximale Energie',
       level: energyLevel,
       cost: nextEnergyCost,
-      currentLabel: 'Сейчас',
-      currentValue: `${maxEnergy.toLocaleString('ru-RU')} энергии`,
-      nextLabel: 'После апгрейда',
-      nextValue: `${(maxEnergy + 500).toLocaleString('ru-RU')} энергии`,
+      currentLabel: 'Aktuell',
+      currentValue: `${maxEnergy.toLocaleString('ru-RU')} Energie`,
+      nextLabel: 'Nach Upgrade',
+      nextValue: `${(maxEnergy + 500).toLocaleString('ru-RU')} Energie`,
     },
     {
       type: 'recharge',
       icon: onixBoostIcons.recharge,
-      title: 'Восстановление',
-      description: 'Энергия быстрее восстанавливается',
+      title: 'Regeneration',
+      description: 'Energie regeneriert schneller',
       level: rechargeLevel,
       cost: nextRechargeCost,
-      currentLabel: 'Сейчас',
-      currentValue: `+${formatOnix(energyRecharge)} энергии/сек`,
-      nextLabel: 'После апгрейда',
-      nextValue: `+${formatOnix(energyRecharge + 1)} энергии/сек`,
+      currentLabel: 'Aktuell',
+      currentValue: `+${formatOnix(energyRecharge)} Energie/Sek.`,
+      nextLabel: 'Nach Upgrade',
+      nextValue: `+${formatOnix(energyRecharge + 1)} Energie/Sek.`,
     },
   ];
 
@@ -17788,13 +17788,13 @@ body:not(.onix-body-home-lock) {
     id: TransactionFilter;
     label: string;
   }> = [
-    { id: 'all', label: 'Все' },
-    { id: 'income', label: 'Доходы' },
-    { id: 'expense', label: 'Расходы' },
-    { id: 'withdrawal', label: 'Выводы' },
-    { id: 'referral', label: 'Рефералы' },
-    { id: 'season', label: 'Сезоны' },
-    { id: 'missions', label: 'Миссии' },
+    { id: 'all', label: 'Alle' },
+    { id: 'income', label: 'Einnahmen' },
+    { id: 'expense', label: 'Ausgaben' },
+    { id: 'withdrawal', label: 'Auszahlungen' },
+    { id: 'referral', label: 'Empfehlungen' },
+    { id: 'season', label: 'Saisons' },
+    { id: 'missions', label: 'Missionen' },
   ];
 
   const filteredTransactions = transactions.filter((transaction) => {
@@ -17842,23 +17842,23 @@ body:not(.onix-body-home-lock) {
   const tutorialSteps = [
     {
       icon: onixBoostIcons.miner,
-      title: 'Тапай и зарабатывай',
-      text: 'Нажимай на монету, получай ONIX и следи за энергией.',
+      title: 'Tippe und verdiene',
+      text: 'Tippe auf die Münze, verdiene ONIX und behalte deine Energie im Blick.',
     },
     {
       icon: onixBoostIcons.recharge,
-      title: 'Прокачивайся',
-      text: 'Покупай улучшения, перки и бусты, чтобы зарабатывать быстрее.',
+      title: 'Verbessere dich',
+      text: 'Kaufe Upgrades, Perks und Boosts, um schneller zu verdienen.',
     },
     {
       icon: '📋',
-      title: 'Выполняй задания',
-      text: 'Daily, weekly и секретные миссии дают дополнительные ONIX.',
+      title: 'Erledige Aufgaben',
+      text: 'Daily-, Weekly- und geheime Missionen bringen zusätzliche ONIX.',
     },
     {
       icon: '🏆',
-      title: 'Соревнуйся',
-      text: 'Попадай в топ недели, команды и сезоны, чтобы получать призы.',
+      title: 'Tritt an',
+      text: 'Komm in die Wochen-, Team- und Saison-Toplisten, um Preise zu erhalten.',
     },
   ];
 
@@ -17888,14 +17888,14 @@ body:not(.onix-body-home-lock) {
     id: AchievementCategory;
     label: string;
   }> = [
-    { id: 'all', label: 'Все' },
-    { id: 'taps', label: 'Тапы' },
-    { id: 'miner', label: 'Майнер' },
-    { id: 'referrals', label: 'Рефералы' },
-    { id: 'seasons', label: 'Сезоны' },
-    { id: 'perks', label: 'Перки' },
+    { id: 'all', label: 'Alle' },
+    { id: 'taps', label: 'Taps' },
+    { id: 'miner', label: 'Miner' },
+    { id: 'referrals', label: 'Empfehlungen' },
+    { id: 'seasons', label: 'Saisons' },
+    { id: 'perks', label: 'Perks' },
     { id: 'daily', label: 'Daily' },
-    { id: 'ranks', label: 'Ранги' },
+    { id: 'ranks', label: 'Ränge' },
   ];
 
   const referralProgress = Math.min(
@@ -17946,8 +17946,8 @@ body:not(.onix-body-home-lock) {
     {
       type: 'tap',
       icon: '🎯',
-      title: 'Буст тапа',
-      description: 'Увеличивает силу тапа на время действия',
+      title: 'Tap-Boost',
+      description: 'Erhöht die Tap-Stärke für die Dauer',
       multiplier: '×2',
       durationMinutes: 10,
       cost: getTapBoostCost(tapPower),
@@ -17956,8 +17956,8 @@ body:not(.onix-body-home-lock) {
     {
       type: 'mining',
       icon: '⛏️',
-      title: 'Буст майнинга',
-      description: 'Удваивает доход майнера онлайн',
+      title: 'Mining-Boost',
+      description: 'Verdoppelt den Online-Miner-Ertrag',
       multiplier: '×2',
       durationMinutes: 15,
       cost: getMiningBoostCost(autoclickers),
@@ -17974,7 +17974,7 @@ body:not(.onix-body-home-lock) {
           </div>
 
           <h1 className="text-3xl font-black text-white">ONIX COIN</h1>
-          <p className="mt-3 text-sm text-gray-400">Загрузка майнера...</p>
+          <p className="mt-3 text-sm text-gray-400">Miner wird geladen...</p>
 
           <div className="mt-6 h-3 overflow-hidden rounded-full bg-gray-800">
             <div className="h-full w-2/3 animate-pulse rounded-full bg-yellow-400" />
@@ -18021,7 +18021,7 @@ body:not(.onix-body-home-lock) {
         >
           <button
             type="button"
-            aria-label="Меню"
+            aria-label="Menü"
             style={{
               width: 34,
               height: 34,
@@ -18060,7 +18060,7 @@ body:not(.onix-body-home-lock) {
 
           <button
             type="button"
-            aria-label="Уведомления"
+            aria-label="Benachrichtigungen"
             style={{
               width: 34,
               height: 34,
@@ -18089,13 +18089,13 @@ body:not(.onix-body-home-lock) {
         <div className="flex justify-between mb-2">
           <div className="flex items-center gap-2">
             <Star className="w-5 h-5 text-yellow-400" />
-            <span className="font-bold">Ранг {rankInfo.currentRank.name}</span>
+            <span className="font-bold">Rang {rankInfo.currentRank.name}</span>
           </div>
 
           <span className="text-sm text-gray-400">
             {rankInfo.nextRank
-              ? `${rankProgressText} до ${rankInfo.nextRank.name}`
-              : 'Максимальный ранг'}
+              ? `${rankProgressText} bis ${rankInfo.nextRank.name}`
+              : 'Maximaler Rang'}
           </span>
         </div>
 
@@ -18108,14 +18108,14 @@ body:not(.onix-body-home-lock) {
       </div>
 
       <div className="onix-balance-panel text-center pt-6 pb-4">
-        <p className="text-gray-400 text-sm">Баланс $ONIX</p>
+        <p className="text-gray-400 text-sm">Guthaben $ONIX</p>
 
         <p className="onix-balance-number text-6xl font-black tracking-tighter">
           {formatOnix(balance)}
         </p>
 
         {isBoostActive && (
-          <p className="text-emerald-400 text-sm mt-1">⚡ Буст активен</p>
+          <p className="text-emerald-400 text-sm mt-1">⚡ Boost aktiv</p>
         )}
       </div>
 
@@ -18124,12 +18124,12 @@ body:not(.onix-body-home-lock) {
 
       <div className="onix-nav flex">
         {[
-          { id: 'home', label: 'Главная', icon: Home },
-          { id: 'boosts', label: 'Улучшения', icon: Zap },
-          { id: 'tasks', label: 'Задания', icon: Trophy },
-          { id: 'friends', label: 'Профиль', icon: UserCircle },
-          { id: 'wallet', label: 'Кошелёк', icon: Wallet },
-          { id: 'launch', label: 'Запуск', icon: Rocket },
+          { id: 'home', label: 'Start', icon: Home },
+          { id: 'boosts', label: 'Upgrades', icon: Zap },
+          { id: 'tasks', label: 'Aufgaben', icon: Trophy },
+          { id: 'friends', label: 'Profil', icon: UserCircle },
+          { id: 'wallet', label: 'Wallet', icon: Wallet },
+          { id: 'launch', label: 'Starten', icon: Rocket },
         ].map((tab) => (
           <button
             key={tab.id}
@@ -18181,7 +18181,7 @@ body:not(.onix-body-home-lock) {
 
           <div className="onix-ref-v5-balance">
             <p className="onix-ref-v5-balance-value">{formatOnix(balance)}</p>
-            <p className="onix-ref-v5-balance-label">Баланс $ONIX</p>
+            <p className="onix-ref-v5-balance-label">Guthaben $ONIX</p>
           </div>
 
           <button
@@ -18206,7 +18206,7 @@ body:not(.onix-body-home-lock) {
             <div className="onix-ref-v5-energy-text">
               <Zap className="onix-ref-v5-energy-icon" />
               <span><strong>{Math.floor(energy).toLocaleString('ru-RU')}</strong> / {maxEnergy.toLocaleString('ru-RU')}</span>
-              <span className="onix-ref-v5-energy-status">{energy >= maxEnergy ? 'Энергия полная' : 'Восстановление'}</span>
+              <span className="onix-ref-v5-energy-status">{energy >= maxEnergy ? 'Energie voll' : 'Regeneration'}</span>
             </div>
 
             <div className="onix-ref-v5-energy-track">
@@ -18221,7 +18221,7 @@ body:not(.onix-body-home-lock) {
               onClick={handleTap}
               className="onix-ref-v5-tap-button"
             >
-              ⚡ ТАП!
+              ⚡ TAP!
             </button>
           </div>
         </div>
@@ -18233,59 +18233,59 @@ body:not(.onix-body-home-lock) {
             id: 'about' as const,
             icon: '🚀',
             title: 'ONIX COIN',
-            subtitle: 'Что это за mini app',
+            subtitle: 'Was ist diese Mini-App?',
             badge: `v${appVersionInfo?.version || '1.0.0'}`,
           },
           {
             id: 'faq' as const,
             icon: '❓',
             title: 'FAQ',
-            subtitle: 'Ответы на частые вопросы',
+            subtitle: 'Antworten auf häufige Fragen',
             badge: '5',
           },
           {
             id: 'roadmap' as const,
             icon: '🗺',
             title: 'Roadmap',
-            subtitle: 'Планы развития ONIX',
+            subtitle: 'ONIX-Entwicklungsplan',
             badge: 'Beta',
           },
           {
             id: 'legal' as const,
             icon: '📄',
             title: 'Privacy policy / Terms',
-            subtitle: 'Правила и данные',
+            subtitle: 'Regeln und Daten',
             badge: 'ONIX',
           },
         ];
 
         const faqItems = [
           {
-            q: 'Как заработать ONIX?',
-            a: 'Тапайте монету, забирайте оффлайн-майнинг, выполняйте задания, приглашайте друзей и участвуйте в сезонах.',
+            q: 'Wie verdient man ONIX?',
+            a: 'Tippe auf die Münze, hole Offline-Mining ab, erledige Aufgaben, lade Freunde ein und nimm an Saisons teil.',
           },
           {
-            q: 'Как работает энергия?',
-            a: 'Каждый тап тратит энергию. Энергия восстанавливается со временем и улучшается через апгрейды.',
+            q: 'Wie funktioniert Energie?',
+            a: 'Jeder Tap kostet Energie. Energie regeneriert sich mit der Zeit und kann durch Upgrades verbessert werden.',
           },
           {
-            q: 'Как получить реферальный бонус?',
-            a: 'Новый игрок получает стартовый бонус. Пригласивший получает бонус после активности приглашённого игрока.',
+            q: 'Wie bekommt man den Empfehlungsbonus?',
+            a: 'Der neue Spieler erhält einen Startbonus. Der Einladende erhält den Bonus nach Aktivität des eingeladenen Spielers.',
           },
           {
-            q: 'Как работают сезоны?',
-            a: 'Каждую неделю считается рейтинг по заработанным ONIX. Лучшие игроки и команды получают призы.',
+            q: 'Wie funktionieren Saisons?',
+            a: 'Jede Woche zählt das Ranking nach verdienten ONIX. Die besten Spieler und Teams erhalten Preise.',
           },
           {
-            q: 'Можно ли вывести ONIX?',
-            a: 'Заявки на вывод доступны после достижения минимальной суммы. Перед выводом действует антибот-проверка.',
+            q: 'Kann man ONIX auszahlen?',
+            a: 'Auszahlungsanträge sind nach Erreichen des Mindestbetrags verfügbar. Vor der Auszahlung gibt es eine Anti-Bot-Prüfung.',
           },
         ];
 
         const roadmapItems = [
-          ['✅', 'Tap-to-earn core', 'Тапы, энергия, апгрейды и майнинг'],
-          ['✅', 'Seasons & teams', 'Сезонные призы, команды и рейтинги'],
-          ['✅', 'Growth tools', 'Промокоды, welcome bonus и share card'],
+          ['✅', 'Tap-to-earn core', 'Taps, Energie, Upgrades und Mining'],
+          ['✅', 'Seasons & teams', 'Saisonpreise, Teams und Rankings'],
+          ['✅', 'Growth tools', 'Promocodes, Willkommensbonus und Share Card'],
         ];
 
         const launchTitle =
@@ -18297,7 +18297,7 @@ body:not(.onix-body-home-lock) {
             ? 'Roadmap'
             : launchPanel === 'legal'
             ? 'Privacy / Terms'
-            : 'Запуск';
+            : 'Starten';
 
         return (
           <div className={`onix-launch-screen onix-launch-v2 onix-launch-menu-v3 px-5 mt-0 ${launchPanel !== 'overview' ? 'is-launch-detail-mode' : ''}`}>
@@ -18339,17 +18339,17 @@ body:not(.onix-body-home-lock) {
                     </div>
 
                     <p className="text-sm leading-6 text-gray-300">
-                      ONIX COIN — это Telegram Mini App, где игроки зарабатывают ONIX за
-                      тапы, майнинг, задания, команды, сезоны и приглашения друзей.
+                      ONIX COIN ist eine Telegram Mini App, in der Spieler ONIX verdienen durch
+                      Taps, Mining, Aufgaben, Teams, Saisons und Freundeinladungen.
                     </p>
 
                     <div className="mt-4 grid grid-cols-2 gap-3">
                       <div className="rounded-2xl p-4">
-                        <p className="text-xs text-gray-400">Игроков</p>
+                        <p className="text-xs text-gray-400">Spieler</p>
                         <p className="mt-1 font-bold text-yellow-400">{backendHealth?.users ?? '—'}</p>
                       </div>
                       <div className="rounded-2xl p-4">
-                        <p className="text-xs text-gray-400">Версия</p>
+                        <p className="text-xs text-gray-400">Version</p>
                         <p className="mt-1 font-bold text-yellow-400">v{appVersionInfo?.version || '1.0.0'}</p>
                       </div>
                     </div>
@@ -18358,7 +18358,7 @@ body:not(.onix-body-home-lock) {
                       onClick={shareReferralLink}
                       className="mt-5 w-full rounded-2xl bg-yellow-400 py-4 text-lg font-bold text-black active:scale-95"
                     >
-                      📣 Пригласить в ONIX COIN
+                      📣 Zu ONIX COIN einladen
                     </button>
                   </div>
                 )}
@@ -18399,21 +18399,21 @@ body:not(.onix-body-home-lock) {
                     <h3 className="mb-4 text-xl font-bold text-white">📄 Privacy Policy / Terms</h3>
                     <div className="space-y-3 text-sm leading-6 text-gray-400">
                       <p>
-                        ONIX COIN использует Telegram ID, username и игровые действия
-                        только для работы приложения, рейтингов, прогресса, заданий,
-                        антиабуза и заявок на вывод.
+                        ONIX COIN verwendet Telegram ID, Username und Spielaktionen
+                        nur für App-Funktionen, Rankings, Fortschritt, Aufgaben,
+                        Anti-Abuse und Auszahlungsanträge.
                       </p>
                       <p>
-                        Запрещены боты, мультиаккаунты, накрутка рефералов, обход
-                        лимитов и любые попытки нарушить экономику игры.
+                        Bots, Multi-Accounts, Referral-Manipulation, Umgehung
+                        von Limits und Angriffe auf die Spielökonomie sind verboten.
                       </p>
                       <p>
-                        Администратор может заморозить подозрительный аккаунт, отклонить
-                        вывод или скорректировать баланс при нарушениях.
+                        Der Administrator kann verdächtige Konten einfrieren,
+                        Auszahlungen ablehnen oder bei Verstößen das Guthaben korrigieren.
                       </p>
                       <p>
-                        ONIX внутри приложения является игровой единицей. Условия вывода
-                        и будущие интеграции могут изменяться во время публичного теста.
+                        ONIX ist innerhalb der App eine Spieleinheit. Auszahlungsbedingungen
+                        und künftige Integrationen können sich während des öffentlichen Tests ändern.
                       </p>
                     </div>
                   </div>
@@ -18431,9 +18431,9 @@ body:not(.onix-body-home-lock) {
             id: 'tap',
             icon: onixBoostIcons.tap,
             accent: 'violet',
-            title: 'Сила тапа',
+            title: 'Tap-Stärke',
             level: tapLevel,
-            subtitle: `${formatOnix(tapPower)} ONIX за тап`,
+            subtitle: `${formatOnix(tapPower)} ONIX pro Tap`,
             price: nextTapCost,
             priceType: 'onix',
             disabled: balance < nextTapCost,
@@ -18443,9 +18443,9 @@ body:not(.onix-body-home-lock) {
             id: 'miner',
             icon: onixBoostIcons.miner,
             accent: 'gold',
-            title: 'Майнер',
+            title: 'Miner',
             level: minerLevel,
-            subtitle: `+${formatOnix(minerIncomePerSecond)} ONIX в сек`,
+            subtitle: `+${formatOnix(minerIncomePerSecond)} ONIX pro Sek.`,
             price: nextMinerCost,
             priceType: 'onix',
             disabled: balance < nextMinerCost,
@@ -18455,9 +18455,9 @@ body:not(.onix-body-home-lock) {
             id: 'recharge',
             icon: onixBoostIcons.recharge,
             accent: 'cyan',
-            title: 'Восстановление энергии',
+            title: 'Energie-Regeneration',
             level: rechargeLevel,
-            subtitle: `+${formatOnix(energyRecharge)} энергии/сек`,
+            subtitle: `+${formatOnix(energyRecharge)} Energie/Sek.`,
             price: nextRechargeCost,
             priceType: 'onix',
             disabled: balance < nextRechargeCost,
@@ -18467,9 +18467,9 @@ body:not(.onix-body-home-lock) {
             id: 'max-energy',
             icon: onixBoostIcons.maxEnergy,
             accent: 'blue',
-            title: 'Макс. энергия',
+            title: 'Max. Energie',
             level: energyLevel,
-            subtitle: `${maxEnergy.toLocaleString('ru-RU')} max. энергии`,
+            subtitle: `${maxEnergy.toLocaleString('ru-RU')} max. Energie`,
             price: nextEnergyCost,
             priceType: 'onix',
             disabled: balance < nextEnergyCost,
@@ -18499,7 +18499,7 @@ body:not(.onix-body-home-lock) {
             accent: boost.isActive ? 'emerald' : 'gold',
             title: boost.title,
             level: null,
-            subtitle: `${boost.multiplier} • ${Math.round(boost.durationMinutes * boostDurationMultiplier)} мин${boost.isActive ? ` • ${boostTimeLeft}` : ''}`,
+            subtitle: `${boost.multiplier} • ${Math.round(boost.durationMinutes * boostDurationMultiplier)} Min.${boost.isActive ? ` • ${boostTimeLeft}` : ''}`,
             price: boost.cost,
             priceType: 'onix',
             disabled: (isAnyBoostActive && !boost.isActive) || (!boost.isActive && balance < boost.cost),
@@ -18510,9 +18510,9 @@ body:not(.onix-body-home-lock) {
             id: 'energy-refill',
             icon: onixBoostIcons.energy100,
             accent: 'emerald',
-            title: 'Энергия',
+            title: 'Energie',
             level: null,
-            subtitle: `${Math.floor(energy).toLocaleString('ru-RU')} / ${maxEnergy.toLocaleString('ru-RU')} • пополнить до 100%`,
+            subtitle: `${Math.floor(energy).toLocaleString('ru-RU')} / ${maxEnergy.toLocaleString('ru-RU')} • auf 100 % auffüllen`,
             price: energyRefillCost,
             priceType: 'onix',
             disabled: balance < energyRefillCost || Math.floor(energy) >= Math.floor(maxEnergy),
@@ -18523,9 +18523,9 @@ body:not(.onix-body-home-lock) {
             id: 'onix-chest',
             icon: onixChestIcon,
             accent: 'pink',
-            title: 'Сундук ONIX',
+            title: 'ONIX-Truhe',
             level: null,
-            subtitle: lastChestReward ? `Последний приз: ${lastChestReward}` : 'Случайный приз и секретная daily-миссия',
+            subtitle: lastChestReward ? `Letzter Preis: ${lastChestReward}` : 'Zufälliger Preis und geheime Daily-Mission',
             price: Number(economyConfig.chestCost || 50000),
             priceType: 'onix',
             disabled: balance < Number(economyConfig.chestCost || 50000),
@@ -18540,7 +18540,7 @@ body:not(.onix-body-home-lock) {
             accent: 'violet',
             title: 'Energy Saver',
             level: energySaverLevel,
-            subtitle: `-${energySaverLevel * 10}% расхода энергии`,
+            subtitle: `-${energySaverLevel * 10}% Energieverbrauch`,
             price: energySaverCost,
             priceType: 'onix',
             disabled: energySaverLevel >= 3 || balance < energySaverCost,
@@ -18553,7 +18553,7 @@ body:not(.onix-body-home-lock) {
             accent: 'pink',
             title: 'Energy Max Pro',
             level: energyMaxProLevel,
-            subtitle: `+${energyMaxProLevel * 500} бонус энергии`,
+            subtitle: `+${energyMaxProLevel * 500} Energiebonus`,
             price: energyMaxProCost,
             priceType: 'onix',
             disabled: energyMaxProLevel >= 3 || balance < energyMaxProCost,
@@ -18566,7 +18566,7 @@ body:not(.onix-body-home-lock) {
             accent: 'violet',
             title: 'Offline Pro',
             level: offlineProLevel,
-            subtitle: `${maxOfflineHours} ч. оффлайн-дохода`,
+            subtitle: `${maxOfflineHours} Std. Offline-Einkommen`,
             price: offlineProCost,
             priceType: 'onix',
             disabled: offlineProLevel >= 3 || balance < offlineProCost,
@@ -18579,7 +18579,7 @@ body:not(.onix-body-home-lock) {
             accent: 'gold',
             title: 'Daily Plus',
             level: dailyPlusLevel,
-            subtitle: `+${dailyPlusLevel * 10}% к daily reward`,
+            subtitle: `+${dailyPlusLevel * 10}% auf Daily Reward`,
             price: dailyPlusCost,
             priceType: 'onix',
             disabled: dailyPlusLevel >= 3 || balance < dailyPlusCost,
@@ -18592,7 +18592,7 @@ body:not(.onix-body-home-lock) {
             accent: 'cyan',
             title: 'Boost Master',
             level: boostMasterLevel,
-            subtitle: `+${boostMasterLevel * 20}% времени буста`,
+            subtitle: `+${boostMasterLevel * 20}% Boost-Zeit`,
             price: boostsMasterCost,
             priceType: 'onix',
             disabled: boostMasterLevel >= 3 || balance < boostsMasterCost,
@@ -18605,7 +18605,7 @@ body:not(.onix-body-home-lock) {
             accent: 'pink',
             title: 'Engineer',
             level: engineerLevel,
-            subtitle: `-${engineerLevel * 5}% к цене апгрейдов`,
+            subtitle: `-${engineerLevel * 5}% auf Upgrade-Kosten`,
             price: engineerCost,
             priceType: 'onix',
             disabled: engineerLevel >= 3 || balance < engineerCost,
@@ -18618,7 +18618,7 @@ body:not(.onix-body-home-lock) {
             accent: 'gold',
             title: 'Miner Plus',
             level: minerPlusLevel,
-            subtitle: `+${minerPlusLevel * 5}% к доходу майнера`,
+            subtitle: `+${minerPlusLevel * 5}% auf Miner-Ertrag`,
             price: minerPlusCost,
             priceType: 'onix',
             disabled: minerPlusLevel >= 3 || balance < minerPlusCost,
@@ -18631,7 +18631,7 @@ body:not(.onix-body-home-lock) {
             accent: 'emerald',
             title: 'Lucky Miner',
             level: luckyMinerLevel,
-            subtitle: `+${luckyMinerLevel * 3}% к доходу майнера`,
+            subtitle: `+${luckyMinerLevel * 3}% auf Miner-Ertrag`,
             price: luckyMinerCost,
             priceType: 'onix',
             disabled: luckyMinerLevel >= 3 || balance < luckyMinerCost,
@@ -18644,7 +18644,7 @@ body:not(.onix-body-home-lock) {
             accent: 'cyan',
             title: 'Referral Pro',
             level: referralProLevel,
-            subtitle: `+${referralProLevel * 5}% к реферальной награде`,
+            subtitle: `+${referralProLevel * 5}% auf Empfehlungsbonus`,
             price: referralProCost,
             priceType: 'onix',
             disabled: referralProLevel >= 3 || balance < referralProCost,
@@ -18657,7 +18657,7 @@ body:not(.onix-body-home-lock) {
             accent: 'violet',
             title: 'Streak Shield',
             level: streakShieldLevel,
-            subtitle: streakShieldLevel >= 1 ? 'Daily streak защищён' : 'Защищает daily streak',
+            subtitle: streakShieldLevel >= 1 ? 'Daily-Streak geschützt' : 'Schützt den Daily-Streak',
             price: streakShieldCost,
             priceType: 'onix',
             disabled: streakShieldLevel >= 1 || balance < streakShieldCost,
@@ -18710,9 +18710,9 @@ body:not(.onix-body-home-lock) {
 
             <div className="onix-upgrades-ref-tabs">
               {[
-                { id: 'tapping', label: 'Бусты' },
-                { id: 'boosts', label: 'Временные бусты' },
-                { id: 'other', label: 'Супер бусты' },
+                { id: 'tapping', label: 'Boosts' },
+                { id: 'boosts', label: 'Temporäre Boosts' },
+                { id: 'other', label: 'Super-Boosts' },
               ].map((tab) => (
                 <button
                   key={tab.id}
@@ -18741,7 +18741,7 @@ body:not(.onix-body-home-lock) {
                   <div className="onix-upgrade-ref-main">
                     <div className="onix-upgrade-ref-title">{item.title}</div>
                     {item.level !== null && item.level !== undefined && (
-                      <div className="onix-upgrade-ref-level">Уровень {item.level}</div>
+                      <div className="onix-upgrade-ref-level">Level {item.level}</div>
                     )}
                     <div className="onix-upgrade-ref-subtitle">{item.subtitle}</div>
                   </div>
@@ -18767,14 +18767,14 @@ body:not(.onix-body-home-lock) {
 
       {activeTab === 'tasks' && (() => {
         const tasksTabs = [
-          { id: 'tasks' as const, label: 'Задания' },
-          { id: 'temporary' as const, label: 'Временные задания' },
-          { id: 'achievements' as const, label: 'Достижения' },
+          { id: 'tasks' as const, label: 'Aufgaben' },
+          { id: 'temporary' as const, label: 'Temporäre Aufgaben' },
+          { id: 'achievements' as const, label: 'Erfolge' },
         ];
 
         return (
         <div className="onix-tasks-screen onix-tasks-ref-screen px-5 mt-3 space-y-4">
-          <h2 className="text-2xl font-bold mb-6">📋 Задания</h2>
+          <h2 className="text-2xl font-bold mb-6">📋 Aufgaben</h2>
 
           <div className="onix-tasks-ref-tabs">
             {tasksTabs.map((tab) => (
@@ -18812,7 +18812,7 @@ body:not(.onix-body-home-lock) {
                 const user = response.data;
 
                 setBalance(user.balance);
-                setUsername(user.username || 'Пользователь');
+                setUsername(user.username || 'Spieler');
                 setWeeklyEarned(Number(user.weeklyEarned || 0));
                 setTotalEarned(user.totalEarned);
                 setLevel(user.level);
@@ -18826,9 +18826,9 @@ body:not(.onix-body-home-lock) {
       showReferralBonusPaidToast(response.data);
                 loadMissions();
 
-                showToast('🎉 Подписка подтверждена! +25000 ONIX');
+                showToast('🎉 Abo bestätigt! +25000 ONIX');
               } catch (error: any) {
-                showToast(error?.response?.data?.message || 'Сначала подпишитесь на канал');
+                showToast(error?.response?.data?.message || 'Abonniere zuerst den Kanal');
               }
             }}
             className={`shop-item ${
@@ -18838,16 +18838,16 @@ body:not(.onix-body-home-lock) {
             }`}
           >
             <div>
-              <p className="font-bold">📢 Подписаться на канал</p>
+              <p className="font-bold">📢 Kanal abonnieren</p>
               <p className="text-gray-400">+25000 ONIX</p>
             </div>
 
             <span className="text-emerald-400 font-bold">
               {completedTasks.includes('channel')
-                ? 'Выполнено'
+                ? 'Abgeschlossen'
                 : channelJoined
-                ? 'Проверить'
-                : 'Подписаться'}
+                ? 'Prüfen'
+                : 'Abonnieren'}
             </span>
           </div>
 )}
@@ -18871,7 +18871,7 @@ body:not(.onix-body-home-lock) {
                 const user = response.data;
 
                 setBalance(user.balance);
-                setUsername(user.username || 'Пользователь');
+                setUsername(user.username || 'Spieler');
                 setWeeklyEarned(Number(user.weeklyEarned || 0));
                 setTotalEarned(user.totalEarned);
                 setLevel(user.level);
@@ -18880,9 +18880,9 @@ body:not(.onix-body-home-lock) {
                 setOwnedPerks(user.ownedPerks || []);
       setPerkLevels(normalizePerkLevels(user.perkLevels));
 
-                showToast(`🎉 Вы получили +${formatOnix(economyConfig.referralReward)} ONIX!`, 'success');
+                showToast(`🎉 Du hast erhalten +${formatOnix(economyConfig.referralReward)} ONIX!`, 'success');
               } catch (error: any) {
-                showToast(error?.response?.data?.message || 'Сначала пригласите друга');
+                showToast(error?.response?.data?.message || 'Lade zuerst einen Freund ein');
               }
             }}
             className={`shop-item ${
@@ -18892,16 +18892,16 @@ body:not(.onix-body-home-lock) {
             }`}
           >
             <div>
-              <p className="font-bold">👥 Пригласить друга</p>
+              <p className="font-bold">👥 Freund einladen</p>
               <p className="text-gray-400">+{formatOnix(economyConfig.referralReward)} ONIX</p>
             </div>
 
             <span className="text-emerald-400 font-bold">
               {completedTasks.includes('inviteFriend')
-                ? 'Выполнено'
+                ? 'Abgeschlossen'
                 : referralsCount >= 1
-                ? 'Забрать'
-                : 'Пригласить'}
+                ? 'Abholen'
+                : 'Einladen'}
             </span>
           </div>
 )}
@@ -18910,8 +18910,8 @@ body:not(.onix-body-home-lock) {
   <div className="onix-tasks-empty-card">
     <div className="onix-tasks-empty-icon">✓</div>
     <div>
-      <p className="font-bold">Все одноразовые задания выполнены</p>
-      <p className="text-gray-400">Новые задания появятся позже.</p>
+      <p className="font-bold">Alle einmaligen Aufgaben sind erledigt</p>
+      <p className="text-gray-400">Neue Aufgaben erscheinen später.</p>
     </div>
   </div>
 )}
@@ -18934,7 +18934,7 @@ body:not(.onix-body-home-lock) {
                 const cooldown = DAY_MS;
 
                 setBalance(user.balance);
-                setUsername(user.username || 'Пользователь');
+                setUsername(user.username || 'Spieler');
                 setWeeklyEarned(Number(user.weeklyEarned || 0));
                 setTotalEarned(user.totalEarned);
                 setLevel(user.level);
@@ -18954,7 +18954,7 @@ body:not(.onix-body-home-lock) {
 
                 const rankBonusText =
                   Array.isArray(response.data.rankBonuses) && response.data.rankBonuses.length
-                    ? `\n🏆 Бонус ранга: +${formatOnix(
+                    ? `\n🏆 Rangbonus: +${formatOnix(
                         response.data.rankBonuses.reduce(
                           (sum: number, item: { bonus: number }) =>
                             sum + Number(item.bonus || 0),
@@ -18964,13 +18964,13 @@ body:not(.onix-body-home-lock) {
                     : '';
 
                 showToast(
-                  `🎁 Вы получили +${formatOnix(
+                  `🎁 Du hast erhalten +${formatOnix(
                     response.data.claimedDailyReward ||
                       getDailyRewardWithStreak(user.level, user.dailyStreak || 1)
-                  )} ONIX\n🔥 Стрик: ${user.dailyStreak || 1}/7${rankBonusText}`
+                  )} ONIX\n🔥 Streak: ${user.dailyStreak || 1}/7${rankBonusText}`
                 );
               } catch (error: any) {
-                showToast(error?.response?.data?.message || 'Ошибка получения награды');
+                showToast(error?.response?.data?.message || 'Fehler beim Abrufen der Belohnung');
               }
             }}
             className={`shop-item ${
@@ -18978,26 +18978,26 @@ body:not(.onix-body-home-lock) {
             }`}
           >
             <div>
-              <p className="font-bold">🎁 Ежедневная награда</p>
+              <p className="font-bold">🎁 Tägliche Belohnung</p>
               <p className="text-gray-400">
-                +{formatOnix(dailyRewardPreview)} ONIX · День {nextDailyStreakDay}/7
+                +{formatOnix(dailyRewardPreview)} ONIX · Tag {nextDailyStreakDay}/7
               </p>
               <p className="text-xs text-yellow-400">
-                Множитель стрика ×{dailyStreakMultiplier.toFixed(1)}
+                Streak-Multiplikator ×{dailyStreakMultiplier.toFixed(1)}
               </p>
             </div>
 
             <span className="text-emerald-400 font-bold">
-              {dailyCooldown > 0 ? formatTime(dailyCooldown) : 'Забрать'}
+              {dailyCooldown > 0 ? formatTime(dailyCooldown) : 'Abholen'}
             </span>
           </div>
 
 <div className="rounded-3xl border border-yellow-400/20 bg-[#111827] p-5 shadow-xl onix-mission-cycle-card">
             <div className="mb-4 flex items-center justify-between gap-3">
               <div>
-                <h3 className="text-xl font-bold text-white">☀️ Ежедневные миссии</h3>
+                <h3 className="text-xl font-bold text-white">☀️ Tägliche Missionen</h3>
                 <p className="text-sm text-gray-400">
-                  Обновление через {formatMissionResetTime(dailyMissionResetMs)}
+                  Aktualisierung in {formatMissionResetTime(dailyMissionResetMs)}
                 </p>
               </div>
 
@@ -19012,9 +19012,9 @@ body:not(.onix-body-home-lock) {
                   <div className="onix-mission-complete-card">
                     <div className="onix-mission-complete-icon">✓</div>
                     <div>
-                      <p className="font-bold text-white">Ежедневные миссии выполнены</p>
+                      <p className="font-bold text-white">Tägliche Missionen erledigt</p>
                       <p className="text-sm text-gray-400">
-                        Новые миссии появятся через {formatMissionResetTime(dailyMissionResetMs)}
+                        Neue Missionen erscheinen in {formatMissionResetTime(dailyMissionResetMs)}
                       </p>
                     </div>
                   </div>
@@ -19041,7 +19041,7 @@ body:not(.onix-body-home-lock) {
                           </div>
 
                           <div className="rounded-2xl bg-[#111827] px-3 py-2 text-right">
-                            <p className="text-xs text-gray-400">Награда</p>
+                            <p className="text-xs text-gray-400">Belohnung</p>
                             <p className="font-bold text-yellow-400">
                               +{formatOnix(mission.reward)}
                             </p>
@@ -19050,7 +19050,7 @@ body:not(.onix-body-home-lock) {
 
                           <div className="onix-task-progress">
                           <div className="onix-task-progress-text">
-                            <span className="onix-task-progress-status">Прогресс</span>
+                            <span className="onix-task-progress-status">Fortschritt</span>
                             <span><strong>{formatOnix(mission.progress)}</strong> / {formatOnix(mission.goal)}</span>
                           </div>
 
@@ -19074,10 +19074,10 @@ body:not(.onix-body-home-lock) {
                           }`}
                         >
                           {mission.isClaimed
-                            ? 'Получено'
+                            ? 'Erhalten'
                             : mission.isCompleted
-                            ? 'Забрать'
-                            : 'В процессе'}
+                            ? 'Abholen'
+                            : 'In Bearbeitung'}
                         </button>
                       </div>
                     );
@@ -19085,7 +19085,7 @@ body:not(.onix-body-home-lock) {
                 )
               ) : (
                 <p className="rounded-2xl bg-[#0a0f1c] p-4 text-center text-gray-400">
-                  Миссии загружаются...
+                  Missionen werden geladen...
                 </p>
               )}
             </div>
@@ -19094,9 +19094,9 @@ body:not(.onix-body-home-lock) {
 <div className="rounded-3xl border border-yellow-400/20 bg-[#111827] p-5 shadow-xl onix-mission-cycle-card">
             <div className="mb-4 flex items-center justify-between gap-3">
               <div>
-                <h3 className="text-xl font-bold text-white">📅 Еженедельные миссии</h3>
+                <h3 className="text-xl font-bold text-white">📅 Wöchentliche Missionen</h3>
                 <p className="text-sm text-gray-400">
-                  Обновление через {formatMissionResetTime(weeklyMissionResetMs)}
+                  Aktualisierung in {formatMissionResetTime(weeklyMissionResetMs)}
                 </p>
               </div>
 
@@ -19111,9 +19111,9 @@ body:not(.onix-body-home-lock) {
                   <div className="onix-mission-complete-card">
                     <div className="onix-mission-complete-icon">✓</div>
                     <div>
-                      <p className="font-bold text-white">Еженедельные миссии выполнены</p>
+                      <p className="font-bold text-white">Wöchentliche Missionen erledigt</p>
                       <p className="text-sm text-gray-400">
-                        Новые миссии появятся через {formatMissionResetTime(weeklyMissionResetMs)}
+                        Neue Missionen erscheinen in {formatMissionResetTime(weeklyMissionResetMs)}
                       </p>
                     </div>
                   </div>
@@ -19140,7 +19140,7 @@ body:not(.onix-body-home-lock) {
                           </div>
 
                           <div className="rounded-2xl bg-[#111827] px-3 py-2 text-right">
-                            <p className="text-xs text-gray-400">Награда</p>
+                            <p className="text-xs text-gray-400">Belohnung</p>
                             <p className="font-bold text-yellow-400">
                               +{formatOnix(mission.reward)}
                             </p>
@@ -19149,7 +19149,7 @@ body:not(.onix-body-home-lock) {
 
                           <div className="onix-task-progress">
                           <div className="onix-task-progress-text">
-                            <span className="onix-task-progress-status">Прогресс</span>
+                            <span className="onix-task-progress-status">Fortschritt</span>
                             <span><strong>{formatOnix(mission.progress)}</strong> / {formatOnix(mission.goal)}</span>
                           </div>
 
@@ -19173,10 +19173,10 @@ body:not(.onix-body-home-lock) {
                           }`}
                         >
                           {mission.isClaimed
-                            ? 'Получено'
+                            ? 'Erhalten'
                             : mission.isCompleted
-                            ? 'Забрать'
-                            : 'В процессе'}
+                            ? 'Abholen'
+                            : 'In Bearbeitung'}
                         </button>
                       </div>
                     );
@@ -19184,7 +19184,7 @@ body:not(.onix-body-home-lock) {
                 )
               ) : (
                 <p className="rounded-2xl bg-[#0a0f1c] p-4 text-center text-gray-400">
-                  Миссии загружаются...
+                  Missionen werden geladen...
                 </p>
               )}
             </div>
@@ -19196,7 +19196,7 @@ body:not(.onix-body-home-lock) {
             <div className="onix-tasks-ref-panel onix-tasks-ref-panel-achievements">
 <div className="mt-8">
             <div className="mb-4 flex items-center justify-between gap-3">
-              <h2 className="text-2xl font-bold">🏆 Достижения</h2>
+              <h2 className="text-2xl font-bold">🏆 Erfolge</h2>
               <span className="rounded-full bg-[#111827] px-3 py-1 text-sm font-bold text-yellow-400">
                 {completedAchievementsCount} / {achievements.length}
               </span>
@@ -19244,7 +19244,7 @@ body:not(.onix-body-home-lock) {
                         </div>
 
                         <div className="rounded-2xl bg-[#0a0f1c] px-3 py-2 text-right">
-                          <p className="text-xs text-gray-400">Награда</p>
+                          <p className="text-xs text-gray-400">Belohnung</p>
                           <p className="font-bold text-yellow-400">
                             +{formatOnix(achievement.reward)}
                           </p>
@@ -19253,7 +19253,7 @@ body:not(.onix-body-home-lock) {
 
                       <div className="onix-task-progress">
                         <div className="onix-task-progress-text">
-                          <span className="onix-task-progress-status">Прогресс</span>
+                          <span className="onix-task-progress-status">Fortschritt</span>
                           <span><strong>{formatOnix(achievement.progress)}</strong> / {formatOnix(achievement.goal)}</span>
                         </div>
 
@@ -19271,10 +19271,10 @@ body:not(.onix-body-home-lock) {
             ) : (
               <div className="rounded-3xl border border-emerald-400/20 bg-emerald-500/10 p-5 text-center">
                 <p className="text-lg font-bold text-emerald-400">
-                  Все достижения выполнены 🎉
+                  Alle Erfolge abgeschlossen 🎉
                 </p>
                 <p className="mt-1 text-sm text-gray-400">
-                  Новые достижения появятся в будущих обновлениях.
+                  Neue Erfolge erscheinen in künftigen Updates.
                 </p>
               </div>
             )}
@@ -19311,7 +19311,7 @@ body:not(.onix-body-home-lock) {
             <div className="onix-profile-v75-rank-progress">
               <div className="onix-task-progress-text">
                 <span className="onix-task-progress-status">{rankInfo.currentRank.name}</span>
-                <span><strong>{profileRankText}</strong>{rankInfo.nextRank ? ` до ${rankInfo.nextRank.name}` : ''}</span>
+                <span><strong>{profileRankText}</strong>{rankInfo.nextRank ? ` bis ${rankInfo.nextRank.name}` : ''}</span>
               </div>
 
               <div className="onix-task-progress-track">
@@ -19324,32 +19324,32 @@ body:not(.onix-body-home-lock) {
 
             <div className="onix-profile-v75-stats-grid">
               <div className="onix-profile-v75-stat">
-                <span>Баланс ONIX</span>
+                <span>ONIX-Guthaben</span>
                 <strong>{Math.floor(balance).toLocaleString('ru-RU')}</strong>
               </div>
               <div className="onix-profile-v75-stat">
-                <span>Всего заработано</span>
+                <span>Insgesamt verdient</span>
                 <strong>{Math.floor(totalEarned).toLocaleString('ru-RU')}</strong>
               </div>
               <button type="button" className="onix-profile-v75-stat" onClick={() => { setProfilePanel('invited'); loadInvitedProfiles(); loadFriendLeaderboard(); }}>
-                <span>Приглашено</span>
+                <span>Eingeladen</span>
                 <strong>{referralsCount}</strong>
               </button>
               <button type="button" className="onix-profile-v75-stat" onClick={openTeamPanel}>
-                <span>Команда</span>
+                <span>Team</span>
                 <strong>{teamName || '—'}</strong>
               </button>
             </div>
 
             <div className="onix-profile-v75-menu">
               <button type="button" className={profilePanel === 'achievements' ? 'is-active' : ''} onClick={() => setProfilePanel(profilePanel === 'achievements' ? 'overview' : 'achievements')}>
-                <span>🏆</span><strong>Достижения</strong><em>{completedAchievementsCount}/{achievements.length}</em><b>›</b>
+                <span>🏆</span><strong>Erfolge</strong><em>{completedAchievementsCount}/{achievements.length}</em><b>›</b>
               </button>
               <button type="button" className={profilePanel === 'ranks' ? 'is-active' : ''} onClick={() => setProfilePanel(profilePanel === 'ranks' ? 'overview' : 'ranks')}>
-                <span>🏅</span><strong>Ранги</strong><em>{rankInfo.currentRank.name}</em><b>›</b>
+                <span>🏅</span><strong>Ränge</strong><em>{rankInfo.currentRank.name}</em><b>›</b>
               </button>
               <button type="button" className={profilePanel === 'stats' ? 'is-active' : ''} onClick={() => setProfilePanel(profilePanel === 'stats' ? 'overview' : 'stats')}>
-                <span>📊</span><strong>Статистика</strong><em>{formatOnix(totalTaps)} тапов</em><b>›</b>
+                <span>📊</span><strong>Statistik</strong><em>{formatOnix(totalTaps)} Taps</em><b>›</b>
               </button>
               {isAdmin() && (
                 <button type="button" className={profilePanel === 'admin' ? 'is-active' : ''} onClick={() => setProfilePanel(profilePanel === 'admin' ? 'overview' : 'admin')}>
@@ -19594,7 +19594,7 @@ body:not(.onix-body-home-lock) {
 
             {profilePanel === 'achievements' && (
               <div className="onix-profile-v75-panel">
-                <div className="onix-profile-v75-panel-title onix-profile-v75-detail-title"><button type="button" className="onix-profile-v75-back" onClick={() => setProfilePanel('overview')}>‹</button><strong>🏆 Все достижения</strong><span>{completedAchievementsCount}/{achievements.length}</span></div>
+                <div className="onix-profile-v75-panel-title onix-profile-v75-detail-title"><button type="button" className="onix-profile-v75-back" onClick={() => setProfilePanel('overview')}>‹</button><strong>🏆 Alle Erfolge</strong><span>{completedAchievementsCount}/{achievements.length}</span></div>
                 <div className="onix-profile-v75-list">
                   {[...pendingAchievementsList, ...completedAchievementsList].map((achievement) => {
                     const progressPercent = Math.min((Number(achievement.progress || 0) / Number(achievement.goal || 1)) * 100, 100);
@@ -19605,7 +19605,7 @@ body:not(.onix-body-home-lock) {
                           <span>{achievement.isCompleted ? '✓' : `+${formatOnix(achievement.reward)}`}</span>
                         </div>
                         <div className="onix-task-progress">
-                          <div className="onix-task-progress-text"><span className="onix-task-progress-status">Прогресс</span><span><strong>{formatOnix(achievement.progress)}</strong> / {formatOnix(achievement.goal)}</span></div>
+                          <div className="onix-task-progress-text"><span className="onix-task-progress-status">Fortschritt</span><span><strong>{formatOnix(achievement.progress)}</strong> / {formatOnix(achievement.goal)}</span></div>
                           <div className="onix-task-progress-track"><div className="onix-task-progress-fill" style={{ width: `${progressPercent}%` }} /></div>
                         </div>
                       </div>
@@ -19617,7 +19617,7 @@ body:not(.onix-body-home-lock) {
 
             {profilePanel === 'ranks' && (
               <div className="onix-profile-v75-panel">
-                <div className="onix-profile-v75-panel-title onix-profile-v75-detail-title"><button type="button" className="onix-profile-v75-back" onClick={() => setProfilePanel('overview')}>‹</button><strong>🏅 Все ранги</strong><span>{rankInfo.currentRank.name}</span></div>
+                <div className="onix-profile-v75-panel-title onix-profile-v75-detail-title"><button type="button" className="onix-profile-v75-back" onClick={() => setProfilePanel('overview')}>‹</button><strong>🏅 Alle Ränge</strong><span>{rankInfo.currentRank.name}</span></div>
                 <div className="onix-profile-v75-list">
                   {RANKS.map((rank, rankIndex) => {
                     const passed = totalEarned >= rank.threshold;
@@ -19630,10 +19630,10 @@ body:not(.onix-body-home-lock) {
                       <div key={rank.id} className={`onix-profile-v75-rank-row ${passed ? 'is-passed' : ''} ${current ? 'is-current' : ''}`}>
                         <div className="onix-profile-v75-rank-mini"><RankIcon rank={rank} size="sm" /></div>
                         <div className="onix-profile-v75-rank-body">
-                          <div className="onix-profile-v75-rank-title"><strong>{rank.name}</strong><span>{current ? 'Текущий' : passed ? 'Пройден' : `Нужно ${formatOnix(rankStepTotal)}`}</span></div>
+                          <div className="onix-profile-v75-rank-title"><strong>{rank.name}</strong><span>{current ? 'Aktuell' : passed ? 'Erreicht' : `Benötigt ${formatOnix(rankStepTotal)}`}</span></div>
                           {!passed && (
                             <div className="onix-task-progress">
-                              <div className="onix-task-progress-text"><span className="onix-task-progress-status">Прогресс</span><span><strong>{formatOnix(rankStepCurrent)}</strong> / {formatOnix(rankStepTotal)}</span></div>
+                              <div className="onix-task-progress-text"><span className="onix-task-progress-status">Fortschritt</span><span><strong>{formatOnix(rankStepCurrent)}</strong> / {formatOnix(rankStepTotal)}</span></div>
                               <div className="onix-task-progress-track"><div className="onix-task-progress-fill" style={{ width: `${rankStepPercent}%` }} /></div>
                             </div>
                           )}
@@ -19647,7 +19647,7 @@ body:not(.onix-body-home-lock) {
 
             {profilePanel === 'stats' && (
               <div className="onix-profile-v75-panel">
-                <div className="onix-profile-v75-panel-title onix-profile-v75-detail-title"><button type="button" className="onix-profile-v75-back" onClick={() => setProfilePanel('overview')}>‹</button><strong>📊 Игровая статистика</strong><span>ONIX</span></div>
+                <div className="onix-profile-v75-panel-title onix-profile-v75-detail-title"><button type="button" className="onix-profile-v75-back" onClick={() => setProfilePanel('overview')}>‹</button><strong>📊 Spielstatistik</strong><span>ONIX</span></div>
                 <div className="onix-profile-v75-stats-list">
                   {profileStats.map((item) => (
                     <div key={item.label}><span>{item.label}</span><strong>{item.value}</strong></div>
@@ -19672,14 +19672,14 @@ body:not(.onix-body-home-lock) {
                   >‹</button>
                   <strong>
                     {teamDetailPanel === 'missions'
-                      ? '📋 Командные задания'
+                      ? '📋 Team-Aufgaben'
                       : teamDetailPanel === 'top'
-                      ? '🏟 Топ команд'
+                      ? '🏟 Team-Top'
                       : teamDetailPanel === 'members'
-                      ? '👥 Участники'
+                      ? '👥 Mitglieder'
                       : teamDetailPanel === 'create'
-                      ? '✨ Создать команду'
-                      : '👥 Команда'}
+                      ? '✨ Team erstellen'
+                      : '👥 Team'}
                   </strong>
                   <span>{teamName || 'ONIX'}</span>
                 </div>
@@ -19690,18 +19690,18 @@ body:not(.onix-body-home-lock) {
                       <>
                         <div className="onix-profile-team-hero">
                           <div>
-                            <p>Текущая команда</p>
+                            <p>Aktuelles Team</p>
                             <strong>{teamSocialDashboard.team.teamName}</strong>
-                            <span>{teamSocialDashboard.team.members} участников · {teamSocialDashboard.team.place ? `#${teamSocialDashboard.team.place}` : 'без места'} за неделю</span>
+                            <span>{teamSocialDashboard.team.members} Mitglieder · {teamSocialDashboard.team.place ? `#${teamSocialDashboard.team.place}` : 'kein Platz'} pro Woche</span>
                           </div>
-                          <button type="button" onClick={shareTeamInviteLink}>Ссылка</button>
+                          <button type="button" onClick={shareTeamInviteLink}>Link</button>
                         </div>
 
                         <div className="onix-profile-team-stats-grid">
-                          <div><span>Текущая неделя</span><strong>{formatOnix(teamSocialDashboard.teamContest?.activeTeamWeeklyEarned ?? teamSocialDashboard.team.weeklyEarned)}</strong></div>
-                          <div><span>Место сейчас</span><strong>{teamSocialDashboard.teamContest?.activeTeamPlace ? `#${teamSocialDashboard.teamContest.activeTeamPlace}` : '—'}</strong></div>
-                          <div><span>Прошлое место</span><strong>{teamSocialDashboard.teamContest?.completedTeamPlace ? `#${teamSocialDashboard.teamContest.completedTeamPlace}` : '—'}</strong></div>
-                          <div><span>Приз недели</span><strong>+{formatOnix(teamSocialDashboard.teamContest?.prize || 0)}</strong></div>
+                          <div><span>Aktuelle Woche</span><strong>{formatOnix(teamSocialDashboard.teamContest?.activeTeamWeeklyEarned ?? teamSocialDashboard.team.weeklyEarned)}</strong></div>
+                          <div><span>Aktueller Platz</span><strong>{teamSocialDashboard.teamContest?.activeTeamPlace ? `#${teamSocialDashboard.teamContest.activeTeamPlace}` : '—'}</strong></div>
+                          <div><span>Vorheriger Platz</span><strong>{teamSocialDashboard.teamContest?.completedTeamPlace ? `#${teamSocialDashboard.teamContest.completedTeamPlace}` : '—'}</strong></div>
+                          <div><span>Wochenpreis</span><strong>+{formatOnix(teamSocialDashboard.teamContest?.prize || 0)}</strong></div>
                         </div>
 
                         <button
@@ -19716,25 +19716,25 @@ body:not(.onix-body-home-lock) {
                         <div className="onix-profile-team-action-grid">
                           <button type="button" className="onix-profile-team-action-card" onClick={() => setTeamDetailPanel('missions')}>
                             <span>📋</span>
-                            <div><strong>Задания</strong><em>{teamSocialDashboard.teamMissions.length} активных</em></div>
+                            <div><strong>Aufgaben</strong><em>{teamSocialDashboard.teamMissions.length} aktiv</em></div>
                             <b>›</b>
                           </button>
 
                           <button type="button" className="onix-profile-team-action-card" onClick={() => setTeamDetailPanel('top')}>
                             <span>🏟</span>
-                            <div><strong>Топ команд</strong><em>{teamSocialDashboard.teamContest?.activeWeek || teamSocialDashboard.week}</em></div>
+                            <div><strong>Team-Top</strong><em>{teamSocialDashboard.teamContest?.activeWeek || teamSocialDashboard.week}</em></div>
                             <b>›</b>
                           </button>
 
                           <button type="button" className="onix-profile-team-action-card" onClick={() => setTeamDetailPanel('members')}>
                             <span>👥</span>
-                            <div><strong>Участники</strong><em>{teamSocialDashboard.team.members} в команде</em></div>
+                            <div><strong>Mitglieder</strong><em>{teamSocialDashboard.team.members} im Team</em></div>
                             <b>›</b>
                           </button>
                         </div>
 
                         <button type="button" className="onix-profile-team-leave-button" onClick={leaveCurrentTeam}>
-                          Выйти из команды
+                          Team verlassen
                         </button>
                       </>
                     )}
@@ -19742,7 +19742,7 @@ body:not(.onix-body-home-lock) {
                     {teamDetailPanel === 'missions' && (
                       <div className="onix-profile-team-detail-scroll">
                         <div className="onix-profile-team-block">
-                          <div className="onix-profile-team-block-title"><strong>Командные задания</strong><span>{teamSocialDashboard.week}</span></div>
+                          <div className="onix-profile-team-block-title"><strong>Team-Aufgaben</strong><span>{teamSocialDashboard.week}</span></div>
                           <div className="onix-profile-team-missions">
                             {teamSocialDashboard.teamMissions.length > 0 ? teamSocialDashboard.teamMissions.map((mission) => {
                               const progressPercent = Math.min((Number(mission.progress || 0) / Number(mission.goal || 1)) * 100, 100);
@@ -19751,14 +19751,14 @@ body:not(.onix-body-home-lock) {
                                   <div className="onix-profile-team-mission-head"><strong>{mission.title}</strong><span>+{formatOnix(mission.reward)}</span></div>
                                   <p>{mission.description}</p>
                                   <div className="onix-task-progress">
-                                    <div className="onix-task-progress-text"><span className="onix-task-progress-status">Прогресс</span><span><strong>{formatOnix(mission.progress)}</strong> / {formatOnix(mission.goal)}</span></div>
+                                    <div className="onix-task-progress-text"><span className="onix-task-progress-status">Fortschritt</span><span><strong>{formatOnix(mission.progress)}</strong> / {formatOnix(mission.goal)}</span></div>
                                     <div className="onix-task-progress-track"><div className="onix-task-progress-fill" style={{ width: `${progressPercent}%` }} /></div>
                                   </div>
-                                  <button type="button" onClick={() => claimTeamMission(mission)} disabled={!mission.isCompleted || mission.isClaimed}>{mission.isClaimed ? 'Получено' : mission.isCompleted ? 'Забрать' : 'В процессе'}</button>
+                                  <button type="button" onClick={() => claimTeamMission(mission)} disabled={!mission.isCompleted || mission.isClaimed}>{mission.isClaimed ? 'Erhalten' : mission.isCompleted ? 'Abholen' : 'In Bearbeitung'}</button>
                                 </div>
                               );
                             }) : (
-                              <div className="onix-profile-v75-empty">Командные задания появятся позже.</div>
+                              <div className="onix-profile-v75-empty">Team-Aufgaben erscheinen später.</div>
                             )}
                           </div>
                         </div>
@@ -19768,16 +19768,16 @@ body:not(.onix-body-home-lock) {
                     {teamDetailPanel === 'top' && (
                       <div className="onix-profile-team-detail-scroll">
                         <div className="onix-profile-team-block onix-profile-team-contest-block">
-                          <div className="onix-profile-team-block-title"><strong>🏟 Топ команд</strong><span>{teamSocialDashboard.teamContest?.activeWeek || teamSocialDashboard.week}</span></div>
+                          <div className="onix-profile-team-block-title"><strong>🏟 Team-Top</strong><span>{teamSocialDashboard.teamContest?.activeWeek || teamSocialDashboard.week}</span></div>
                           <div className="onix-profile-team-podium">
                             {(teamSocialDashboard.teamContest?.leaderboardTop3 || []).length > 0 ? (teamSocialDashboard.teamContest?.leaderboardTop3 || []).map((team) => (
                               <div key={team.teamName} className={`onix-profile-team-podium-row place-${team.place}`}>
                                 <em>#{team.place}</em>
-                                <div><strong>{team.teamName}</strong><span>{formatOnix(team.weeklyEarned)} ONIX · {team.members} участников</span></div>
+                                <div><strong>{team.teamName}</strong><span>{formatOnix(team.weeklyEarned)} ONIX · {team.members} Mitglieder</span></div>
                                 <b>+{formatOnix(team.prize || 0)}</b>
                               </div>
                             )) : (
-                              <div className="onix-profile-v75-empty">Лидерборд появится после заработка команд.</div>
+                              <div className="onix-profile-v75-empty">Das Leaderboard erscheint, sobald Teams ONIX verdienen.</div>
                             )}
                           </div>
                         </div>
@@ -19787,15 +19787,15 @@ body:not(.onix-body-home-lock) {
                     {teamDetailPanel === 'members' && (
                       <div className="onix-profile-team-detail-scroll">
                         <div className="onix-profile-team-block">
-                          <div className="onix-profile-team-block-title"><strong>Участники</strong><span>{teamSocialDashboard.team.members}</span></div>
+                          <div className="onix-profile-team-block-title"><strong>Mitglieder</strong><span>{teamSocialDashboard.team.members}</span></div>
                           <div className="onix-profile-team-members">
                             {(teamSocialDashboard.team.membersList || []).length > 0 ? teamSocialDashboard.team.membersList.map((member, index) => (
                               <div key={member.telegramId} className="onix-profile-team-member">
                                 <em>{index + 1}</em>
-                                <div><strong>{member.username || 'ONIX Player'}</strong><span>{formatOnix(member.weeklyEarned)} за неделю · {formatOnix(member.totalEarned)} всего</span></div>
+                                <div><strong>{member.username || 'ONIX Player'}</strong><span>{formatOnix(member.weeklyEarned)} pro Woche · {formatOnix(member.totalEarned)} gesamt</span></div>
                               </div>
                             )) : (
-                              <div className="onix-profile-v75-empty">Участники команды пока не найдены.</div>
+                              <div className="onix-profile-v75-empty">Noch keine Teammitglieder gefunden.</div>
                             )}
                           </div>
                         </div>
@@ -19807,14 +19807,14 @@ body:not(.onix-body-home-lock) {
                     {teamDetailPanel === 'create' ? (
                       <div className="onix-profile-team-create-page">
                         <div className="onix-profile-team-block onix-profile-team-create-card">
-                          <div className="onix-profile-team-block-title"><strong>✨ Новая команда</strong><span>ONIX</span></div>
-                          <p>Придумайте название команды. После создания вы автоматически станете её первым участником, а другие игроки смогут найти команду через поиск и вступить.</p>
+                          <div className="onix-profile-team-block-title"><strong>✨ Neues Team</strong><span>ONIX</span></div>
+                          <p>Gib deinem Team einen Namen. Nach der Erstellung bist du automatisch das erste Mitglied, andere Spieler können das Team über die Suche finden und beitreten.</p>
                           <div className="onix-profile-team-create-input">
                             <input
                               value={createTeamName}
                               maxLength={24}
                               onChange={(event) => setCreateTeamName(event.target.value)}
-                              placeholder="Название команды"
+                              placeholder="Teamname"
                             />
                           </div>
                           <button
@@ -19823,7 +19823,7 @@ body:not(.onix-body-home-lock) {
                             onClick={createTeam}
                             disabled={isCreatingTeam || createTeamName.trim().length < 2}
                           >
-                            {isCreatingTeam ? 'Создаю...' : 'Создать команду'}
+                            {isCreatingTeam ? 'Wird erstellt...' : 'Team erstellen'}
                           </button>
                         </div>
                       </div>
@@ -19837,32 +19837,32 @@ body:not(.onix-body-home-lock) {
                               setTeamSearch(value);
                               loadTeamDirectory(value);
                             }}
-                            placeholder="Поиск команды по названию"
+                            placeholder="Team nach Namen suchen"
                           />
                         </div>
 
                         <button type="button" className="onix-profile-team-create-button" onClick={() => setTeamDetailPanel('create')}>
                           <span>＋</span>
-                          <div><strong>Создать свою команду</strong><em>Станьте первым участником</em></div>
+                          <div><strong>Eigenes Team erstellen</strong><em>Werde das erste Mitglied</em></div>
                           <b>›</b>
                         </button>
 
                         <div className="onix-profile-team-block">
-                          <div className="onix-profile-team-block-title"><strong>Все команды ONIX</strong><span>{teamDirectory.length}</span></div>
+                          <div className="onix-profile-team-block-title"><strong>Alle ONIX-Teams</strong><span>{teamDirectory.length}</span></div>
                           <div className="onix-profile-team-directory">
                             {isTeamDirectoryLoading ? (
-                              <div className="onix-profile-v75-empty">Загружаю команды...</div>
+                              <div className="onix-profile-v75-empty">Teams werden geladen...</div>
                             ) : teamDirectory.length > 0 ? teamDirectory.map((team) => (
                               <div key={team.teamName} className="onix-profile-team-card">
                                 <div>
                                   <strong>{team.teamName}</strong>
-                                  <span>{team.members} участников · {formatOnix(team.totalEarned)} ONIX всего</span>
-                                  <em>{team.place ? `#${team.place} за неделю` : 'без места'} · {formatOnix(team.weeklyEarned)} за неделю</em>
+                                  <span>{team.members} Mitglieder · {formatOnix(team.totalEarned)} ONIX gesamt</span>
+                                  <em>{team.place ? `#${team.place} pro Woche` : 'kein Platz'} · {formatOnix(team.weeklyEarned)} pro Woche</em>
                                 </div>
-                                <button type="button" onClick={() => joinTeamByName(team.teamName)}>Вступить</button>
+                                <button type="button" onClick={() => joinTeamByName(team.teamName)}>Beitreten</button>
                               </div>
                             )) : (
-                              <div className="onix-profile-v75-empty">Команды не найдены.</div>
+                              <div className="onix-profile-v75-empty">Keine Teams gefunden.</div>
                             )}
                           </div>
                         </div>
@@ -19875,7 +19875,7 @@ body:not(.onix-body-home-lock) {
 
             {profilePanel === 'invited' && (
               <div className="onix-profile-v75-panel">
-                <div className="onix-profile-v75-panel-title onix-profile-v75-detail-title"><button type="button" className="onix-profile-v75-back" onClick={() => setProfilePanel('overview')}>‹</button><strong>👥 Приглашенные игроки</strong><span>{invitedProfiles.length || referralsCount}</span></div>
+                <div className="onix-profile-v75-panel-title onix-profile-v75-detail-title"><button type="button" className="onix-profile-v75-back" onClick={() => setProfilePanel('overview')}>‹</button><strong>👥 Eingeladene Spieler</strong><span>{invitedProfiles.length || referralsCount}</span></div>
                 <div className="onix-profile-v75-invited-grid">
                   {invitedProfiles.length > 0 ? invitedProfiles.map((friend) => (
                     <div key={friend.telegramId} className="onix-profile-v75-friend-card">
@@ -19883,7 +19883,7 @@ body:not(.onix-body-home-lock) {
                       <div><strong>{friend.username || 'ONIX Player'}</strong><span>{friend.rankName || getRankInfo(friend.totalEarned).currentRank.name}</span><em>{formatOnix(friend.totalEarned)} earned</em></div>
                     </div>
                   )) : (
-                    <div className="onix-profile-v75-empty">Пока нет данных по приглашенным игрокам.</div>
+                    <div className="onix-profile-v75-empty">Noch keine Daten zu eingeladenen Spielern.</div>
                   )}
                 </div>
               </div>
@@ -19924,16 +19924,16 @@ body:not(.onix-body-home-lock) {
             <div className="mt-5 rounded-2xl bg-[#0a0f1c] p-4 text-left">
               <div className="flex items-center justify-between gap-3">
                 <div>
-                  <p className="text-sm font-bold text-white">🏟 Лига</p>
+                  <p className="text-sm font-bold text-white">🏟 Liga</p>
                   <p className="mt-1 text-2xl font-bold text-yellow-400">
                     {getLeagueIcon(league)} {league}
                   </p>
                 </div>
 
                 <div className="rounded-2xl bg-[#111827] px-4 py-3 text-right">
-                  <p className="text-xs text-gray-400">Сезон</p>
+                  <p className="text-xs text-gray-400">Saison</p>
                   <p className="font-bold text-emerald-400">
-                    {seasonSecondsLeft > 0 ? seasonTimeLeft : 'обновляется'}
+                    {seasonSecondsLeft > 0 ? seasonTimeLeft : 'wird aktualisiert'}
                   </p>
                 </div>
               </div>
@@ -19941,7 +19941,7 @@ body:not(.onix-body-home-lock) {
 
             <div className="mt-5 rounded-2xl bg-[#0a0f1c] p-4 text-left">
               <div className="mb-3 flex items-center justify-between">
-                <p className="text-sm font-bold text-white">🏅 Бейджи игрока</p>
+                <p className="text-sm font-bold text-white">🏅 Spieler-Badges</p>
                 <span className="rounded-full bg-[#111827] px-3 py-1 text-xs font-bold text-yellow-400">
                   {profileBadges.length}
                 </span>
@@ -19964,17 +19964,17 @@ body:not(.onix-body-home-lock) {
               ) : (
                 <div className="rounded-2xl bg-[#111827] p-4 text-center">
                   <p className="text-sm font-bold text-gray-300">
-                    Пока нет бейджей
+                    Noch keine Badges
                   </p>
                   <p className="mt-1 text-xs text-gray-500">
-                    Получайте ранги, попадайте в топ и выполняйте достижения.
+                    Erhalte Ränge, komm in die Topliste und schließe Erfolge ab.
                   </p>
                 </div>
               )}
             </div>
 
             <div className="mt-5 rounded-2xl bg-[#0a0f1c] p-4 text-left">
-              <p className="mb-3 text-sm font-bold text-white">🎖 Титул игрока</p>
+              <p className="mb-3 text-sm font-bold text-white">🎖 Spielertitel</p>
 
               <div className="flex flex-wrap gap-2">
                 {availableTitles.map((title) => (
@@ -19996,14 +19996,14 @@ body:not(.onix-body-home-lock) {
             <div className="mt-5 rounded-2xl bg-[#0a0f1c] p-4 text-left">
               <div className="mb-3 flex items-center justify-between gap-3">
                 <div>
-                  <p className="text-xs text-gray-400">Текущий ранг</p>
+                  <p className="text-xs text-gray-400">Aktueller Rang</p>
                   <p className="mt-1 text-xl font-bold text-yellow-400">
                     {rankInfo.currentRank.name}
                   </p>
                 </div>
 
                 <div className="text-right">
-                  <p className="text-xs text-gray-400">Бонус ранга</p>
+                  <p className="text-xs text-gray-400">Rangbonus</p>
                   <p className="mt-1 font-bold text-emerald-400">
                     +{formatOnix(currentRankBonus)} ONIX
                   </p>
@@ -20020,8 +20020,8 @@ body:not(.onix-body-home-lock) {
               <div className="mt-3 flex items-center justify-between text-sm">
                 <span className="text-gray-400">
                   {rankInfo.nextRank
-                    ? `${rankProgressText} до ${rankInfo.nextRank.name}`
-                    : 'Максимальный ранг'}
+                    ? `${rankProgressText} bis ${rankInfo.nextRank.name}`
+                    : 'Maximaler Rang'}
                 </span>
 
                 {rankInfo.nextRank && (
@@ -20036,9 +20036,9 @@ body:not(.onix-body-home-lock) {
               <div className="mt-5 rounded-2xl bg-[#0a0f1c] p-4 text-left">
                 <div className="mb-4 flex items-center justify-between gap-3">
                   <div>
-                    <p className="text-sm font-bold text-white">🤝 Командная активность</p>
+                    <p className="text-sm font-bold text-white">🤝 Team-Aktivität</p>
                     <p className="mt-1 text-xs text-gray-500">
-                      {teamSocialDashboard.team.members} участников · место {teamSocialDashboard.team.place ? `#${teamSocialDashboard.team.place}` : '—'}
+                      {teamSocialDashboard.team.members} Mitglieder · Platz {teamSocialDashboard.team.place ? `#${teamSocialDashboard.team.place}` : '—'}
                     </p>
                   </div>
 
@@ -20046,27 +20046,27 @@ body:not(.onix-body-home-lock) {
                     onClick={shareTeamInviteLink}
                     className="rounded-2xl bg-yellow-400 px-4 py-3 text-xs font-bold text-black active:scale-95"
                   >
-                    Ссылка
+                    Link
                   </button>
                 </div>
 
                 <div className="grid grid-cols-3 gap-2 text-center">
                   <div className="rounded-2xl bg-[#111827] p-3">
-                    <p className="text-xs text-gray-400">Неделя</p>
+                    <p className="text-xs text-gray-400">Woche</p>
                     <p className="mt-1 text-sm font-bold text-yellow-400">
                       {formatOnix(teamSocialDashboard.team.weeklyEarned)}
                     </p>
                   </div>
 
                   <div className="rounded-2xl bg-[#111827] p-3">
-                    <p className="text-xs text-gray-400">Тапы</p>
+                    <p className="text-xs text-gray-400">Taps</p>
                     <p className="mt-1 text-sm font-bold text-yellow-400">
                       {teamSocialDashboard.team.totalTaps}
                     </p>
                   </div>
 
                   <div className="rounded-2xl bg-[#111827] p-3">
-                    <p className="text-xs text-gray-400">Приз</p>
+                    <p className="text-xs text-gray-400">Preis</p>
                     <p className="mt-1 text-sm font-bold text-emerald-400">
                       +{formatOnix(teamSocialDashboard.teamPrize)}
                     </p>
@@ -20082,11 +20082,11 @@ body:not(.onix-body-home-lock) {
                       : 'bg-gray-700 text-gray-400 cursor-not-allowed'
                   }`}
                 >
-                  {teamSocialDashboard.teamPrize ? 'Забрать командный приз' : 'Команда вне призовой зоны'}
+                  {teamSocialDashboard.teamPrize ? 'Team-Preis abholen' : 'Team außerhalb der Preiszone'}
                 </button>
 
                 <div className="mt-4 space-y-3">
-                  <p className="text-sm font-bold text-white">📋 Командные задания</p>
+                  <p className="text-sm font-bold text-white">📋 Team-Aufgaben</p>
 
                   {teamSocialDashboard.teamMissions.map((mission) => {
                     const progressPercent = Math.min(
@@ -20130,7 +20130,7 @@ body:not(.onix-body-home-lock) {
                                 : 'bg-gray-700 text-gray-400'
                             }`}
                           >
-                            {mission.isClaimed ? 'Получено' : mission.isCompleted ? 'Забрать' : 'В процессе'}
+                            {mission.isClaimed ? 'Erhalten' : mission.isCompleted ? 'Abholen' : 'In Bearbeitung'}
                           </button>
                         </div>
                       </div>
@@ -20143,35 +20143,35 @@ body:not(.onix-body-home-lock) {
 
             <div className="mt-3 grid grid-cols-2 gap-3">
               <div className="rounded-2xl bg-[#0a0f1c] p-4">
-                <p className="text-xs text-gray-400">Место в топе</p>
+                <p className="text-xs text-gray-400">Platz im Top</p>
                 <p className="mt-1 text-lg font-bold text-yellow-400">
                   {currentUserPlace ? `#${currentUserPlace}` : '—'}
                 </p>
               </div>
 
               <div className="rounded-2xl bg-[#0a0f1c] p-4">
-                <p className="text-xs text-gray-400">За неделю</p>
+                <p className="text-xs text-gray-400">Pro Woche</p>
                 <p className="mt-1 text-lg font-bold text-yellow-400">
                   +{formatOnix(weeklyEarned)}
                 </p>
               </div>
 
               <div className="rounded-2xl bg-[#0a0f1c] p-4">
-                <p className="text-xs text-gray-400">До конца сезона</p>
+                <p className="text-xs text-gray-400">Bis Saisonende</p>
                 <p className="mt-1 text-lg font-bold text-emerald-400">
-                  {seasonSecondsLeft > 0 ? seasonTimeLeft : 'обновляется'}
+                  {seasonSecondsLeft > 0 ? seasonTimeLeft : 'wird aktualisiert'}
                 </p>
               </div>
 
               <div className="rounded-2xl bg-[#0a0f1c] p-4">
-                <p className="text-xs text-gray-400">Всего заработано</p>
+                <p className="text-xs text-gray-400">Insgesamt verdient</p>
                 <p className="mt-1 text-lg font-bold text-white">
                   {formatOnix(totalEarned)}
                 </p>
               </div>
 
               <div className="rounded-2xl bg-[#0a0f1c] p-4">
-                <p className="text-xs text-gray-400">Рефералы</p>
+                <p className="text-xs text-gray-400">Empfehlungen</p>
                 <p className="mt-1 text-lg font-bold text-white">
                   {referralsCount}
                 </p>
@@ -20179,26 +20179,26 @@ body:not(.onix-body-home-lock) {
             </div>
 
             <div className="mt-5 rounded-2xl bg-[#0a0f1c] p-4 text-left">
-              <h3 className="mb-3 text-lg font-bold text-white">📊 Статистика игрока</h3>
+              <h3 className="mb-3 text-lg font-bold text-white">📊 Spielerstatistik</h3>
 
               <div className="grid grid-cols-2 gap-3">
                 <div className="rounded-2xl bg-[#111827] p-3">
-                  <p className="text-xs text-gray-400">Тапов</p>
+                  <p className="text-xs text-gray-400">Taps</p>
                   <p className="font-bold text-yellow-400">{formatOnix(totalTaps)}</p>
                 </div>
 
                 <div className="rounded-2xl bg-[#111827] p-3">
-                  <p className="text-xs text-gray-400">Апгрейдов</p>
+                  <p className="text-xs text-gray-400">Upgrades</p>
                   <p className="font-bold text-yellow-400">{formatOnix(totalUpgradesBought)}</p>
                 </div>
 
                 <div className="rounded-2xl bg-[#111827] p-3">
-                  <p className="text-xs text-gray-400">Бустов</p>
+                  <p className="text-xs text-gray-400">Boosts</p>
                   <p className="font-bold text-yellow-400">{formatOnix(totalBoostsUsed)}</p>
                 </div>
 
                 <div className="rounded-2xl bg-[#111827] p-3">
-                  <p className="text-xs text-gray-400">Оффлайн-клеймов</p>
+                  <p className="text-xs text-gray-400">Offline-Claims</p>
                   <p className="font-bold text-yellow-400">{formatOnix(offlineClaimsCount)}</p>
                 </div>
               </div>
@@ -20207,14 +20207,14 @@ body:not(.onix-body-home-lock) {
             <div className="mt-5 rounded-2xl bg-[#0a0f1c] p-4 text-left">
               <div className="mb-3 flex items-center justify-between gap-3">
                 <div>
-                  <p className="text-xs text-gray-400">Реферальные бонусы сегодня</p>
+                  <p className="text-xs text-gray-400">Empfehlungsboni heute</p>
                   <p className="mt-1 text-lg font-bold text-white">
                     {referralLimit.used} / {referralLimit.max}
                   </p>
                 </div>
 
                 <div className="text-right">
-                  <p className="text-xs text-gray-400">За друга</p>
+                  <p className="text-xs text-gray-400">Pro Freund</p>
                   <p className="mt-1 font-bold text-yellow-400">
                     +{formatOnix(economyConfig.referralReward)} ONIX
                   </p>
@@ -20230,8 +20230,8 @@ body:not(.onix-body-home-lock) {
 
               <p className="mt-3 text-sm text-gray-400">
                 {referralLimit.isLimitReached
-                  ? `Лимит исчерпан. Новые бонусы через ${referralResetTime}`
-                  : `Осталось оплачиваемых приглашений: ${referralLimit.remaining}`}
+                  ? `Limit erreicht. Neue Boni in ${referralResetTime}`
+                  : `Bezahlte Einladungen übrig: ${referralLimit.remaining}`}
               </p>
             </div>
 
@@ -20239,19 +20239,19 @@ body:not(.onix-body-home-lock) {
               onClick={() => setReferralModalVisible(true)}
               className="mt-5 w-full bg-yellow-400 hover:bg-yellow-300 text-black font-bold py-4 rounded-2xl text-lg active:scale-95 transition"
             >
-              👥 Пригласить друга
+              👥 Freund einladen
             </button>
             <div className="mt-5 rounded-3xl border border-yellow-400/20 bg-[#111827] p-5 text-left shadow-xl">
               <div className="mb-4 flex items-center justify-between gap-3">
                 <div>
                   <h3 className="text-xl font-bold text-white">🚀 Referral campaign</h3>
                   <p className="text-sm text-gray-400">
-                    Приглашай друзей и делись результатом
+                    Lade Freunde ein und teile dein Ergebnis
                   </p>
                 </div>
 
                 <div className="rounded-2xl bg-[#0a0f1c] px-3 py-2 text-right">
-                  <p className="text-xs text-gray-400">За друга</p>
+                  <p className="text-xs text-gray-400">Pro Freund</p>
                   <p className="font-bold text-yellow-400">
                     +{formatOnix(economyConfig.referralReward)}
                   </p>
@@ -20270,7 +20270,7 @@ body:not(.onix-body-home-lock) {
                   onClick={() => setPromoModalVisible(true)}
                   className="rounded-2xl bg-[#0a0f1c] py-4 font-bold text-yellow-400 active:scale-95"
                 >
-                  🎟 Промокод
+                  🎟 Promocode
                 </button>
 
                 <button
@@ -20379,7 +20379,7 @@ body:not(.onix-body-home-lock) {
 
 
           <div className="rounded-3xl border border-yellow-400/20 bg-[#111827] p-5 text-left shadow-xl">
-            <h3 className="mb-4 text-xl font-bold text-white">👥 Рейтинг друзей</h3>
+            <h3 className="mb-4 text-xl font-bold text-white">👥 Freunde-Ranking</h3>
 
             {friendLeaderboard.length > 0 ? (
               <div className="space-y-3">
@@ -20395,7 +20395,7 @@ body:not(.onix-body-home-lock) {
                         #{friend.place} {friend.username}
                       </p>
                       <p className="text-xs text-gray-500">
-                        неделя +{formatOnix(friend.weeklyEarned)} · refs {friend.referralsCount}
+                        Woche +{formatOnix(friend.weeklyEarned)} · refs {friend.referralsCount}
                       </p>
                     </div>
 
@@ -20407,9 +20407,9 @@ body:not(.onix-body-home-lock) {
               </div>
             ) : (
               <div className="rounded-2xl bg-[#0a0f1c] p-5 text-center">
-                <p className="font-bold text-gray-300">Пока нет друзей</p>
+                <p className="font-bold text-gray-300">Noch keine Freunde</p>
                 <p className="mt-1 text-sm text-gray-500">
-                  Пригласите игроков по ссылке, и они появятся здесь.
+                  Lade Spieler über deinen Link ein, dann erscheinen sie hier.
                 </p>
               </div>
             )}
@@ -20418,9 +20418,9 @@ body:not(.onix-body-home-lock) {
           <div className="rounded-3xl border border-yellow-400/20 bg-[#111827] p-5 text-left shadow-xl">
             <div className="mb-4 flex items-center justify-between gap-3">
               <div>
-                <h3 className="text-xl font-bold text-white">🏆 Топ недели</h3>
+                <h3 className="text-xl font-bold text-white">🏆 Wochen-Top</h3>
                 <p className="text-sm text-gray-400">
-                  Заработано ONIX за текущую неделю
+                  Verdiente ONIX in dieser Woche
                 </p>
               </div>
 
@@ -20432,7 +20432,7 @@ body:not(.onix-body-home-lock) {
                 )}
 
                 <p className="mt-2 text-xs text-emerald-400">
-                  До конца: {seasonSecondsLeft > 0 ? seasonTimeLeft : 'обновляется'}
+                  Bis Ende: {seasonSecondsLeft > 0 ? seasonTimeLeft : 'wird aktualisiert'}
                 </p>
               </div>
             </div>
@@ -20441,9 +20441,9 @@ body:not(.onix-body-home-lock) {
             <div className="mb-5 rounded-3xl border border-yellow-400/20 bg-[#0a0f1c] p-4">
               <div className="mb-3 flex items-center justify-between gap-3">
                 <div>
-                  <h4 className="text-lg font-bold text-white">🎁 Призы сезона</h4>
+                  <h4 className="text-lg font-bold text-white">🎁 Saisonpreise</h4>
                   <p className="text-sm text-gray-400">
-                    Награды за топ-3 будут активированы позже
+                    Belohnungen für Top 3 werden später aktiviert
                   </p>
                 </div>
               </div>
@@ -20451,7 +20451,7 @@ body:not(.onix-body-home-lock) {
               <div className="grid grid-cols-3 gap-2 text-center">
                 <div className="rounded-2xl bg-[#111827] p-3">
                   <p className="text-2xl">🥇</p>
-                  <p className="mt-1 text-xs text-gray-400">1 место</p>
+                  <p className="mt-1 text-xs text-gray-400">1. Platz</p>
                   <p className="mt-1 text-sm font-bold text-yellow-400">
                     +250 000
                   </p>
@@ -20459,7 +20459,7 @@ body:not(.onix-body-home-lock) {
 
                 <div className="rounded-2xl bg-[#111827] p-3">
                   <p className="text-2xl">🥈</p>
-                  <p className="mt-1 text-xs text-gray-400">2 место</p>
+                  <p className="mt-1 text-xs text-gray-400">2. Platz</p>
                   <p className="mt-1 text-sm font-bold text-yellow-400">
                     +150 000
                   </p>
@@ -20467,7 +20467,7 @@ body:not(.onix-body-home-lock) {
 
                 <div className="rounded-2xl bg-[#111827] p-3">
                   <p className="text-2xl">🥉</p>
-                  <p className="mt-1 text-xs text-gray-400">3 место</p>
+                  <p className="mt-1 text-xs text-gray-400">3. Platz</p>
                   <p className="mt-1 text-sm font-bold text-yellow-400">
                     +75 000
                   </p>
@@ -20477,7 +20477,7 @@ body:not(.onix-body-home-lock) {
               <div className="mt-3 grid grid-cols-2 gap-2 text-center">
                 <div className="rounded-2xl bg-[#111827] p-3">
                   <p className="text-lg">🎖</p>
-                  <p className="mt-1 text-xs text-gray-400">4–10 место</p>
+                  <p className="mt-1 text-xs text-gray-400">4.–10. Platz</p>
                   <p className="mt-1 text-sm font-bold text-yellow-400">
                     +25 000
                   </p>
@@ -20485,7 +20485,7 @@ body:not(.onix-body-home-lock) {
 
                 <div className="rounded-2xl bg-[#111827] p-3">
                   <p className="text-lg">⭐</p>
-                  <p className="mt-1 text-xs text-gray-400">11–50 место</p>
+                  <p className="mt-1 text-xs text-gray-400">11.–50. Platz</p>
                   <p className="mt-1 text-sm font-bold text-yellow-400">
                     +5 000
                   </p>
@@ -20518,7 +20518,7 @@ body:not(.onix-body-home-lock) {
                             {item.username}
                           </p>
                           <p className="text-xs text-gray-500">
-                            за неделю {formatOnix(item.weeklyEarned)} ONIX
+                            pro Woche {formatOnix(item.weeklyEarned)} ONIX
                           </p>
                         </div>
                       </div>
@@ -20532,14 +20532,14 @@ body:not(.onix-body-home-lock) {
               </div>
             ) : (
               <p className="text-sm text-gray-500">
-                Пока нет данных для рейтинга. Начните зарабатывать ONIX.
+                Noch keine Ranking-Daten. Beginne ONIX zu verdienen.
               </p>
             )}
           </div>
 
           {teamLeaderboard.length > 0 && (
             <div className="rounded-3xl border border-yellow-400/20 bg-[#111827] p-5 text-left shadow-xl">
-              <h3 className="mb-4 text-xl font-bold text-white">🏟 Топ команд</h3>
+              <h3 className="mb-4 text-xl font-bold text-white">🏟 Team-Top</h3>
 
               <div className="space-y-3">
                 {teamLeaderboard.map((team) => (
@@ -20552,7 +20552,7 @@ body:not(.onix-body-home-lock) {
                         #{team.place} {team.teamName}
                       </p>
                       <p className="text-xs text-gray-500">
-                        участников: {team.members}
+                        Mitglieder: {team.members}
                       </p>
                     </div>
 
@@ -20566,7 +20566,7 @@ body:not(.onix-body-home-lock) {
           )}
 
           <div className="rounded-3xl border border-yellow-400/20 bg-[#111827] p-5 text-left shadow-xl">
-            <h3 className="mb-4 text-xl font-bold text-white">📜 История сезонов</h3>
+            <h3 className="mb-4 text-xl font-bold text-white">📜 Saisonverlauf</h3>
 
             {seasonHistory.length > 0 ? (
               <div className="space-y-3">
@@ -20601,10 +20601,10 @@ body:not(.onix-body-home-lock) {
             ) : (
               <div className="rounded-2xl bg-[#0a0f1c] p-5 text-center">
                 <p className="font-bold text-gray-300">
-                  Пока нет завершённых сезонов
+                  Noch keine abgeschlossenen Saisons
                 </p>
                 <p className="mt-2 text-sm text-gray-500">
-                  После первой выдачи сезонных призов здесь появятся победители.
+                  Nach der ersten Auszahlung der Saisonpreise erscheinen hier die Gewinner.
                 </p>
               </div>
             )}
@@ -20622,16 +20622,16 @@ body:not(.onix-body-home-lock) {
                     <div className="onix-wallet-icon text-2xl">💼</div>
 
                     <div>
-                      <h2 className="text-2xl font-bold text-white">Кошелёк</h2>
+                      <h2 className="text-2xl font-bold text-white">Wallet</h2>
                       <p className="text-sm text-gray-400">
-                        Баланс и вывод ONIX
+                        Guthaben und Auszahlung von ONIX
                       </p>
                     </div>
                   </div>
 
                   <div className="onix-wallet-balance-card">
                     <div className="w-full min-w-0">
-                      <p className="onix-wallet-balance-label">Баланс ONIX</p>
+                      <p className="onix-wallet-balance-label">ONIX-Guthaben</p>
                       <p className="onix-wallet-balance-value">
                         {formatOnix(balance)}
                       </p>
@@ -20639,21 +20639,21 @@ body:not(.onix-body-home-lock) {
                         ≈ {balanceInEur.toLocaleString('ru-RU', {
                           minimumFractionDigits: 2,
                           maximumFractionDigits: 2,
-                        })} € · всего {formatOnix(totalEarned)}
+                        })} € · gesamt {formatOnix(totalEarned)}
                       </p>
                     </div>
                   </div>
 
                   <div className="mt-3 grid grid-cols-2 gap-3">
                     <div className="onix-wallet-mini-card p-4">
-                      <p className="text-xs text-gray-400">Курс</p>
+                      <p className="text-xs text-gray-400">Kurs</p>
                       <p className="mt-1 text-sm font-bold text-white">
                         1000 ONIX = {economyConfig.onixEurPer1000.toLocaleString('ru-RU')}€
                       </p>
                     </div>
 
                     <div className="onix-wallet-mini-card p-4">
-                      <p className="text-xs text-gray-400">Минимальный вывод</p>
+                      <p className="text-xs text-gray-400">Mindestauszahlung</p>
                       <p className="mt-1 text-sm font-bold text-yellow-400">
                         {minWithdrawOnix.toLocaleString('ru-RU')} ONIX
                       </p>
@@ -20666,8 +20666,8 @@ body:not(.onix-body-home-lock) {
                 <button type="button" className="onix-wallet-section-card-v3" onClick={() => setWalletPanel('chart')}>
                   <span className="onix-wallet-section-icon-v3">📈</span>
                   <div className="onix-wallet-section-text-v3">
-                    <strong>График заработка</strong>
-                    <p>Доходы за последние 7 дней</p>
+                    <strong>Einkommensdiagramm</strong>
+                    <p>Einnahmen der letzten 7 Tage</p>
                   </div>
                   <b className="onix-wallet-section-arrow-v3">›</b>
                 </button>
@@ -20675,8 +20675,8 @@ body:not(.onix-body-home-lock) {
                 <button type="button" className="onix-wallet-section-card-v3" onClick={() => setWalletPanel('withdrawals')}>
                   <span className="onix-wallet-section-icon-v3">💸</span>
                   <div className="onix-wallet-section-text-v3">
-                    <strong>Заявки на вывод</strong>
-                    <p>{withdrawalRequests.length} заявок · прогресс {Math.floor(withdrawProgress).toString()}%</p>
+                    <strong>Auszahlungsanträge</strong>
+                    <p>{withdrawalRequests.length} Anträge · Fortschritt {Math.floor(withdrawProgress).toString()}%</p>
                   </div>
                   <b className="onix-wallet-section-arrow-v3">›</b>
                 </button>
@@ -20684,8 +20684,8 @@ body:not(.onix-body-home-lock) {
                 <button type="button" className="onix-wallet-section-card-v3" onClick={() => setWalletPanel('history')}>
                   <span className="onix-wallet-section-icon-v3">🧾</span>
                   <div className="onix-wallet-section-text-v3">
-                    <strong>История операций</strong>
-                    <p>{filteredTransactions.length} операций</p>
+                    <strong>Transaktionsverlauf</strong>
+                    <p>{filteredTransactions.length} Transaktionen</p>
                   </div>
                   <b className="onix-wallet-section-arrow-v3">›</b>
                 </button>
@@ -20697,10 +20697,10 @@ body:not(.onix-body-home-lock) {
                 <button type="button" className="onix-profile-v75-back" onClick={() => setWalletPanel('overview')}>‹</button>
                 <strong>
                   {walletPanel === 'chart'
-                    ? '📈 График заработка'
+                    ? '📈 Einkommensdiagramm'
                     : walletPanel === 'withdrawals'
-                    ? '💸 Заявки на вывод'
-                    : '🧾 История операций'}
+                    ? '💸 Auszahlungsanträge'
+                    : '🧾 Transaktionsverlauf'}
                 </strong>
                 <span>ONIX</span>
               </div>
@@ -20708,8 +20708,8 @@ body:not(.onix-body-home-lock) {
               {walletPanel === 'chart' && (
                 <div className="onix-wallet-panel-card shadow-xl">
                   <div className="onix-wallet-card-content">
-                    <h3 className="text-xl font-bold text-white">📈 График заработка</h3>
-                    <p className="mt-1 text-sm text-gray-400">Доходы за последние 7 дней</p>
+                    <h3 className="text-xl font-bold text-white">📈 Einkommensdiagramm</h3>
+                    <p className="mt-1 text-sm text-gray-400">Einnahmen der letzten 7 Tage</p>
 
                     <div className="onix-wallet-chart-box mt-5 flex items-end gap-2 p-4">
                       {earningChartDays.map((item) => (
@@ -20735,16 +20735,16 @@ body:not(.onix-body-home-lock) {
                   <div className="onix-wallet-card-content">
                     <div className="mb-4 flex items-center justify-between gap-3">
                       <div>
-                        <h3 className="text-xl font-bold text-white">💸 Заявки на вывод</h3>
+                        <h3 className="text-xl font-bold text-white">💸 Auszahlungsanträge</h3>
                         <p className="text-sm text-gray-400">
-                          {withdrawalRequests.length} заявок
+                          {withdrawalRequests.length} Anträge
                         </p>
                       </div>
                     </div>
 
                     <div className="onix-wallet-mini-card mb-3 p-3">
                       <div className="mb-3 flex items-center justify-between gap-3 text-sm">
-                        <span className="text-gray-400">Прогресс до вывода</span>
+                        <span className="text-gray-400">Fortschritt bis zur Auszahlung</span>
                         <span className="font-bold text-yellow-400">
                           {Math.floor(withdrawProgress).toString()}%
                         </span>
@@ -20759,25 +20759,25 @@ body:not(.onix-body-home-lock) {
 
                       <p className="mt-3 text-sm text-gray-400">
                         {canWithdraw
-                          ? 'Минимальная сумма набрана'
-                          : `Осталось ${formatOnix(leftToWithdraw)} ONIX`}
+                          ? 'Mindestbetrag erreicht'
+                          : `Verbleibend ${formatOnix(leftToWithdraw)} ONIX`}
                       </p>
 
                       <p className="mt-1 text-xs text-gray-500">
-                        Pending-заявки: {formatOnix(walletPendingWithdrawal)} ONIX
+                        Offene Anträge: {formatOnix(walletPendingWithdrawal)} ONIX
                       </p>
                     </div>
 
                     <div className="onix-wallet-mini-card mb-3 p-3">
-                      <p className="text-sm font-bold text-white">🛡 Антибот-проверка</p>
+                      <p className="text-sm font-bold text-white">🛡 Anti-Bot-Prüfung</p>
                       <p className="mt-1 text-xs text-gray-500">
-                        Перед созданием заявки введите ONIX.
+                        Gib vor dem Antrag ONIX ein.
                       </p>
 
                       <input
                         value={withdrawalCheck}
                         onChange={(event) => setWithdrawalCheck(event.target.value)}
-                        placeholder="Введите ONIX"
+                        placeholder="ONIX eingeben"
                         className="mt-3 w-full px-4 py-3 text-sm outline-none"
                       />
                     </div>
@@ -20788,10 +20788,10 @@ body:not(.onix-body-home-lock) {
                       className="onix-wallet-primary-button mb-4 w-full py-3 text-base active:scale-95 disabled:cursor-not-allowed"
                     >
                       {isWithdrawalLoading
-                        ? 'Создаём заявку...'
+                        ? 'Antrag wird erstellt...'
                         : canWithdraw
-                        ? 'Создать заявку на вывод'
-                        : 'Недостаточно ONIX для вывода'}
+                        ? 'Auszahlungsantrag erstellen'
+                        : 'Nicht genug ONIX für Auszahlung'}
                     </button>
 
                     {withdrawalRequests.length > 0 ? (
@@ -20826,10 +20826,10 @@ body:not(.onix-body-home-lock) {
                                 }`}
                               >
                                 {request.status === 'approved'
-                                  ? 'Одобрено'
+                                  ? 'Genehmigt'
                                   : request.status === 'rejected'
-                                  ? 'Отклонено'
-                                  : 'В обработке'}
+                                  ? 'Abgelehnt'
+                                  : 'In Bearbeitung'}
                               </span>
                             </div>
                           </div>
@@ -20837,9 +20837,9 @@ body:not(.onix-body-home-lock) {
                       </div>
                     ) : (
                       <div className="onix-wallet-mini-card p-5 text-center">
-                        <p className="font-bold text-gray-300">Заявок пока нет</p>
+                        <p className="font-bold text-gray-300">Noch keine Anträge</p>
                         <p className="mt-1 text-sm text-gray-500">
-                          Когда вы создадите заявку, она появится здесь.
+                          Wenn du einen Antrag erstellst, erscheint er hier.
                         </p>
                       </div>
                     )}
@@ -20852,9 +20852,9 @@ body:not(.onix-body-home-lock) {
                   <div className="onix-wallet-card-content">
                     <div className="mb-4 flex items-center justify-between gap-3">
                       <div>
-                        <h3 className="text-xl font-bold text-white">🧾 История операций</h3>
+                        <h3 className="text-xl font-bold text-white">🧾 Transaktionsverlauf</h3>
                         <p className="text-sm text-gray-400">
-                          {filteredTransactions.length} операций
+                          {filteredTransactions.length} Transaktionen
                         </p>
                       </div>
                     </div>
@@ -20888,7 +20888,7 @@ body:not(.onix-body-home-lock) {
 
                                 <div className="min-w-0">
                                   <p className="truncate text-sm font-bold text-white">
-                                    {transaction.title || 'Операция'}
+                                    {transaction.title || 'Transaktion'}
                                   </p>
                                   <p className="text-xs text-gray-500">
                                     {formatTransactionTime(transaction.createdAt)}
@@ -20910,9 +20910,9 @@ body:not(.onix-body-home-lock) {
                       </div>
                     ) : (
                       <div className="onix-wallet-mini-card p-5 text-center">
-                        <p className="font-bold text-gray-300">Операций нет</p>
+                        <p className="font-bold text-gray-300">Keine Transaktionen</p>
                         <p className="mt-1 text-sm text-gray-500">
-                          Попробуйте выбрать другой фильтр.
+                          Wähle einen anderen Filter.
                         </p>
                       </div>
                     )}
@@ -20938,9 +20938,9 @@ body:not(.onix-body-home-lock) {
           <div className="w-full max-w-sm rounded-3xl border border-yellow-400/30 bg-[#111827] p-6 shadow-2xl">
             <div className="mb-5 flex items-start justify-between gap-3">
               <div>
-                <h2 className="text-2xl font-bold text-white">🎟 Промокод</h2>
+                <h2 className="text-2xl font-bold text-white">🎟 Promocode</h2>
                 <p className="mt-1 text-sm text-gray-400">
-                  Введите промокод кампании
+                  Gib den Kampagnen-Promocode ein
                 </p>
               </div>
 
@@ -20955,7 +20955,7 @@ body:not(.onix-body-home-lock) {
             <input
               value={promoCodeInput}
               onChange={(event) => setPromoCodeInput(event.target.value.toUpperCase())}
-              placeholder="Например: LAUNCH"
+              placeholder="Zum Beispiel: LAUNCH"
               className="w-full rounded-2xl bg-[#0a0f1c] px-4 py-4 text-center text-lg font-bold text-white outline-none"
             />
 
@@ -20963,11 +20963,11 @@ body:not(.onix-body-home-lock) {
               onClick={applyPromoCode}
               className="mt-4 w-full rounded-2xl bg-yellow-400 py-4 text-lg font-bold text-black active:scale-95"
             >
-              Активировать
+              Aktivieren
             </button>
 
             <p className="mt-3 text-center text-xs text-gray-500">
-              Промокод можно использовать только один раз.
+              Ein Promocode kann nur einmal verwendet werden.
             </p>
           </div>
         </div>
@@ -20988,26 +20988,26 @@ body:not(.onix-body-home-lock) {
             </div>
 
             <h2 className="mt-4 text-3xl font-black text-white">ONIX COIN</h2>
-            <p className="mt-2 text-sm text-gray-400">Мой результат</p>
+            <p className="mt-2 text-sm text-gray-400">Mein Ergebnis</p>
 
             <div className="mt-3 grid grid-cols-2 gap-3">
               <div className="rounded-2xl bg-[#0a0f1c] p-4">
-                <p className="text-xs text-gray-400">Баланс</p>
+                <p className="text-xs text-gray-400">Guthaben</p>
                 <p className="font-bold text-yellow-400">{formatOnix(balance)}</p>
               </div>
 
               <div className="rounded-2xl bg-[#0a0f1c] p-4">
-                <p className="text-xs text-gray-400">Всего</p>
+                <p className="text-xs text-gray-400">Gesamt</p>
                 <p className="font-bold text-yellow-400">{formatOnix(totalEarned)}</p>
               </div>
 
               <div className="rounded-2xl bg-[#0a0f1c] p-4">
-                <p className="text-xs text-gray-400">Ранг</p>
+                <p className="text-xs text-gray-400">Rang</p>
                 <p className="font-bold text-yellow-400">{rankInfo.currentRank.name}</p>
               </div>
 
               <div className="rounded-2xl bg-[#0a0f1c] p-4">
-                <p className="text-xs text-gray-400">Топ</p>
+                <p className="text-xs text-gray-400">Top</p>
                 <p className="font-bold text-yellow-400">
                   {currentUserPlace ? `#${currentUserPlace}` : '—'}
                 </p>
@@ -21018,7 +21018,7 @@ body:not(.onix-body-home-lock) {
               onClick={shareReferralLink}
               className="mt-5 w-full rounded-2xl bg-yellow-400 py-4 text-lg font-bold text-black active:scale-95"
             >
-              Поделиться в Telegram
+              Auf Telegram teilen
             </button>
           </div>
         </div>
@@ -21029,9 +21029,9 @@ body:not(.onix-body-home-lock) {
           <div className="max-h-[90vh] w-full max-w-md overflow-y-auto rounded-3xl border border-emerald-400/30 bg-[#111827] p-6 shadow-2xl">
             <div className="mb-5 flex items-start justify-between gap-3">
               <div>
-                <h2 className="text-2xl font-bold text-white">🚀 Публичный запуск</h2>
+                <h2 className="text-2xl font-bold text-white">🚀 Öffentlicher Launch</h2>
                 <p className="mt-1 text-sm text-gray-400">
-                  Быстрая проверка перед релизом
+                  Schnellcheck vor dem Release
                 </p>
               </div>
 
@@ -21050,32 +21050,32 @@ body:not(.onix-body-home-lock) {
                   ok: Boolean(backendHealth?.ok),
                   text: backendHealth?.ok
                     ? `OK · users: ${backendHealth.users || 0}`
-                    : 'Проверь Render logs',
+                    : 'Render-Logs prüfen',
                 },
                 {
                   title: 'Telegram Mini App',
                   ok: true,
-                  text: 'Проверить кнопку запуска и /start',
+                  text: 'Startbutton und /start prüfen',
                 },
                 {
-                  title: 'Кошелёк и вывод',
+                  title: 'Wallet und Auszahlung',
                   ok: true,
-                  text: 'Проверить создание заявки и админку вывода',
+                  text: 'Antragserstellung und Admin-Auszahlungen prüfen',
                 },
                 {
-                  title: 'Рефералка',
+                  title: 'Referral-System',
                   ok: true,
-                  text: 'Проверить: +15 000 новому, +75 000 после 100 тапов',
+                  text: 'Prüfen: +15.000 für Neue, +75.000 nach 100 Taps',
                 },
                 {
-                  title: 'Cron сезона',
+                  title: 'Saison-Cron',
                   ok: true,
-                  text: 'GitHub Actions / cron должен вызывать weekly prizes',
+                  text: 'GitHub Actions / Cron soll weekly prizes auslösen',
                 },
                 {
-                  title: 'Антиабуз',
+                  title: 'Anti-Abuse',
                   ok: true,
-                  text: 'Проверить suspicious, ban/unban и security logs',
+                  text: 'Suspicious, Ban/Unban und Security Logs prüfen',
                 },
               ].map((item) => (
                 <div
@@ -21104,7 +21104,7 @@ body:not(.onix-body-home-lock) {
               onClick={() => setLaunchChecklistVisible(false)}
               className="mt-5 w-full rounded-2xl bg-yellow-400 py-4 text-lg font-bold text-black active:scale-95"
             >
-              Готово
+              Fertig
             </button>
           </div>
         </div>
@@ -21676,7 +21676,7 @@ body:not(.onix-body-home-lock) {
                 onClick={closeTutorial}
                 className="rounded-2xl border border-white/10 bg-[#0a0f1c] py-4 font-bold text-gray-300 active:scale-95"
               >
-                Пропустить
+                Überspringen
               </button>
 
               <button
@@ -21689,7 +21689,7 @@ body:not(.onix-body-home-lock) {
                 }}
                 className="rounded-2xl bg-gradient-to-r from-cyan-400 to-fuchsia-500 py-4 font-bold text-white shadow-[0_0_18px_rgba(168,85,247,0.45)] active:scale-95"
               >
-                {tutorialStep >= tutorialSteps.length - 1 ? 'Начать' : 'Дальше'}
+                {tutorialStep >= tutorialSteps.length - 1 ? 'Starten' : 'Weiter'}
               </button>
             </div>
           </div>
@@ -21819,15 +21819,15 @@ body:not(.onix-body-home-lock) {
             </div>
 
             <h2 className="text-2xl font-bold text-white">
-              Приз сезона получен
+              Saisonpreis erhalten
             </h2>
 
             <p className="mt-2 text-sm text-gray-400">
-              Неделя {seasonPrizePopup.week}
+              Woche {seasonPrizePopup.week}
             </p>
 
             <p className="mt-4 text-lg font-bold text-yellow-400">
-              #{seasonPrizePopup.place} место
+              #{seasonPrizePopup.place}. Platz
             </p>
 
             <p className="mt-2 text-3xl font-black text-yellow-400">
@@ -21838,7 +21838,7 @@ body:not(.onix-body-home-lock) {
               onClick={() => setSeasonPrizePopup(null)}
               className="mt-6 w-full rounded-2xl bg-yellow-400 py-4 text-lg font-bold text-black active:scale-95"
             >
-              Забрать
+              Abholen
             </button>
           </div>
         </div>
@@ -22151,26 +22151,26 @@ body:not(.onix-body-home-lock) {
               👥
             </div>
 
-            <h2 className="text-2xl font-bold text-white">Пригласи друга</h2>
+            <h2 className="text-2xl font-bold text-white">Lade einen Freund ein</h2>
             <p className="mt-2 text-sm text-gray-400">
-              Делись ссылкой и получай ONIX за новых игроков
+              Teile deinen Link und erhalte ONIX für neue Spieler
             </p>
 
             <div className="mt-3 grid grid-cols-2 gap-3">
               <div className="rounded-2xl bg-[#0a0f1c] p-4">
-                <p className="text-xs text-gray-400">Ты получишь</p>
+                <p className="text-xs text-gray-400">Du erhältst</p>
                 <p className="mt-1 font-bold text-yellow-400">+{formatOnix(economyConfig.referralReward)}</p>
               </div>
 
               <div className="rounded-2xl bg-[#0a0f1c] p-4">
-                <p className="text-xs text-gray-400">Друг получит</p>
+                <p className="text-xs text-gray-400">Freund erhält</p>
                 <p className="mt-1 font-bold text-emerald-400">+{formatOnix(economyConfig.referredUserReward)}</p>
               </div>
             </div>
 
             <div className="mt-5 rounded-2xl bg-[#0a0f1c] p-4 text-left">
               <div className="mb-2 flex items-center justify-between text-sm">
-                <span className="text-gray-400">Бонусы сегодня</span>
+                <span className="text-gray-400">Boni heute</span>
                 <span className="font-bold text-yellow-400">
                   {referralLimit.used} / {referralLimit.max}
                 </span>
@@ -22185,8 +22185,8 @@ body:not(.onix-body-home-lock) {
 
               <p className="mt-3 text-xs text-gray-400">
                 {referralLimit.isLimitReached
-                  ? `Лимит бонусов на сегодня исчерпан. Следующие бонусы через ${referralResetTime}`
-                  : `Можно получить ещё ${referralLimit.remaining} оплачиваемых бонусов сегодня`}
+                  ? `Heutiges Bonuslimit erreicht. Nächste Boni in ${referralResetTime}`
+                  : `Du kannst heute noch ${referralLimit.remaining} bezahlte Boni erhalten`}
               </p>
             </div>
 
@@ -22194,19 +22194,19 @@ body:not(.onix-body-home-lock) {
               onClick={shareReferralLink}
               className="mt-5 w-full rounded-2xl bg-yellow-400 py-4 text-lg font-bold text-black active:scale-95"
             >
-              📤 Пригласить в Telegram
+              📤 Auf Telegram einladen
             </button>
 
             <button
               onClick={copyReferralLink}
               className="mt-3 w-full rounded-2xl bg-[#0a0f1c] py-4 text-lg font-bold text-white active:scale-95"
             >
-              🔗 Скопировать ссылку
+              🔗 Link kopieren
             </button>
 
             {copySuccessVisible && (
               <p className="mt-3 rounded-2xl bg-emerald-500/10 py-2 text-sm font-bold text-emerald-400">
-                ✅ Ссылка скопирована
+                ✅ Link kopiert
               </p>
             )}
           </div>
@@ -22221,7 +22221,7 @@ body:not(.onix-body-home-lock) {
             </div>
 
             <h2 className="text-2xl font-bold text-white">
-              Получены награды
+              Erhaltene Belohnungen
             </h2>
 
             <div className="mt-5 space-y-3">
@@ -22253,7 +22253,7 @@ body:not(.onix-body-home-lock) {
               }}
               className="mt-6 w-full rounded-2xl bg-yellow-400 py-4 text-lg font-bold text-black active:scale-95"
             >
-              Забрать
+              Abholen
             </button>
           </div>
         </div>
@@ -22267,13 +22267,13 @@ body:not(.onix-body-home-lock) {
             </div>
 
             <h3 className="text-2xl font-bold text-white mb-2">
-              Майнер заработал
+              Miner hat verdient
             </h3>
 
             <p className="text-gray-400 mb-4">
               {offlineRewardTime
-                ? `Пока вас не было ${offlineRewardTime}`
-                : 'Пока вас не было'}
+                ? `Während du weg warst ${offlineRewardTime}`
+                : 'Während du weg warst'}
             </p>
 
             <p className="text-4xl font-bold text-yellow-400 mb-6">
@@ -22289,7 +22289,7 @@ body:not(.onix-body-home-lock) {
                   : 'bg-yellow-400 active:scale-95'
               }`}
             >
-              {isClaimingOfflineReward ? 'Забираем...' : 'Забрать'}
+              {isClaimingOfflineReward ? 'Wird abgeholt...' : 'Abholen'}
             </button>
           </div>
         </div>
