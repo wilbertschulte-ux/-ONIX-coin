@@ -12397,7 +12397,7 @@ function App() {
     useState<TeamSocialDashboard | null>(null);
   const [friendLeaderboard, setFriendLeaderboard] = useState<FriendLeaderboardItem[]>([]);
   const [profilePanel, setProfilePanel] =
-    useState<'overview' | 'achievements' | 'ranks' | 'stats' | 'invited' | 'team' | 'admin'>('overview');
+    useState<'overview' | 'achievements' | 'ranks' | 'badges' | 'stats' | 'invited' | 'team' | 'admin'>('overview');
   const [teamDetailPanel, setTeamDetailPanel] =
     useState<'overview' | 'missions' | 'top' | 'members' | 'create'>('overview');
   const [invitedProfiles, setInvitedProfiles] = useState<InvitedProfileItem[]>([]);
@@ -17586,6 +17586,32 @@ body:not(.onix-body-home-lock) {
     return '🥉';
   };
 
+  const getProfileTitleLabel = (title: string) => {
+    const titleLabels: Record<string, string> = {
+      'ONIX Player': 'ONIX-Spieler',
+      'Tap Master': 'Tap-Meister',
+      Miner: 'Miner',
+      'Referral Master': 'Empfehlungsmeister',
+      'Season Hunter': 'Saisonjäger',
+      Diamond: 'Diamant',
+      'Boost Master': 'Boost-Meister',
+      'Perk Collector': 'Perk-Sammler',
+    };
+
+    return titleLabels[title] || title;
+  };
+
+  const isProfileImageIcon = (icon: string) => (
+    icon.startsWith('data:image/') ||
+    icon.startsWith('/') ||
+    icon.includes('/assets/') ||
+    icon.endsWith('.png') ||
+    icon.endsWith('.webp') ||
+    icon.endsWith('.jpg') ||
+    icon.endsWith('.jpeg') ||
+    icon.endsWith('.svg')
+  );
+
   const selectProfileTitle = async (title: string) => {
     const telegramId = getTelegramId();
 
@@ -19300,7 +19326,7 @@ body:not(.onix-body-home-lock) {
 
               <div className="onix-profile-v75-user">
                 <div className="onix-profile-v75-name">{username}</div>
-                <div className="onix-profile-v75-title">{selectedTitle || rankInfo.currentRank.name}</div>
+                <div className="onix-profile-v75-title">{getProfileTitleLabel(selectedTitle || rankInfo.currentRank.name)}</div>
               </div>
 
               <div className="onix-profile-v82-rank-badge">
@@ -19348,6 +19374,9 @@ body:not(.onix-body-home-lock) {
               <button type="button" className={profilePanel === 'ranks' ? 'is-active' : ''} onClick={() => setProfilePanel(profilePanel === 'ranks' ? 'overview' : 'ranks')}>
                 <span>🏅</span><strong>Ränge</strong><em>{rankInfo.currentRank.name}</em><b>›</b>
               </button>
+              <button type="button" className={profilePanel === 'badges' ? 'is-active' : ''} onClick={() => setProfilePanel(profilePanel === 'badges' ? 'overview' : 'badges')}>
+                <span>🎖</span><strong>Badges & Titel</strong><em>{getProfileTitleLabel(selectedTitle || 'ONIX Player')}</em><b>›</b>
+              </button>
               <button type="button" className={profilePanel === 'stats' ? 'is-active' : ''} onClick={() => setProfilePanel(profilePanel === 'stats' ? 'overview' : 'stats')}>
                 <span>📊</span><strong>Statistik</strong><em>{formatOnix(totalTaps)} Taps</em><b>›</b>
               </button>
@@ -19357,6 +19386,82 @@ body:not(.onix-body-home-lock) {
                 </button>
               )}
             </div>
+
+            {profilePanel === 'badges' && (
+              <div className="onix-profile-v75-panel">
+                <div className="onix-profile-v75-panel-title onix-profile-v75-detail-title">
+                  <button type="button" className="onix-profile-v75-back" onClick={() => setProfilePanel('overview')}>‹</button>
+                  <strong>🎖 Badges & Titel</strong>
+                  <span>{profileBadges.length} Badges</span>
+                </div>
+
+                <div className="rounded-3xl border border-violet-400/20 bg-[#0a0f1c] p-4 text-left">
+                  <div className="mb-3 flex items-center justify-between gap-3">
+                    <div>
+                      <p className="text-sm font-bold text-white">Deine Badges</p>
+                      <p className="mt-1 text-xs text-gray-500">Verdiene Ränge, Serien, Top-Plätze und Perks, um neue Badges freizuschalten.</p>
+                    </div>
+                    <span className="rounded-full bg-[#111827] px-3 py-1 text-xs font-bold text-yellow-400">{profileBadges.length}</span>
+                  </div>
+
+                  {profileBadges.length > 0 ? (
+                    <div className="grid grid-cols-2 gap-3">
+                      {profileBadges.map((badge) => (
+                        <div key={badge.label} className="rounded-2xl border border-yellow-400/20 bg-[#111827] p-3 text-center shadow-lg">
+                          <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-2xl bg-[#070b18] text-2xl">
+                            {isProfileImageIcon(badge.icon) ? (
+                              <img src={badge.icon} alt={badge.label} className="h-10 w-10 object-contain" draggable={false} />
+                            ) : (
+                              <span>{badge.icon}</span>
+                            )}
+                          </div>
+                          <p className="mt-2 text-sm font-bold text-yellow-400">{badge.label}</p>
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <div className="rounded-2xl bg-[#111827] p-4 text-center">
+                      <p className="text-sm font-bold text-gray-300">Noch keine Badges</p>
+                      <p className="mt-1 text-xs text-gray-500">Schalte Badges durch Fortschritt, Top-Plätze und Aktivität frei.</p>
+                    </div>
+                  )}
+                </div>
+
+                <div className="mt-4 rounded-3xl border border-yellow-400/20 bg-[#0a0f1c] p-4 text-left">
+                  <div className="mb-3 flex items-center justify-between gap-3">
+                    <div>
+                      <p className="text-sm font-bold text-white">Spielertitel wählen</p>
+                      <p className="mt-1 text-xs text-gray-500">Der ausgewählte Titel erscheint direkt unter deinem Namen.</p>
+                    </div>
+                    <span className="rounded-full bg-[#111827] px-3 py-1 text-xs font-bold text-yellow-400">{availableTitles.length}</span>
+                  </div>
+
+                  <div className="flex flex-col gap-2">
+                    {availableTitles.map((title) => {
+                      const isSelectedTitle = selectedTitle === title;
+
+                      return (
+                        <button
+                          key={title}
+                          type="button"
+                          onClick={() => selectProfileTitle(title)}
+                          className={`flex items-center justify-between gap-3 rounded-2xl border px-4 py-3 text-left active:scale-[0.99] ${
+                            isSelectedTitle
+                              ? 'border-yellow-400 bg-yellow-400 text-black'
+                              : 'border-violet-400/20 bg-[#111827] text-white'
+                          }`}
+                        >
+                          <span className="font-bold">{getProfileTitleLabel(title)}</span>
+                          <em className={`not-italic text-xs font-black ${isSelectedTitle ? 'text-black' : 'text-yellow-400'}`}>
+                            {isSelectedTitle ? 'Aktiv' : 'Auswählen'}
+                          </em>
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+              </div>
+            )}
 
             {profilePanel === 'admin' && isAdmin() && (
               <div className="onix-profile-v75-panel onix-admin-hub-panel onix-admin-hub-page">
@@ -19896,7 +20001,7 @@ body:not(.onix-body-home-lock) {
 
             <h2 className="text-2xl font-bold text-white">{username}</h2>
 
-            <p className="mt-1 text-sm text-gray-400">{selectedTitle}</p>
+            <p className="mt-1 text-sm text-gray-400">{getProfileTitleLabel(selectedTitle)}</p>
 
             <div className="mt-5 rounded-2xl bg-[#0a0f1c] p-4 text-left">
               <div className="mb-3 flex items-center justify-between">
@@ -19987,7 +20092,7 @@ body:not(.onix-body-home-lock) {
                         : 'bg-[#111827] text-gray-300'
                     }`}
                   >
-                    {title}
+                    {getProfileTitleLabel(title)}
                   </button>
                 ))}
               </div>
