@@ -11049,6 +11049,48 @@ div.fixed.inset-0.z-\[90\] button.bg-yellow-400 {
     min-width: 86px !important;
   }
 }
+
+/* === ONIX BOOST ICONS CLEAN v84 === */
+/* Единый режим для всех иконок во вкладке "Улучшения": без обрезки, без чёрных квадратных углов, ровно в одной ONIX-рамке. */
+.onix-upgrade-ref-icon--image {
+  width: 74px !important;
+  height: 74px !important;
+  flex: 0 0 74px !important;
+  padding: 0 !important;
+  overflow: visible !important;
+  border-radius: 20px !important;
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+}
+
+.onix-upgrade-ref-icon--image img {
+  width: 74px !important;
+  height: 74px !important;
+  object-fit: contain !important;
+  object-position: center !important;
+  display: block !important;
+  border-radius: 20px !important;
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+  filter: drop-shadow(0 0 10px rgba(90, 221, 255, 0.16)) drop-shadow(0 0 14px rgba(168, 85, 247, 0.18)) !important;
+}
+
+.onix-upgrade-ref-card {
+  align-items: center !important;
+}
+
+@media (max-width: 390px) {
+  .onix-upgrade-ref-icon--image,
+  .onix-upgrade-ref-icon--image img {
+    width: 66px !important;
+    height: 66px !important;
+    flex-basis: 66px !important;
+    border-radius: 18px !important;
+  }
+}
+
 `;
 
 
@@ -18363,7 +18405,7 @@ body:not(.onix-body-home-lock) {
           },
           {
             id: 'onix-chest',
-            icon: '🎁',
+            icon: onixLogoCrystal,
             accent: 'pink',
             title: 'Сундук ONIX',
             level: null,
