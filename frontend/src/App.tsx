@@ -11051,22 +11051,22 @@ div.fixed.inset-0.z-\[90\] button.bg-yellow-400 {
   }
 }
 
-/* === ONIX BOOST ICONS CLEAN v85 === */
-/* Финальная ровная вёрстка для всех иконок во вкладке "Улучшения". */
+/* === ONIX BOOST ICONS CLEAN v86 === */
+/* Фикс после проверки на телефоне: убраны чёрные квадраты, иконки увеличены и выровнены по сетке. */
 .onix-upgrades-ref-list {
-  gap: 14px !important;
-  padding-bottom: 118px !important;
+  gap: 15px !important;
+  padding-bottom: 122px !important;
 }
 
 .onix-upgrade-ref-card {
   display: grid !important;
-  grid-template-columns: 74px minmax(0, 1fr) auto !important;
+  grid-template-columns: 84px minmax(0, 1fr) 122px !important;
   align-items: center !important;
   column-gap: 14px !important;
-  row-gap: 0 !important;
-  min-height: 102px !important;
+  min-height: 108px !important;
   padding: 14px !important;
-  border-radius: 22px !important;
+  border-radius: 24px !important;
+  overflow: hidden !important;
   background:
     linear-gradient(135deg, rgba(17, 24, 48, 0.98), rgba(7, 10, 24, 0.98)) !important;
   border: 1px solid rgba(136, 92, 246, 0.30) !important;
@@ -11076,16 +11076,16 @@ div.fixed.inset-0.z-\[90\] button.bg-yellow-400 {
 }
 
 .onix-upgrade-ref-icon--image {
-  width: 74px !important;
-  height: 74px !important;
-  min-width: 74px !important;
-  min-height: 74px !important;
+  width: 84px !important;
+  height: 84px !important;
+  min-width: 84px !important;
+  min-height: 84px !important;
   flex: none !important;
   display: grid !important;
   place-items: center !important;
   padding: 0 !important;
-  overflow: hidden !important;
-  border-radius: 20px !important;
+  overflow: visible !important;
+  border-radius: 22px !important;
   background: transparent !important;
   border: 0 !important;
   box-shadow: none !important;
@@ -11094,16 +11094,16 @@ div.fixed.inset-0.z-\[90\] button.bg-yellow-400 {
 }
 
 .onix-upgrade-ref-icon--image img {
-  width: 100% !important;
-  height: 100% !important;
+  width: 84px !important;
+  height: 84px !important;
   object-fit: contain !important;
   object-position: center !important;
   display: block !important;
-  border-radius: 20px !important;
+  border-radius: 22px !important;
   background: transparent !important;
   border: 0 !important;
   box-shadow: none !important;
-  filter: drop-shadow(0 0 10px rgba(90, 221, 255, 0.16)) drop-shadow(0 0 14px rgba(168, 85, 247, 0.18)) !important;
+  filter: drop-shadow(0 0 12px rgba(90, 221, 255, 0.18)) drop-shadow(0 0 16px rgba(168, 85, 247, 0.20)) !important;
 }
 
 .onix-upgrade-ref-main {
@@ -11115,6 +11115,7 @@ div.fixed.inset-0.z-\[90\] button.bg-yellow-400 {
 
 .onix-upgrade-ref-title {
   line-height: 1.04 !important;
+  font-size: 16px !important;
 }
 
 .onix-upgrade-ref-level {
@@ -11129,9 +11130,11 @@ div.fixed.inset-0.z-\[90\] button.bg-yellow-400 {
 .onix-upgrade-ref-buy {
   align-self: center !important;
   justify-self: end !important;
-  min-width: 118px !important;
+  width: 122px !important;
+  min-width: 122px !important;
+  max-width: 122px !important;
   height: 42px !important;
-  padding: 0 14px !important;
+  padding: 0 12px !important;
   border-radius: 14px !important;
   white-space: nowrap !important;
   flex: none !important;
@@ -11139,28 +11142,51 @@ div.fixed.inset-0.z-\[90\] button.bg-yellow-400 {
 
 .onix-upgrade-ref-buy span:last-child {
   display: inline-block !important;
-  min-width: 42px !important;
+  min-width: 52px !important;
   text-align: center !important;
+}
+
+@media (max-width: 430px) {
+  .onix-upgrade-ref-card {
+    grid-template-columns: 78px minmax(0, 1fr) 112px !important;
+    column-gap: 12px !important;
+    min-height: 104px !important;
+    padding: 13px !important;
+    border-radius: 23px !important;
+  }
+
+  .onix-upgrade-ref-icon--image,
+  .onix-upgrade-ref-icon--image img {
+    width: 78px !important;
+    height: 78px !important;
+    min-width: 78px !important;
+    min-height: 78px !important;
+    border-radius: 21px !important;
+  }
+
+  .onix-upgrade-ref-buy {
+    width: 112px !important;
+    min-width: 112px !important;
+    max-width: 112px !important;
+    height: 40px !important;
+  }
 }
 
 @media (max-width: 390px) {
   .onix-upgrade-ref-card {
-    grid-template-columns: 66px minmax(0, 1fr) 96px !important;
+    grid-template-columns: 74px minmax(0, 1fr) 104px !important;
     column-gap: 10px !important;
-    min-height: 96px !important;
+    min-height: 100px !important;
     padding: 12px !important;
   }
 
-  .onix-upgrade-ref-icon--image {
-    width: 66px !important;
-    height: 66px !important;
-    min-width: 66px !important;
-    min-height: 66px !important;
-    border-radius: 18px !important;
-  }
-
+  .onix-upgrade-ref-icon--image,
   .onix-upgrade-ref-icon--image img {
-    border-radius: 18px !important;
+    width: 74px !important;
+    height: 74px !important;
+    min-width: 74px !important;
+    min-height: 74px !important;
+    border-radius: 20px !important;
   }
 
   .onix-upgrade-ref-title {
@@ -11172,9 +11198,11 @@ div.fixed.inset-0.z-\[90\] button.bg-yellow-400 {
   }
 
   .onix-upgrade-ref-buy {
-    min-width: 96px !important;
+    width: 104px !important;
+    min-width: 104px !important;
+    max-width: 104px !important;
     height: 38px !important;
-    padding: 0 10px !important;
+    padding: 0 9px !important;
     font-size: 12px !important;
     border-radius: 12px !important;
   }
