@@ -21,6 +21,7 @@ import onixBoostMinerPlusIcon from './assets/onix-boost-icons/miner_plus.png';
 import onixBoostLuckyMinerIcon from './assets/onix-boost-icons/lucky_miner.png';
 import onixBoostReferralProIcon from './assets/onix-boost-icons/referral_pro.png';
 import onixBoostStreakShieldIcon from './assets/onix-boost-icons/streak_shield.png';
+import onixChestIcon from './assets/onix-boost-icons/onix_chest.png';
 
 const tg = window.Telegram?.WebApp;
 
@@ -11050,23 +11051,51 @@ div.fixed.inset-0.z-\[90\] button.bg-yellow-400 {
   }
 }
 
-/* === ONIX BOOST ICONS CLEAN v84 === */
-/* Единый режим для всех иконок во вкладке "Улучшения": без обрезки, без чёрных квадратных углов, ровно в одной ONIX-рамке. */
+/* === ONIX BOOST ICONS CLEAN v85 === */
+/* Финальная ровная вёрстка для всех иконок во вкладке "Улучшения". */
+.onix-upgrades-ref-list {
+  gap: 14px !important;
+  padding-bottom: 118px !important;
+}
+
+.onix-upgrade-ref-card {
+  display: grid !important;
+  grid-template-columns: 74px minmax(0, 1fr) auto !important;
+  align-items: center !important;
+  column-gap: 14px !important;
+  row-gap: 0 !important;
+  min-height: 102px !important;
+  padding: 14px !important;
+  border-radius: 22px !important;
+  background:
+    linear-gradient(135deg, rgba(17, 24, 48, 0.98), rgba(7, 10, 24, 0.98)) !important;
+  border: 1px solid rgba(136, 92, 246, 0.30) !important;
+  box-shadow:
+    0 16px 30px rgba(0, 0, 0, 0.34),
+    inset 0 0 22px rgba(122, 77, 255, 0.10) !important;
+}
+
 .onix-upgrade-ref-icon--image {
   width: 74px !important;
   height: 74px !important;
-  flex: 0 0 74px !important;
+  min-width: 74px !important;
+  min-height: 74px !important;
+  flex: none !important;
+  display: grid !important;
+  place-items: center !important;
   padding: 0 !important;
-  overflow: visible !important;
+  overflow: hidden !important;
   border-radius: 20px !important;
   background: transparent !important;
   border: 0 !important;
   box-shadow: none !important;
+  align-self: center !important;
+  justify-self: start !important;
 }
 
 .onix-upgrade-ref-icon--image img {
-  width: 74px !important;
-  height: 74px !important;
+  width: 100% !important;
+  height: 100% !important;
   object-fit: contain !important;
   object-position: center !important;
   display: block !important;
@@ -11077,20 +11106,79 @@ div.fixed.inset-0.z-\[90\] button.bg-yellow-400 {
   filter: drop-shadow(0 0 10px rgba(90, 221, 255, 0.16)) drop-shadow(0 0 14px rgba(168, 85, 247, 0.18)) !important;
 }
 
-.onix-upgrade-ref-card {
-  align-items: center !important;
+.onix-upgrade-ref-main {
+  min-width: 0 !important;
+  width: 100% !important;
+  padding-top: 0 !important;
+  align-self: center !important;
+}
+
+.onix-upgrade-ref-title {
+  line-height: 1.04 !important;
+}
+
+.onix-upgrade-ref-level {
+  margin-top: 4px !important;
+}
+
+.onix-upgrade-ref-subtitle {
+  margin-top: 4px !important;
+  line-height: 1.18 !important;
+}
+
+.onix-upgrade-ref-buy {
+  align-self: center !important;
+  justify-self: end !important;
+  min-width: 118px !important;
+  height: 42px !important;
+  padding: 0 14px !important;
+  border-radius: 14px !important;
+  white-space: nowrap !important;
+  flex: none !important;
+}
+
+.onix-upgrade-ref-buy span:last-child {
+  display: inline-block !important;
+  min-width: 42px !important;
+  text-align: center !important;
 }
 
 @media (max-width: 390px) {
-  .onix-upgrade-ref-icon--image,
-  .onix-upgrade-ref-icon--image img {
+  .onix-upgrade-ref-card {
+    grid-template-columns: 66px minmax(0, 1fr) 96px !important;
+    column-gap: 10px !important;
+    min-height: 96px !important;
+    padding: 12px !important;
+  }
+
+  .onix-upgrade-ref-icon--image {
     width: 66px !important;
     height: 66px !important;
-    flex-basis: 66px !important;
+    min-width: 66px !important;
+    min-height: 66px !important;
     border-radius: 18px !important;
   }
-}
 
+  .onix-upgrade-ref-icon--image img {
+    border-radius: 18px !important;
+  }
+
+  .onix-upgrade-ref-title {
+    font-size: 14px !important;
+  }
+
+  .onix-upgrade-ref-subtitle {
+    font-size: 11px !important;
+  }
+
+  .onix-upgrade-ref-buy {
+    min-width: 96px !important;
+    height: 38px !important;
+    padding: 0 10px !important;
+    font-size: 12px !important;
+    border-radius: 12px !important;
+  }
+}
 `;
 
 
@@ -18405,7 +18493,7 @@ body:not(.onix-body-home-lock) {
           },
           {
             id: 'onix-chest',
-            icon: onixLogoCrystal,
+            icon: onixChestIcon,
             accent: 'pink',
             title: 'Сундук ONIX',
             level: null,
