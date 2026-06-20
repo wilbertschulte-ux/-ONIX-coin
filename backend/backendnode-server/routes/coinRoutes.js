@@ -1,12 +1,182 @@
 const axios = require('axios');
 const express = require('express');
 const mongoose = require('mongoose');
+const crypto = require('crypto');
 
 const router = express.Router();
 
 const API_RATE_LIMITS = new Map();
 const ECONOMY_OVERRIDES = {};
 const APP_VERSION = process.env.APP_VERSION || '1.0.0';
+
+
+const TELEGRAM_AUTH_REQUIRED = String(process.env.TELEGRAM_AUTH_REQUIRED || 'true') !== 'false';
+const TELEGRAM_AUTH_MAX_AGE_SECONDS = Number(process.env.TELEGRAM_AUTH_MAX_AGE_SECONDS || 24 * 60 * 60);
+
+function verifyTelegramInitData(initData) {
+  const botToken = process.env.BOT_TOKEN;
+
+  if (!botToken) {
+    return { ok: false, reason: 'BOT_TOKEN is not configured' };
+  }
+
+  if (!initData || typeof initData !== 'string') {
+    return { ok: false, reason: 'Telegram initData is missing' };
+  }
+
+  const params = new URLSearchParams(initData);
+  const hash = params.get('hash');
+
+  if (!hash) {
+    return { ok: false, reason: 'Telegram initData hash is missing' };
+  }
+
+  params.delete('hash');
+
+  const dataCheckString = Array.from(params.entries())
+    .sort(([a], [b]) => a.localeCompare(b))
+    .map(([key, value]) => `${key}=${value}`)
+    .join('\n');
+
+  const secretKey = crypto.createHmac('sha256', 'WebAppData').update(botToken).digest();
+  const calculatedHash = crypto
+    .createHmac('sha256', secretKey)
+    .update(dataCheckString)
+    .digest('hex');
+
+  const receivedHash = Buffer.from(hash, 'hex');
+  const expectedHash = Buffer.from(calculatedHash, 'hex');
+
+  if (receivedHash.length !== expectedHash.length || !crypto.timingSafeEqual(receivedHash, expectedHash)) {
+    return { ok: false, reason: 'Telegram initData hash is invalid' };
+  }
+
+  const authDate = Number(params.get('auth_date') || 0);
+
+  if (!authDate) {
+    return { ok: false, reason: 'Telegram auth_date is missing' };
+  }
+
+  const ageSeconds = Math.floor(Date.now() / 1000) - authDate;
+
+  if (ageSeconds > TELEGRAM_AUTH_MAX_AGE_SECONDS) {
+    return { ok: false, reason: 'Telegram session is expired' };
+  }
+
+  let user = null;
+
+  try {
+    user = JSON.parse(params.get('user') || 'null');
+  } catch {
+    user = null;
+  }
+
+  const telegramId = user?.id ? String(user.id) : '';
+
+  if (!telegramId) {
+    return { ok: false, reason: 'Telegram user is missing' };
+  }
+
+  return {
+    ok: true,
+    telegramId,
+    user,
+    authDate,
+  };
+}
+
+function routeRequiresTelegramAuth(req) {
+  if (!TELEGRAM_AUTH_REQUIRED) return false;
+  if (req.path.startsWith('/admin') || req.path.startsWith('/cron')) return false;
+
+  const method = String(req.method || '').toUpperCase();
+  const publicGetPrefixes = [
+    '/health',
+    '/config',
+    '/version',
+    '/launch-info',
+    '/season-history',
+    '/leaderboard/teams',
+    '/leaderboard/weekly',
+    '/teams',
+  ];
+
+  if (method === 'GET' && publicGetPrefixes.some((path) => req.path === path || req.path.startsWith(`${path}/`))) {
+    return false;
+  }
+
+  if (req.path === '/frontend-error') return false;
+
+  if (method !== 'GET') return true;
+
+  return Boolean(
+    req.params?.telegramId ||
+      req.query?.telegramId ||
+      /^\/[^/]+$/.test(req.path) ||
+      req.path.startsWith('/missions/') ||
+      req.path.startsWith('/referrals/') ||
+      req.path.startsWith('/friends-leaderboard/') ||
+      req.path.startsWith('/team-dashboard/')
+  );
+}
+
+function getRequestedTelegramIds(req) {
+  const ids = new Set();
+  const add = (value) => {
+    if (value === undefined || value === null || value === '') return;
+    ids.add(String(value));
+  };
+
+  add(req.body?.telegramId);
+  add(req.query?.telegramId);
+  add(req.params?.telegramId);
+  add(req.headers['x-telegram-id']);
+
+  const singleUserMatch = req.path.match(/^\/([^/]+)$/);
+
+  if (singleUserMatch && !['health', 'config', 'version', 'teams', 'launch-info'].includes(singleUserMatch[1])) {
+    add(singleUserMatch[1]);
+  }
+
+  const prefixedUserMatch = req.path.match(/^\/(missions|referrals|friends-leaderboard|team-dashboard)\/([^/]+)/);
+
+  if (prefixedUserMatch) {
+    add(prefixedUserMatch[2]);
+  }
+
+  return Array.from(ids);
+}
+
+function requireTelegramAuth(req, res, next) {
+  if (!routeRequiresTelegramAuth(req)) {
+    return next();
+  }
+
+  const initData = req.headers['x-telegram-init-data'] || req.body?.telegramInitData || req.query?.telegramInitData;
+  const verification = verifyTelegramInitData(initData);
+
+  if (!verification.ok) {
+    return res.status(401).json({
+      message: 'Telegram-Sitzung konnte nicht verifiziert werden. Öffne die Mini-App erneut in Telegram.',
+      code: 'TELEGRAM_AUTH_INVALID',
+    });
+  }
+
+  const requestedTelegramIds = getRequestedTelegramIds(req);
+  const mismatch = requestedTelegramIds.find((id) => id !== verification.telegramId);
+
+  if (mismatch) {
+    return res.status(403).json({
+      message: 'Telegram-ID stimmt nicht mit der aktuellen Sitzung überein.',
+      code: 'TELEGRAM_AUTH_MISMATCH',
+    });
+  }
+
+  req.telegramUser = verification.user;
+  req.telegramId = verification.telegramId;
+
+  return next();
+}
 
 
 function escapeRegExpValue(value) {
@@ -189,6 +359,8 @@ router.use((req, res, next) => {
     return next();
   }
 });
+
+router.use(requireTelegramAuth);
 
 const User = require('../models/User');
 
