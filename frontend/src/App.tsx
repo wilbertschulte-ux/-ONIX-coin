@@ -24,6 +24,9 @@ import onixBoostStreakShieldIcon from './assets/onix-boost-icons/streak_shield.p
 import onixChestIcon from './assets/onix-boost-icons/onix_chest.png';
 
 const tg = window.Telegram?.WebApp;
+const WITHDRAW_SUPPORT_URL = 'https://t.me/Wilbert_Schulte';
+const WITHDRAW_SUCCESS_MESSAGE =
+  'Транзанкция на вывод средств успешно создана, свяжитесь с технической поддержкой чтобы подтвердить вывод средств';
 
 if (tg) {
   tg.ready();
@@ -5845,6 +5848,120 @@ body,
   background:
     radial-gradient(circle at 40% 35%, rgba(248, 113, 113, 0.24), rgba(69, 11, 23, 0.92) 70%) !important;
   border-color: rgba(248, 113, 113, 0.28) !important;
+}
+
+
+.onix-withdraw-modal-backdrop {
+  position: fixed !important;
+  inset: 0 !important;
+  z-index: 2147483100 !important;
+  display: grid !important;
+  place-items: center !important;
+  padding: 18px !important;
+  background:
+    radial-gradient(circle at 50% 38%, rgba(45, 212, 255, 0.14), transparent 32%),
+    radial-gradient(circle at 50% 58%, rgba(168, 85, 247, 0.22), transparent 42%),
+    rgba(2, 6, 18, 0.76) !important;
+  backdrop-filter: blur(12px) !important;
+}
+
+.onix-withdraw-modal {
+  position: relative !important;
+  width: min(calc(100vw - 36px), 390px) !important;
+  overflow: hidden !important;
+  border-radius: 28px !important;
+  padding: 22px !important;
+  border: 1px solid rgba(45, 212, 255, 0.36) !important;
+  background:
+    radial-gradient(circle at 18% 10%, rgba(45, 212, 255, 0.18), transparent 36%),
+    radial-gradient(circle at 92% 18%, rgba(168, 85, 247, 0.22), transparent 40%),
+    linear-gradient(145deg, rgba(13, 11, 35, 0.98), rgba(5, 9, 24, 0.99)) !important;
+  box-shadow:
+    0 28px 80px rgba(0, 0, 0, 0.72),
+    0 0 34px rgba(45, 212, 255, 0.18),
+    0 0 42px rgba(168, 85, 247, 0.20),
+    inset 0 0 24px rgba(132, 86, 255, 0.10) !important;
+  animation: onixToastPopV60 240ms ease-out both !important;
+}
+
+.onix-withdraw-modal::before {
+  content: '' !important;
+  position: absolute !important;
+  inset: 1px !important;
+  border-radius: 27px !important;
+  border: 1px solid rgba(210, 244, 255, 0.10) !important;
+  pointer-events: none !important;
+}
+
+.onix-withdraw-modal-icon {
+  width: 58px !important;
+  height: 58px !important;
+  margin: 0 auto 14px !important;
+  border-radius: 20px !important;
+  display: grid !important;
+  place-items: center !important;
+  font-size: 30px !important;
+  font-weight: 900 !important;
+  color: #7ef9ff !important;
+  background:
+    radial-gradient(circle at 40% 35%, rgba(45, 212, 255, 0.28), rgba(9, 42, 66, 0.94) 72%) !important;
+  border: 1px solid rgba(45, 212, 255, 0.28) !important;
+  box-shadow: 0 0 28px rgba(45, 212, 255, 0.16), inset 0 0 14px rgba(45, 212, 255, 0.10) !important;
+}
+
+.onix-withdraw-modal-title {
+  position: relative !important;
+  z-index: 2 !important;
+  margin: 0 !important;
+  text-align: center !important;
+  font-family: 'Orbitron', 'Exo 2', system-ui, sans-serif !important;
+  font-size: 18px !important;
+  font-weight: 900 !important;
+  letter-spacing: 0.03em !important;
+  color: #ffffff !important;
+}
+
+.onix-withdraw-modal-text {
+  position: relative !important;
+  z-index: 2 !important;
+  margin: 12px 0 18px !important;
+  text-align: center !important;
+  font-family: 'Exo 2', system-ui, sans-serif !important;
+  font-size: 14px !important;
+  line-height: 1.38 !important;
+  font-weight: 800 !important;
+  color: #dbeafe !important;
+}
+
+.onix-withdraw-support-button {
+  position: relative !important;
+  z-index: 2 !important;
+  width: 100% !important;
+  min-height: 48px !important;
+  border: 0 !important;
+  border-radius: 17px !important;
+  color: #07111f !important;
+  font-family: 'Exo 2', system-ui, sans-serif !important;
+  font-size: 15px !important;
+  font-weight: 900 !important;
+  letter-spacing: 0.01em !important;
+  background: linear-gradient(135deg, #7ef9ff, #a78bfa 54%, #facc15) !important;
+  box-shadow: 0 14px 30px rgba(45, 212, 255, 0.16), 0 12px 24px rgba(168, 85, 247, 0.14) !important;
+}
+
+.onix-withdraw-close-button {
+  position: relative !important;
+  z-index: 2 !important;
+  width: 100% !important;
+  margin-top: 10px !important;
+  min-height: 42px !important;
+  border-radius: 15px !important;
+  border: 1px solid rgba(148, 163, 184, 0.18) !important;
+  color: #cbd5e1 !important;
+  font-family: 'Exo 2', system-ui, sans-serif !important;
+  font-size: 13px !important;
+  font-weight: 800 !important;
+  background: rgba(15, 23, 42, 0.68) !important;
 }
 
 @keyframes onixToastPopV60 {
@@ -12360,6 +12477,7 @@ function App() {
   const [backendHealth, setBackendHealth] = useState<any>(null);
   const [promoModalVisible, setPromoModalVisible] = useState(false);
   const [promoCodeInput, setPromoCodeInput] = useState('');
+  const [withdrawSuccessModalVisible, setWithdrawSuccessModalVisible] = useState(false);
 
 
   useEffect(() => {
@@ -13424,6 +13542,15 @@ function App() {
     setTimeout(() => {
       setToastMessages((prev) => prev.filter((toast) => toast.id !== id));
     }, 2800);
+  };
+
+
+  const openWithdrawSupport = () => {
+    try {
+      WebApp.openTelegramLink(WITHDRAW_SUPPORT_URL);
+    } catch {
+      window.open(WITHDRAW_SUPPORT_URL, '_blank', 'noopener,noreferrer');
+    }
   };
 
   const showReferralBonusPaidToast = (data: any) => {
@@ -17452,7 +17579,7 @@ body:not(.onix-body-home-lock) {
       setTransactions(user.transactions || []);
       setWithdrawalRequests(user.withdrawalRequests || []);
       setWithdrawalCheck('');
-      showToast('✅ Auszahlungsantrag erstellt', 'success');
+      setWithdrawSuccessModalVisible(true);
       refreshAfterAction();
     } catch (error: any) {
       showToast(error?.response?.data?.message || 'Antrag konnte nicht erstellt werden', 'error');
@@ -18026,6 +18153,29 @@ body:not(.onix-body-home-lock) {
           </div>
         ))}
       </div>
+      {withdrawSuccessModalVisible && (
+        <div className="onix-withdraw-modal-backdrop" role="dialog" aria-modal="true">
+          <div className="onix-withdraw-modal">
+            <div className="onix-withdraw-modal-icon">✓</div>
+            <h2 className="onix-withdraw-modal-title">Заявка создана</h2>
+            <p className="onix-withdraw-modal-text">{WITHDRAW_SUCCESS_MESSAGE}</p>
+            <button
+              type="button"
+              className="onix-withdraw-support-button active:scale-95"
+              onClick={openWithdrawSupport}
+            >
+              Написать в техническую поддержку
+            </button>
+            <button
+              type="button"
+              className="onix-withdraw-close-button active:scale-95"
+              onClick={() => setWithdrawSuccessModalVisible(false)}
+            >
+              Закрыть
+            </button>
+          </div>
+        </div>
+      )}
       {activeTab === 'home' && (
         <div
           aria-label="ONIX top navigation"
