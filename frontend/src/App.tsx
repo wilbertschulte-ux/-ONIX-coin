@@ -26,7 +26,7 @@ import onixChestIcon from './assets/onix-boost-icons/onix_chest.png';
 const tg = window.Telegram?.WebApp;
 const WITHDRAW_SUPPORT_URL = 'https://t.me/Wilbert_Schulte';
 const WITHDRAW_SUCCESS_MESSAGE =
-  'Транзанкция на вывод средств успешно создана, свяжитесь с технической поддержкой чтобы подтвердить вывод средств';
+  'Deine Auszahlungs-Quest wurde erfolgreich erstellt. Kontaktiere den technischen Support, um die Auszahlung zu bestätigen.';
 
 if (tg) {
   tg.ready();
@@ -18157,21 +18157,21 @@ body:not(.onix-body-home-lock) {
         <div className="onix-withdraw-modal-backdrop" role="dialog" aria-modal="true">
           <div className="onix-withdraw-modal">
             <div className="onix-withdraw-modal-icon">✓</div>
-            <h2 className="onix-withdraw-modal-title">Заявка создана</h2>
+            <h2 className="onix-withdraw-modal-title">Auszahlungs-Quest gestartet!</h2>
             <p className="onix-withdraw-modal-text">{WITHDRAW_SUCCESS_MESSAGE}</p>
             <button
               type="button"
               className="onix-withdraw-support-button active:scale-95"
               onClick={openWithdrawSupport}
             >
-              Написать в техническую поддержку
+              Support-Chat öffnen
             </button>
             <button
               type="button"
               className="onix-withdraw-close-button active:scale-95"
               onClick={() => setWithdrawSuccessModalVisible(false)}
             >
-              Закрыть
+              Zurück ins Spiel
             </button>
           </div>
         </div>
