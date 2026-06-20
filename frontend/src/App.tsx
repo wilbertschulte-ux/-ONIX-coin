@@ -19530,6 +19530,9 @@ body:not(.onix-body-home-lock) {
               <button type="button" className={profilePanel === 'stats' ? 'is-active' : ''} onClick={() => setProfilePanel(profilePanel === 'stats' ? 'overview' : 'stats')}>
                 <span>📊</span><strong>Statistik</strong><em>{formatOnix(totalTaps)} Taps</em><b>›</b>
               </button>
+              <button type="button" onClick={openWithdrawSupport}>
+                <span>🛡️</span><strong>Technischer Support</strong><em>ONIX-Hilfe öffnen</em><b>›</b>
+              </button>
               {isAdmin() && (
                 <button type="button" className={profilePanel === 'admin' ? 'is-active' : ''} onClick={() => setProfilePanel(profilePanel === 'admin' ? 'overview' : 'admin')}>
                   <span>🛠️</span><strong>Админ-панель</strong><em>ONIX admin</em><b>›</b>
