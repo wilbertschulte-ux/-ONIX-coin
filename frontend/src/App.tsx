@@ -19530,9 +19530,6 @@ body:not(.onix-body-home-lock) {
               <button type="button" className={profilePanel === 'stats' ? 'is-active' : ''} onClick={() => setProfilePanel(profilePanel === 'stats' ? 'overview' : 'stats')}>
                 <span>📊</span><strong>Statistik</strong><em>{formatOnix(totalTaps)} Taps</em><b>›</b>
               </button>
-              <button type="button" onClick={openWithdrawSupport}>
-                <span>🛡️</span><strong>Technischer Support</strong><em>ONIX-Hilfe öffnen</em><b>›</b>
-              </button>
               {isAdmin() && (
                 <button type="button" className={profilePanel === 'admin' ? 'is-active' : ''} onClick={() => setProfilePanel(profilePanel === 'admin' ? 'overview' : 'admin')}>
                   <span>🛠️</span><strong>Админ-панель</strong><em>ONIX admin</em><b>›</b>
@@ -20944,6 +20941,15 @@ body:not(.onix-body-home-lock) {
                   <div className="onix-wallet-section-text-v3">
                     <strong>Transaktionsverlauf</strong>
                     <p>{filteredTransactions.length} Transaktionen</p>
+                  </div>
+                  <b className="onix-wallet-section-arrow-v3">›</b>
+                </button>
+
+                <button type="button" className="onix-wallet-section-card-v3" onClick={openWithdrawSupport}>
+                  <span className="onix-wallet-section-icon-v3">🛡️</span>
+                  <div className="onix-wallet-section-text-v3">
+                    <strong>Technischer Support</strong>
+                    <p>ONIX-Hilfe öffnen</p>
                   </div>
                   <b className="onix-wallet-section-arrow-v3">›</b>
                 </button>
