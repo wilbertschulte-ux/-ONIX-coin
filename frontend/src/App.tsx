@@ -12542,8 +12542,11 @@ function App() {
 
   useEffect(() => {
     const loadUser = async () => {
+      let loadedTelegramId = '';
+
       try {
         const telegramId = await waitForTelegramId();
+        loadedTelegramId = telegramId;
 
         if (!telegramId) {
           showToast('Telegram-ID konnte nicht abgerufen werden. Öffne die Mini-App direkt in Telegram.', 'error');
@@ -12687,7 +12690,15 @@ function App() {
       } finally {
         setIsAppLoading(false);
 
-        if (!localStorage.getItem('onixTutorialDone')) {
+        const onboardingKey = loadedTelegramId
+          ? `onixOnboardingDone_${loadedTelegramId}`
+          : 'onixOnboardingDone_guest';
+
+        if (
+          !localStorage.getItem('onixTutorialDone') &&
+          !localStorage.getItem(onboardingKey)
+        ) {
+          setTutorialStep(0);
           setTutorialVisible(true);
         }
       }
@@ -18011,24 +18022,29 @@ body:not(.onix-body-home-lock) {
   );
   const tutorialSteps = [
     {
+      icon: '💎',
+      title: 'Willkommen bei ONIX Coin',
+      text: 'Dein Telegram Mini-App Game ist bereit. Sammle ONIX, baue Fortschritt auf und entdecke jeden Tag neue Aktionen.',
+    },
+    {
       icon: onixBoostIcons.miner,
-      title: 'Tippe und verdiene',
-      text: 'Tippe auf die Münze, verdiene ONIX und behalte deine Energie im Blick.',
+      title: 'Tippen & Energie nutzen',
+      text: 'Tippe auf die Münze, sammle ONIX und achte auf deine Energie. Deine Energie lädt sich automatisch wieder auf.',
     },
     {
       icon: onixBoostIcons.recharge,
-      title: 'Verbessere dich',
-      text: 'Kaufe Upgrades, Perks und Boosts, um schneller zu verdienen.',
+      title: 'Upgrades freischalten',
+      text: 'Verbessere Tap Power, Miner, Energie und Aufladung, damit dein Fortschritt im Spiel schneller wächst.',
     },
     {
-      icon: '📋',
-      title: 'Erledige Aufgaben',
-      text: 'Daily-, Weekly- und geheime Missionen bringen zusätzliche ONIX.',
+      icon: '🎁',
+      title: 'Aufgaben & Daily Bonus',
+      text: 'Erledige Aufgaben, hole deinen täglichen Bonus ab und halte deine Streak aktiv, um zusätzliche ONIX zu erhalten.',
     },
     {
-      icon: '🏆',
-      title: 'Tritt an',
-      text: 'Komm in die Wochen-, Team- und Saison-Toplisten, um Preise zu erhalten.',
+      icon: '💼',
+      title: 'Wallet im Blick',
+      text: 'Im Wallet siehst du Guthaben, Verlauf und Auszahlungsanträge. Bei Fragen findest du dort auch den technischen Support.',
     },
   ];
 
@@ -18050,6 +18066,12 @@ body:not(.onix-body-home-lock) {
   };
 
   const closeTutorial = () => {
+    const currentTelegramId = getTelegramId();
+    const onboardingKey = currentTelegramId
+      ? `onixOnboardingDone_${currentTelegramId}`
+      : 'onixOnboardingDone_guest';
+
+    localStorage.setItem(onboardingKey, 'true');
     localStorage.setItem('onixTutorialDone', 'true');
     setTutorialVisible(false);
   };
