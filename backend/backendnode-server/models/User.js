@@ -511,6 +511,11 @@ const userSchema = new mongoose.Schema(
       default: Date.now,
     },
 
+    lastEnergyRecoveryAt: {
+      type: Number,
+      default: Date.now,
+    },
+
     lastTapAt: {
       type: Number,
       default: 0,

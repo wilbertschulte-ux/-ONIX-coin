@@ -1753,6 +1753,10 @@ function normalizeUserFields(user) {
     user.lastMineTickAt = 0;
   }
 
+  if (user.lastEnergyRecoveryAt === undefined || user.lastEnergyRecoveryAt === null) {
+    user.lastEnergyRecoveryAt = Number(user.lastSeenAt || Date.now());
+  }
+
   if (user.lastUpgradeBuyAt === undefined || user.lastUpgradeBuyAt === null) {
     user.lastUpgradeBuyAt = 0;
   }
@@ -1769,6 +1773,25 @@ function normalizeUserFields(user) {
 }
 
   return user;
+}
+
+function applyOfflineEnergyRecovery(user, now = Date.now()) {
+  normalizeUserFields(user);
+
+  const maxEnergy = Number(user.maxEnergy || DEFAULT_MAX_ENERGY);
+  const currentEnergy = Math.max(0, Number(user.energy || 0));
+  const rechargePerSecond = Math.max(1, Number(user.energyRecharge || DEFAULT_ENERGY_RECHARGE));
+  const lastRecoveryAt = Number(user.lastEnergyRecoveryAt || user.lastSeenAt || now);
+  const elapsedSeconds = Math.max(0, Math.floor((now - lastRecoveryAt) / 1000));
+
+  if (elapsedSeconds > 0 && currentEnergy < maxEnergy) {
+    user.energy = Math.min(maxEnergy, roundOnix(currentEnergy + rechargePerSecond * elapsedSeconds));
+  } else {
+    user.energy = Math.min(maxEnergy, currentEnergy);
+  }
+
+  user.lastEnergyRecoveryAt = now;
+  return user.energy;
 }
 
 
@@ -3660,6 +3683,7 @@ router.get('/:telegramId', async (req, res) => {
     if (frozenResponse) return frozenResponse;
 
     const now = Date.now();
+    applyOfflineEnergyRecovery(user, now);
 
     if (
       user.activeBoost &&
@@ -3675,18 +3699,6 @@ router.get('/:telegramId', async (req, res) => {
 
     const lastSeenAt = user.lastSeenAt || now;
     const offlineSeconds = Math.floor((now - lastSeenAt) / 1000);
-
-    if (offlineSeconds > 0) {
-      const offlineEnergy = roundOnix(
-        Number(user.energy || 0) +
-          Number(user.energyRecharge || DEFAULT_ENERGY_RECHARGE) * offlineSeconds
-      );
-
-      user.energy = Math.min(
-        Number(user.maxEnergy || DEFAULT_MAX_ENERGY),
-        offlineEnergy
-      );
-    }
 
     if (
   user.autoclickers > 0 &&
@@ -3808,6 +3820,7 @@ router.post('/create', async (req, res) => {
         rechargeLevel: 1,
 
         lastSeenAt: Date.now(),
+        lastEnergyRecoveryAt: Date.now(),
         lastMineTickAt: 0,
         lastUpgradeBuyAt: 0,
         lastOfflineIncome: 0,
@@ -3862,6 +3875,7 @@ router.post('/create', async (req, res) => {
     await user.save();
     } else {
       normalizeUserFields(user);
+      applyOfflineEnergyRecovery(user);
 
       if (username && user.username !== username) {
         user.username = username;
@@ -3980,6 +3994,7 @@ router.post('/save', async (req, res) => {
         rechargeLevel: 1,
 
         lastSeenAt: Date.now(),
+        lastEnergyRecoveryAt: Date.now(),
         lastMineTickAt: 0,
         lastUpgradeBuyAt: 0,
         lastOfflineIncome: 0,
@@ -4051,6 +4066,7 @@ router.post('/buy-upgrade', async (req, res) => {
     if (frozenResponse) return frozenResponse;
 
     const now = Date.now();
+    applyOfflineEnergyRecovery(user, now);
     const lastUpgradeBuyAt = Number(user.lastUpgradeBuyAt || 0);
     const elapsedMs = now - lastUpgradeBuyAt;
 
@@ -4121,6 +4137,7 @@ router.post('/buy-upgrade', async (req, res) => {
     user.level = calculateLevel(user.totalEarned);
 
     user.lastUpgradeBuyAt = now;
+    user.lastEnergyRecoveryAt = now;
     user.updatedAt = new Date();
     user.lastSeenAt = now;
 
@@ -5657,6 +5674,7 @@ router.post('/mine-tick', async (req, res) => {
     if (frozenResponse) return frozenResponse;
 
     const now = Date.now();
+    applyOfflineEnergyRecovery(user, now);
     const lastMineTickAt = Number(user.lastMineTickAt || 0);
     const elapsedMs = now - lastMineTickAt;
 
@@ -5699,6 +5717,7 @@ router.post('/mine-tick', async (req, res) => {
     );
 
     user.lastMineTickAt = now;
+    user.lastEnergyRecoveryAt = now;
     user.updatedAt = new Date();
     user.lastSeenAt = now;
 
@@ -5745,6 +5764,9 @@ router.post('/refill-energy', async (req, res) => {
     const frozenResponse = ensureUserNotFrozen(user, res);
     if (frozenResponse) return frozenResponse;
 
+    const now = Date.now();
+    applyOfflineEnergyRecovery(user, now);
+
     const maxEnergy = Number(user.maxEnergy || DEFAULT_MAX_ENERGY);
     const currentEnergy = Number(user.energy || 0);
 
@@ -5760,9 +5782,10 @@ router.post('/refill-energy', async (req, res) => {
 
     user.balance = roundOnix(Number(user.balance || 0) - cost);
     user.energy = maxEnergy;
+    user.lastEnergyRecoveryAt = now;
     addTransaction(user, 'expense_boost', -cost, 'Energie auf 100 % aufgefüllt');
     user.updatedAt = new Date();
-    user.lastSeenAt = Date.now();
+    user.lastSeenAt = now;
 
     await user.save();
 
@@ -5909,6 +5932,9 @@ router.post('/tap', async (req, res) => {
     const frozenResponse = ensureUserNotFrozen(user, res);
     if (frozenResponse) return frozenResponse;
 
+    const now = Date.now();
+    applyOfflineEnergyRecovery(user, now);
+
     const energyCost = getEnergyCost(user);
 
     if (Number(user.energy || 0) < energyCost) {
@@ -5917,7 +5943,6 @@ router.post('/tap', async (req, res) => {
       });
     }
 
-    const now = Date.now();
     const oneSecondAgo = now - 1000;
 
     user.tapTimestamps = user.tapTimestamps.filter((time) => {
@@ -5949,6 +5974,7 @@ router.post('/tap', async (req, res) => {
     user.balance = roundOnix(Number(user.balance || 0) + points);
     addEarnings(user, points);
     user.energy = Math.max(0, roundOnix(Number(user.energy || 0) - energyCost));
+    user.lastEnergyRecoveryAt = now;
     user.totalTaps = Number(user.totalTaps || 0) + 1;
     incrementMissionStat(user, 'dailyTaps');
     incrementMissionStat(user, 'weeklyTaps');
