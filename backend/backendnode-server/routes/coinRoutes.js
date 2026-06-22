@@ -10,7 +10,7 @@ const ECONOMY_OVERRIDES = {};
 const APP_VERSION = process.env.APP_VERSION || '1.0.0';
 
 
-const TELEGRAM_AUTH_REQUIRED = String(process.env.TELEGRAM_AUTH_REQUIRED || 'true') !== 'false';
+const TELEGRAM_AUTH_REQUIRED = String(process.env.TELEGRAM_AUTH_REQUIRED || 'false') === 'true';
 const TELEGRAM_AUTH_MAX_AGE_SECONDS = Number(process.env.TELEGRAM_AUTH_MAX_AGE_SECONDS || 24 * 60 * 60);
 
 function verifyTelegramInitData(initData) {

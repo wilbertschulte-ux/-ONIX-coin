@@ -11587,8 +11587,51 @@ type SuspiciousUser = {
 
 const API_URL = 'https://onix-coin.onrender.com/api/coins';
 
+function getTelegramWebApp() {
+  return window.Telegram?.WebApp || (WebApp as any);
+}
+
 function getTelegramInitData() {
-  return window.Telegram?.WebApp?.initData || '';
+  return getTelegramWebApp()?.initData || '';
+}
+
+function getTelegramUnsafe() {
+  return getTelegramWebApp()?.initDataUnsafe || {};
+}
+
+function getTelegramUser() {
+  return getTelegramUnsafe()?.user || null;
+}
+
+function getTelegramStartParam() {
+  return getTelegramUnsafe()?.start_param || null;
+}
+
+function getTelegramUsername() {
+  const user = getTelegramUser();
+  const fullName = `${user?.first_name || ''} ${user?.last_name || ''}`.trim();
+
+  return fullName || user?.username || 'Spieler';
+}
+
+function waitForTelegramId(timeoutMs = 2500): Promise<string> {
+  const existingId = getTelegramId();
+
+  if (existingId) {
+    return Promise.resolve(existingId);
+  }
+
+  return new Promise((resolve) => {
+    const startedAt = Date.now();
+    const timer = window.setInterval(() => {
+      const telegramId = getTelegramId();
+
+      if (telegramId || Date.now() - startedAt >= timeoutMs) {
+        window.clearInterval(timer);
+        resolve(telegramId);
+      }
+    }, 100);
+  });
 }
 
 axios.interceptors.request.use((config) => {
@@ -12073,14 +12116,11 @@ function OnixTapCoinVector() {
 }
 
 function getTelegramAvatarUrl() {
-  const tg = (window as any).Telegram?.WebApp;
-  return tg?.initDataUnsafe?.user?.photo_url || '';
+  return getTelegramUser()?.photo_url || '';
 }
 
 function getTelegramId() {
-  const tg = window.Telegram?.WebApp;
-  if (!tg) return '';
-  return tg.initDataUnsafe?.user?.id?.toString() || '';
+  return getTelegramUser()?.id?.toString() || '';
 }
 
 function getTransactionIcon(type: string) {
@@ -12410,6 +12450,8 @@ function App() {
   const [isClaimingOfflineReward, setIsClaimingOfflineReward] = useState(false);
   const [rewardPopupItems, setRewardPopupItems] = useState<RewardPopupItem[]>([]);
   const [rewardPopupVisible, setRewardPopupVisible] = useState(false);
+  const [dailyBonusModalVisible, setDailyBonusModalVisible] = useState(false);
+  const [isClaimingDailyBonus, setIsClaimingDailyBonus] = useState(false);
   const [toastMessages, setToastMessages] = useState<ToastMessage[]>([]);
   const [seasonHistory, setSeasonHistory] = useState<SeasonHistoryItem[]>([]);
   const [teamLeaderboard, setTeamLeaderboard] = useState<TeamLeaderboardItem[]>([]);
@@ -12449,7 +12491,7 @@ function App() {
   const [isAdminLoading, setIsAdminLoading] = useState(false);
 
   useEffect(() => {
-    const startParam = window.Telegram?.WebApp?.initDataUnsafe?.start_param || '';
+    const startParam = getTelegramStartParam() || '';
 
     if (startParam.startsWith('team_')) {
       joinTeamByCode(startParam.replace('team_', ''));
@@ -12501,18 +12543,18 @@ function App() {
   useEffect(() => {
     const loadUser = async () => {
       try {
-        const telegramId =
-          window.Telegram?.WebApp?.initDataUnsafe?.user?.id?.toString() || '';
+        const telegramId = await waitForTelegramId();
 
-        const startParam =
-          window.Telegram?.WebApp?.initDataUnsafe?.start_param || null;
+        if (!telegramId) {
+          showToast('Telegram-ID konnte nicht abgerufen werden. Öffne die Mini-App direkt in Telegram.', 'error');
+          return;
+        }
+
+        const startParam = getTelegramStartParam();
 
         await axios.post(`${API_URL}/create`, {
           telegramId,
-          username:
-            `${window.Telegram?.WebApp?.initDataUnsafe?.user?.first_name || ''} ${
-              window.Telegram?.WebApp?.initDataUnsafe?.user?.last_name || ''
-            }`.trim() || 'Spieler',
+          username: getTelegramUsername(),
           referredBy: startParam,
         });
 
@@ -12570,6 +12612,16 @@ function App() {
         setAchievements(user.achievements || response.data.achievements || ACHIEVEMENTS);
         setActiveBoost(normalizeBoost(user.activeBoost));
         setBoostEndTime(Number(user.boostEndTime || 0));
+
+        const dailyBonusKey = `dailyBonusAutoShown_${telegramId}_${getOnixUtcDayKey()}`;
+        const dailyBonusAvailable = !localStorage.getItem('dailyCooldownEnd');
+
+        if (telegramId && dailyBonusAvailable && !localStorage.getItem(dailyBonusKey)) {
+          localStorage.setItem(dailyBonusKey, 'true');
+          setTimeout(() => {
+            setDailyBonusModalVisible(true);
+          }, 1200);
+        }
 
         setTimeout(() => {
           const offlineIncome = Number(
@@ -12630,7 +12682,6 @@ function App() {
         setEnergyLevel(user.energyLevel || 1);
         setRechargeLevel(user.rechargeLevel || 1);
       applyUserStats(user);
-        applyUserStats(user);
       } catch (error) {
         console.log('Fehler beim Laden des Spielers:', error);
       } finally {
@@ -12865,7 +12916,6 @@ function App() {
         setEnergyLevel(user.energyLevel || 1);
         setRechargeLevel(user.rechargeLevel || 1);
       applyUserStats(user);
-        applyUserStats(user);
       } catch (error) {
         console.log('Mining-Fehler:', error);
       } finally {
@@ -13502,6 +13552,65 @@ function App() {
       try {
         WebApp.HapticFeedback?.notificationOccurred('success');
       } catch {}
+    }
+  };
+
+  const claimDailyBonus = async () => {
+    if (dailyCooldown > 0 || isClaimingDailyBonus) return;
+
+    try {
+      setIsClaimingDailyBonus(true);
+
+      const response = await axios.post(`${API_URL}/claim-task`, {
+        telegramId: getTelegramId(),
+        task: 'daily',
+      });
+
+      const user = response.data;
+      const cooldown = DAY_MS;
+
+      setBalance(user.balance);
+      setUsername(user.username || 'Spieler');
+      setWeeklyEarned(Number(user.weeklyEarned || 0));
+      setTotalEarned(user.totalEarned);
+      setLevel(user.level);
+      applyUserStats(user);
+      setDailyStreak(Number(user.dailyStreak || 0));
+      setTransactions(user.transactions || []);
+      setDailyCooldown(cooldown);
+      setDailyBonusModalVisible(false);
+
+      localStorage.setItem('dailyCooldownEnd', (Date.now() + cooldown).toString());
+      localStorage.setItem(`dailyBonusAutoShown_${getTelegramId()}_${getOnixUtcDayKey()}`, 'true');
+
+      showRewardPopupFromResponse(response.data);
+      showReferralBonusPaidToast(response.data);
+      loadMissions();
+
+      const rankBonusText =
+        Array.isArray(response.data.rankBonuses) && response.data.rankBonuses.length
+          ? `\n🏆 Rangbonus: +${formatOnix(
+              response.data.rankBonuses.reduce(
+                (sum: number, item: { bonus: number }) => sum + Number(item.bonus || 0),
+                0
+              )
+            )} ONIX`
+          : '';
+
+      showToast(
+        `🎁 Täglicher Bonus: +${formatOnix(
+          response.data.claimedDailyReward || getDailyRewardWithStreak(user.level, user.dailyStreak || 1)
+        )} ONIX\n🔥 Streak: ${user.dailyStreak || 1}/7${rankBonusText}`,
+        'success'
+      );
+
+      try {
+        WebApp.HapticFeedback?.notificationOccurred('success');
+      } catch {}
+    } catch (error: any) {
+      showToast(error?.response?.data?.message || 'Fehler beim Abrufen der Belohnung', 'error');
+    } finally {
+      setIsClaimingDailyBonus(false);
     }
   };
 
@@ -22337,6 +22446,104 @@ body:not(.onix-body-home-lock) {
                 ✅ Link kopiert
               </p>
             )}
+          </div>
+        </div>
+      )}
+
+      {dailyBonusModalVisible && (
+        <div className="onix-modal-layer fixed inset-0 z-[10002] flex items-center justify-center bg-black/75 px-4">
+          <div className="relative w-full max-w-sm overflow-hidden rounded-[2rem] border border-yellow-400/40 bg-[#090d18] p-6 text-center shadow-[0_0_45px_rgba(168,85,247,0.55)]">
+            <button
+              type="button"
+              onClick={() => setDailyBonusModalVisible(false)}
+              className="absolute right-5 top-4 z-10 text-2xl text-gray-400 active:scale-95"
+            >
+              ×
+            </button>
+
+            <div className="pointer-events-none absolute -left-16 -top-16 h-36 w-36 rounded-full bg-purple-500/30 blur-3xl" />
+            <div className="pointer-events-none absolute -bottom-20 -right-14 h-44 w-44 rounded-full bg-yellow-400/20 blur-3xl" />
+
+            <div className="relative mx-auto mb-4 flex h-20 w-20 items-center justify-center rounded-3xl border border-purple-300/30 bg-purple-500/20 text-4xl shadow-[0_0_28px_rgba(168,85,247,0.75)]">
+              💎
+            </div>
+
+            <p className="relative text-xs font-black uppercase tracking-[0.32em] text-yellow-300">
+              Daily Quest
+            </p>
+
+            <h2 className="relative mt-2 text-3xl font-black text-white">
+              Täglicher Bonus
+            </h2>
+
+            <p className="relative mt-3 text-sm leading-relaxed text-gray-300">
+              Komm jeden Tag zurück, sammle ONIX und erhöhe deinen Streak-Bonus bis Tag 7.
+            </p>
+
+            <div className="relative mt-5 rounded-3xl border border-yellow-400/20 bg-black/35 p-4">
+              <p className="text-xs text-gray-400">Heute verfügbar</p>
+              <p className="mt-1 text-4xl font-black text-yellow-300">
+                +{formatOnix(dailyRewardPreview)}
+              </p>
+              <p className="text-sm font-bold text-purple-200">ONIX</p>
+
+              <div className="mt-4 grid grid-cols-7 gap-1.5">
+                {Array.from({ length: 7 }).map((_, index) => {
+                  const day = index + 1;
+                  const isActiveDay = day === nextDailyStreakDay;
+                  const isCompletedDay = dailyCooldown > 0 && day <= nextDailyStreakDay;
+
+                  return (
+                    <div
+                      key={day}
+                      className={`rounded-xl border px-1 py-2 text-center text-[10px] font-black ${
+                        isActiveDay
+                          ? 'border-yellow-300 bg-yellow-300 text-black shadow-[0_0_16px_rgba(250,204,21,0.55)]'
+                          : isCompletedDay
+                          ? 'border-purple-400/50 bg-purple-500/25 text-purple-100'
+                          : 'border-white/10 bg-white/5 text-gray-500'
+                      }`}
+                    >
+                      {day}
+                    </div>
+                  );
+                })}
+              </div>
+
+              <div className="mt-4 flex items-center justify-between rounded-2xl bg-white/5 px-4 py-3 text-sm">
+                <span className="text-gray-400">Streak-Multiplikator</span>
+                <span className="font-black text-yellow-300">×{dailyStreakMultiplier.toFixed(1)}</span>
+              </div>
+            </div>
+
+            <button
+              type="button"
+              onClick={claimDailyBonus}
+              disabled={dailyCooldown > 0 || isClaimingDailyBonus}
+              className={`relative mt-5 w-full rounded-2xl py-4 text-lg font-black transition active:scale-95 ${
+                dailyCooldown > 0 || isClaimingDailyBonus
+                  ? 'bg-gray-700 text-gray-400'
+                  : 'bg-yellow-400 text-black shadow-[0_0_24px_rgba(250,204,21,0.45)]'
+              }`}
+            >
+              {isClaimingDailyBonus
+                ? 'Wird abgeholt...'
+                : dailyCooldown > 0
+                ? `Nächster Bonus in ${formatTime(dailyCooldown)}`
+                : 'Bonus abholen'}
+            </button>
+
+            <button
+              type="button"
+              onClick={() => {
+                setDailyBonusModalVisible(false);
+                setActiveTab('tasks');
+                setTasksInnerTab('temporary');
+              }}
+              className="relative mt-3 w-full rounded-2xl border border-purple-400/30 bg-purple-500/10 py-3 text-sm font-bold text-purple-100 active:scale-95"
+            >
+              Später in Aufgaben ansehen
+            </button>
           </div>
         </div>
       )}
