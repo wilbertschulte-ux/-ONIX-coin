@@ -11417,6 +11417,35 @@ type AdminSecurityLog = {
   createdAt: number;
 };
 
+
+
+type AdminTrafficAnalytics = {
+  days: number;
+  totalPlayers: number;
+  newPlayers: number;
+  events: Record<string, number>;
+  funnel: Array<{
+    key: string;
+    label: string;
+    count: number;
+  }>;
+  sources: Array<{
+    source: string;
+    startParam: string;
+    campaign: string;
+    count: number;
+  }>;
+  recentEvents: Array<{
+    telegramId: string;
+    username: string;
+    event: string;
+    source?: string;
+    startParam?: string;
+    campaign?: string;
+    createdAt: number;
+  }>;
+};
+
 type AdminEconomyDashboard = {
   economyConfig: any;
   totals: {
@@ -12518,6 +12547,8 @@ function App() {
   const [launchPanel, setLaunchPanel] = useState<LaunchPanel>('overview');
   const [adminEconomyDashboard, setAdminEconomyDashboard] =
     useState<AdminEconomyDashboard | null>(null);
+  const [adminTrafficAnalytics, setAdminTrafficAnalytics] =
+    useState<AdminTrafficAnalytics | null>(null);
   const [adminEconomyVisible, setAdminEconomyVisible] = useState(false);
   const [adminSearchVisible, setAdminSearchVisible] = useState(false);
   const [adminSearchQuery, setAdminSearchQuery] = useState('');
@@ -12604,7 +12635,7 @@ function App() {
   const [totalUpgradesBought, setTotalUpgradesBought] = useState(0);
   const [offlineClaimsCount, setOfflineClaimsCount] = useState(0);
   const [adminPanelVisible, setAdminPanelVisible] = useState(false);
-  const [adminHubPage, setAdminHubPage] = useState<'overview' | 'prizes' | 'withdrawals' | 'economy' | 'search' | 'suspicious' | 'logs' | 'launch' | 'admin2'>('overview');
+  const [adminHubPage, setAdminHubPage] = useState<'overview' | 'prizes' | 'withdrawals' | 'economy' | 'traffic' | 'search' | 'suspicious' | 'logs' | 'launch' | 'admin2'>('overview');
   const [adminPrizePreview, setAdminPrizePreview] =
     useState<AdminPrizePreviewResponse | null>(null);
   const [isAdminLoading, setIsAdminLoading] = useState(false);
@@ -13107,6 +13138,7 @@ function App() {
       applyUserStats(user);
       showRewardPopupFromResponse(response.data);
       showReferralBonusPaidToast(response.data);
+      trackTrafficEvent('first_tap');
 
       const newNum: FloatingNumber = {
         id: Date.now(),
@@ -13201,6 +13233,43 @@ function App() {
     } catch {}
   };
 
+
+  const trackTrafficEvent = async (event: string, metadata: Record<string, any> = {}) => {
+    const telegramId = getTelegramId();
+
+    if (!telegramId) return;
+
+    const storageKey = `onixTrafficEvent_${telegramId}_${event}`;
+
+    if (localStorage.getItem(storageKey)) return;
+
+    try {
+      await axios.post(`${API_URL}/track-event`, {
+        telegramId,
+        username: getTelegramUsername() || username || 'Spieler',
+        event,
+        source: 'telegram_mini_app',
+        startParam: getTelegramStartParam() || '',
+        campaign: getTelegramStartParam() || '',
+        metadata,
+      });
+
+      localStorage.setItem(storageKey, 'true');
+    } catch {
+      // Analytics must never block gameplay.
+    }
+  };
+
+  useEffect(() => {
+    trackTrafficEvent('app_opened');
+  }, []);
+
+  useEffect(() => {
+    if (activeTab === 'wallet') {
+      trackTrafficEvent('wallet_opened');
+    }
+  }, [activeTab]);
+
   const buyUpgrade = async (type: 'tap' | 'energy' | 'recharge' | 'miner') => {
     const telegramId = getTelegramId();
 
@@ -13246,6 +13315,7 @@ function App() {
       showRewardPopupFromResponse(response.data);
       showReferralBonusPaidToast(response.data);
       refreshAfterAction();
+      trackTrafficEvent('first_upgrade', { type });
 
       try {
         WebApp.HapticFeedback?.notificationOccurred('success');
@@ -13396,7 +13466,6 @@ function App() {
       showRewardPopupFromResponse(response.data);
       showReferralBonusPaidToast(response.data);
       refreshAfterAction();
-
       try {
         WebApp.HapticFeedback?.notificationOccurred('success');
       } catch {}
@@ -13451,7 +13520,6 @@ function App() {
       showRewardPopupFromResponse(response.data);
       showReferralBonusPaidToast(response.data);
       refreshAfterAction();
-
       try {
         WebApp.HapticFeedback?.notificationOccurred('success');
       } catch {}
@@ -13716,6 +13784,7 @@ function App() {
       showRewardPopupFromResponse(response.data);
       showReferralBonusPaidToast(response.data);
       loadMissions();
+      trackTrafficEvent('daily_bonus_claimed');
 
       const rankBonusText =
         Array.isArray(response.data.rankBonuses) && response.data.rankBonuses.length
@@ -14080,6 +14149,8 @@ function App() {
       setAchievements(user.achievements || response.data.achievements || ACHIEVEMENTS);
       applyUserStats(user);
       setMissions(response.data.missions || user.missions || { daily: [], weekly: [], difficulty: 1, dailyKey: '', weeklyKey: '' });
+
+      trackTrafficEvent('mission_claimed', { missionId: mission.id, missionType });
 
       showToast(`✅ Mission abgeschlossen: +${formatOnix(response.data.missionReward.reward)} ONIX`, 'success');
     } catch (error: any) {
@@ -17585,6 +17656,29 @@ body:not(.onix-body-home-lock) {
     }
   };
 
+
+  const loadAdminTrafficAnalytics = async () => {
+    const telegramId = getTelegramId();
+
+    try {
+      setIsAdminLoading(true);
+
+      const response = await axios.get(`${API_URL}/admin-traffic-analytics`, {
+        params: {
+          telegramId,
+          days: 7,
+        },
+      });
+
+      setAdminTrafficAnalytics(response.data);
+      setAdminHubPage('traffic');
+    } catch (error: any) {
+      showToast(error?.response?.data?.message || 'Не удалось загрузить аналитику трафика', 'error');
+    } finally {
+      setIsAdminLoading(false);
+    }
+  };
+
   const loadSuspiciousUsers = async () => {
     const telegramId = getTelegramId();
 
@@ -17684,6 +17778,8 @@ body:not(.onix-body-home-lock) {
   };
 
   const openWithdrawSupport = () => {
+    trackTrafficEvent('support_clicked');
+
     const tg = (window as any).Telegram?.WebApp;
 
     if (tg?.openTelegramLink) {
@@ -17702,6 +17798,8 @@ body:not(.onix-body-home-lock) {
     const telegramId = getTelegramId();
 
     if (!canWithdraw || isWithdrawalLoading) return;
+
+    trackTrafficEvent('withdraw_clicked');
 
     if (withdrawalCheck.trim().toUpperCase() !== 'ONIX') {
       showToast('Gib ONIX in die Anti-Bot-Prüfung ein', 'error');
@@ -17730,6 +17828,7 @@ body:not(.onix-body-home-lock) {
       setWithdrawalRequests(user.withdrawalRequests || []);
       setWithdrawalCheck('');
       setWithdrawSuccessModalVisible(true);
+      trackTrafficEvent('withdraw_request_created');
       showToast('✅ Auszahlungsantrag erstellt', 'success');
       refreshAfterAction();
     } catch (error: any) {
@@ -18197,6 +18296,7 @@ body:not(.onix-body-home-lock) {
     localStorage.setItem(onboardingKey, 'true');
     localStorage.setItem('onixTutorialDone', 'true');
     setTutorialVisible(false);
+    trackTrafficEvent('onboarding_completed');
   };
 
 
@@ -18292,6 +18392,8 @@ body:not(.onix-body-home-lock) {
       showRewardPopupFromResponse(response.data);
       showReferralBonusPaidToast(response.data);
       loadMissions();
+
+      trackTrafficEvent('starter_quest_claimed', { questId });
 
       showToast(`🚀 Starter-Quest abgeschlossen: +${formatOnix(quest.reward)} ONIX`, 'success');
 
@@ -20002,6 +20104,9 @@ body:not(.onix-body-home-lock) {
                     <button type="button" onClick={loadAdminEconomyDashboard} disabled={isAdminLoading}>
                       <span>📊</span><strong>Экономика</strong><em>балансы, выводы, конфиг</em>
                     </button>
+                    <button type="button" onClick={loadAdminTrafficAnalytics} disabled={isAdminLoading}>
+                      <span>📈</span><strong>Traffic analytics</strong><em>реклама, воронка, события</em>
+                    </button>
                     <button type="button" onClick={() => { setAdminSearchVisible(false); setAdminHubPage('search'); }} disabled={isAdminLoading}>
                       <span>🔎</span><strong>Поиск игрока</strong><em>профиль, баланс, бан</em>
                     </button>
@@ -20084,6 +20189,53 @@ body:not(.onix-body-home-lock) {
                           </div>
                         ) : <p className="onix-admin-empty">Нажми обновить, чтобы загрузить dashboard.</p>}
                         <button type="button" className="onix-admin-secondary" onClick={loadAdminEconomyDashboard} disabled={isAdminLoading}>Обновить экономику</button>
+                      </div>
+                    )}
+
+                    {adminHubPage === 'traffic' && (
+                      <div className="onix-admin-section-card">
+                        <div className="onix-admin-section-head"><strong>📈 Traffic analytics</strong><span>7 дней</span></div>
+                        {adminTrafficAnalytics ? (
+                          <>
+                            <div className="onix-admin-metrics-grid">
+                              <div><span>Новые игроки</span><strong>{formatOnix(adminTrafficAnalytics.newPlayers || 0)}</strong></div>
+                              <div><span>Всего игроков</span><strong>{formatOnix(adminTrafficAnalytics.totalPlayers || 0)}</strong></div>
+                              <div><span>Первый тап</span><strong>{formatOnix(adminTrafficAnalytics.events.first_tap || 0)}</strong></div>
+                              <div><span>Wallet</span><strong>{formatOnix(adminTrafficAnalytics.events.wallet_opened || 0)}</strong></div>
+                            </div>
+
+                            <div className="onix-admin-list">
+                              {adminTrafficAnalytics.funnel.map((item) => (
+                                <div key={item.key} className="onix-admin-row">
+                                  <div><strong>{item.label}</strong><em>{item.key}</em></div>
+                                  <b>{formatOnix(item.count)}</b>
+                                </div>
+                              ))}
+                            </div>
+
+                            <div className="onix-admin-section-head"><strong>Источники</strong><span>{adminTrafficAnalytics.sources.length}</span></div>
+                            <div className="onix-admin-list">
+                              {adminTrafficAnalytics.sources.slice(0, 6).map((item, index) => (
+                                <div key={`${item.source}-${item.startParam}-${index}`} className="onix-admin-row is-column">
+                                  <strong>{item.source || 'direct'} · {formatOnix(item.count)}</strong>
+                                  <em>{item.startParam || item.campaign || 'без startParam'}</em>
+                                </div>
+                              ))}
+                              {adminTrafficAnalytics.sources.length === 0 && <p className="onix-admin-empty">Источников пока нет.</p>}
+                            </div>
+
+                            <div className="onix-admin-section-head"><strong>Последние события</strong><span>{adminTrafficAnalytics.recentEvents.length}</span></div>
+                            <div className="onix-admin-list">
+                              {adminTrafficAnalytics.recentEvents.slice(0, 8).map((item, index) => (
+                                <div key={`${item.telegramId}-${item.event}-${index}`} className="onix-admin-row is-column">
+                                  <strong>{item.event} · {item.username || 'Spieler'}</strong>
+                                  <em>ID: {item.telegramId} · {formatTransactionTime(item.createdAt)}</em>
+                                </div>
+                              ))}
+                            </div>
+                          </>
+                        ) : <p className="onix-admin-empty">Нажми обновить, чтобы загрузить аналитику рекламы.</p>}
+                        <button type="button" className="onix-admin-secondary" onClick={loadAdminTrafficAnalytics} disabled={isAdminLoading}>Обновить аналитику</button>
                       </div>
                     )}
 

@@ -105,7 +105,7 @@ function routeRequiresTelegramAuth(req) {
     return false;
   }
 
-  if (req.path === '/frontend-error') return false;
+  if (req.path === '/frontend-error' || req.path === '/track-event') return false;
 
   if (method !== 'GET') return true;
 
@@ -390,6 +390,54 @@ const WeeklyPrizeSchema = new mongoose.Schema({
 
 const WeeklyPrize =
   mongoose.models.WeeklyPrize || mongoose.model('WeeklyPrize', WeeklyPrizeSchema);
+
+
+const TRAFFIC_EVENT_NAMES = [
+  'app_opened',
+  'onboarding_completed',
+  'first_tap',
+  'first_upgrade',
+  'daily_bonus_claimed',
+  'starter_quest_claimed',
+  'wallet_opened',
+  'withdraw_clicked',
+  'withdraw_request_created',
+  'support_clicked',
+  'mission_claimed',
+];
+
+const TrafficEventSchema = new mongoose.Schema(
+  {
+    telegramId: { type: String, required: true, index: true },
+    username: { type: String, default: 'Spieler' },
+    event: { type: String, required: true, index: true },
+    source: { type: String, default: '' },
+    startParam: { type: String, default: '' },
+    campaign: { type: String, default: '' },
+    metadata: { type: mongoose.Schema.Types.Mixed, default: {} },
+    createdAt: { type: Number, default: Date.now, index: true },
+  },
+  { collection: 'traffic_events' }
+);
+
+TrafficEventSchema.index({ telegramId: 1, event: 1 }, { unique: true });
+TrafficEventSchema.index({ event: 1, createdAt: -1 });
+
+const TrafficEvent =
+  mongoose.models.TrafficEvent || mongoose.model('TrafficEvent', TrafficEventSchema);
+
+function normalizeTrafficEventName(event) {
+  const cleanEvent = String(event || '').trim().toLowerCase();
+  return TRAFFIC_EVENT_NAMES.includes(cleanEvent) ? cleanEvent : '';
+}
+
+function getAnalyticsSince(req) {
+  const days = Math.min(Math.max(Number(req.query.days || 7), 1), 90);
+  return {
+    days,
+    since: Date.now() - days * DAY_MS,
+  };
+}
 
 
 const LEVEL_COINS = 500;
@@ -1736,6 +1784,123 @@ function isAdminRequest(secret, telegramId) {
 
   return Boolean(hasSecret || hasAdminTelegramId);
 }
+
+
+router.post('/track-event', async (req, res) => {
+  try {
+    const telegramId = String(req.body.telegramId || '').trim();
+    const event = normalizeTrafficEventName(req.body.event);
+
+    if (!telegramId || !event) {
+      return res.status(400).json({ message: 'Invalid traffic event' });
+    }
+
+    const username = String(req.body.username || 'Spieler').trim().slice(0, 64) || 'Spieler';
+    const source = String(req.body.source || '').trim().slice(0, 80);
+    const startParam = String(req.body.startParam || '').trim().slice(0, 160);
+    const campaign = String(req.body.campaign || '').trim().slice(0, 120);
+    const metadata = req.body.metadata && typeof req.body.metadata === 'object' ? req.body.metadata : {};
+
+    await TrafficEvent.updateOne(
+      { telegramId, event },
+      {
+        $setOnInsert: {
+          telegramId,
+          event,
+          username,
+          source,
+          startParam,
+          campaign,
+          metadata,
+          createdAt: Date.now(),
+        },
+        $set: {
+          username,
+        },
+      },
+      { upsert: true }
+    );
+
+    return res.json({ ok: true });
+  } catch (error) {
+    if (error && error.code === 11000) {
+      return res.json({ ok: true, duplicate: true });
+    }
+
+    return res.status(500).json({ message: 'Traffic event could not be saved' });
+  }
+});
+
+router.get('/admin-traffic-analytics', async (req, res) => {
+  try {
+    const telegramId = req.query.telegramId;
+    const secret = req.query.secret;
+
+    if (!isAdminRequest(secret, telegramId)) {
+      return res.status(403).json({ message: 'Forbidden' });
+    }
+
+    const { days, since } = getAnalyticsSince(req);
+    const sinceDate = new Date(since);
+
+    const [newPlayers, totalPlayers, eventCounts, recentEvents, sources] = await Promise.all([
+      User.countDocuments({ createdAt: { $gte: sinceDate } }),
+      User.countDocuments({}),
+      TrafficEvent.aggregate([
+        { $match: { createdAt: { $gte: since } } },
+        { $group: { _id: '$event', count: { $sum: 1 } } },
+        { $sort: { count: -1 } },
+      ]),
+      TrafficEvent.find({ createdAt: { $gte: since } })
+        .sort({ createdAt: -1 })
+        .limit(20)
+        .select('telegramId username event source startParam campaign createdAt')
+        .lean(),
+      TrafficEvent.aggregate([
+        { $match: { createdAt: { $gte: since } } },
+        { $group: { _id: { source: '$source', startParam: '$startParam', campaign: '$campaign' }, count: { $sum: 1 } } },
+        { $sort: { count: -1 } },
+        { $limit: 10 },
+      ]),
+    ]);
+
+    const eventMap = eventCounts.reduce((acc, item) => {
+      acc[item._id] = item.count;
+      return acc;
+    }, {});
+
+    const funnel = [
+      { key: 'new_players', label: 'New players', count: newPlayers },
+      { key: 'app_opened', label: 'App opened', count: eventMap.app_opened || 0 },
+      { key: 'first_tap', label: 'First tap', count: eventMap.first_tap || 0 },
+      { key: 'first_upgrade', label: 'First upgrade', count: eventMap.first_upgrade || 0 },
+      { key: 'daily_bonus_claimed', label: 'Daily bonus', count: eventMap.daily_bonus_claimed || 0 },
+      { key: 'starter_quest_claimed', label: 'Starter quest', count: eventMap.starter_quest_claimed || 0 },
+      { key: 'wallet_opened', label: 'Wallet opened', count: eventMap.wallet_opened || 0 },
+      { key: 'withdraw_clicked', label: 'Withdraw clicked', count: eventMap.withdraw_clicked || 0 },
+      { key: 'support_clicked', label: 'Support clicked', count: eventMap.support_clicked || 0 },
+    ];
+
+    return res.json({
+      ok: true,
+      days,
+      since,
+      totalPlayers,
+      newPlayers,
+      events: eventMap,
+      funnel,
+      sources: sources.map((item) => ({
+        source: item._id.source || 'direct',
+        startParam: item._id.startParam || '',
+        campaign: item._id.campaign || '',
+        count: item.count,
+      })),
+      recentEvents,
+    });
+  } catch (error) {
+    return res.status(500).json({ error: error.message });
+  }
+});
 
 
 // CRON: AUTO AWARD WEEKLY PRIZES
