@@ -17553,6 +17553,18 @@ body:not(.onix-body-home-lock) {
     }
   };
 
+  const openWithdrawSupport = () => {
+    const supportUrl = 'https://t.me/Wilbert_Schulte';
+    const tg = (window as any).Telegram?.WebApp;
+
+    if (tg?.openTelegramLink) {
+      tg.openTelegramLink(supportUrl);
+      return;
+    }
+
+    window.open(supportUrl, '_blank', 'noopener,noreferrer');
+  };
+
   const requestWithdrawal = async () => {
     const telegramId = getTelegramId();
 
