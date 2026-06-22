@@ -18490,18 +18490,42 @@ body:not(.onix-body-home-lock) {
 
   if (isAppLoading) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-[#020617] px-6 text-white">
-        <div className="w-full max-w-sm rounded-3xl border border-yellow-400/20 bg-[#111827] p-8 text-center shadow-2xl">
-          <div className="mx-auto mb-5 flex h-20 w-20 animate-pulse items-center justify-center rounded-full bg-yellow-400 text-4xl">
-            🔗
+      <div className="relative flex min-h-screen items-center justify-center overflow-hidden bg-[#060114] px-5 text-white">
+        <div className="absolute inset-0">
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,_rgba(114,56,255,0.35),_transparent_38%),radial-gradient(circle_at_bottom,_rgba(82,24,196,0.28),_transparent_45%),linear-gradient(180deg,_#050313_0%,_#090122_50%,_#04010f_100%)]" />
+          <div className="absolute left-1/2 top-24 h-56 w-56 -translate-x-1/2 rounded-full border border-violet-400/30 bg-violet-500/10 blur-[1px]" />
+          <div className="absolute left-1/2 top-24 h-56 w-56 -translate-x-1/2 rounded-full border-8 border-violet-500/20 blur-md" />
+          <div className="absolute left-[-8%] bottom-16 h-52 w-40 rotate-12 rounded-[28px] bg-[linear-gradient(180deg,_rgba(133,92,248,0.55),_rgba(39,14,93,0.05))] opacity-40 blur-[2px]" style={{ clipPath: 'polygon(30% 0%, 70% 0%, 100% 30%, 65% 100%, 15% 82%, 0% 30%)' }} />
+          <div className="absolute right-[-6%] top-40 h-60 w-44 -rotate-12 rounded-[28px] bg-[linear-gradient(180deg,_rgba(158,106,255,0.65),_rgba(39,14,93,0.05))] opacity-40 blur-[2px]" style={{ clipPath: 'polygon(30% 0%, 70% 0%, 100% 30%, 65% 100%, 15% 82%, 0% 30%)' }} />
+          <div className="absolute left-6 top-52 h-24 w-16 rotate-[-18deg] bg-violet-400/35 blur-[1px]" style={{ clipPath: 'polygon(34% 0%, 66% 0%, 100% 34%, 72% 100%, 18% 82%, 0% 30%)' }} />
+          <div className="absolute right-10 bottom-24 h-28 w-20 rotate-[15deg] bg-violet-300/30 blur-[1px]" style={{ clipPath: 'polygon(34% 0%, 66% 0%, 100% 34%, 72% 100%, 18% 82%, 0% 30%)' }} />
+          <div className="absolute inset-x-0 bottom-0 h-56 bg-[linear-gradient(180deg,_transparent,_rgba(80,24,184,0.18),_rgba(7,2,24,0.9))]" />
+        </div>
+
+        <div className="relative z-10 w-full max-w-sm rounded-[34px] border border-[#caa95a]/40 bg-[linear-gradient(180deg,rgba(22,14,58,0.95),rgba(9,5,28,0.98))] px-7 pb-9 pt-10 text-center shadow-[0_0_0_1px_rgba(125,77,255,0.18),0_30px_80px_rgba(6,0,25,0.75)]">
+          <div className="pointer-events-none absolute inset-x-4 top-4 h-px bg-gradient-to-r from-transparent via-[#d8b56a]/50 to-transparent" />
+          <div className="pointer-events-none absolute inset-x-7 bottom-4 h-px bg-gradient-to-r from-transparent via-violet-500/35 to-transparent" />
+          <div className="mx-auto mb-7 flex h-36 w-36 items-center justify-center rounded-full border border-[#d5b263]/60 bg-[radial-gradient(circle_at_50%_45%,_rgba(99,48,255,0.9),_rgba(22,9,52,0.96)_55%,_rgba(7,3,24,1)_100%)] shadow-[0_0_30px_rgba(132,71,255,0.4)]">
+            <div className="flex h-[112px] w-[112px] items-center justify-center rounded-full border border-[#d5b263]/60 bg-[radial-gradient(circle_at_center,_rgba(34,18,79,0.95),_rgba(10,4,30,1)_72%)]">
+              <div className="relative h-[68px] w-[68px] rotate-45 rounded-[14px] border-4 border-[#ddb869] bg-[linear-gradient(145deg,_rgba(125,73,255,0.95),_rgba(45,19,114,0.95))] shadow-[0_0_26px_rgba(125,73,255,0.45)]">
+                <div className="absolute inset-[12px] rounded-[10px] border-2 border-[#efdb9f]/70 bg-[radial-gradient(circle_at_center,_rgba(167,120,255,1),_rgba(90,40,214,0.95)_55%,_rgba(31,14,85,1)_100%)]" />
+                <div className="absolute left-1/2 top-1/2 h-4 w-4 -translate-x-1/2 -translate-y-1/2 rounded-full bg-[#f5dd8f] shadow-[0_0_18px_rgba(245,221,143,0.95)]" />
+              </div>
+            </div>
           </div>
 
-          <h1 className="text-3xl font-black text-white">ONIX COIN</h1>
-          <p className="mt-3 text-sm text-gray-400">Miner wird geladen...</p>
+          <h1 className="bg-gradient-to-b from-[#f9e6ac] via-[#d7b36a] to-[#a97a32] bg-clip-text text-[46px] font-black uppercase tracking-[0.08em] text-transparent">ONIX COIN</h1>
+          <div className="mx-auto mt-3 h-px w-44 bg-gradient-to-r from-transparent via-violet-300/70 to-transparent" />
+          <p className="mt-5 text-[17px] font-medium tracking-[0.02em] text-violet-100/90">Miner wird geladen...</p>
 
-          <div className="mt-6 h-3 overflow-hidden rounded-full bg-gray-800">
-            <div className="h-full w-2/3 animate-pulse rounded-full bg-yellow-400" />
+          <div className="mt-7 overflow-hidden rounded-full border border-violet-400/25 bg-[rgba(15,8,40,0.95)] p-[3px]">
+            <div className="relative h-4 overflow-hidden rounded-full bg-[linear-gradient(180deg,rgba(33,18,78,0.95),rgba(19,8,53,0.95))]">
+              <div className="absolute inset-y-0 left-0 w-2/3 rounded-full bg-[linear-gradient(90deg,#d3a83d_0%,#f6dd8e_46%,#f0bd39_100%)] shadow-[0_0_18px_rgba(240,189,57,0.65)]" />
+              <div className="absolute inset-y-[1px] left-[62%] w-10 rounded-full bg-white/35 blur-sm" />
+            </div>
           </div>
+
+          <div className="mt-4 text-xs uppercase tracking-[0.35em] text-violet-200/55">Initializing ONIX Miner</div>
         </div>
       </div>
     );
