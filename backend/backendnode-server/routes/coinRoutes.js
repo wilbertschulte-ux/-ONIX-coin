@@ -403,6 +403,41 @@ const DEFAULT_MAX_ENERGY = 500;
 const DEFAULT_TAP_POWER = 1;
 const DEFAULT_ENERGY_RECHARGE = 1;
 const DEFAULT_MINER_INCOME = 1;
+
+const STARTER_QUESTS = {
+  starter_tap_50: {
+    reward: 5000,
+    title: 'Starter-Quest: 50 Mal tippen',
+    isReady: (user) => Number(user.totalTaps || 0) >= 50,
+    message: 'Tippe zuerst 50 Mal auf die ONIX-Münze.',
+  },
+  starter_first_upgrade: {
+    reward: 10000,
+    title: 'Starter-Quest: Erstes Upgrade',
+    isReady: (user) => Number(user.totalUpgradesBought || 0) >= 1,
+    message: 'Kaufe zuerst dein erstes Upgrade.',
+  },
+  starter_daily_bonus: {
+    reward: 10000,
+    title: 'Starter-Quest: Daily Bonus',
+    isReady: (user) => Boolean(user.dailyRewardLastClaim || user.lastDailyClaimDay || Number(user.dailyStreak || 0) > 0),
+    message: 'Hole zuerst deinen Daily Bonus ab.',
+  },
+  starter_complete_task: {
+    reward: 15000,
+    title: 'Starter-Quest: Aufgabe erledigt',
+    isReady: (user) =>
+      Boolean(user.dailyRewardLastClaim || user.lastDailyClaimDay || Number(user.dailyStreak || 0) > 0) ||
+      (Array.isArray(user.completedTasks) && user.completedTasks.some((task) => !String(task).startsWith('starter_'))),
+    message: 'Erledige zuerst eine Aufgabe oder hole den Daily Bonus ab.',
+  },
+  starter_invite_friend: {
+    reward: 25000,
+    title: 'Starter-Quest: Freund eingeladen',
+    isReady: (user) => Number(user.referralsCount || 0) >= 1,
+    message: 'Lade zuerst einen Freund ein.',
+  },
+};
 const TEMP_TAP_BOOST_COST = 15000;
 const TEMP_MINING_BOOST_COST = 20000;
 const TEMP_ENERGY_REFILL_COST = 25000;
@@ -5189,6 +5224,57 @@ router.post('/claim-task', async (req, res) => {
         rankBonuses,
         dailyStreak: nextStreak,
         dailyStreakMultiplier: getDailyStreakMultiplier(nextStreak),
+      });
+    }
+
+    // STARTER QUESTS
+    if (STARTER_QUESTS[task]) {
+      const quest = STARTER_QUESTS[task];
+
+      if (!Array.isArray(user.completedTasks)) {
+        user.completedTasks = [];
+      }
+
+      if (user.completedTasks.includes(task)) {
+        return res.status(400).json({
+          message: 'Starter-Quest already claimed',
+        });
+      }
+
+      if (!quest.isReady(user)) {
+        return res.status(400).json({
+          message: quest.message,
+        });
+      }
+
+      const reward = Number(quest.reward || 0);
+
+      user.balance = roundOnix(Number(user.balance || 0) + reward);
+      addEarnings(user, reward);
+      user.completedTasks.push(task);
+      addTransaction(user, 'income_task', reward, quest.title);
+
+      const achievementBonuses = applyAchievements(user);
+      const rankBonuses = applyRankBonuses(user);
+      user.level = calculateLevel(user.totalEarned);
+      user.updatedAt = new Date();
+      user.lastSeenAt = Date.now();
+
+      await user.save();
+
+      return res.json({
+        ...user.toObject({ flattenMaps: true }),
+        perkLevels: getPerkLevelsPayload(user),
+        achievements: getAchievementsPayload(user),
+        referralLimit: getReferralLimitPayload(user),
+        missions: getMissionsPayload(user),
+        starterQuestReward: {
+          id: task,
+          title: quest.title,
+          reward,
+        },
+        rankBonuses,
+        achievementBonuses,
       });
     }
 

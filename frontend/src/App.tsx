@@ -12452,6 +12452,7 @@ function App() {
   const [rewardPopupVisible, setRewardPopupVisible] = useState(false);
   const [dailyBonusModalVisible, setDailyBonusModalVisible] = useState(false);
   const [isClaimingDailyBonus, setIsClaimingDailyBonus] = useState(false);
+  const [claimingStarterQuestId, setClaimingStarterQuestId] = useState('');
   const [toastMessages, setToastMessages] = useState<ToastMessage[]>([]);
   const [seasonHistory, setSeasonHistory] = useState<SeasonHistoryItem[]>([]);
   const [teamLeaderboard, setTeamLeaderboard] = useState<TeamLeaderboardItem[]>([]);
@@ -18076,6 +18077,112 @@ body:not(.onix-body-home-lock) {
     setTutorialVisible(false);
   };
 
+
+  const starterQuestItems = [
+    {
+      id: 'starter_tap_50',
+      icon: '👆',
+      title: '50 Mal tippen',
+      text: 'Tippe auf die ONIX-Münze und starte deinen Fortschritt.',
+      reward: 5000,
+      progress: Math.min(Number(totalTaps || 0), 50),
+      target: 50,
+      ready: Number(totalTaps || 0) >= 50,
+    },
+    {
+      id: 'starter_first_upgrade',
+      icon: '⚡',
+      title: 'Erstes Upgrade kaufen',
+      text: 'Verbessere Tap Power, Miner, Energie oder Aufladung.',
+      reward: 10000,
+      progress: Math.min(Number(totalUpgradesBought || 0), 1),
+      target: 1,
+      ready: Number(totalUpgradesBought || 0) >= 1,
+    },
+    {
+      id: 'starter_daily_bonus',
+      icon: '🎁',
+      title: 'Daily Bonus abholen',
+      text: 'Hole deine tägliche Belohnung ab und starte deine Streak.',
+      reward: 10000,
+      progress: dailyCooldown > 0 || Number(dailyStreak || 0) > 0 ? 1 : 0,
+      target: 1,
+      ready: dailyCooldown > 0 || Number(dailyStreak || 0) > 0,
+    },
+    {
+      id: 'starter_complete_task',
+      icon: '📋',
+      title: 'Eine Aufgabe erledigen',
+      text: 'Schließe eine normale Aufgabe oder den Daily Bonus ab.',
+      reward: 15000,
+      progress: completedTasks.some((task) => !task.startsWith('starter_')) || dailyCooldown > 0 ? 1 : 0,
+      target: 1,
+      ready: completedTasks.some((task) => !task.startsWith('starter_')) || dailyCooldown > 0,
+    },
+    {
+      id: 'starter_invite_friend',
+      icon: '👥',
+      title: 'Freund einladen',
+      text: 'Teile deinen Einladungslink und erhalte einen Extra-Bonus.',
+      reward: 25000,
+      progress: Math.min(Number(referralsCount || 0), 1),
+      target: 1,
+      ready: Number(referralsCount || 0) >= 1,
+    },
+  ];
+
+  const visibleStarterQuests = starterQuestItems.filter(
+    (quest) => !completedTasks.includes(quest.id)
+  );
+
+  const starterQuestCompletedCount = starterQuestItems.length - visibleStarterQuests.length;
+
+  const claimStarterQuest = async (questId: string) => {
+    const quest = starterQuestItems.find((item) => item.id === questId);
+
+    if (!quest || completedTasks.includes(questId) || !quest.ready || claimingStarterQuestId) {
+      if (quest && !quest.ready) {
+        showToast('Erledige zuerst die Quest-Bedingung.', 'info');
+      }
+      return;
+    }
+
+    try {
+      setClaimingStarterQuestId(questId);
+
+      const response = await axios.post(`${API_URL}/claim-task`, {
+        telegramId: getTelegramId(),
+        task: questId,
+      });
+
+      const user = response.data;
+
+      setBalance(user.balance);
+      setUsername(user.username || 'Spieler');
+      setWeeklyEarned(Number(user.weeklyEarned || 0));
+      setTotalEarned(user.totalEarned);
+      setLevel(user.level);
+      setCompletedTasks(user.completedTasks || []);
+      setOwnedPerks(user.ownedPerks || []);
+      setTransactions(user.transactions || []);
+      setAchievements(user.achievements || response.data.achievements || ACHIEVEMENTS);
+      applyUserStats(user);
+      showRewardPopupFromResponse(response.data);
+      showReferralBonusPaidToast(response.data);
+      loadMissions();
+
+      showToast(`🚀 Starter-Quest abgeschlossen: +${formatOnix(quest.reward)} ONIX`, 'success');
+
+      try {
+        WebApp.HapticFeedback?.notificationOccurred('success');
+      } catch {}
+    } catch (error: any) {
+      showToast(error?.response?.data?.message || 'Starter-Quest konnte nicht abgeholt werden', 'error');
+    } finally {
+      setClaimingStarterQuestId('');
+    }
+  };
+
   const achievementCategories: Array<{
     id: AchievementCategory;
     label: string;
@@ -18983,6 +19090,69 @@ body:not(.onix-body-home-lock) {
 
           {tasksInnerTab === 'tasks' && (
             <div className="onix-tasks-ref-panel onix-tasks-ref-panel-main">
+              <div className="rounded-3xl border border-yellow-400/20 bg-black/35 p-4 shadow-[0_0_28px_rgba(250,204,21,0.10)] backdrop-blur-xl">
+                <div className="mb-4 flex items-start justify-between gap-3">
+                  <div>
+                    <p className="text-lg font-extrabold text-yellow-300">🚀 Starter-Quest</p>
+                    <p className="mt-1 text-sm text-gray-300">Schließe deine ersten Schritte ab und sichere dir Bonus-ONIX.</p>
+                  </div>
+                  <div className="rounded-2xl border border-yellow-400/20 bg-yellow-400/10 px-3 py-2 text-right">
+                    <p className="text-xs text-yellow-100/80">Fortschritt</p>
+                    <p className="font-black text-yellow-300">{starterQuestCompletedCount}/{starterQuestItems.length}</p>
+                  </div>
+                </div>
+
+                {visibleStarterQuests.length > 0 ? (
+                  <div className="space-y-3">
+                    {visibleStarterQuests.map((quest) => {
+                      const progressPercent = Math.max(0, Math.min(100, (quest.progress / quest.target) * 100));
+
+                      return (
+                        <div key={quest.id} className="rounded-2xl border border-white/10 bg-white/[0.04] p-3">
+                          <div className="flex items-center gap-3">
+                            <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-yellow-400/10 text-2xl">
+                              {quest.icon}
+                            </div>
+                            <div className="min-w-0 flex-1">
+                              <div className="flex items-start justify-between gap-2">
+                                <div>
+                                  <p className="font-bold text-white">{quest.title}</p>
+                                  <p className="text-xs text-gray-400">{quest.text}</p>
+                                </div>
+                                <p className="shrink-0 text-sm font-black text-yellow-300">+{formatOnix(quest.reward)}</p>
+                              </div>
+                              <div className="mt-3 h-2 overflow-hidden rounded-full bg-white/10">
+                                <div
+                                  className="h-full rounded-full bg-gradient-to-r from-yellow-300 to-purple-400"
+                                  style={{ width: `${progressPercent}%` }}
+                                />
+                              </div>
+                              <div className="mt-2 flex items-center justify-between gap-2">
+                                <span className="text-xs text-gray-400">{formatOnix(quest.progress)} / {formatOnix(quest.target)}</span>
+                                <button
+                                  type="button"
+                                  onClick={() => claimStarterQuest(quest.id)}
+                                  disabled={!quest.ready || claimingStarterQuestId === quest.id}
+                                  className={`rounded-xl px-3 py-2 text-xs font-black transition ${quest.ready ? 'bg-yellow-400 text-black shadow-[0_0_16px_rgba(250,204,21,0.35)]' : 'bg-white/10 text-gray-400'}`}
+                                >
+                                  {claimingStarterQuestId === quest.id ? 'Lädt...' : quest.ready ? 'Abholen' : 'Offen'}
+                                </button>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                ) : (
+                  <div className="rounded-2xl border border-emerald-400/20 bg-emerald-400/10 p-4 text-center">
+                    <p className="text-2xl">✅</p>
+                    <p className="mt-1 font-bold text-emerald-300">Starter-Quest abgeschlossen</p>
+                    <p className="text-sm text-gray-300">Alle Start-Boni wurden abgeholt.</p>
+                  </div>
+                )}
+              </div>
+
 {!completedTasks.includes('channel') && (
 <div
             onClick={async () => {
