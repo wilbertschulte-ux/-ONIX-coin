@@ -20926,6 +20926,15 @@ body:not(.onix-body-home-lock) {
                   </div>
                   <b className="onix-wallet-section-arrow-v3">›</b>
                 </button>
+
+                <button type="button" className="onix-wallet-section-card-v3" onClick={openWithdrawSupport}>
+                  <span className="onix-wallet-section-icon-v3">🛡️</span>
+                  <div className="onix-wallet-section-text-v3">
+                    <strong>Technischer Support</strong>
+                    <p>ONIX-Hilfe öffnen</p>
+                  </div>
+                  <b className="onix-wallet-section-arrow-v3">›</b>
+                </button>
               </div>
             </>
           ) : (
