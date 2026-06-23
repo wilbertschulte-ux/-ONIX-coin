@@ -13265,8 +13265,9 @@ function App() {
     if (!telegramId) return;
 
     const storageKey = `onixTrafficEvent_${telegramId}_${event}`;
+    const alwaysTrackEvents = new Set(['wallet_opened', 'withdraw_clicked', 'support_clicked']);
 
-    if (localStorage.getItem(storageKey)) return;
+    if (!alwaysTrackEvents.has(event) && localStorage.getItem(storageKey)) return;
 
     try {
       await axios.post(`${API_URL}/track-event`, {
@@ -13279,7 +13280,9 @@ function App() {
         metadata,
       });
 
-      localStorage.setItem(storageKey, 'true');
+      if (!alwaysTrackEvents.has(event)) {
+        localStorage.setItem(storageKey, 'true');
+      }
     } catch {
       // Analytics must never block gameplay.
     }

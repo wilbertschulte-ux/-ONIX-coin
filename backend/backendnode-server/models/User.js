@@ -526,6 +526,21 @@ const userSchema = new mongoose.Schema(
       default: '',
     },
 
+    walletOpenedAt: {
+      type: Number,
+      default: 0,
+    },
+
+    withdrawClickedAt: {
+      type: Number,
+      default: 0,
+    },
+
+    supportClickedAt: {
+      type: Number,
+      default: 0,
+    },
+
     reminderOptOut: {
       type: Boolean,
       default: false,

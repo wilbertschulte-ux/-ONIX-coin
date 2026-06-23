@@ -1992,6 +1992,30 @@ router.post('/track-event', async (req, res) => {
     const startParam = String(req.body.startParam || '').trim().slice(0, 160);
     const campaign = String(req.body.campaign || '').trim().slice(0, 120);
     const metadata = req.body.metadata && typeof req.body.metadata === 'object' ? req.body.metadata : {};
+    const now = Date.now();
+
+    const userUpdate = {
+      username,
+      lastSeenAt: now,
+    };
+
+    if (event === 'wallet_opened') {
+      userUpdate.walletOpenedAt = now;
+    }
+
+    if (event === 'withdraw_clicked') {
+      userUpdate.withdrawClickedAt = now;
+    }
+
+    if (event === 'support_clicked') {
+      userUpdate.supportClickedAt = now;
+    }
+
+    await User.updateOne(
+      { telegramId },
+      { $set: userUpdate },
+      { upsert: false }
+    );
 
     await TrafficEvent.updateOne(
       { telegramId, event },
@@ -2004,7 +2028,7 @@ router.post('/track-event', async (req, res) => {
           startParam,
           campaign,
           metadata,
-          createdAt: Date.now(),
+          createdAt: now,
         },
         $set: {
           username,
@@ -2094,18 +2118,17 @@ router.get('/admin-traffic-analytics', async (req, res) => {
         completedTasks: { $elemMatch: { $regex: '^starter_' } },
       }),
       User.countDocuments({
-        ...createdRecentlyQuery,
         $or: [
           { walletOpenedAt: { $gte: since } },
-          { 'withdrawalRequests.0': { $exists: true } },
-          { 'transactions.type': { $in: ['withdrawal', 'income_withdrawal'] } },
+          { ...createdRecentlyQuery, 'withdrawalRequests.0': { $exists: true } },
+          { ...createdRecentlyQuery, 'transactions.type': { $in: ['withdrawal', 'income_withdrawal'] } },
         ],
       }),
       User.countDocuments({
-        ...createdRecentlyQuery,
         $or: [
-          { 'withdrawalRequests.0': { $exists: true } },
-          { 'transactions.type': 'withdrawal' },
+          { withdrawClickedAt: { $gte: since } },
+          { ...createdRecentlyQuery, 'withdrawalRequests.0': { $exists: true } },
+          { ...createdRecentlyQuery, 'transactions.type': 'withdrawal' },
         ],
       }),
     ]);
@@ -2127,7 +2150,7 @@ router.get('/admin-traffic-analytics', async (req, res) => {
       { key: 'starter_quest_claimed', label: 'Starter quest', count: hybridCount('starter_quest_claimed', starterQuestFallback) },
       { key: 'wallet_opened', label: 'Wallet opened', count: hybridCount('wallet_opened', walletOpenedFallback) },
       { key: 'withdraw_clicked', label: 'Withdraw clicked', count: hybridCount('withdraw_clicked', withdrawFallback) },
-      { key: 'support_clicked', label: 'Support clicked', count: eventMap.support_clicked || 0 },
+      { key: 'support_clicked', label: 'Support clicked', count: hybridCount('support_clicked', await User.countDocuments({ supportClickedAt: { $gte: since } })) },
     ];
 
     return res.json({
