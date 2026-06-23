@@ -516,6 +516,21 @@ const userSchema = new mongoose.Schema(
       default: Date.now,
     },
 
+    lastEnergyFullReminderAt: {
+      type: Number,
+      default: 0,
+    },
+
+    lastDailyBonusReminderDay: {
+      type: String,
+      default: '',
+    },
+
+    reminderOptOut: {
+      type: Boolean,
+      default: false,
+    },
+
     lastTapAt: {
       type: Number,
       default: 0,

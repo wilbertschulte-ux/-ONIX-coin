@@ -1757,6 +1757,18 @@ function normalizeUserFields(user) {
     user.lastEnergyRecoveryAt = Number(user.lastSeenAt || Date.now());
   }
 
+  if (user.lastEnergyFullReminderAt === undefined || user.lastEnergyFullReminderAt === null) {
+    user.lastEnergyFullReminderAt = 0;
+  }
+
+  if (user.lastDailyBonusReminderDay === undefined || user.lastDailyBonusReminderDay === null) {
+    user.lastDailyBonusReminderDay = '';
+  }
+
+  if (user.reminderOptOut === undefined || user.reminderOptOut === null) {
+    user.reminderOptOut = false;
+  }
+
   if (user.lastUpgradeBuyAt === undefined || user.lastUpgradeBuyAt === null) {
     user.lastUpgradeBuyAt = 0;
   }
@@ -1795,6 +1807,134 @@ function applyOfflineEnergyRecovery(user, now = Date.now()) {
 }
 
 
+const REMINDER_MAX_USERS_PER_RUN = Number(process.env.REMINDER_MAX_USERS_PER_RUN || 250);
+const ENERGY_FULL_REMINDER_COOLDOWN_MS = Number(process.env.ENERGY_FULL_REMINDER_COOLDOWN_MS || 6 * 60 * 60 * 1000);
+const DAILY_BONUS_REMINDER_MAX_INACTIVE_MS = Number(process.env.DAILY_BONUS_REMINDER_MAX_INACTIVE_MS || 7 * DAY_MS);
+
+function isCronRequest(req) {
+  const cronSecret = String(process.env.CRON_SECRET || '').trim();
+  if (!cronSecret) return true;
+
+  const provided =
+    String(req.query?.secret || '').trim() ||
+    String(req.headers['x-cron-secret'] || '').trim() ||
+    String(req.headers.authorization || '').replace(/^Bearer\s+/i, '').trim();
+
+  return provided === cronSecret;
+}
+
+function isDailyBonusReady(user, now = Date.now()) {
+  normalizeUserFields(user);
+  const todayKey = getUtcDayKey(now);
+  const lastClaimDay =
+    user.lastDailyClaimDay ||
+    (user.dailyRewardLastClaim ? getUtcDayKey(Number(user.dailyRewardLastClaim)) : '');
+
+  return lastClaimDay !== todayKey;
+}
+
+async function sendTelegramReminder(chatId, text) {
+  const botToken = process.env.BOT_TOKEN;
+  if (!botToken || !chatId) {
+    return { ok: false, reason: 'telegram_not_configured' };
+  }
+
+  try {
+    await axios.post(`https://api.telegram.org/bot${botToken}/sendMessage`, {
+      chat_id: String(chatId),
+      text,
+      parse_mode: 'HTML',
+      disable_web_page_preview: true,
+    });
+
+    return { ok: true };
+  } catch (error) {
+    return {
+      ok: false,
+      reason: error?.response?.data?.description || error.message || 'telegram_send_failed',
+    };
+  }
+}
+
+async function sendDueReminders(now = Date.now()) {
+  const stats = {
+    checked: 0,
+    energySent: 0,
+    dailySent: 0,
+    failed: 0,
+  };
+
+  const users = await User.find({
+    reminderOptOut: { $ne: true },
+    telegramId: { $exists: true, $ne: '' },
+  })
+    .sort({ lastSeenAt: -1 })
+    .limit(REMINDER_MAX_USERS_PER_RUN);
+
+  const todayKey = getUtcDayKey(now);
+
+  for (const user of users) {
+    stats.checked += 1;
+
+    try {
+      normalizeUserFields(user);
+
+      const beforeEnergy = Number(user.energy || 0);
+      const maxEnergy = Number(user.maxEnergy || DEFAULT_MAX_ENERGY);
+      applyOfflineEnergyRecovery(user, now);
+      const afterEnergy = Number(user.energy || 0);
+
+      const shouldSendEnergyReminder =
+        beforeEnergy < maxEnergy &&
+        afterEnergy >= maxEnergy &&
+        now - Number(user.lastEnergyFullReminderAt || 0) >= ENERGY_FULL_REMINDER_COOLDOWN_MS;
+
+      if (shouldSendEnergyReminder) {
+        const result = await sendTelegramReminder(
+          user.telegramId,
+          '⚡ <b>Deine Energie ist wieder voll!</b>\n\nKomm zurück zu <b>ONIX Coin</b> und sammle weiter ONIX.'
+        );
+
+        if (result.ok) {
+          user.lastEnergyFullReminderAt = now;
+          stats.energySent += 1;
+        } else {
+          stats.failed += 1;
+        }
+      }
+
+      const recentlyActive = now - Number(user.lastSeenAt || 0) <= DAILY_BONUS_REMINDER_MAX_INACTIVE_MS;
+      const shouldSendDailyReminder =
+        recentlyActive &&
+        isDailyBonusReady(user, now) &&
+        String(user.lastDailyBonusReminderDay || '') !== todayKey;
+
+      if (shouldSendDailyReminder) {
+        const result = await sendTelegramReminder(
+          user.telegramId,
+          '🎁 <b>Dein Daily Bonus ist bereit!</b>\n\nÖffne <b>ONIX Coin</b> und hol dir deine tägliche Belohnung.'
+        );
+
+        if (result.ok) {
+          user.lastDailyBonusReminderDay = todayKey;
+          stats.dailySent += 1;
+        } else {
+          stats.failed += 1;
+        }
+      }
+
+      if (user.isModified()) {
+        await user.save();
+      }
+    } catch {
+      stats.failed += 1;
+    }
+  }
+
+  return stats;
+}
+
+
 
 
 
@@ -1808,6 +1948,27 @@ function isAdminRequest(secret, telegramId) {
   return Boolean(hasSecret || hasAdminTelegramId);
 }
 
+
+
+router.get('/cron-reminders', async (req, res) => {
+  try {
+    if (!isCronRequest(req)) {
+      return res.status(403).json({ message: 'Forbidden' });
+    }
+
+    const stats = await sendDueReminders(Date.now());
+
+    return res.json({
+      ok: true,
+      ...stats,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      ok: false,
+      message: error.message,
+    });
+  }
+});
 
 router.post('/track-event', async (req, res) => {
   try {
