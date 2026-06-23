@@ -5975,6 +5975,30 @@ body,
   background: rgba(15, 23, 42, 0.68) !important;
 }
 
+.onix-wallet-unlock-modal .onix-withdraw-modal-icon {
+  color: #facc15 !important;
+  background:
+    radial-gradient(circle at 38% 32%, rgba(250, 204, 21, 0.40), rgba(64, 32, 120, 0.94) 72%) !important;
+  border-color: rgba(250, 204, 21, 0.38) !important;
+  box-shadow: 0 0 30px rgba(250, 204, 21, 0.20), inset 0 0 16px rgba(168, 85, 247, 0.20) !important;
+}
+
+.onix-wallet-unlock-button {
+  position: relative !important;
+  z-index: 2 !important;
+  width: 100% !important;
+  min-height: 48px !important;
+  border: 0 !important;
+  border-radius: 17px !important;
+  color: #12081f !important;
+  font-family: 'Exo 2', system-ui, sans-serif !important;
+  font-size: 15px !important;
+  font-weight: 900 !important;
+  letter-spacing: 0.01em !important;
+  background: linear-gradient(135deg, #facc15, #a78bfa 52%, #7ef9ff) !important;
+  box-shadow: 0 14px 30px rgba(250, 204, 21, 0.18), 0 12px 24px rgba(168, 85, 247, 0.16) !important;
+}
+
 /* ONIX style for old reward/offline/season modal cards */
 .onix-modal-layer {
   position: fixed !important;
@@ -12600,6 +12624,7 @@ function App() {
   const [rewardPopupVisible, setRewardPopupVisible] = useState(false);
   const [dailyBonusModalVisible, setDailyBonusModalVisible] = useState(false);
   const [withdrawSuccessModalVisible, setWithdrawSuccessModalVisible] = useState(false);
+  const [walletUnlockModalVisible, setWalletUnlockModalVisible] = useState(false);
   const [isClaimingDailyBonus, setIsClaimingDailyBonus] = useState(false);
   const [claimingStarterQuestId, setClaimingStarterQuestId] = useState('');
   const [toastMessages, setToastMessages] = useState<ToastMessage[]>([]);
@@ -13274,6 +13299,24 @@ function App() {
     }
   }, [activeTab]);
 
+  const openWalletTab = () => {
+    setWalletUnlockModalVisible(false);
+    setActiveTab('wallet');
+    trackTrafficEvent('wallet_opened');
+  };
+
+  const maybeShowWalletUnlockModal = () => {
+    const currentTelegramId = getTelegramId();
+    const storageKey = currentTelegramId
+      ? `onixWalletUnlockShown_${currentTelegramId}`
+      : 'onixWalletUnlockShown_guest';
+
+    if (localStorage.getItem(storageKey)) return;
+
+    localStorage.setItem(storageKey, 'true');
+    setWalletUnlockModalVisible(true);
+  };
+
   const buyUpgrade = async (type: 'tap' | 'energy' | 'recharge' | 'miner') => {
     const telegramId = getTelegramId();
 
@@ -13320,6 +13363,10 @@ function App() {
       showReferralBonusPaidToast(response.data);
       refreshAfterAction();
       trackTrafficEvent('first_upgrade', { type });
+
+      if (Number(user.totalUpgradesBought || 0) >= 1) {
+        maybeShowWalletUnlockModal();
+      }
 
       try {
         WebApp.HapticFeedback?.notificationOccurred('success');
@@ -18570,6 +18617,31 @@ body:not(.onix-body-home-lock) {
               onClick={() => setWithdrawSuccessModalVisible(false)}
             >
               Zurück ins Spiel
+            </button>
+          </div>
+        </div>
+      )}
+      {walletUnlockModalVisible && (
+        <div className="onix-withdraw-modal-backdrop" role="dialog" aria-modal="true">
+          <div className="onix-withdraw-modal onix-wallet-unlock-modal">
+            <div className="onix-withdraw-modal-icon">👛</div>
+            <h2 className="onix-withdraw-modal-title">Wallet freigeschaltet!</h2>
+            <p className="onix-withdraw-modal-text">
+              Öffne dein Wallet und verfolge dein ONIX-Guthaben.
+            </p>
+            <button
+              type="button"
+              className="onix-wallet-unlock-button active:scale-95"
+              onClick={openWalletTab}
+            >
+              Wallet öffnen
+            </button>
+            <button
+              type="button"
+              className="onix-withdraw-close-button active:scale-95"
+              onClick={() => setWalletUnlockModalVisible(false)}
+            >
+              Später
             </button>
           </div>
         </div>
