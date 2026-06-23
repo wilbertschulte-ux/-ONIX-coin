@@ -1825,12 +1825,20 @@ function isCronRequest(req) {
 
 function isDailyBonusReady(user, now = Date.now()) {
   normalizeUserFields(user);
+
   const todayKey = getUtcDayKey(now);
+  const lastClaimTime = Number(user.dailyRewardLastClaim || 0);
   const lastClaimDay =
     user.lastDailyClaimDay ||
-    (user.dailyRewardLastClaim ? getUtcDayKey(Number(user.dailyRewardLastClaim)) : '');
+    (lastClaimTime ? getUtcDayKey(lastClaimTime) : '');
 
-  return lastClaimDay !== todayKey;
+  // Must match /claim-task daily logic exactly:
+  // blocked if the reward was already claimed today OR if 24 hours have not passed yet.
+  if (lastClaimTime && (lastClaimDay === todayKey || now - lastClaimTime < DAY_MS)) {
+    return false;
+  }
+
+  return true;
 }
 
 async function sendTelegramReminder(chatId, text) {
