@@ -13261,7 +13261,11 @@ function App() {
   };
 
   useEffect(() => {
-    trackTrafficEvent('app_opened');
+    const timer = window.setTimeout(() => {
+      trackTrafficEvent('app_opened');
+    }, 600);
+
+    return () => window.clearTimeout(timer);
   }, []);
 
   useEffect(() => {

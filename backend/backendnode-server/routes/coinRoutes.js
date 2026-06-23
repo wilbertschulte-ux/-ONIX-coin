@@ -2035,8 +2035,23 @@ router.get('/admin-traffic-analytics', async (req, res) => {
     const { days, since } = getAnalyticsSince(req);
     const sinceDate = new Date(since);
 
-    const [newPlayers, totalPlayers, eventCounts, recentEvents, sources] = await Promise.all([
-      User.countDocuments({ createdAt: { $gte: sinceDate } }),
+    const createdRecentlyQuery = { createdAt: { $gte: sinceDate } };
+
+    const [
+      newPlayers,
+      totalPlayers,
+      eventCounts,
+      recentEvents,
+      sources,
+      activePlayersFallback,
+      firstTapFallback,
+      firstUpgradeFallback,
+      dailyBonusFallback,
+      starterQuestFallback,
+      walletOpenedFallback,
+      withdrawFallback,
+    ] = await Promise.all([
+      User.countDocuments(createdRecentlyQuery),
       User.countDocuments({}),
       TrafficEvent.aggregate([
         { $match: { createdAt: { $gte: since } } },
@@ -2054,6 +2069,45 @@ router.get('/admin-traffic-analytics', async (req, res) => {
         { $sort: { count: -1 } },
         { $limit: 10 },
       ]),
+      User.countDocuments({ lastSeenAt: { $gte: since } }),
+      User.countDocuments({ ...createdRecentlyQuery, totalTaps: { $gt: 0 } }),
+      User.countDocuments({
+        ...createdRecentlyQuery,
+        $or: [
+          { totalUpgradesBought: { $gt: 0 } },
+          { tapLevel: { $gt: 1 } },
+          { minerLevel: { $gt: 1 } },
+          { energyLevel: { $gt: 1 } },
+          { rechargeLevel: { $gt: 1 } },
+        ],
+      }),
+      User.countDocuments({
+        ...createdRecentlyQuery,
+        $or: [
+          { dailyRewardLastClaim: { $gte: since } },
+          { lastDailyClaimDay: { $exists: true, $nin: ['', null] } },
+          { dailyStreak: { $gt: 0 } },
+        ],
+      }),
+      User.countDocuments({
+        ...createdRecentlyQuery,
+        completedTasks: { $elemMatch: { $regex: '^starter_' } },
+      }),
+      User.countDocuments({
+        ...createdRecentlyQuery,
+        $or: [
+          { walletOpenedAt: { $gte: since } },
+          { 'withdrawalRequests.0': { $exists: true } },
+          { 'transactions.type': { $in: ['withdrawal', 'income_withdrawal'] } },
+        ],
+      }),
+      User.countDocuments({
+        ...createdRecentlyQuery,
+        $or: [
+          { 'withdrawalRequests.0': { $exists: true } },
+          { 'transactions.type': 'withdrawal' },
+        ],
+      }),
     ]);
 
     const eventMap = eventCounts.reduce((acc, item) => {
@@ -2061,15 +2115,18 @@ router.get('/admin-traffic-analytics', async (req, res) => {
       return acc;
     }, {});
 
+    const hybridCount = (eventName, fallbackCount = 0) =>
+      Math.max(Number(eventMap[eventName] || 0), Number(fallbackCount || 0));
+
     const funnel = [
       { key: 'new_players', label: 'New players', count: newPlayers },
-      { key: 'app_opened', label: 'App opened', count: eventMap.app_opened || 0 },
-      { key: 'first_tap', label: 'First tap', count: eventMap.first_tap || 0 },
-      { key: 'first_upgrade', label: 'First upgrade', count: eventMap.first_upgrade || 0 },
-      { key: 'daily_bonus_claimed', label: 'Daily bonus', count: eventMap.daily_bonus_claimed || 0 },
-      { key: 'starter_quest_claimed', label: 'Starter quest', count: eventMap.starter_quest_claimed || 0 },
-      { key: 'wallet_opened', label: 'Wallet opened', count: eventMap.wallet_opened || 0 },
-      { key: 'withdraw_clicked', label: 'Withdraw clicked', count: eventMap.withdraw_clicked || 0 },
+      { key: 'app_opened', label: 'App opened', count: hybridCount('app_opened', activePlayersFallback || newPlayers) },
+      { key: 'first_tap', label: 'First tap', count: hybridCount('first_tap', firstTapFallback) },
+      { key: 'first_upgrade', label: 'First upgrade', count: hybridCount('first_upgrade', firstUpgradeFallback) },
+      { key: 'daily_bonus_claimed', label: 'Daily bonus', count: hybridCount('daily_bonus_claimed', dailyBonusFallback) },
+      { key: 'starter_quest_claimed', label: 'Starter quest', count: hybridCount('starter_quest_claimed', starterQuestFallback) },
+      { key: 'wallet_opened', label: 'Wallet opened', count: hybridCount('wallet_opened', walletOpenedFallback) },
+      { key: 'withdraw_clicked', label: 'Withdraw clicked', count: hybridCount('withdraw_clicked', withdrawFallback) },
       { key: 'support_clicked', label: 'Support clicked', count: eventMap.support_clicked || 0 },
     ];
 
