@@ -19482,10 +19482,10 @@ body:not(.onix-body-home-lock) {
 
                 <button
                   type="button"
-                  onClick={() => setPromoModalVisible(true)}
+                  onClick={() => window.open('https://t.me/+LEfKu_gQS_o4YTVh', '_blank')}
                   className="mt-3 w-full rounded-2xl border border-purple-400/20 bg-white/[0.05] py-3 text-sm font-bold text-purple-100 active:scale-95"
                 >
-                  Promocode-Fenster öffnen
+                  📢 Offizieller Kanal
                 </button>
               </div>
 
