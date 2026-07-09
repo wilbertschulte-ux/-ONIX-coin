@@ -11453,6 +11453,27 @@ type AdminTrafficAnalytics = {
     label: string;
     count: number;
   }>;
+  promoAnalytics?: {
+    total: {
+      recent: number;
+      allTime: number;
+      rewardRecent: number;
+    };
+    codes: Array<{
+      code: string;
+      reward: number;
+      recent: number;
+      allTime: number;
+      rewardRecent: number;
+    }>;
+    recent: Array<{
+      telegramId: string;
+      username: string;
+      code: string;
+      reward: number;
+      createdAt: number;
+    }>;
+  };
   sources: Array<{
     source: string;
     startParam: string;
@@ -20352,9 +20373,49 @@ body:not(.onix-body-home-lock) {
                             <div className="onix-admin-metrics-grid">
                               <div><span>Новые игроки</span><strong>{formatOnix(adminTrafficAnalytics.newPlayers || 0)}</strong></div>
                               <div><span>Всего игроков</span><strong>{formatOnix(adminTrafficAnalytics.totalPlayers || 0)}</strong></div>
-                              <div><span>Первый тап</span><strong>{formatOnix(adminTrafficAnalytics.events.first_tap || 0)}</strong></div>
-                              <div><span>Wallet</span><strong>{formatOnix(adminTrafficAnalytics.events.wallet_opened || 0)}</strong></div>
+                              <div><span>Первый тап</span><strong>{formatOnix(adminTrafficAnalytics.funnel.find((item) => item.key === 'first_tap')?.count || 0)}</strong></div>
+                              <div><span>Wallet</span><strong>{formatOnix(adminTrafficAnalytics.funnel.find((item) => item.key === 'wallet_opened')?.count || 0)}</strong></div>
+                              <div><span>Promo 7 дней</span><strong>{formatOnix(adminTrafficAnalytics.promoAnalytics?.total.recent || 0)}</strong></div>
+                              <div><span>Promo всего</span><strong>{formatOnix(adminTrafficAnalytics.promoAnalytics?.total.allTime || 0)}</strong></div>
                             </div>
+
+                            {adminTrafficAnalytics.promoAnalytics && (
+                              <>
+                                <div className="onix-admin-section-head">
+                                  <strong>🎟 Promo analytics</strong>
+                                  <span>{formatOnix(adminTrafficAnalytics.promoAnalytics.total.recent || 0)} за 7 дней</span>
+                                </div>
+
+                                <div className="onix-admin-list">
+                                  {adminTrafficAnalytics.promoAnalytics.codes.map((item) => (
+                                    <div key={item.code} className="onix-admin-row">
+                                      <div>
+                                        <strong>{item.code}</strong>
+                                        <em>reward {formatOnix(item.reward)} · total {formatOnix(item.allTime)}</em>
+                                      </div>
+                                      <b>{formatOnix(item.recent)}</b>
+                                    </div>
+                                  ))}
+                                </div>
+
+                                {adminTrafficAnalytics.promoAnalytics.recent.length > 0 && (
+                                  <>
+                                    <div className="onix-admin-section-head">
+                                      <strong>Последние промокоды</strong>
+                                      <span>{adminTrafficAnalytics.promoAnalytics.recent.length}</span>
+                                    </div>
+                                    <div className="onix-admin-list">
+                                      {adminTrafficAnalytics.promoAnalytics.recent.slice(0, 6).map((item, index) => (
+                                        <div key={`${item.telegramId}-${item.code}-${index}`} className="onix-admin-row is-column">
+                                          <strong>{item.code} · {item.username || 'Spieler'}</strong>
+                                          <em>+{formatOnix(item.reward)} ONIX · {formatTransactionTime(item.createdAt)}</em>
+                                        </div>
+                                      ))}
+                                    </div>
+                                  </>
+                                )}
+                              </>
+                            )}
 
                             <div className="onix-admin-list">
                               {adminTrafficAnalytics.funnel.map((item) => (

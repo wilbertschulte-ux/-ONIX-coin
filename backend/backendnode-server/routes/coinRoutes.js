@@ -836,6 +836,7 @@ function ensureMissionStats(user, now = Date.now()) {
   if (!user.claimedDailyMissions) user.claimedDailyMissions = [];
   if (!user.claimedWeeklyMissions) user.claimedWeeklyMissions = [];
   if (!user.usedPromoCodes) user.usedPromoCodes = [];
+  if (!user.promoUsage) user.promoUsage = [];
   if (user.welcomeBonusClaimed === undefined || user.welcomeBonusClaimed === null) {
     user.welcomeBonusClaimed = false;
   }
@@ -2047,6 +2048,125 @@ router.post('/track-event', async (req, res) => {
   }
 });
 
+
+function buildPromoAnalytics(users, since, promoCodesConfig) {
+  const promoCodes = Object.keys(promoCodesConfig || {});
+  const stats = promoCodes.reduce((acc, code) => {
+    acc[code] = {
+      code,
+      reward: Number(promoCodesConfig[code] || 0),
+      recent: 0,
+      allTime: 0,
+      rewardRecent: 0,
+    };
+    return acc;
+  }, {});
+
+  const recentSeen = new Set();
+  const allTimeSeen = new Set();
+  const recentRows = [];
+
+  const ensureCodeStats = (code) => {
+    const cleanCode = String(code || '').trim().toUpperCase();
+    if (!cleanCode) return null;
+
+    if (!stats[cleanCode]) {
+      stats[cleanCode] = {
+        code: cleanCode,
+        reward: 0,
+        recent: 0,
+        allTime: 0,
+        rewardRecent: 0,
+      };
+    }
+
+    return stats[cleanCode];
+  };
+
+  const addAllTime = (telegramId, code) => {
+    const cleanCode = String(code || '').trim().toUpperCase();
+    const codeStats = ensureCodeStats(cleanCode);
+    if (!codeStats || !telegramId) return;
+
+    const key = `${telegramId}:${cleanCode}`;
+    if (allTimeSeen.has(key)) return;
+
+    allTimeSeen.add(key);
+    codeStats.allTime += 1;
+  };
+
+  const addRecent = (user, code, reward, createdAt) => {
+    const telegramId = String(user.telegramId || '').trim();
+    const cleanCode = String(code || '').trim().toUpperCase();
+    const timestamp = Number(createdAt || 0);
+
+    if (!telegramId || !cleanCode || !timestamp || timestamp < since) return;
+
+    const codeStats = ensureCodeStats(cleanCode);
+    if (!codeStats) return;
+
+    const key = `${telegramId}:${cleanCode}`;
+    if (recentSeen.has(key)) return;
+
+    recentSeen.add(key);
+    codeStats.recent += 1;
+    codeStats.rewardRecent += Number(reward || codeStats.reward || 0);
+
+    recentRows.push({
+      telegramId,
+      username: user.username || 'Spieler',
+      code: cleanCode,
+      reward: Number(reward || codeStats.reward || 0),
+      createdAt: timestamp,
+    });
+  };
+
+  for (const user of users || []) {
+    const usedCodes = Array.isArray(user.usedPromoCodes) ? user.usedPromoCodes : [];
+    usedCodes.forEach((code) => addAllTime(user.telegramId, code));
+
+    const promoUsage = Array.isArray(user.promoUsage) ? user.promoUsage : [];
+    promoUsage.forEach((item) => {
+      addAllTime(user.telegramId, item.code);
+      addRecent(user, item.code, item.reward, item.createdAt);
+    });
+
+    const transactions = Array.isArray(user.transactions) ? user.transactions : [];
+    transactions.forEach((tx) => {
+      if (tx.type !== 'income_promo') return;
+
+      const match = String(tx.title || '').match(/Promocode\s+([A-Z0-9_-]+)/i);
+      const code = match ? match[1].toUpperCase() : '';
+      addAllTime(user.telegramId, code);
+      addRecent(user, code, tx.amount, tx.createdAt);
+    });
+  }
+
+  const codes = Object.values(stats).sort((a, b) => {
+    if (b.recent !== a.recent) return b.recent - a.recent;
+    return b.allTime - a.allTime;
+  });
+
+  const totals = codes.reduce(
+    (acc, item) => {
+      acc.recent += Number(item.recent || 0);
+      acc.allTime += Number(item.allTime || 0);
+      acc.rewardRecent += Number(item.rewardRecent || 0);
+      return acc;
+    },
+    { recent: 0, allTime: 0, rewardRecent: 0 }
+  );
+
+  recentRows.sort((a, b) => Number(b.createdAt || 0) - Number(a.createdAt || 0));
+
+  return {
+    total: totals,
+    codes,
+    recent: recentRows.slice(0, 20),
+  };
+}
+
+
 router.get('/admin-traffic-analytics', async (req, res) => {
   try {
     const telegramId = req.query.telegramId;
@@ -2074,6 +2194,7 @@ router.get('/admin-traffic-analytics', async (req, res) => {
       starterQuestFallback,
       walletOpenedFallback,
       withdrawFallback,
+      promoUsers,
     ] = await Promise.all([
       User.countDocuments(createdRecentlyQuery),
       User.countDocuments({}),
@@ -2131,7 +2252,18 @@ router.get('/admin-traffic-analytics', async (req, res) => {
           { ...createdRecentlyQuery, 'transactions.type': 'withdrawal' },
         ],
       }),
+      User.find({
+        $or: [
+          { 'promoUsage.0': { $exists: true } },
+          { 'usedPromoCodes.0': { $exists: true } },
+          { 'transactions.type': 'income_promo' },
+        ],
+      })
+        .select('telegramId username usedPromoCodes promoUsage transactions')
+        .lean(),
     ]);
+
+    const promoAnalytics = buildPromoAnalytics(promoUsers, since, getPromoCodesConfig());
 
     const eventMap = eventCounts.reduce((acc, item) => {
       acc[item._id] = item.count;
@@ -2161,6 +2293,7 @@ router.get('/admin-traffic-analytics', async (req, res) => {
       newPlayers,
       events: eventMap,
       funnel,
+      promoAnalytics,
       sources: sources.map((item) => ({
         source: item._id.source || 'direct',
         startParam: item._id.startParam || '',
@@ -3574,7 +3707,18 @@ router.post('/apply-promo', async (req, res) => {
       return res.status(400).json({ message: 'Du hast diesen Promocode bereits verwendet' });
     }
 
+    const promoUsedAt = Date.now();
+
     user.usedPromoCodes.push(cleanCode);
+
+    if (!Array.isArray(user.promoUsage)) user.promoUsage = [];
+    user.promoUsage.unshift({
+      code: cleanCode,
+      reward,
+      createdAt: promoUsedAt,
+    });
+    user.promoUsage = user.promoUsage.slice(0, 20);
+
     user.balance = roundOnix(Number(user.balance || 0) + reward);
     addEarnings(user, reward);
 

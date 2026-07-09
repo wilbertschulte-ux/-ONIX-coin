@@ -228,6 +228,26 @@ const userSchema = new mongoose.Schema(
       default: [],
     },
 
+    promoUsage: {
+      type: [
+        {
+          code: {
+            type: String,
+            default: '',
+          },
+          reward: {
+            type: Number,
+            default: 0,
+          },
+          createdAt: {
+            type: Number,
+            default: Date.now,
+          },
+        },
+      ],
+      default: [],
+    },
+
     welcomeBonusClaimed: {
       type: Boolean,
       default: false,
