@@ -13232,11 +13232,17 @@ function App() {
 
   const applyPromoCode = async () => {
     const telegramId = getTelegramId();
+    const normalizedPromoCode = promoCodeInput.trim().toUpperCase();
+
+    if (!normalizedPromoCode) {
+      showToast('Bitte gib einen Promocode ein.', 'info');
+      return;
+    }
 
     try {
       const response = await axios.post(`${API_URL}/apply-promo`, {
         telegramId,
-        code: promoCodeInput,
+        code: normalizedPromoCode,
       });
 
       syncGrowthUser(response.data.user, response.data);
@@ -19440,6 +19446,49 @@ body:not(.onix-body-home-lock) {
 
           {tasksInnerTab === 'tasks' && (
             <div className="onix-tasks-ref-panel onix-tasks-ref-panel-main">
+              <div className="rounded-3xl border border-purple-400/25 bg-gradient-to-br from-purple-950/60 via-black/45 to-yellow-950/30 p-4 shadow-[0_0_30px_rgba(168,85,247,0.16)] backdrop-blur-xl">
+                <div className="flex items-start gap-3">
+                  <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl border border-yellow-400/25 bg-yellow-400/10 text-2xl">
+                    🎟
+                  </div>
+                  <div className="min-w-0 flex-1">
+                    <p className="text-lg font-extrabold text-white">Promocode einlösen</p>
+                    <p className="mt-1 text-sm text-gray-300">
+                      Hast du einen ONIX-Code aus dem Kanal oder einer Aktion? Gib ihn hier ein und hole deinen Bonus ab.
+                    </p>
+                  </div>
+                </div>
+
+                <div className="mt-4 flex gap-2">
+                  <input
+                    value={promoCodeInput}
+                    onChange={(event) => setPromoCodeInput(event.target.value.toUpperCase())}
+                    onKeyDown={(event) => {
+                      if (event.key === 'Enter') {
+                        applyPromoCode();
+                      }
+                    }}
+                    placeholder="Code eingeben"
+                    className="min-w-0 flex-1 rounded-2xl border border-white/10 bg-black/35 px-4 py-3 text-sm font-black uppercase tracking-[0.14em] text-white outline-none placeholder:text-gray-500"
+                  />
+                  <button
+                    type="button"
+                    onClick={applyPromoCode}
+                    className="rounded-2xl bg-yellow-400 px-4 py-3 text-sm font-black text-black shadow-[0_0_18px_rgba(250,204,21,0.28)] active:scale-95"
+                  >
+                    Aktivieren
+                  </button>
+                </div>
+
+                <button
+                  type="button"
+                  onClick={() => setPromoModalVisible(true)}
+                  className="mt-3 w-full rounded-2xl border border-purple-400/20 bg-white/[0.05] py-3 text-sm font-bold text-purple-100 active:scale-95"
+                >
+                  Promocode-Fenster öffnen
+                </button>
+              </div>
+
               <div className="rounded-3xl border border-yellow-400/20 bg-black/35 p-4 shadow-[0_0_28px_rgba(250,204,21,0.10)] backdrop-blur-xl">
                 <div className="mb-4 flex items-start justify-between gap-3">
                   <div>
@@ -21805,8 +21854,13 @@ body:not(.onix-body-home-lock) {
             <input
               value={promoCodeInput}
               onChange={(event) => setPromoCodeInput(event.target.value.toUpperCase())}
-              placeholder="Zum Beispiel: LAUNCH"
-              className="w-full rounded-2xl bg-[#0a0f1c] px-4 py-4 text-center text-lg font-bold text-white outline-none"
+              onKeyDown={(event) => {
+                if (event.key === 'Enter') {
+                  applyPromoCode();
+                }
+              }}
+              placeholder="Code eingeben"
+              className="w-full rounded-2xl bg-[#0a0f1c] px-4 py-4 text-center text-lg font-bold uppercase tracking-[0.16em] text-white outline-none"
             />
 
             <button
