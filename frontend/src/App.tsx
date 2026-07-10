@@ -25,6 +25,7 @@ import onixChestIcon from './assets/onix-boost-icons/onix_chest.png';
 
 const tg = window.Telegram?.WebApp;
 const WITHDRAW_SUPPORT_URL = 'https://t.me/Wilbert_Schulte';
+const ONIX_OFFICIAL_CHANNEL_URL = 'https://t.me/+LEfKu_gQS_o4YTVh';
 const WITHDRAW_SUCCESS_MESSAGE =
   'Deine Auszahlungs-Quest wurde erfolgreich erstellt. Kontaktiere den technischen Support, um die Auszahlung zu bestätigen.';
 
@@ -2192,6 +2193,171 @@ body,
   }
 }
 
+
+
+/* === ONIX side menu hub === */
+.onix-side-menu-backdrop {
+  position: fixed !important;
+  inset: 0 !important;
+  z-index: 2147482800 !important;
+  background: rgba(2, 2, 12, 0.58) !important;
+  backdrop-filter: blur(10px) !important;
+  display: flex !important;
+  align-items: stretch !important;
+  justify-content: flex-start !important;
+}
+
+.onix-side-menu-panel {
+  width: min(88vw, 360px) !important;
+  height: 100dvh !important;
+  overflow-y: auto !important;
+  padding: calc(18px + env(safe-area-inset-top)) 16px calc(22px + env(safe-area-inset-bottom)) !important;
+  border-right: 1px solid rgba(168, 85, 247, 0.42) !important;
+  background:
+    radial-gradient(circle at 18% 3%, rgba(168, 85, 247, 0.34), transparent 30%),
+    radial-gradient(circle at 95% 18%, rgba(45, 212, 255, 0.14), transparent 30%),
+    linear-gradient(160deg, rgba(11, 10, 33, 0.98), rgba(3, 6, 21, 0.99)) !important;
+  box-shadow:
+    22px 0 70px rgba(0, 0, 0, 0.68),
+    0 0 34px rgba(168, 85, 247, 0.28),
+    inset 0 0 26px rgba(132, 86, 255, 0.09) !important;
+  color: #fff !important;
+  animation: onixSideMenuSlide 220ms ease-out both !important;
+}
+
+@keyframes onixSideMenuSlide {
+  from { transform: translateX(-22px); opacity: 0; }
+  to { transform: translateX(0); opacity: 1; }
+}
+
+.onix-side-menu-head {
+  display: flex !important;
+  align-items: flex-start !important;
+  justify-content: space-between !important;
+  gap: 14px !important;
+  margin-bottom: 14px !important;
+}
+
+.onix-side-menu-head p,
+.onix-side-menu-group > p {
+  margin: 0 0 5px !important;
+  color: #67e8f9 !important;
+  font-size: 10px !important;
+  font-weight: 1000 !important;
+  letter-spacing: 0.18em !important;
+  text-transform: uppercase !important;
+}
+
+.onix-side-menu-head h2 {
+  margin: 0 !important;
+  font-size: 30px !important;
+  line-height: 1 !important;
+  font-weight: 1000 !important;
+  letter-spacing: -0.03em !important;
+}
+
+.onix-side-menu-head button {
+  width: 36px !important;
+  height: 36px !important;
+  border-radius: 14px !important;
+  border: 1px solid rgba(255, 255, 255, 0.12) !important;
+  background: rgba(255, 255, 255, 0.06) !important;
+  color: #fff !important;
+  font-size: 25px !important;
+  line-height: 1 !important;
+}
+
+.onix-side-menu-player {
+  display: grid !important;
+  grid-template-columns: 52px 1fr !important;
+  gap: 12px !important;
+  align-items: center !important;
+  padding: 13px !important;
+  margin-bottom: 14px !important;
+  border-radius: 24px !important;
+  border: 1px solid rgba(250, 204, 21, 0.18) !important;
+  background: linear-gradient(135deg, rgba(250, 204, 21, 0.12), rgba(168, 85, 247, 0.10)) !important;
+}
+
+.onix-side-avatar {
+  width: 52px !important;
+  height: 52px !important;
+  display: grid !important;
+  place-items: center !important;
+  border-radius: 18px !important;
+  background: radial-gradient(circle at 35% 20%, rgba(45, 212, 255, 0.36), rgba(168, 85, 247, 0.24)) !important;
+  border: 1px solid rgba(255, 255, 255, 0.14) !important;
+  font-size: 23px !important;
+  font-weight: 1000 !important;
+}
+
+.onix-side-menu-player strong {
+  display: block !important;
+  font-size: 16px !important;
+  font-weight: 1000 !important;
+}
+
+.onix-side-menu-player span {
+  display: block !important;
+  margin-top: 4px !important;
+  color: rgba(255, 255, 255, 0.54) !important;
+  font-size: 11px !important;
+  font-weight: 800 !important;
+}
+
+.onix-side-menu-group {
+  margin-top: 14px !important;
+}
+
+.onix-side-menu-group button {
+  width: 100% !important;
+  display: grid !important;
+  grid-template-columns: 42px 1fr auto !important;
+  align-items: center !important;
+  gap: 11px !important;
+  margin-top: 8px !important;
+  padding: 12px !important;
+  border-radius: 20px !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+  background: rgba(255, 255, 255, 0.045) !important;
+  color: #fff !important;
+  text-align: left !important;
+}
+
+.onix-side-menu-group button > span {
+  width: 42px !important;
+  height: 42px !important;
+  display: grid !important;
+  place-items: center !important;
+  border-radius: 15px !important;
+  background: rgba(168, 85, 247, 0.14) !important;
+  border: 1px solid rgba(168, 85, 247, 0.26) !important;
+  font-size: 18px !important;
+}
+
+.onix-side-menu-group button strong {
+  display: block !important;
+  font-size: 14px !important;
+  font-weight: 1000 !important;
+}
+
+.onix-side-menu-group button em {
+  display: block !important;
+  margin-top: 3px !important;
+  color: rgba(255, 255, 255, 0.54) !important;
+  font-size: 11px !important;
+  font-style: normal !important;
+  font-weight: 800 !important;
+}
+
+.onix-side-menu-group button b {
+  padding: 5px 8px !important;
+  border-radius: 999px !important;
+  background: rgba(250, 204, 21, 0.12) !important;
+  color: #fde68a !important;
+  font-size: 10px !important;
+  font-weight: 1000 !important;
+}
 
 /* === ONIX notification center === */
 .onix-notification-center {
@@ -12811,6 +12977,9 @@ function App() {
   const [promoModalVisible, setPromoModalVisible] = useState(false);
   const [promoCodeInput, setPromoCodeInput] = useState('');
   const [notificationCenterVisible, setNotificationCenterVisible] = useState(false);
+  const [sideMenuVisible, setSideMenuVisible] = useState(false);
+  const [soundEnabled, setSoundEnabled] = useState(() => localStorage.getItem('onixSoundEnabled') !== 'false');
+  const [vibrationEnabled, setVibrationEnabled] = useState(() => localStorage.getItem('onixVibrationEnabled') !== 'false');
   const [appNotifications, setAppNotifications] = useState<AppNotification[]>([]);
   const [notificationFilter, setNotificationFilter] = useState<AppNotificationCategory>('all');
   const unreadNotificationsCount = appNotifications.filter((item) => !Number(item.readAt || 0)).length;
@@ -18234,6 +18403,55 @@ body:not(.onix-body-home-lock) {
     }
   };
 
+  const openExternalLink = (url: string) => {
+    const tg = (window as any).Telegram?.WebApp;
+
+    if (tg?.openTelegramLink) {
+      tg.openTelegramLink(url);
+      return;
+    }
+
+    try {
+      WebApp.openTelegramLink(url);
+    } catch {
+      window.open(url, '_blank', 'noopener,noreferrer');
+    }
+  };
+
+  const closeSideMenuAndGo = (tab: Tab, options: { tasksTab?: 'tasks' | 'temporary' | 'achievements'; launchPanel?: LaunchPanel } = {}) => {
+    if (options.tasksTab) setTasksInnerTab(options.tasksTab);
+    if (options.launchPanel) setLaunchPanel(options.launchPanel);
+    setActiveTab(tab);
+    setSideMenuVisible(false);
+  };
+
+  const openOfficialChannel = () => {
+    openExternalLink(ONIX_OFFICIAL_CHANNEL_URL);
+    setSideMenuVisible(false);
+  };
+
+  const openSupportFromMenu = () => {
+    trackTrafficEvent('support_clicked', { source: 'side_menu' });
+    openExternalLink(WITHDRAW_SUPPORT_URL);
+    setSideMenuVisible(false);
+  };
+
+  const toggleSoundSetting = () => {
+    setSoundEnabled((prev) => {
+      const next = !prev;
+      localStorage.setItem('onixSoundEnabled', String(next));
+      return next;
+    });
+  };
+
+  const toggleVibrationSetting = () => {
+    setVibrationEnabled((prev) => {
+      const next = !prev;
+      localStorage.setItem('onixVibrationEnabled', String(next));
+      return next;
+    });
+  };
+
   const requestWithdrawal = async () => {
     const telegramId = getTelegramId();
 
@@ -19035,6 +19253,71 @@ body:not(.onix-body-home-lock) {
           </div>
         </div>
       )}
+      {sideMenuVisible && (
+        <div className="onix-side-menu-backdrop" role="dialog" aria-modal="true" onClick={() => setSideMenuVisible(false)}>
+          <div className="onix-side-menu-panel" onClick={(event) => event.stopPropagation()}>
+            <div className="onix-side-menu-head">
+              <div>
+                <p>ONIX HUB</p>
+                <h2>Menü</h2>
+              </div>
+              <button type="button" onClick={() => setSideMenuVisible(false)} aria-label="Schließen">×</button>
+            </div>
+
+            <div className="onix-side-menu-player">
+              <div className="onix-side-avatar">{username.slice(0, 1).toUpperCase()}</div>
+              <div>
+                <strong>{username || 'Spieler'}</strong>
+                <span>ID: {getTelegramId() || 'Telegram'}</span>
+              </div>
+            </div>
+
+            <div className="onix-side-menu-group">
+              <p>Spieler</p>
+              <button type="button" onClick={() => closeSideMenuAndGo('friends')}>
+                <span>👤</span><div><strong>Profil / ID</strong><em>Spielerprofil öffnen</em></div>
+              </button>
+              <button type="button" onClick={() => closeSideMenuAndGo('tasks', { tasksTab: 'achievements' })}>
+                <span>🎯</span><div><strong>Erfolge & Statistik</strong><em>Fortschritt ansehen</em></div>
+              </button>
+              <button type="button" onClick={() => closeSideMenuAndGo('friends')}>
+                <span>👥</span><div><strong>Freund einladen</strong><em>Referral-Link teilen</em></div>
+              </button>
+            </div>
+
+            <div className="onix-side-menu-group">
+              <p>Community</p>
+              <button type="button" onClick={openOfficialChannel}>
+                <span>📢</span><div><strong>Offizieller Kanal</strong><em>News, Promocodes, Updates</em></div>
+              </button>
+              <button type="button" onClick={openSupportFromMenu}>
+                <span>💬</span><div><strong>Support</strong><em>Technischen Support öffnen</em></div>
+              </button>
+            </div>
+
+            <div className="onix-side-menu-group">
+              <p>Einstellungen</p>
+              <button type="button" onClick={toggleSoundSetting}>
+                <span>🔊</span><div><strong>Sound</strong><em>{soundEnabled ? 'Ein' : 'Aus'}</em></div><b>{soundEnabled ? 'ON' : 'OFF'}</b>
+              </button>
+              <button type="button" onClick={toggleVibrationSetting}>
+                <span>📳</span><div><strong>Vibration</strong><em>{vibrationEnabled ? 'Ein' : 'Aus'}</em></div><b>{vibrationEnabled ? 'ON' : 'OFF'}</b>
+              </button>
+            </div>
+
+            <div className="onix-side-menu-group">
+              <p>Information</p>
+              <button type="button" onClick={() => closeSideMenuAndGo('launch', { launchPanel: 'faq' })}>
+                <span>📜</span><div><strong>Regeln / FAQ</strong><em>Häufige Fragen lesen</em></div>
+              </button>
+              <button type="button" onClick={() => closeSideMenuAndGo('launch', { launchPanel: 'about' })}>
+                <span>ℹ️</span><div><strong>Über ONIX</strong><em>Projektinformationen</em></div>
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       {notificationCenterVisible && (
         <div className="onix-withdraw-modal-backdrop" role="dialog" aria-modal="true">
           <div className="onix-notification-center">
@@ -19157,6 +19440,7 @@ body:not(.onix-body-home-lock) {
           <button
             type="button"
             aria-label="Menü"
+            onClick={() => setSideMenuVisible(true)}
             style={{
               width: 34,
               height: 34,
@@ -19986,7 +20270,7 @@ body:not(.onix-body-home-lock) {
 
                 <button
                   type="button"
-                  onClick={() => window.open('https://t.me/+LEfKu_gQS_o4YTVh', '_blank')}
+                  onClick={() => openExternalLink(ONIX_OFFICIAL_CHANNEL_URL)}
                   className="mt-3 w-full rounded-2xl border border-purple-400/20 bg-white/[0.05] py-3 text-sm font-bold text-purple-100 active:scale-95"
                 >
                   📢 Offizieller Kanal
