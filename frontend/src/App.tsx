@@ -2327,6 +2327,44 @@ body,
   font-weight: 800 !important;
 }
 
+
+.onix-notification-actions > div {
+  display: flex !important;
+  gap: 7px !important;
+  align-items: center !important;
+}
+
+.onix-notification-actions > div button:last-child {
+  border-color: rgba(255, 77, 109, 0.22) !important;
+  background: rgba(255, 77, 109, 0.08) !important;
+  color: #fecdd3 !important;
+}
+
+.onix-notification-tabs {
+  display: flex !important;
+  gap: 7px !important;
+  padding: 0 14px 12px !important;
+  overflow-x: auto !important;
+}
+
+.onix-notification-tabs button {
+  flex: 0 0 auto !important;
+  border: 1px solid rgba(255, 255, 255, 0.10) !important;
+  border-radius: 999px !important;
+  background: rgba(255, 255, 255, 0.045) !important;
+  color: rgba(255, 255, 255, 0.72) !important;
+  padding: 8px 11px !important;
+  font-size: 11px !important;
+  font-weight: 900 !important;
+}
+
+.onix-notification-tabs button.is-active {
+  border-color: rgba(168, 85, 247, 0.58) !important;
+  background: linear-gradient(135deg, rgba(168, 85, 247, 0.28), rgba(250, 204, 21, 0.10)) !important;
+  color: #fff !important;
+  box-shadow: 0 0 18px rgba(168, 85, 247, 0.18) !important;
+}
+
 .onix-notification-empty {
   padding: 32px 16px !important;
   text-align: center !important;
@@ -11526,12 +11564,15 @@ type TransactionFilter =
   | 'season'
   | 'missions';
 
+type AppNotificationCategory = 'all' | 'new' | 'rewards' | 'news';
+
 type AppNotification = {
   id: string;
   type: string;
   title: string;
   message: string;
   actionTab?: Tab;
+  category?: AppNotificationCategory;
   createdAt: number;
   readAt?: number;
 };
@@ -12771,7 +12812,13 @@ function App() {
   const [promoCodeInput, setPromoCodeInput] = useState('');
   const [notificationCenterVisible, setNotificationCenterVisible] = useState(false);
   const [appNotifications, setAppNotifications] = useState<AppNotification[]>([]);
+  const [notificationFilter, setNotificationFilter] = useState<AppNotificationCategory>('all');
   const unreadNotificationsCount = appNotifications.filter((item) => !Number(item.readAt || 0)).length;
+  const filteredAppNotifications = appNotifications.filter((item) => {
+    if (notificationFilter === 'all') return true;
+    if (notificationFilter === 'new') return !Number(item.readAt || 0);
+    return item.category === notificationFilter;
+  });
 
 
   useEffect(() => {
@@ -12965,12 +13012,50 @@ function App() {
         setDailyStreak(Number(user.dailyStreak || 0));
         setTransactions(user.transactions || []);
         setAppNotifications(normalizeNotifications(user.notifications || []));
+
+        const todayKey = getOnixUtcDayKey();
+        const dailyBonusKey = `dailyBonusAutoShown_${telegramId}_${todayKey}`;
+        const dailyBonusAvailable = !localStorage.getItem('dailyCooldownEnd');
+
+        if (!localStorage.getItem(`onixNewsPromocodeStart_${telegramId}`)) {
+          localStorage.setItem(`onixNewsPromocodeStart_${telegramId}`, 'true');
+          createUserNotification({
+            type: 'news_promo',
+            title: 'Neuer Promocode',
+            message: 'Der Promocode START ist aktiv. Öffne Aufgaben und löse den Code ein.',
+            actionTab: 'tasks',
+            category: 'news',
+            dedupeKey: `news_start_${telegramId}`,
+          });
+        }
+
+        if (!localStorage.getItem(`onixUpdatePromoUi_${telegramId}`)) {
+          localStorage.setItem(`onixUpdatePromoUi_${telegramId}`, 'true');
+          createUserNotification({
+            type: 'game_update',
+            title: 'Neues Update',
+            message: 'Promocodes können jetzt direkt in der Mini-App eingelöst werden.',
+            actionTab: 'tasks',
+            category: 'news',
+            dedupeKey: `update_promo_ui_${telegramId}`,
+          });
+        }
+
+        if (dailyBonusAvailable && !localStorage.getItem(`onixDailyAvailableNotice_${telegramId}_${todayKey}`)) {
+          localStorage.setItem(`onixDailyAvailableNotice_${telegramId}_${todayKey}`, 'true');
+          createUserNotification({
+            type: 'daily_bonus_ready',
+            title: 'Daily Bonus verfügbar',
+            message: 'Dein Daily Bonus ist bereit. Öffne Aufgaben und hole deine Belohnung ab.',
+            actionTab: 'tasks',
+            category: 'rewards',
+            dedupeKey: `daily_ready_${telegramId}_${todayKey}`,
+          });
+        }
+
         setAchievements(user.achievements || response.data.achievements || ACHIEVEMENTS);
         setActiveBoost(normalizeBoost(user.activeBoost));
         setBoostEndTime(Number(user.boostEndTime || 0));
-
-        const dailyBonusKey = `dailyBonusAutoShown_${telegramId}_${getOnixUtcDayKey()}`;
-        const dailyBonusAvailable = !localStorage.getItem('dailyCooldownEnd');
 
         if (telegramId && dailyBonusAvailable && !localStorage.getItem(dailyBonusKey)) {
           localStorage.setItem(dailyBonusKey, 'true');
@@ -13059,6 +13144,28 @@ function App() {
 
     loadUser();
   }, []);
+
+  useEffect(() => {
+    const telegramId = getTelegramId();
+
+    if (!telegramId || maxEnergy <= 0 || energy < maxEnergy) return;
+
+    const todayKey = getOnixUtcDayKey();
+    const key = `onixEnergyFullNotice_${telegramId}_${todayKey}`;
+
+    if (localStorage.getItem(key)) return;
+
+    localStorage.setItem(key, 'true');
+
+    createUserNotification({
+      type: 'energy_full',
+      title: 'Energie wieder voll',
+      message: 'Deine Energie ist vollständig aufgeladen. Du kannst wieder ONIX sammeln.',
+      actionTab: 'home',
+      category: 'news',
+      dedupeKey: `energy_full_${telegramId}_${todayKey}`,
+    });
+  }, [energy, maxEnergy]);
 
   useEffect(() => {
     const loadSeasonHistory = async () => {
@@ -13386,6 +13493,7 @@ function App() {
         title: String(item.title || 'ONIX Nachricht'),
         message: String(item.message || ''),
         actionTab: item.actionTab as Tab | undefined,
+        category: (item.category || (String(item.type || '').includes('reward') || String(item.type || '').includes('bonus') || String(item.type || '').includes('promo') ? 'rewards' : 'news')) as AppNotificationCategory,
         createdAt: Number(item.createdAt || Date.now()),
         readAt: Number(item.readAt || 0),
       }))
@@ -13401,6 +13509,31 @@ function App() {
       setAppNotifications(normalizeNotifications(response.data.notifications || []));
     } catch (error) {
       console.log('Benachrichtigungen konnten nicht geladen werden:', error);
+    }
+  };
+
+  const createUserNotification = async (
+    payload: {
+      type: string;
+      title: string;
+      message: string;
+      actionTab?: Tab;
+      category?: AppNotificationCategory;
+      dedupeKey?: string;
+    }
+  ) => {
+    const telegramId = getTelegramId();
+
+    if (!telegramId) return;
+
+    try {
+      const response = await axios.post(`${API_URL}/notifications/create`, {
+        telegramId,
+        ...payload,
+      });
+      setAppNotifications(normalizeNotifications(response.data.notifications || []));
+    } catch (error) {
+      console.log('Benachrichtigung konnte nicht erstellt werden:', error);
     }
   };
 
@@ -13425,6 +13558,22 @@ function App() {
       setAppNotifications(normalizeNotifications(response.data.notifications || []));
     } catch (error) {
       console.log('Benachrichtigungen konnten nicht gelesen markiert werden:', error);
+    }
+  };
+
+  const clearNotifications = async () => {
+    const telegramId = getTelegramId();
+
+    setAppNotifications([]);
+
+    if (!telegramId) return;
+
+    try {
+      await axios.post(`${API_URL}/notifications/clear`, {
+        telegramId,
+      });
+    } catch (error) {
+      console.log('Benachrichtigungen konnten nicht gelöscht werden:', error);
     }
   };
 
@@ -18905,19 +19054,42 @@ body:not(.onix-body-home-lock) {
 
             <div className="onix-notification-actions">
               <span>{unreadNotificationsCount > 0 ? `${unreadNotificationsCount} neu` : 'Alles gelesen'}</span>
-              <button type="button" onClick={markNotificationsRead}>
-                Alle lesen
-              </button>
+              <div>
+                <button type="button" onClick={markNotificationsRead}>
+                  Alle lesen
+                </button>
+                <button type="button" onClick={clearNotifications}>
+                  Löschen
+                </button>
+              </div>
+            </div>
+
+            <div className="onix-notification-tabs">
+              {[
+                { id: 'all', label: 'Alle' },
+                { id: 'new', label: 'Neu' },
+                { id: 'rewards', label: 'Belohnungen' },
+                { id: 'news', label: 'News' },
+              ].map((tab) => (
+                <button
+                  key={tab.id}
+                  type="button"
+                  className={notificationFilter === tab.id ? 'is-active' : ''}
+                  onClick={() => setNotificationFilter(tab.id as AppNotificationCategory)}
+                >
+                  {tab.label}
+                </button>
+              ))}
             </div>
 
             <div className="onix-notification-list">
-              {appNotifications.length === 0 && (
+              {filteredAppNotifications.length === 0 && (
                 <div className="onix-notification-empty">
-                  Noch keine Benachrichtigungen.
+                  Benachrichtigungen gibt es hier noch nicht.
                 </div>
               )}
 
-              {appNotifications.map((item) => (
+              {filteredAppNotifications.map((item) => (
                 <button
                   key={item.id}
                   type="button"
@@ -18931,7 +19103,25 @@ body:not(.onix-body-home-lock) {
                   }}
                 >
                   <div className="onix-notification-icon">
-                    {item.type === 'withdrawal_approved' ? '✅' : item.type === 'withdrawal_rejected' ? '⚠️' : '◆'}
+                    {item.type === 'withdrawal_approved'
+                      ? '✅'
+                      : item.type === 'withdrawal_rejected'
+                      ? '⚠️'
+                      : item.type.includes('daily')
+                      ? '🎁'
+                      : item.type.includes('energy')
+                      ? '⚡'
+                      : item.type.includes('promo')
+                      ? '🎟'
+                      : item.type.includes('mission') || item.type.includes('task')
+                      ? '🏆'
+                      : item.type.includes('referral')
+                      ? '👥'
+                      : item.type.includes('offline')
+                      ? '💰'
+                      : item.type.includes('update')
+                      ? '🚀'
+                      : '📢'}
                   </div>
                   <div>
                     <strong>{item.title}</strong>

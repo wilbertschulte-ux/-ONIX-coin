@@ -1506,7 +1506,7 @@ function addTransaction(user, type, amount, title, status = 'completed') {
   user.transactions = user.transactions.slice(0, 50);
 }
 
-function addUserNotification(user, type, title, message, actionTab = '') {
+function addUserNotification(user, type, title, message, actionTab = '', category = 'news') {
   if (!user.notifications) user.notifications = [];
 
   const now = Date.now();
@@ -1517,6 +1517,7 @@ function addUserNotification(user, type, title, message, actionTab = '') {
     title: String(title || '').slice(0, 120),
     message: String(message || '').slice(0, 700),
     actionTab: String(actionTab || ''),
+    category: String(category || 'news'),
     createdAt: now,
     readAt: 0,
   });
@@ -3092,7 +3093,8 @@ router.post('/admin-review-withdrawal', async (req, res) => {
         request.adminComment
           ? request.adminComment
           : 'Deine Auszahlungsanfrage wurde abgelehnt. Die ONIX wurden deinem Guthaben zurückgegeben.',
-        'wallet'
+        'wallet',
+        'news'
       );
     } else {
       addTransaction(
@@ -3112,7 +3114,8 @@ router.post('/admin-review-withdrawal', async (req, res) => {
         request.adminComment
           ? request.adminComment
           : 'Deine Auszahlungsanfrage wurde genehmigt.',
-        'wallet'
+        'wallet',
+        'news'
       );
     }
 
@@ -3196,6 +3199,87 @@ router.post('/notifications/mark-read', async (req, res) => {
       ok: true,
       notifications: user.notifications || [],
       unreadCount: 0,
+    });
+  } catch (error) {
+    return res.status(500).json({ error: error.message });
+  }
+});
+
+router.post('/notifications/clear', async (req, res) => {
+  try {
+    const { telegramId } = req.body;
+
+    const user = await User.findOne({ telegramId });
+
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    normalizeUserFields(user);
+
+    user.notifications = [];
+    user.markModified('notifications');
+    user.updatedAt = new Date();
+    await user.save();
+
+    return res.json({
+      ok: true,
+      notifications: [],
+      unreadCount: 0,
+    });
+  } catch (error) {
+    return res.status(500).json({ error: error.message });
+  }
+});
+
+router.post('/notifications/create', async (req, res) => {
+  try {
+    const { telegramId, type, title, message, actionTab, category, dedupeKey } = req.body;
+
+    const user = await User.findOne({ telegramId });
+
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    normalizeUserFields(user);
+
+    const cleanDedupeKey = String(dedupeKey || '').slice(0, 160);
+
+    if (cleanDedupeKey) {
+      const exists = (user.notifications || []).some((item) => item.id === cleanDedupeKey);
+
+      if (exists) {
+        return res.json({
+          ok: true,
+          duplicate: true,
+          notifications: user.notifications || [],
+          unreadCount: (user.notifications || []).filter((item) => !Number(item.readAt || 0)).length,
+        });
+      }
+    }
+
+    addUserNotification(
+      user,
+      type || 'info',
+      title || 'ONIX Nachricht',
+      message || '',
+      actionTab || '',
+      category || 'news'
+    );
+
+    if (cleanDedupeKey && user.notifications && user.notifications[0]) {
+      user.notifications[0].id = cleanDedupeKey;
+    }
+
+    user.markModified('notifications');
+    user.updatedAt = new Date();
+    await user.save();
+
+    return res.json({
+      ok: true,
+      notifications: user.notifications || [],
+      unreadCount: (user.notifications || []).filter((item) => !Number(item.readAt || 0)).length,
     });
   } catch (error) {
     return res.status(500).json({ error: error.message });
@@ -3745,6 +3829,15 @@ router.post('/claim-welcome-bonus', async (req, res) => {
 
     addTransaction(user, 'income_welcome_bonus', reward, 'Welcome bonus');
 
+    addUserNotification(
+      user,
+      'reward',
+      'Welcome Bonus erhalten',
+      `Dein Welcome Bonus wurde gutgeschrieben: +${reward} ONIX.`,
+      'tasks',
+      'rewards'
+    );
+
     addSecurityLog(user, 'welcome_bonus', 'Welcome bonus claimed', `+${reward} ONIX`);
 
     const achievementBonuses = applyAchievements(user);
@@ -3824,6 +3917,15 @@ router.post('/apply-promo', async (req, res) => {
     addEarnings(user, reward);
 
     addTransaction(user, 'income_promo', reward, `Promocode ${cleanCode}`);
+
+    addUserNotification(
+      user,
+      'promo_activated',
+      'Promocode aktiviert',
+      `Code ${cleanCode}: +${reward} ONIX wurden deinem Guthaben gutgeschrieben.`,
+      'tasks',
+      'rewards'
+    );
 
     addSecurityLog(user, 'promo', 'Promo code used', `${cleanCode}: +${reward} ONIX`);
 
@@ -4764,6 +4866,15 @@ async function tryPayQualifiedReferralBonus(user) {
     'income_referral',
     referralReward,
     `Empfehlungsbonus für aktiven Freund: ${user.username || 'neuer Spieler'}`
+  );
+
+  addUserNotification(
+    refUser,
+    'referral_reward',
+    'Referral-Bonus erhalten',
+    `${user.username || 'Ein neuer Spieler'} ist aktiv geworden. +${referralReward} ONIX wurden gutgeschrieben.`,
+    'friends',
+    'rewards'
   );
 
   applyAchievements(refUser);
@@ -5785,6 +5896,15 @@ router.post('/claim-mission', async (req, res) => {
       `${missionType === 'daily' ? 'Daily' : 'Weekly'} Mission: ${mission.title}`
     );
 
+    addUserNotification(
+      user,
+      'mission_reward',
+      'Mission abgeschlossen',
+      `${mission.title}: +${mission.reward} ONIX erhalten.`,
+      'tasks',
+      'rewards'
+    );
+
     const achievementBonuses = applyAchievements(user);
     const rankBonuses = applyRankBonuses(user);
     user.level = calculateLevel(user.totalEarned);
@@ -5885,6 +6005,15 @@ router.post('/claim-task', async (req, res) => {
 
       addTransaction(user, 'income_daily', reward, `Tägliche Belohnung · Tag ${nextStreak}/7`);
 
+      addUserNotification(
+        user,
+        'daily_bonus_claimed',
+        'Daily Bonus abgeholt',
+        `Tag ${nextStreak}/7: +${reward} ONIX wurden deinem Guthaben gutgeschrieben.`,
+        'tasks',
+        'rewards'
+      );
+
       const rankBonuses = applyRankBonuses(user);
       user.level = calculateLevel(user.totalEarned);
       user.updatedAt = new Date();
@@ -5929,6 +6058,15 @@ router.post('/claim-task', async (req, res) => {
       addEarnings(user, reward);
       user.completedTasks.push(task);
       addTransaction(user, 'income_task', reward, quest.title);
+
+      addUserNotification(
+        user,
+        'task_reward',
+        'Starter-Quest abgeschlossen',
+        `${quest.title}: +${reward} ONIX erhalten.`,
+        'tasks',
+        'rewards'
+      );
 
       const achievementBonuses = applyAchievements(user);
       const rankBonuses = applyRankBonuses(user);
@@ -5995,6 +6133,15 @@ router.post('/claim-task', async (req, res) => {
       user.completedTasks.push('channel');
       addTransaction(user, 'income_task', 25000, 'Aufgabe: Kanal abonnieren');
 
+      addUserNotification(
+        user,
+        'task_reward',
+        'Aufgabe abgeschlossen',
+        'Kanal-Aufgabe: +25000 ONIX erhalten.',
+        'tasks',
+        'rewards'
+      );
+
       const rankBonuses = applyRankBonuses(user);
       user.level = calculateLevel(user.totalEarned);
       user.updatedAt = new Date();
@@ -6037,6 +6184,15 @@ router.post('/claim-task', async (req, res) => {
         'income_task',
         economyConfig.referralReward,
         'Aufgabe: Freund einladen'
+      );
+
+      addUserNotification(
+        user,
+        'referral_reward',
+        'Freunde-Bonus erhalten',
+        `Aufgabe Freund einladen: +${economyConfig.referralReward} ONIX erhalten.`,
+        'friends',
+        'rewards'
       );
 
       const rankBonuses = applyRankBonuses(user);
@@ -6100,6 +6256,16 @@ router.post('/claim-offline-income', async (req, res) => {
     user.balance = roundOnix(Number(user.balance || 0) + claimedAmount);
     addEarnings(user, claimedAmount);
     addTransaction(user, 'income_offline', claimedAmount, 'Offline-Mining');
+
+    addUserNotification(
+      user,
+      'offline_income',
+      'Passiver Ertrag abgeholt',
+      `Offline-Mining: +${roundOnix(claimedAmount)} ONIX wurden gutgeschrieben.`,
+      'home',
+      'rewards'
+    );
+
     user.offlineClaimsCount = Number(user.offlineClaimsCount || 0) + 1;
     incrementMissionStat(user, 'dailyOfflineClaims');
     incrementMissionStat(user, 'weeklyOfflineClaims');

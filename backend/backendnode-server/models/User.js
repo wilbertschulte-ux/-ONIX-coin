@@ -334,6 +334,10 @@ const userSchema = new mongoose.Schema(
             type: String,
             default: '',
           },
+          category: {
+            type: String,
+            default: 'news',
+          },
           createdAt: {
             type: Number,
             default: Date.now,
