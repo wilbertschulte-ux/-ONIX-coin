@@ -2192,6 +2192,149 @@ body,
   }
 }
 
+
+/* === ONIX notification center === */
+.onix-notification-center {
+  width: min(calc(100vw - 32px), 390px) !important;
+  max-height: min(78vh, 620px) !important;
+  overflow: hidden !important;
+  border-radius: 30px !important;
+  border: 1px solid rgba(168, 85, 247, 0.42) !important;
+  background:
+    radial-gradient(circle at 18% 5%, rgba(168, 85, 247, 0.30), transparent 34%),
+    radial-gradient(circle at 92% 10%, rgba(45, 212, 255, 0.12), transparent 28%),
+    linear-gradient(145deg, rgba(9, 9, 30, 0.98), rgba(5, 8, 23, 0.99)) !important;
+  box-shadow:
+    0 24px 70px rgba(0, 0, 0, 0.72),
+    0 0 34px rgba(168, 85, 247, 0.30),
+    inset 0 0 24px rgba(132, 86, 255, 0.10) !important;
+  color: #fff !important;
+}
+
+.onix-notification-head {
+  display: flex !important;
+  align-items: flex-start !important;
+  justify-content: space-between !important;
+  gap: 14px !important;
+  padding: 20px 20px 12px !important;
+}
+
+.onix-notification-head p {
+  margin: 0 0 4px !important;
+  color: #67e8f9 !important;
+  font-size: 11px !important;
+  font-weight: 900 !important;
+  letter-spacing: 0.18em !important;
+}
+
+.onix-notification-head h2 {
+  margin: 0 !important;
+  font-size: 24px !important;
+  line-height: 1.05 !important;
+  font-weight: 1000 !important;
+}
+
+.onix-notification-head button {
+  width: 34px !important;
+  height: 34px !important;
+  border: 1px solid rgba(255, 255, 255, 0.12) !important;
+  border-radius: 14px !important;
+  background: rgba(255, 255, 255, 0.06) !important;
+  color: #fff !important;
+  font-size: 24px !important;
+  line-height: 1 !important;
+}
+
+.onix-notification-actions {
+  display: flex !important;
+  justify-content: space-between !important;
+  align-items: center !important;
+  padding: 0 20px 14px !important;
+  color: rgba(255, 255, 255, 0.68) !important;
+  font-size: 12px !important;
+  font-weight: 800 !important;
+}
+
+.onix-notification-actions button {
+  border: 1px solid rgba(250, 204, 21, 0.24) !important;
+  border-radius: 999px !important;
+  background: rgba(250, 204, 21, 0.10) !important;
+  color: #fde68a !important;
+  padding: 8px 12px !important;
+  font-size: 12px !important;
+  font-weight: 900 !important;
+}
+
+.onix-notification-list {
+  max-height: min(55vh, 430px) !important;
+  overflow-y: auto !important;
+  padding: 0 14px 16px !important;
+}
+
+.onix-notification-item {
+  width: 100% !important;
+  display: grid !important;
+  grid-template-columns: 42px 1fr !important;
+  gap: 12px !important;
+  text-align: left !important;
+  padding: 14px !important;
+  margin: 0 0 10px !important;
+  border-radius: 22px !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+  background: rgba(255, 255, 255, 0.045) !important;
+  color: #fff !important;
+}
+
+.onix-notification-item.is-unread {
+  border-color: rgba(255, 45, 85, 0.48) !important;
+  background:
+    radial-gradient(circle at 92% 12%, rgba(255, 45, 85, 0.20), transparent 30%),
+    rgba(255, 255, 255, 0.065) !important;
+  box-shadow: 0 0 22px rgba(255, 45, 85, 0.12) !important;
+}
+
+.onix-notification-icon {
+  width: 42px !important;
+  height: 42px !important;
+  border-radius: 16px !important;
+  display: grid !important;
+  place-items: center !important;
+  background: rgba(168, 85, 247, 0.14) !important;
+  border: 1px solid rgba(168, 85, 247, 0.28) !important;
+  font-size: 18px !important;
+}
+
+.onix-notification-item strong {
+  display: block !important;
+  font-size: 15px !important;
+  font-weight: 1000 !important;
+  line-height: 1.15 !important;
+}
+
+.onix-notification-item p {
+  margin: 5px 0 6px !important;
+  color: rgba(255, 255, 255, 0.76) !important;
+  font-size: 12px !important;
+  line-height: 1.35 !important;
+  white-space: pre-wrap !important;
+}
+
+.onix-notification-item em {
+  display: block !important;
+  color: rgba(255, 255, 255, 0.44) !important;
+  font-size: 11px !important;
+  font-style: normal !important;
+  font-weight: 800 !important;
+}
+
+.onix-notification-empty {
+  padding: 32px 16px !important;
+  text-align: center !important;
+  color: rgba(255, 255, 255, 0.58) !important;
+  font-size: 13px !important;
+  font-weight: 800 !important;
+}
+
 /* === REFERENCE HOME SCREEN PATCH v83 === */
 /* Clean isolated home screen based on reference */
 html,
@@ -11383,6 +11526,16 @@ type TransactionFilter =
   | 'season'
   | 'missions';
 
+type AppNotification = {
+  id: string;
+  type: string;
+  title: string;
+  message: string;
+  actionTab?: Tab;
+  createdAt: number;
+  readAt?: number;
+};
+
 type AdminUserSearchResult = {
   telegramId: string;
   username: string;
@@ -12616,6 +12769,9 @@ function App() {
   const [backendHealth, setBackendHealth] = useState<any>(null);
   const [promoModalVisible, setPromoModalVisible] = useState(false);
   const [promoCodeInput, setPromoCodeInput] = useState('');
+  const [notificationCenterVisible, setNotificationCenterVisible] = useState(false);
+  const [appNotifications, setAppNotifications] = useState<AppNotification[]>([]);
+  const unreadNotificationsCount = appNotifications.filter((item) => !Number(item.readAt || 0)).length;
 
 
   useEffect(() => {
@@ -12808,6 +12964,7 @@ function App() {
       setPerkLevels(normalizePerkLevels(user.perkLevels));
         setDailyStreak(Number(user.dailyStreak || 0));
         setTransactions(user.transactions || []);
+        setAppNotifications(normalizeNotifications(user.notifications || []));
         setAchievements(user.achievements || response.data.achievements || ACHIEVEMENTS);
         setActiveBoost(normalizeBoost(user.activeBoost));
         setBoostEndTime(Number(user.boostEndTime || 0));
@@ -13221,6 +13378,56 @@ function App() {
   };
 
 
+  const normalizeNotifications = (items: any[] = []): AppNotification[] =>
+    (Array.isArray(items) ? items : [])
+      .map((item) => ({
+        id: String(item.id || `${item.createdAt || Date.now()}_${item.title || 'notification'}`),
+        type: String(item.type || 'info'),
+        title: String(item.title || 'ONIX Nachricht'),
+        message: String(item.message || ''),
+        actionTab: item.actionTab as Tab | undefined,
+        createdAt: Number(item.createdAt || Date.now()),
+        readAt: Number(item.readAt || 0),
+      }))
+      .sort((a, b) => Number(b.createdAt || 0) - Number(a.createdAt || 0));
+
+  const loadNotifications = async () => {
+    const telegramId = getTelegramId();
+
+    if (!telegramId) return;
+
+    try {
+      const response = await axios.get(`${API_URL}/notifications/${telegramId}`);
+      setAppNotifications(normalizeNotifications(response.data.notifications || []));
+    } catch (error) {
+      console.log('Benachrichtigungen konnten nicht geladen werden:', error);
+    }
+  };
+
+  const openNotificationCenter = async () => {
+    setNotificationCenterVisible(true);
+    await loadNotifications();
+  };
+
+  const markNotificationsRead = async () => {
+    const telegramId = getTelegramId();
+
+    setAppNotifications((prev) =>
+      prev.map((item) => ({ ...item, readAt: item.readAt || Date.now() }))
+    );
+
+    if (!telegramId) return;
+
+    try {
+      const response = await axios.post(`${API_URL}/notifications/mark-read`, {
+        telegramId,
+      });
+      setAppNotifications(normalizeNotifications(response.data.notifications || []));
+    } catch (error) {
+      console.log('Benachrichtigungen konnten nicht gelesen markiert werden:', error);
+    }
+  };
+
   const syncGrowthUser = (user: any, fallbackData: any = {}) => {
     if (!user) return;
 
@@ -13229,6 +13436,9 @@ function App() {
     setTotalEarned(user.totalEarned || 0);
     setLevel(user.level || 1);
     setTransactions(user.transactions || []);
+    if (user.notifications) {
+      setAppNotifications(normalizeNotifications(user.notifications || []));
+    }
     setAchievements(user.achievements || fallbackData.achievements || ACHIEVEMENTS);
     setOwnedPerks(user.ownedPerks || []);
     setPerkLevels(normalizePerkLevels(user.perkLevels));
@@ -18676,6 +18886,65 @@ body:not(.onix-body-home-lock) {
           </div>
         </div>
       )}
+      {notificationCenterVisible && (
+        <div className="onix-withdraw-modal-backdrop" role="dialog" aria-modal="true">
+          <div className="onix-notification-center">
+            <div className="onix-notification-head">
+              <div>
+                <p>ONIX CONTROL</p>
+                <h2>Benachrichtigungen</h2>
+              </div>
+              <button
+                type="button"
+                onClick={() => setNotificationCenterVisible(false)}
+                aria-label="Schließen"
+              >
+                ×
+              </button>
+            </div>
+
+            <div className="onix-notification-actions">
+              <span>{unreadNotificationsCount > 0 ? `${unreadNotificationsCount} neu` : 'Alles gelesen'}</span>
+              <button type="button" onClick={markNotificationsRead}>
+                Alle lesen
+              </button>
+            </div>
+
+            <div className="onix-notification-list">
+              {appNotifications.length === 0 && (
+                <div className="onix-notification-empty">
+                  Noch keine Benachrichtigungen.
+                </div>
+              )}
+
+              {appNotifications.map((item) => (
+                <button
+                  key={item.id}
+                  type="button"
+                  className={`onix-notification-item ${!Number(item.readAt || 0) ? 'is-unread' : ''}`}
+                  onClick={() => {
+                    if (item.actionTab) {
+                      setActiveTab(item.actionTab);
+                    }
+                    markNotificationsRead();
+                    setNotificationCenterVisible(false);
+                  }}
+                >
+                  <div className="onix-notification-icon">
+                    {item.type === 'withdrawal_approved' ? '✅' : item.type === 'withdrawal_rejected' ? '⚠️' : '◆'}
+                  </div>
+                  <div>
+                    <strong>{item.title}</strong>
+                    <p>{item.message}</p>
+                    <em>{formatTransactionTime(item.createdAt)}</em>
+                  </div>
+                </button>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
+
       {activeTab === 'home' && (
         <div
           aria-label="ONIX top navigation"
@@ -18737,6 +19006,7 @@ body:not(.onix-body-home-lock) {
           <button
             type="button"
             aria-label="Benachrichtigungen"
+            onClick={openNotificationCenter}
             style={{
               width: 34,
               height: 34,
@@ -18748,13 +19018,36 @@ body:not(.onix-body-home-lock) {
               alignItems: 'center',
               justifyContent: 'center',
               background: 'transparent',
-              color: '#FFFFFF',
-              boxShadow: 'none',
+              color: unreadNotificationsCount > 0 ? '#ff4d6d' : '#FFFFFF',
+              boxShadow: unreadNotificationsCount > 0 ? '0 0 18px rgba(255, 77, 109, 0.48)' : 'none',
               outline: 'none',
               justifySelf: 'end',
+              position: 'relative',
             }}
           >
             <Bell size={19} strokeWidth={2.1} />
+            {unreadNotificationsCount > 0 && (
+              <span
+                style={{
+                  position: 'absolute',
+                  top: 2,
+                  right: 1,
+                  minWidth: 15,
+                  height: 15,
+                  padding: '0 4px',
+                  borderRadius: 999,
+                  background: '#ff2d55',
+                  color: '#fff',
+                  fontSize: 9,
+                  fontWeight: 900,
+                  lineHeight: '15px',
+                  textAlign: 'center',
+                  boxShadow: '0 0 12px rgba(255, 45, 85, 0.75)',
+                }}
+              >
+                {unreadNotificationsCount > 9 ? '9+' : unreadNotificationsCount}
+              </span>
+            )}
           </button>
         </div>
       )}

@@ -837,6 +837,7 @@ function ensureMissionStats(user, now = Date.now()) {
   if (!user.claimedWeeklyMissions) user.claimedWeeklyMissions = [];
   if (!user.usedPromoCodes) user.usedPromoCodes = [];
   if (!user.promoUsage) user.promoUsage = [];
+  if (!user.notifications) user.notifications = [];
   if (user.welcomeBonusClaimed === undefined || user.welcomeBonusClaimed === null) {
     user.welcomeBonusClaimed = false;
   }
@@ -1503,6 +1504,24 @@ function addTransaction(user, type, amount, title, status = 'completed') {
   });
 
   user.transactions = user.transactions.slice(0, 50);
+}
+
+function addUserNotification(user, type, title, message, actionTab = '') {
+  if (!user.notifications) user.notifications = [];
+
+  const now = Date.now();
+
+  user.notifications.unshift({
+    id: `${now}_${Math.random().toString(36).slice(2, 10)}`,
+    type: String(type || 'info'),
+    title: String(title || '').slice(0, 120),
+    message: String(message || '').slice(0, 700),
+    actionTab: String(actionTab || ''),
+    createdAt: now,
+    readAt: 0,
+  });
+
+  user.notifications = user.notifications.slice(0, 50);
 }
 
 function prepareReferralBonusWindow(user, now = Date.now()) {
@@ -3065,6 +3084,16 @@ router.post('/admin-review-withdrawal', async (req, res) => {
           : 'Вывод отклонён, ONIX возвращены',
         'rejected'
       );
+
+      addUserNotification(
+        user,
+        'withdrawal_rejected',
+        'Auszahlung abgelehnt',
+        request.adminComment
+          ? request.adminComment
+          : 'Deine Auszahlungsanfrage wurde abgelehnt. Die ONIX wurden deinem Guthaben zurückgegeben.',
+        'wallet'
+      );
     } else {
       addTransaction(
         user,
@@ -3075,8 +3104,19 @@ router.post('/admin-review-withdrawal', async (req, res) => {
           : 'Вывод одобрен',
         'approved'
       );
+
+      addUserNotification(
+        user,
+        'withdrawal_approved',
+        'Auszahlung genehmigt',
+        request.adminComment
+          ? request.adminComment
+          : 'Deine Auszahlungsanfrage wurde genehmigt.',
+        'wallet'
+      );
     }
 
+    user.markModified('notifications');
     user.markModified('withdrawalRequests');
     user.updatedAt = new Date();
 
@@ -3100,6 +3140,67 @@ router.post('/admin-review-withdrawal', async (req, res) => {
 
 
 
+
+
+// USER NOTIFICATIONS
+router.get('/notifications/:telegramId', async (req, res) => {
+  try {
+    const user = await User.findOne({ telegramId: req.params.telegramId }).select('notifications');
+
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    normalizeUserFields(user);
+
+    const notifications = [...(user.notifications || [])]
+      .sort((a, b) => Number(b.createdAt || 0) - Number(a.createdAt || 0))
+      .slice(0, 50);
+
+    return res.json({
+      notifications,
+      unreadCount: notifications.filter((item) => !Number(item.readAt || 0)).length,
+    });
+  } catch (error) {
+    return res.status(500).json({ error: error.message });
+  }
+});
+
+router.post('/notifications/mark-read', async (req, res) => {
+  try {
+    const { telegramId } = req.body;
+
+    const user = await User.findOne({ telegramId });
+
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    normalizeUserFields(user);
+
+    const now = Date.now();
+
+    user.notifications = (user.notifications || []).map((item) => {
+      if (!Number(item.readAt || 0)) {
+        item.readAt = now;
+      }
+
+      return item;
+    });
+
+    user.markModified('notifications');
+    user.updatedAt = new Date();
+    await user.save();
+
+    return res.json({
+      ok: true,
+      notifications: user.notifications || [],
+      unreadCount: 0,
+    });
+  } catch (error) {
+    return res.status(500).json({ error: error.message });
+  }
+});
 
 
 // PUBLIC LAUNCH INFO

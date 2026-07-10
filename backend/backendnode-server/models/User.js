@@ -311,6 +311,42 @@ const userSchema = new mongoose.Schema(
       default: [],
     },
 
+    notifications: {
+      type: [
+        {
+          id: {
+            type: String,
+            default: '',
+          },
+          type: {
+            type: String,
+            default: 'info',
+          },
+          title: {
+            type: String,
+            default: '',
+          },
+          message: {
+            type: String,
+            default: '',
+          },
+          actionTab: {
+            type: String,
+            default: '',
+          },
+          createdAt: {
+            type: Number,
+            default: Date.now,
+          },
+          readAt: {
+            type: Number,
+            default: 0,
+          },
+        },
+      ],
+      default: [],
+    },
+
     withdrawalRequests: {
       type: [
         {
