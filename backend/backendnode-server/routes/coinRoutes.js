@@ -3145,6 +3145,118 @@ router.post('/admin-review-withdrawal', async (req, res) => {
 
 
 
+
+// ADMIN: PLAYER USERNAMES EXPORT
+router.get('/admin-player-usernames', async (req, res) => {
+  try {
+    const secret = req.query.secret ? String(req.query.secret) : '';
+    const telegramId = req.query.telegramId ? String(req.query.telegramId) : '';
+
+    if (!isAdminRequest(secret, telegramId)) {
+      return res.status(403).json({
+        message: 'Forbidden',
+      });
+    }
+
+    const filter = String(req.query.filter || 'all').trim().toLowerCase();
+    const since7 = Date.now() - 7 * DAY_MS;
+
+    const users = await User.find({})
+      .select('telegramId username balance totalEarned weeklyEarned totalTaps totalUpgradesBought referralsCount createdAt lastSeenAt usedPromoCodes promoUsage withdrawalRequests withdrawClickedAt supportClickedAt')
+      .sort({ lastSeenAt: -1, createdAt: -1 })
+      .limit(1000)
+      .lean();
+
+    const normalizeUsername = (value) => {
+      const username = String(value || '').trim();
+      if (!username || username === 'Spieler') return '';
+      return username.startsWith('@') ? username : `@${username}`;
+    };
+
+    const hasPromoCode = (user, code) => {
+      const target = String(code || '').trim().toUpperCase();
+
+      const usedPromoCodes = Array.isArray(user.usedPromoCodes) ? user.usedPromoCodes : [];
+      const promoUsage = Array.isArray(user.promoUsage) ? user.promoUsage : [];
+
+      return (
+        usedPromoCodes.some((item) => String(item || '').toUpperCase() === target) ||
+        promoUsage.some((item) => String(item?.code || '').toUpperCase() === target)
+      );
+    };
+
+    const getPromoCodes = (user) => {
+      const codes = new Set();
+
+      (Array.isArray(user.usedPromoCodes) ? user.usedPromoCodes : []).forEach((code) => {
+        const clean = String(code || '').trim().toUpperCase();
+        if (clean) codes.add(clean);
+      });
+
+      (Array.isArray(user.promoUsage) ? user.promoUsage : []).forEach((item) => {
+        const clean = String(item?.code || '').trim().toUpperCase();
+        if (clean) codes.add(clean);
+      });
+
+      return Array.from(codes);
+    };
+
+    const matchesFilter = (user) => {
+      if (filter === 'new7') return new Date(user.createdAt || 0).getTime() >= since7;
+      if (filter === 'active7') return Number(user.lastSeenAt || 0) >= since7;
+      if (filter === 'start') return hasPromoCode(user, 'START');
+      if (filter === 'onix2026') return hasPromoCode(user, 'ONIX2026');
+      if (filter === 'launch') return hasPromoCode(user, 'LAUNCH');
+      if (filter === 'withdraw') {
+        const withdrawals = Array.isArray(user.withdrawalRequests) ? user.withdrawalRequests : [];
+        return Number(user.withdrawClickedAt || 0) > 0 || withdrawals.length > 0;
+      }
+      if (filter === 'support') return Number(user.supportClickedAt || 0) > 0;
+      if (filter === 'tapped') return Number(user.totalTaps || 0) > 0;
+
+      return true;
+    };
+
+    const players = users
+      .filter(matchesFilter)
+      .map((user) => {
+        const username = normalizeUsername(user.username);
+        const promoCodes = getPromoCodes(user);
+
+        return {
+          username,
+          telegramId: String(user.telegramId || ''),
+          displayName: username || String(user.username || 'Spieler'),
+          balance: roundOnix(user.balance || 0),
+          totalEarned: roundOnix(user.totalEarned || 0),
+          weeklyEarned: roundOnix(user.weeklyEarned || 0),
+          totalTaps: Number(user.totalTaps || 0),
+          totalUpgradesBought: Number(user.totalUpgradesBought || 0),
+          referralsCount: Number(user.referralsCount || 0),
+          promoCodes,
+          createdAt: user.createdAt ? new Date(user.createdAt).getTime() : 0,
+          lastSeenAt: Number(user.lastSeenAt || 0),
+          hasUsername: Boolean(username),
+        };
+      });
+
+    const usernames = players
+      .map((player) => player.username)
+      .filter(Boolean);
+
+    return res.json({
+      filter,
+      total: players.length,
+      usernamesCount: usernames.length,
+      usernames,
+      players,
+    });
+  } catch (error) {
+    return res.status(500).json({ error: error.message });
+  }
+});
+
+
 // USER NOTIFICATIONS
 router.get('/notifications/:telegramId', async (req, res) => {
   try {

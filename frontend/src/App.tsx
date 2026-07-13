@@ -7891,6 +7891,9 @@ div.fixed.inset-0.z-\[90\] button.bg-yellow-400 {
 .onix-admin-secondary{width:100%!important;margin-top:10px!important;display:block!important;}
 .onix-admin-input{width:100%!important;border-radius:16px!important;border:1px solid rgba(124,58,237,.22)!important;background:rgba(5,8,24,.92)!important;color:#fff!important;padding:12px!important;outline:none!important;font-weight:900!important;}
 .onix-admin-textarea{min-height:92px!important;resize:none!important;}
+.onix-admin-player-tools{display:grid!important;grid-template-columns:1fr auto!important;gap:8px!important;margin:10px 0 8px!important;}
+.onix-admin-player-tools select{min-width:0!important;border-radius:16px!important;border:1px solid rgba(124,58,237,.22)!important;background:rgba(5,8,24,.92)!important;color:#fff!important;padding:12px!important;outline:none!important;font-weight:900!important;}
+.onix-admin-player-tools button{border:0!important;border-radius:16px!important;background:linear-gradient(135deg,#2dd4ff,#c026d3)!important;color:#fff!important;font-weight:1000!important;padding:0 16px!important;}
 .onix-admin-search-line{display:grid!important;grid-template-columns:1fr auto!important;gap:8px!important;}
 .onix-admin-search-line button{border:0!important;border-radius:16px!important;background:linear-gradient(135deg,#2dd4ff,#c026d3)!important;color:#fff!important;font-weight:1000!important;padding:0 16px!important;}
 .onix-admin-metrics-grid{display:grid!important;grid-template-columns:1fr 1fr!important;gap:10px!important;margin:12px 0!important;}
@@ -11851,6 +11854,28 @@ type AdminTrafficAnalytics = {
   }>;
 };
 
+type AdminPlayerUsernamesPayload = {
+  filter: string;
+  total: number;
+  usernamesCount: number;
+  usernames: string[];
+  players: Array<{
+    username: string;
+    telegramId: string;
+    displayName: string;
+    balance: number;
+    totalEarned: number;
+    weeklyEarned: number;
+    totalTaps: number;
+    totalUpgradesBought: number;
+    referralsCount: number;
+    promoCodes: string[];
+    createdAt: number;
+    lastSeenAt: number;
+    hasUsername: boolean;
+  }>;
+};
+
 type AdminEconomyDashboard = {
   economyConfig: any;
   totals: {
@@ -12954,6 +12979,9 @@ function App() {
     useState<AdminEconomyDashboard | null>(null);
   const [adminTrafficAnalytics, setAdminTrafficAnalytics] =
     useState<AdminTrafficAnalytics | null>(null);
+  const [adminPlayerUsernames, setAdminPlayerUsernames] =
+    useState<AdminPlayerUsernamesPayload | null>(null);
+  const [adminPlayerFilter, setAdminPlayerFilter] = useState('all');
   const [adminEconomyVisible, setAdminEconomyVisible] = useState(false);
   const [adminSearchVisible, setAdminSearchVisible] = useState(false);
   const [adminSearchQuery, setAdminSearchQuery] = useState('');
@@ -18288,6 +18316,83 @@ body:not(.onix-body-home-lock) {
     }
   };
 
+  const loadAdminPlayerUsernames = async (filter = adminPlayerFilter) => {
+    const telegramId = getTelegramId();
+
+    try {
+      setIsAdminLoading(true);
+      setAdminPlayerFilter(filter);
+
+      const response = await axios.get(`${API_URL}/admin-player-usernames`, {
+        params: {
+          telegramId,
+          filter,
+        },
+      });
+
+      setAdminPlayerUsernames(response.data);
+      setAdminHubPage('traffic');
+    } catch (error: any) {
+      showToast(error?.response?.data?.message || 'Не удалось загрузить игроков', 'error');
+    } finally {
+      setIsAdminLoading(false);
+    }
+  };
+
+  const copyAdminUsernames = async () => {
+    const names = adminPlayerUsernames?.usernames || [];
+
+    if (names.length === 0) {
+      showToast('Username пока нет', 'info');
+      return;
+    }
+
+    try {
+      await navigator.clipboard.writeText(names.join('\n'));
+      showToast(`✅ Скопировано username: ${names.length}`, 'success');
+    } catch {
+      showToast('Не удалось скопировать username', 'error');
+    }
+  };
+
+  const exportAdminUsernamesCsv = () => {
+    const players = adminPlayerUsernames?.players || [];
+
+    if (players.length === 0) {
+      showToast('Список игроков пуст', 'info');
+      return;
+    }
+
+    const escapeCsv = (value: any) => {
+      const text = String(value ?? '').replace(/"/g, '""');
+      return `"${text}"`;
+    };
+
+    const rows = [
+      ['username', 'telegramId', 'balance', 'totalEarned', 'totalTaps', 'promoCodes', 'lastSeenAt'],
+      ...players.map((player) => [
+        player.username || '',
+        player.telegramId,
+        player.balance,
+        player.totalEarned,
+        player.totalTaps,
+        player.promoCodes.join('|'),
+        player.lastSeenAt ? new Date(player.lastSeenAt).toISOString() : '',
+      ]),
+    ];
+
+    const csv = rows.map((row) => row.map(escapeCsv).join(',')).join('\n');
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+
+    link.href = url;
+    link.download = `onix_players_${adminPlayerFilter}_${Date.now()}.csv`;
+    link.click();
+
+    URL.revokeObjectURL(url);
+  };
+
   const loadSuspiciousUsers = async () => {
     const telegramId = getTelegramId();
 
@@ -21181,6 +21286,56 @@ body:not(.onix-body-home-lock) {
                                     </div>
                                   </>
                                 )}
+                              </>
+                            )}
+
+                            <div className="onix-admin-section-head">
+                              <strong>👥 Player usernames</strong>
+                              <span>{adminPlayerUsernames ? `${adminPlayerUsernames.usernamesCount}/${adminPlayerUsernames.total}` : 'export'}</span>
+                            </div>
+
+                            <div className="onix-admin-player-tools">
+                              <select
+                                value={adminPlayerFilter}
+                                onChange={(event) => loadAdminPlayerUsernames(event.target.value)}
+                                disabled={isAdminLoading}
+                              >
+                                <option value="all">All players</option>
+                                <option value="new7">New 7 days</option>
+                                <option value="active7">Active 7 days</option>
+                                <option value="start">START users</option>
+                                <option value="onix2026">ONIX2026 users</option>
+                                <option value="launch">LAUNCH users</option>
+                                <option value="tapped">First tap users</option>
+                                <option value="withdraw">Withdraw clicked</option>
+                                <option value="support">Support clicked</option>
+                              </select>
+                              <button type="button" onClick={() => loadAdminPlayerUsernames(adminPlayerFilter)} disabled={isAdminLoading}>
+                                Laden
+                              </button>
+                            </div>
+
+                            {adminPlayerUsernames && (
+                              <>
+                                <div className="onix-admin-actions">
+                                  <button type="button" onClick={copyAdminUsernames}>
+                                    Copy usernames
+                                  </button>
+                                  <button type="button" onClick={exportAdminUsernamesCsv}>
+                                    Export CSV
+                                  </button>
+                                </div>
+
+                                <div className="onix-admin-list">
+                                  {adminPlayerUsernames.players.slice(0, 10).map((player) => (
+                                    <div key={`${player.telegramId}-${player.username}`} className="onix-admin-row is-column">
+                                      <strong>{player.username || player.displayName || 'Spieler ohne username'}</strong>
+                                      <em>ID: {player.telegramId} · balance {formatOnix(player.balance)} · taps {formatOnix(player.totalTaps)}</em>
+                                      <p>{player.promoCodes.length > 0 ? `Promo: ${player.promoCodes.join(', ')}` : 'Promo: —'}</p>
+                                    </div>
+                                  ))}
+                                  {adminPlayerUsernames.players.length === 0 && <p className="onix-admin-empty">Игроков по фильтру нет.</p>}
+                                </div>
                               </>
                             )}
 
