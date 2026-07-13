@@ -18343,15 +18343,15 @@ body:not(.onix-body-home-lock) {
     const names = adminPlayerUsernames?.usernames || [];
 
     if (names.length === 0) {
-      showToast('Username пока нет', 'info');
+      showToast('Настоящих @username пока нет', 'info');
       return;
     }
 
     try {
       await navigator.clipboard.writeText(names.join('\n'));
-      showToast(`✅ Скопировано username: ${names.length}`, 'success');
+      showToast(`✅ Скопировано @username: ${names.length}`, 'success');
     } catch {
-      showToast('Не удалось скопировать username', 'error');
+      showToast('Не удалось скопировать @username', 'error');
     }
   };
 
@@ -18369,9 +18369,11 @@ body:not(.onix-body-home-lock) {
     };
 
     const rows = [
-      ['username', 'telegramId', 'balance', 'totalEarned', 'totalTaps', 'promoCodes', 'lastSeenAt'],
+      ['username', 'displayName', 'hasUsername', 'telegramId', 'balance', 'totalEarned', 'totalTaps', 'promoCodes', 'lastSeenAt'],
       ...players.map((player) => [
         player.username || '',
+        player.displayName || '',
+        player.hasUsername ? 'yes' : 'no',
         player.telegramId,
         player.balance,
         player.totalEarned,
@@ -21319,7 +21321,7 @@ body:not(.onix-body-home-lock) {
                               <>
                                 <div className="onix-admin-actions">
                                   <button type="button" onClick={copyAdminUsernames}>
-                                    Copy usernames
+                                    Copy @usernames
                                   </button>
                                   <button type="button" onClick={exportAdminUsernamesCsv}>
                                     Export CSV
@@ -21328,8 +21330,13 @@ body:not(.onix-body-home-lock) {
 
                                 <div className="onix-admin-list">
                                   {adminPlayerUsernames.players.slice(0, 10).map((player) => (
-                                    <div key={`${player.telegramId}-${player.username}`} className="onix-admin-row is-column">
+                                    <div key={`${player.telegramId}-${player.username || player.displayName}`} className="onix-admin-row is-column">
                                       <strong>{player.username || player.displayName || 'Spieler ohne username'}</strong>
+                                      <em>
+                                        {player.username
+                                          ? 'echter Telegram @username'
+                                          : 'nur Telegram Name, kein @username'}
+                                      </em>
                                       <em>ID: {player.telegramId} · balance {formatOnix(player.balance)} · taps {formatOnix(player.totalTaps)}</em>
                                       <p>{player.promoCodes.length > 0 ? `Promo: ${player.promoCodes.join(', ')}` : 'Promo: —'}</p>
                                     </div>

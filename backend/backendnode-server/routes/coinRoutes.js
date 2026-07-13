@@ -3168,9 +3168,17 @@ router.get('/admin-player-usernames', async (req, res) => {
       .lean();
 
     const normalizeUsername = (value) => {
-      const username = String(value || '').trim();
-      if (!username || username === 'Spieler') return '';
-      return username.startsWith('@') ? username : `@${username}`;
+      const raw = String(value || '').trim();
+
+      if (!raw || raw === 'Spieler') return '';
+
+      const clean = raw.startsWith('@') ? raw.slice(1) : raw;
+
+      // Telegram usernames are 5-32 chars, Latin letters, digits and underscores.
+      // Display names like "Ronny", "Siegfrid", "DanielArne" must not be converted into @links.
+      if (!/^[a-zA-Z][a-zA-Z0-9_]{4,31}$/.test(clean)) return '';
+
+      return `@${clean}`;
     };
 
     const hasPromoCode = (user, code) => {
@@ -3226,7 +3234,7 @@ router.get('/admin-player-usernames', async (req, res) => {
         return {
           username,
           telegramId: String(user.telegramId || ''),
-          displayName: username || String(user.username || 'Spieler'),
+          displayName: String(user.username || 'Spieler'),
           balance: roundOnix(user.balance || 0),
           totalEarned: roundOnix(user.totalEarned || 0),
           weeklyEarned: roundOnix(user.weeklyEarned || 0),
