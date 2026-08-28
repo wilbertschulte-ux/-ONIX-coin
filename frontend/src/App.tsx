@@ -12189,6 +12189,53 @@ class AppErrorBoundary extends React.Component<
 
 function App() {
   const telegramAvatarUrl = getTelegramAvatarUrl();
+
+  // Temporary, read-only Telegram authentication diagnostic.
+  // It does not change balance, progress, tasks, energy, or user data.
+  useEffect(() => {
+    const initData = window.Telegram?.WebApp?.initData || '';
+
+    if (!initData) {
+      tg?.showAlert?.('AUTH TEST: Telegram initData is missing');
+      return;
+    }
+
+    let cancelled = false;
+
+    axios
+      .post(
+        `${API_URL}/telegram-auth-test`,
+        { initData },
+        { timeout: 10000 }
+      )
+      .then((response) => {
+        if (cancelled) return;
+
+        const data = response.data;
+        const user = data?.user;
+        const username = user?.username ? `@${user.username}` : 'not set';
+        const fullName = [user?.first_name, user?.last_name].filter(Boolean).join(' ') || 'not set';
+        const language = user?.language_code || 'not set';
+
+        tg?.showAlert?.(
+          `AUTH OK\nID: ${user?.id ?? 'unknown'}\nName: ${fullName}\nUsername: ${username}\nLanguage: ${language}`
+        );
+      })
+      .catch((error) => {
+        if (cancelled) return;
+
+        const message =
+          error?.response?.data?.error ||
+          error?.message ||
+          'Unknown authentication error';
+
+        tg?.showAlert?.(`AUTH FAILED\n${message}`);
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, []);
   useEffect(() => {
     const updateViewportVars = () => {
       const viewportHeight = Math.floor(
