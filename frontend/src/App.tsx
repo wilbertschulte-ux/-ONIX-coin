@@ -30,6 +30,16 @@ if (tg) {
   tg.expand();
 }
 
+axios.interceptors.request.use((config) => {
+  const initData = window.Telegram?.WebApp?.initData || '';
+
+  if (initData) {
+    config.headers.set('X-Telegram-Init-Data', initData);
+  }
+
+  return config;
+});
+
 const onixBoostIcons = {
   tap: onixBoostTapStrengthIcon,
   miner: onixBoostCoinMultiplierIcon,
@@ -11245,14 +11255,26 @@ type TransactionFilter =
 type AdminUserSearchResult = {
   telegramId: string;
   username: string;
+  telegramUsername?: string;
+  firstName?: string;
+  lastName?: string;
+  displayName?: string;
+  languageCode?: string;
+  photoUrl?: string;
+  telegramProfileUrl?: string;
   balance: number;
   totalEarned: number;
   weeklyEarned: number;
   referralsCount: number;
   totalTaps: number;
+  level?: number;
+  selectedTitle?: string;
+  league?: string;
   isSuspicious: boolean;
   isFrozen: boolean;
   frozenReason: string;
+  createdAt?: string | number | null;
+  updatedAt?: string | number | null;
 };
 
 type AdminOperationsPayload = {
@@ -12139,6 +12161,7 @@ class AppErrorBoundary extends React.Component<
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          'X-Telegram-Init-Data': window.Telegram?.WebApp?.initData || '',
         },
         body: JSON.stringify({
           telegramId,
@@ -12189,7 +12212,6 @@ class AppErrorBoundary extends React.Component<
 
 function App() {
   const telegramAvatarUrl = getTelegramAvatarUrl();
-
   useEffect(() => {
     const updateViewportVars = () => {
       const viewportHeight = Math.floor(
@@ -12343,6 +12365,9 @@ function App() {
   const [adminSearchVisible, setAdminSearchVisible] = useState(false);
   const [adminSearchQuery, setAdminSearchQuery] = useState('');
   const [adminSearchResults, setAdminSearchResults] = useState<AdminUserSearchResult[]>([]);
+  const [adminUserListTotal, setAdminUserListTotal] = useState(0);
+  const [adminUserListPage, setAdminUserListPage] = useState(1);
+  const [adminUserListTotalPages, setAdminUserListTotalPages] = useState(1);
   const [adminSelectedUser, setAdminSelectedUser] =
     useState<AdminUserProfile | null>(null);
   const [adminAdjustAmount, setAdminAdjustAmount] = useState('');
@@ -12486,15 +12511,7 @@ function App() {
           window.Telegram?.WebApp?.initDataUnsafe?.start_param || null;
 
         await axios.post(`${API_URL}/create`, {
-          telegramId,
-          username:
-            `${window.Telegram?.WebApp?.initDataUnsafe?.user?.first_name || ''} ${
-              window.Telegram?.WebApp?.initDataUnsafe?.user?.last_name || ''
-            }`.trim() || 'Spieler',
           referredBy: startParam,
-          // Signed Telegram Mini App payload. Backend uses it only to sync
-          // verified Telegram profile fields; gameplay routes remain unchanged.
-          initData: window.Telegram?.WebApp?.initData || '',
         });
 
         const response = await axios.get(`${API_URL}/${telegramId}`);
@@ -13829,13 +13846,9 @@ function App() {
     }
   };
 
-  const searchAdminUsers = async () => {
+  const searchAdminUsers = async (page = 1, queryOverride?: string) => {
     const telegramId = getTelegramId();
-
-    if (!adminSearchQuery.trim()) {
-      setAdminSearchResults([]);
-      return;
-    }
+    const query = typeof queryOverride === 'string' ? queryOverride.trim() : adminSearchQuery.trim();
 
     try {
       setIsAdminLoading(true);
@@ -13843,13 +13856,19 @@ function App() {
       const response = await axios.get(`${API_URL}/admin-search-users`, {
         params: {
           telegramId,
-          query: adminSearchQuery.trim(),
+          query,
+          page,
+          limit: 50,
         },
       });
 
       setAdminSearchResults(response.data.users || []);
+      setAdminUserListTotal(Number(response.data.pagination?.total || 0));
+      setAdminUserListPage(Number(response.data.pagination?.page || page));
+      setAdminUserListTotalPages(Number(response.data.pagination?.totalPages || 1));
+      setAdminSelectedUser(null);
     } catch (error: any) {
-      showToast(error?.response?.data?.message || 'Не удалось найти пользователей', 'error');
+      showToast(error?.response?.data?.message || 'Не удалось загрузить пользователей', 'error');
     } finally {
       setIsAdminLoading(false);
     }
@@ -13867,7 +13886,8 @@ function App() {
         },
       });
 
-      setAdminSelectedUser(response.data.user);
+      const summary = adminSearchResults.find((user) => user.telegramId === targetTelegramId);
+      setAdminSelectedUser({ ...(summary || {}), ...(response.data.user || {}) } as AdminUserProfile);
     } catch (error: any) {
       showToast(error?.response?.data?.message || 'Не удалось загрузить профиль', 'error');
     } finally {
@@ -19525,8 +19545,8 @@ body:not(.onix-body-home-lock) {
                     <button type="button" onClick={loadAdminEconomyDashboard} disabled={isAdminLoading}>
                       <span>📊</span><strong>Экономика</strong><em>балансы, выводы, конфиг</em>
                     </button>
-                    <button type="button" onClick={() => { setAdminSearchVisible(false); setAdminHubPage('search'); }} disabled={isAdminLoading}>
-                      <span>🔎</span><strong>Поиск игрока</strong><em>профиль, баланс, бан</em>
+                    <button type="button" onClick={() => { setAdminSearchVisible(false); setAdminHubPage('search'); setAdminSearchQuery(''); void searchAdminUsers(1, ''); }} disabled={isAdminLoading}>
+                      <span>👥</span><strong>Все игроки</strong><em>список, поиск, профиль</em>
                     </button>
                     <button type="button" onClick={loadSuspiciousUsers} disabled={isAdminLoading}>
                       <span>🚨</span><strong>Suspicious</strong><em>подозрительные аккаунты</em>
@@ -19612,19 +19632,33 @@ body:not(.onix-body-home-lock) {
 
                     {adminHubPage === 'search' && (
                       <div className="onix-admin-section-card">
-                        <div className="onix-admin-section-head"><strong>🔎 Поиск игрока</strong><span>{adminSearchResults.length}</span></div>
-                        <div className="onix-admin-search-line"><input value={adminSearchQuery} onChange={(event) => setAdminSearchQuery(event.target.value)} placeholder="username или Telegram ID" className="onix-admin-input" /><button type="button" onClick={searchAdminUsers} disabled={isAdminLoading}>Найти</button></div>
+                        <div className="onix-admin-section-head"><strong>👥 Все игроки</strong><span>{adminUserListTotal}</span></div>
+                        <div className="onix-admin-search-line"><input value={adminSearchQuery} onChange={(event) => setAdminSearchQuery(event.target.value)} onKeyDown={(event) => { if (event.key === 'Enter') void searchAdminUsers(1); }} placeholder="ID, имя или @username" className="onix-admin-input" /><button type="button" onClick={() => searchAdminUsers(1)} disabled={isAdminLoading}>Найти</button></div>
+                        <button type="button" className="onix-admin-secondary" onClick={() => { setAdminSearchQuery(''); void searchAdminUsers(1, ''); }} disabled={isAdminLoading}>Показать всех</button>
                         <div className="onix-admin-list">
                           {adminSearchResults.map((user) => (
                             <button key={user.telegramId} type="button" className="onix-admin-row as-button" onClick={() => loadAdminUserProfile(user.telegramId)}>
-                              <div><strong>{user.username}</strong><em>ID: {user.telegramId}</em></div><b>{formatOnix(user.balance)}</b>
+                              <div style={{ minWidth: 0 }}>
+                                <strong>{user.displayName || user.username || 'Spieler'}</strong>
+                                <em>{user.telegramUsername ? `@${String(user.telegramUsername).replace(/^@+/, '')} · ` : ''}ID: {user.telegramId}</em>
+                                <em>Level {user.level || 1}{user.createdAt ? ` · ${new Date(user.createdAt).toLocaleDateString('de-DE')}` : ''}</em>
+                              </div>
+                              <b>{formatOnix(user.balance)}</b>
                             </button>
                           ))}
-                          {adminSearchResults.length === 0 && <p className="onix-admin-empty">Введите запрос и нажмите Найти.</p>}
+                          {adminSearchResults.length === 0 && <p className="onix-admin-empty">Игроки не найдены.</p>}
                         </div>
+                        {adminUserListTotalPages > 1 && (
+                          <div className="onix-admin-actions">
+                            <button type="button" onClick={() => searchAdminUsers(adminUserListPage - 1)} disabled={isAdminLoading || adminUserListPage <= 1}>← Назад</button>
+                            <button type="button" onClick={() => searchAdminUsers(adminUserListPage + 1)} disabled={isAdminLoading || adminUserListPage >= adminUserListTotalPages}>Далее →</button>
+                          </div>
+                        )}
+                        {adminUserListTotalPages > 1 && <p className="onix-admin-muted" style={{ textAlign: 'center', marginTop: 8 }}>Страница {adminUserListPage} из {adminUserListTotalPages}</p>}
                         {adminSelectedUser && (
                           <div className="onix-admin-user-card">
-                            <strong>{adminSelectedUser.username}</strong><span>ID: {adminSelectedUser.telegramId}</span>
+                            <strong>{adminSelectedUser.displayName || adminSelectedUser.username}</strong><span>{adminSelectedUser.telegramUsername ? `@${String(adminSelectedUser.telegramUsername).replace(/^@+/, '')} · ` : ''}ID: {adminSelectedUser.telegramId}</span>
+                            {adminSelectedUser.telegramProfileUrl && <a href={adminSelectedUser.telegramProfileUrl} target="_blank" rel="noreferrer" className="onix-admin-secondary" style={{ textAlign: 'center', textDecoration: 'none' }}>Открыть Telegram-профиль ↗</a>}
                             <div className="onix-admin-metrics-grid"><div><span>Баланс</span><strong>{formatOnix(adminSelectedUser.balance)}</strong></div><div><span>Всего</span><strong>{formatOnix(adminSelectedUser.totalEarned)}</strong></div></div>
                             <input value={adminAdjustAmount} onChange={(event) => setAdminAdjustAmount(event.target.value)} placeholder="Сумма +/-" className="onix-admin-input" />
                             <input value={adminActionReason} onChange={(event) => setAdminActionReason(event.target.value)} placeholder="Причина" className="onix-admin-input" />
@@ -21477,7 +21511,7 @@ body:not(.onix-body-home-lock) {
               />
 
               <button
-                onClick={searchAdminUsers}
+                onClick={() => searchAdminUsers(1)}
                 disabled={isAdminLoading}
                 className="rounded-2xl bg-yellow-400 px-4 py-3 font-bold text-black active:scale-95 disabled:opacity-50"
               >
