@@ -11,38 +11,7 @@ const userSchema = new mongoose.Schema(
 
     username: {
       type: String,
-      default: '',
-      trim: true,
-    },
-
-    firstName: {
-      type: String,
-      default: '',
-      trim: true,
-    },
-
-    lastName: {
-      type: String,
-      default: '',
-      trim: true,
-    },
-
-    displayName: {
-      type: String,
       default: 'Spieler',
-      trim: true,
-    },
-
-    languageCode: {
-      type: String,
-      default: 'de',
-      trim: true,
-    },
-
-    photoUrl: {
-      type: String,
-      default: '',
-      trim: true,
     },
 
     balance: {

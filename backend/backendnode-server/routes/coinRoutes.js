@@ -1,5 +1,4 @@
 const axios = require('axios');
-const crypto = require('crypto');
 const express = require('express');
 const mongoose = require('mongoose');
 
@@ -8,137 +7,6 @@ const router = express.Router();
 const API_RATE_LIMITS = new Map();
 const ECONOMY_OVERRIDES = {};
 const APP_VERSION = process.env.APP_VERSION || '1.0.0';
-
-const TELEGRAM_AUTH_MAX_AGE_SECONDS = Number(process.env.TELEGRAM_AUTH_MAX_AGE_SECONDS || 86400);
-
-function verifyTelegramInitData(initData) {
-  const botToken = String(process.env.BOT_TOKEN || '').trim();
-  const rawInitData = String(initData || '').trim();
-
-  if (!botToken) {
-    throw new Error('BOT_TOKEN is not configured');
-  }
-
-  if (!rawInitData) {
-    return { ok: false, reason: 'missing_init_data' };
-  }
-
-  const params = new URLSearchParams(rawInitData);
-  const receivedHash = params.get('hash');
-
-  if (!receivedHash) {
-    return { ok: false, reason: 'missing_hash' };
-  }
-
-  params.delete('hash');
-  params.delete('signature');
-
-  const dataCheckString = [...params.entries()]
-    .sort(([a], [b]) => a.localeCompare(b))
-    .map(([key, value]) => `${key}=${value}`)
-    .join('\n');
-
-  const secretKey = crypto
-    .createHmac('sha256', 'WebAppData')
-    .update(botToken)
-    .digest();
-
-  const calculatedHash = crypto
-    .createHmac('sha256', secretKey)
-    .update(dataCheckString)
-    .digest('hex');
-
-  const receivedBuffer = Buffer.from(receivedHash, 'hex');
-  const calculatedBuffer = Buffer.from(calculatedHash, 'hex');
-
-  if (
-    receivedBuffer.length !== calculatedBuffer.length ||
-    !crypto.timingSafeEqual(receivedBuffer, calculatedBuffer)
-  ) {
-    return { ok: false, reason: 'invalid_hash' };
-  }
-
-  const authDate = Number(params.get('auth_date') || 0);
-  const nowSeconds = Math.floor(Date.now() / 1000);
-
-  if (
-    TELEGRAM_AUTH_MAX_AGE_SECONDS > 0 &&
-    (!authDate || nowSeconds - authDate > TELEGRAM_AUTH_MAX_AGE_SECONDS || authDate > nowSeconds + 60)
-  ) {
-    return { ok: false, reason: 'expired_init_data' };
-  }
-
-  let user = null;
-  try {
-    const rawUser = params.get('user');
-    user = rawUser ? JSON.parse(rawUser) : null;
-  } catch {
-    return { ok: false, reason: 'invalid_user_data' };
-  }
-
-  if (!user?.id) {
-    return { ok: false, reason: 'missing_user' };
-  }
-
-  return {
-    ok: true,
-    authDate,
-    user: {
-      id: String(user.id),
-      firstName: String(user.first_name || '').trim(),
-      lastName: String(user.last_name || '').trim(),
-      username: String(user.username || '').replace(/^@/, '').trim(),
-      languageCode: String(user.language_code || 'de').trim() || 'de',
-      photoUrl: String(user.photo_url || '').trim(),
-    },
-  };
-}
-
-function getTelegramInitDataFromRequest(req) {
-  return String(req.headers['x-telegram-init-data'] || '').trim();
-}
-
-function isTelegramAuthPublicPath(path) {
-  return path === '/config' || path === '/version' || path.startsWith('/cron-');
-}
-
-function telegramAuthMiddleware(req, res, next) {
-  try {
-    if (isTelegramAuthPublicPath(req.path)) {
-      return next();
-    }
-
-    const verification = verifyTelegramInitData(getTelegramInitDataFromRequest(req));
-
-    if (!verification.ok) {
-      return res.status(401).json({
-        message: 'Telegram-Authentifizierung fehlgeschlagen.',
-        code: verification.reason,
-      });
-    }
-
-    req.telegramUser = verification.user;
-    req.authenticatedTelegramId = verification.user.id;
-
-    if (req.body && Object.prototype.hasOwnProperty.call(req.body, 'telegramId')) {
-      req.body.telegramId = verification.user.id;
-    }
-
-    const queryTelegramId = req.query?.telegramId ? String(req.query.telegramId) : '';
-    if (queryTelegramId && queryTelegramId !== verification.user.id) {
-      return res.status(403).json({
-        message: 'Telegram-ID stimmt nicht mit der authentifizierten Sitzung überein.',
-      });
-    }
-
-    return next();
-  } catch (error) {
-    console.error('Telegram auth error:', error);
-    return res.status(500).json({
-      message: 'Telegram-Authentifizierung konnte nicht geprüft werden.',
-    });
-  }
-}
 
 
 function escapeRegExpValue(value) {
@@ -262,17 +130,6 @@ function cleanupRateLimits(now = Date.now()) {
     }
   }
 }
-
-router.use(telegramAuthMiddleware);
-
-router.param('telegramId', (req, res, next, telegramId) => {
-  if (req.authenticatedTelegramId && String(telegramId) !== String(req.authenticatedTelegramId)) {
-    return res.status(403).json({
-      message: 'Telegram-ID stimmt nicht mit der authentifizierten Sitzung überein.',
-    });
-  }
-  return next();
-});
 
 router.use((req, res, next) => {
   try {
@@ -1664,11 +1521,13 @@ function normalizeUserFields(user) {
 
 
 
-function isAdminRequest(_secret, telegramId) {
-  return Boolean(
+function isAdminRequest(secret, telegramId) {
+  const hasSecret = process.env.ADMIN_SECRET && secret === process.env.ADMIN_SECRET;
+  const hasAdminTelegramId =
     process.env.ADMIN_TELEGRAM_ID &&
-      String(telegramId || '') === String(process.env.ADMIN_TELEGRAM_ID)
-  );
+    String(telegramId || '') === String(process.env.ADMIN_TELEGRAM_ID);
+
+  return Boolean(hasSecret || hasAdminTelegramId);
 }
 
 
@@ -3498,32 +3357,20 @@ router.get('/:telegramId', async (req, res) => {
 // CREATE USER
 router.post('/create', async (req, res) => {
   try {
-    const telegramId = req.authenticatedTelegramId;
-    const telegramUser = req.telegramUser;
-    const { referredBy } = req.body;
+    const { telegramId, username, referredBy } = req.body;
 
-    if (!telegramId || !telegramUser) {
-      return res.status(401).json({
-        message: 'Telegram authentication is required',
+    if (!telegramId) {
+      return res.status(400).json({
+        message: 'Telegram ID is required',
       });
     }
-
-    const displayName =
-      [telegramUser.firstName, telegramUser.lastName].filter(Boolean).join(' ').trim() ||
-      telegramUser.username ||
-      'Spieler';
 
     let user = await User.findOne({ telegramId });
 
     if (!user) {
       user = new User({
         telegramId,
-        username: telegramUser.username,
-        firstName: telegramUser.firstName,
-        lastName: telegramUser.lastName,
-        displayName,
-        languageCode: telegramUser.languageCode,
-        photoUrl: telegramUser.photoUrl,
+        username: username || 'Spieler',
         referredBy: referredBy || null,
         completedTasks: [],
         completedAchievements: [],
@@ -3611,7 +3458,7 @@ router.post('/create', async (req, res) => {
 
           refUser.referralsCount += 1;
           incrementMissionStat(refUser, 'weeklyReferrals');
-          refUser.lastReferralUsername = displayName;
+          refUser.lastReferralUsername = username || 'neuer Spieler';
           refUser.updatedAt = new Date();
 
           user.referredByUsername = refUser.username || 'Spielers';
@@ -3644,12 +3491,10 @@ router.post('/create', async (req, res) => {
     } else {
       normalizeUserFields(user);
 
-      user.username = telegramUser.username;
-      user.firstName = telegramUser.firstName;
-      user.lastName = telegramUser.lastName;
-      user.displayName = displayName;
-      user.languageCode = telegramUser.languageCode;
-      user.photoUrl = telegramUser.photoUrl;
+      if (username && user.username !== username) {
+        user.username = username;
+      }
+
       user.updatedAt = new Date();
 
       // ВАЖНО:

@@ -30,16 +30,6 @@ if (tg) {
   tg.expand();
 }
 
-axios.interceptors.request.use((config) => {
-  const initData = window.Telegram?.WebApp?.initData || '';
-
-  if (initData) {
-    config.headers.set('X-Telegram-Init-Data', initData);
-  }
-
-  return config;
-});
-
 const onixBoostIcons = {
   tap: onixBoostTapStrengthIcon,
   miner: onixBoostCoinMultiplierIcon,
@@ -12149,7 +12139,6 @@ class AppErrorBoundary extends React.Component<
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'X-Telegram-Init-Data': window.Telegram?.WebApp?.initData || '',
         },
         body: JSON.stringify({
           telegramId,
@@ -12496,6 +12485,11 @@ function App() {
           window.Telegram?.WebApp?.initDataUnsafe?.start_param || null;
 
         await axios.post(`${API_URL}/create`, {
+          telegramId,
+          username:
+            `${window.Telegram?.WebApp?.initDataUnsafe?.user?.first_name || ''} ${
+              window.Telegram?.WebApp?.initDataUnsafe?.user?.last_name || ''
+            }`.trim() || 'Spieler',
           referredBy: startParam,
         });
 
