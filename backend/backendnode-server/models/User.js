@@ -11,7 +11,38 @@ const userSchema = new mongoose.Schema(
 
     username: {
       type: String,
+      default: '',
+      trim: true,
+    },
+
+    firstName: {
+      type: String,
+      default: '',
+      trim: true,
+    },
+
+    lastName: {
+      type: String,
+      default: '',
+      trim: true,
+    },
+
+    displayName: {
+      type: String,
       default: 'Spieler',
+      trim: true,
+    },
+
+    languageCode: {
+      type: String,
+      default: 'de',
+      trim: true,
+    },
+
+    photoUrl: {
+      type: String,
+      default: '',
+      trim: true,
     },
 
     balance: {
@@ -228,26 +259,6 @@ const userSchema = new mongoose.Schema(
       default: [],
     },
 
-    promoUsage: {
-      type: [
-        {
-          code: {
-            type: String,
-            default: '',
-          },
-          reward: {
-            type: Number,
-            default: 0,
-          },
-          createdAt: {
-            type: Number,
-            default: Date.now,
-          },
-        },
-      ],
-      default: [],
-    },
-
     welcomeBonusClaimed: {
       type: Boolean,
       default: false,
@@ -305,46 +316,6 @@ const userSchema = new mongoose.Schema(
           createdAt: {
             type: Number,
             default: Date.now,
-          },
-        },
-      ],
-      default: [],
-    },
-
-    notifications: {
-      type: [
-        {
-          id: {
-            type: String,
-            default: '',
-          },
-          type: {
-            type: String,
-            default: 'info',
-          },
-          title: {
-            type: String,
-            default: '',
-          },
-          message: {
-            type: String,
-            default: '',
-          },
-          actionTab: {
-            type: String,
-            default: '',
-          },
-          category: {
-            type: String,
-            default: 'news',
-          },
-          createdAt: {
-            type: Number,
-            default: Date.now,
-          },
-          readAt: {
-            type: Number,
-            default: 0,
           },
         },
       ],
@@ -569,41 +540,6 @@ const userSchema = new mongoose.Schema(
     lastSeenAt: {
       type: Number,
       default: Date.now,
-    },
-
-    lastEnergyRecoveryAt: {
-      type: Number,
-      default: Date.now,
-    },
-
-    lastEnergyFullReminderAt: {
-      type: Number,
-      default: 0,
-    },
-
-    lastDailyBonusReminderDay: {
-      type: String,
-      default: '',
-    },
-
-    walletOpenedAt: {
-      type: Number,
-      default: 0,
-    },
-
-    withdrawClickedAt: {
-      type: Number,
-      default: 0,
-    },
-
-    supportClickedAt: {
-      type: Number,
-      default: 0,
-    },
-
-    reminderOptOut: {
-      type: Boolean,
-      default: false,
     },
 
     lastTapAt: {

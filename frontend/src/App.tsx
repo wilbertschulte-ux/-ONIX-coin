@@ -24,15 +24,21 @@ import onixBoostStreakShieldIcon from './assets/onix-boost-icons/streak_shield.p
 import onixChestIcon from './assets/onix-boost-icons/onix_chest.png';
 
 const tg = window.Telegram?.WebApp;
-const WITHDRAW_SUPPORT_URL = 'https://t.me/Wilbert_Schulte';
-const ONIX_OFFICIAL_CHANNEL_URL = 'https://t.me/+LEfKu_gQS_o4YTVh';
-const WITHDRAW_SUCCESS_MESSAGE =
-  'Deine Auszahlungs-Quest wurde erfolgreich erstellt. Kontaktiere den technischen Support, um die Auszahlung zu bestätigen.';
 
 if (tg) {
   tg.ready();
   tg.expand();
 }
+
+axios.interceptors.request.use((config) => {
+  const initData = window.Telegram?.WebApp?.initData || '';
+
+  if (initData) {
+    config.headers.set('X-Telegram-Init-Data', initData);
+  }
+
+  return config;
+});
 
 const onixBoostIcons = {
   tap: onixBoostTapStrengthIcon,
@@ -2191,352 +2197,6 @@ body,
   .onix-home-locked .onix-home-energy-block {
     margin-top: 8px !important;
   }
-}
-
-
-
-/* === ONIX side menu hub === */
-.onix-side-menu-backdrop {
-  position: fixed !important;
-  inset: 0 !important;
-  z-index: 2147482800 !important;
-  background: rgba(2, 2, 12, 0.58) !important;
-  backdrop-filter: blur(10px) !important;
-  display: flex !important;
-  align-items: stretch !important;
-  justify-content: flex-start !important;
-}
-
-.onix-side-menu-panel {
-  width: min(88vw, 360px) !important;
-  height: 100dvh !important;
-  overflow-y: auto !important;
-  padding: calc(18px + env(safe-area-inset-top)) 16px calc(22px + env(safe-area-inset-bottom)) !important;
-  border-right: 1px solid rgba(168, 85, 247, 0.42) !important;
-  background:
-    radial-gradient(circle at 18% 3%, rgba(168, 85, 247, 0.34), transparent 30%),
-    radial-gradient(circle at 95% 18%, rgba(45, 212, 255, 0.14), transparent 30%),
-    linear-gradient(160deg, rgba(11, 10, 33, 0.98), rgba(3, 6, 21, 0.99)) !important;
-  box-shadow:
-    22px 0 70px rgba(0, 0, 0, 0.68),
-    0 0 34px rgba(168, 85, 247, 0.28),
-    inset 0 0 26px rgba(132, 86, 255, 0.09) !important;
-  color: #fff !important;
-  animation: onixSideMenuSlide 220ms ease-out both !important;
-}
-
-@keyframes onixSideMenuSlide {
-  from { transform: translateX(-22px); opacity: 0; }
-  to { transform: translateX(0); opacity: 1; }
-}
-
-.onix-side-menu-head {
-  display: flex !important;
-  align-items: flex-start !important;
-  justify-content: space-between !important;
-  gap: 14px !important;
-  margin-bottom: 14px !important;
-}
-
-.onix-side-menu-head p,
-.onix-side-menu-group > p {
-  margin: 0 0 5px !important;
-  color: #67e8f9 !important;
-  font-size: 10px !important;
-  font-weight: 1000 !important;
-  letter-spacing: 0.18em !important;
-  text-transform: uppercase !important;
-}
-
-.onix-side-menu-head h2 {
-  margin: 0 !important;
-  font-size: 30px !important;
-  line-height: 1 !important;
-  font-weight: 1000 !important;
-  letter-spacing: -0.03em !important;
-}
-
-.onix-side-menu-head button {
-  width: 36px !important;
-  height: 36px !important;
-  border-radius: 14px !important;
-  border: 1px solid rgba(255, 255, 255, 0.12) !important;
-  background: rgba(255, 255, 255, 0.06) !important;
-  color: #fff !important;
-  font-size: 25px !important;
-  line-height: 1 !important;
-}
-
-.onix-side-menu-player {
-  display: grid !important;
-  grid-template-columns: 52px 1fr !important;
-  gap: 12px !important;
-  align-items: center !important;
-  padding: 13px !important;
-  margin-bottom: 14px !important;
-  border-radius: 24px !important;
-  border: 1px solid rgba(250, 204, 21, 0.18) !important;
-  background: linear-gradient(135deg, rgba(250, 204, 21, 0.12), rgba(168, 85, 247, 0.10)) !important;
-}
-
-.onix-side-avatar {
-  width: 52px !important;
-  height: 52px !important;
-  display: grid !important;
-  place-items: center !important;
-  border-radius: 18px !important;
-  background: radial-gradient(circle at 35% 20%, rgba(45, 212, 255, 0.36), rgba(168, 85, 247, 0.24)) !important;
-  border: 1px solid rgba(255, 255, 255, 0.14) !important;
-  font-size: 23px !important;
-  font-weight: 1000 !important;
-}
-
-.onix-side-menu-player strong {
-  display: block !important;
-  font-size: 16px !important;
-  font-weight: 1000 !important;
-}
-
-.onix-side-menu-player span {
-  display: block !important;
-  margin-top: 4px !important;
-  color: rgba(255, 255, 255, 0.54) !important;
-  font-size: 11px !important;
-  font-weight: 800 !important;
-}
-
-.onix-side-menu-group {
-  margin-top: 14px !important;
-}
-
-.onix-side-menu-group button {
-  width: 100% !important;
-  display: grid !important;
-  grid-template-columns: 42px 1fr auto !important;
-  align-items: center !important;
-  gap: 11px !important;
-  margin-top: 8px !important;
-  padding: 12px !important;
-  border-radius: 20px !important;
-  border: 1px solid rgba(255, 255, 255, 0.08) !important;
-  background: rgba(255, 255, 255, 0.045) !important;
-  color: #fff !important;
-  text-align: left !important;
-}
-
-.onix-side-menu-group button > span {
-  width: 42px !important;
-  height: 42px !important;
-  display: grid !important;
-  place-items: center !important;
-  border-radius: 15px !important;
-  background: rgba(168, 85, 247, 0.14) !important;
-  border: 1px solid rgba(168, 85, 247, 0.26) !important;
-  font-size: 18px !important;
-}
-
-.onix-side-menu-group button strong {
-  display: block !important;
-  font-size: 14px !important;
-  font-weight: 1000 !important;
-}
-
-.onix-side-menu-group button em {
-  display: block !important;
-  margin-top: 3px !important;
-  color: rgba(255, 255, 255, 0.54) !important;
-  font-size: 11px !important;
-  font-style: normal !important;
-  font-weight: 800 !important;
-}
-
-.onix-side-menu-group button b {
-  padding: 5px 8px !important;
-  border-radius: 999px !important;
-  background: rgba(250, 204, 21, 0.12) !important;
-  color: #fde68a !important;
-  font-size: 10px !important;
-  font-weight: 1000 !important;
-}
-
-/* === ONIX notification center === */
-.onix-notification-center {
-  width: min(calc(100vw - 32px), 390px) !important;
-  max-height: min(78vh, 620px) !important;
-  overflow: hidden !important;
-  border-radius: 30px !important;
-  border: 1px solid rgba(168, 85, 247, 0.42) !important;
-  background:
-    radial-gradient(circle at 18% 5%, rgba(168, 85, 247, 0.30), transparent 34%),
-    radial-gradient(circle at 92% 10%, rgba(45, 212, 255, 0.12), transparent 28%),
-    linear-gradient(145deg, rgba(9, 9, 30, 0.98), rgba(5, 8, 23, 0.99)) !important;
-  box-shadow:
-    0 24px 70px rgba(0, 0, 0, 0.72),
-    0 0 34px rgba(168, 85, 247, 0.30),
-    inset 0 0 24px rgba(132, 86, 255, 0.10) !important;
-  color: #fff !important;
-}
-
-.onix-notification-head {
-  display: flex !important;
-  align-items: flex-start !important;
-  justify-content: space-between !important;
-  gap: 14px !important;
-  padding: 20px 20px 12px !important;
-}
-
-.onix-notification-head p {
-  margin: 0 0 4px !important;
-  color: #67e8f9 !important;
-  font-size: 11px !important;
-  font-weight: 900 !important;
-  letter-spacing: 0.18em !important;
-}
-
-.onix-notification-head h2 {
-  margin: 0 !important;
-  font-size: 24px !important;
-  line-height: 1.05 !important;
-  font-weight: 1000 !important;
-}
-
-.onix-notification-head button {
-  width: 34px !important;
-  height: 34px !important;
-  border: 1px solid rgba(255, 255, 255, 0.12) !important;
-  border-radius: 14px !important;
-  background: rgba(255, 255, 255, 0.06) !important;
-  color: #fff !important;
-  font-size: 24px !important;
-  line-height: 1 !important;
-}
-
-.onix-notification-actions {
-  display: flex !important;
-  justify-content: space-between !important;
-  align-items: center !important;
-  padding: 0 20px 14px !important;
-  color: rgba(255, 255, 255, 0.68) !important;
-  font-size: 12px !important;
-  font-weight: 800 !important;
-}
-
-.onix-notification-actions button {
-  border: 1px solid rgba(250, 204, 21, 0.24) !important;
-  border-radius: 999px !important;
-  background: rgba(250, 204, 21, 0.10) !important;
-  color: #fde68a !important;
-  padding: 8px 12px !important;
-  font-size: 12px !important;
-  font-weight: 900 !important;
-}
-
-.onix-notification-list {
-  max-height: min(55vh, 430px) !important;
-  overflow-y: auto !important;
-  padding: 0 14px 16px !important;
-}
-
-.onix-notification-item {
-  width: 100% !important;
-  display: grid !important;
-  grid-template-columns: 42px 1fr !important;
-  gap: 12px !important;
-  text-align: left !important;
-  padding: 14px !important;
-  margin: 0 0 10px !important;
-  border-radius: 22px !important;
-  border: 1px solid rgba(255, 255, 255, 0.08) !important;
-  background: rgba(255, 255, 255, 0.045) !important;
-  color: #fff !important;
-}
-
-.onix-notification-item.is-unread {
-  border-color: rgba(255, 45, 85, 0.48) !important;
-  background:
-    radial-gradient(circle at 92% 12%, rgba(255, 45, 85, 0.20), transparent 30%),
-    rgba(255, 255, 255, 0.065) !important;
-  box-shadow: 0 0 22px rgba(255, 45, 85, 0.12) !important;
-}
-
-.onix-notification-icon {
-  width: 42px !important;
-  height: 42px !important;
-  border-radius: 16px !important;
-  display: grid !important;
-  place-items: center !important;
-  background: rgba(168, 85, 247, 0.14) !important;
-  border: 1px solid rgba(168, 85, 247, 0.28) !important;
-  font-size: 18px !important;
-}
-
-.onix-notification-item strong {
-  display: block !important;
-  font-size: 15px !important;
-  font-weight: 1000 !important;
-  line-height: 1.15 !important;
-}
-
-.onix-notification-item p {
-  margin: 5px 0 6px !important;
-  color: rgba(255, 255, 255, 0.76) !important;
-  font-size: 12px !important;
-  line-height: 1.35 !important;
-  white-space: pre-wrap !important;
-}
-
-.onix-notification-item em {
-  display: block !important;
-  color: rgba(255, 255, 255, 0.44) !important;
-  font-size: 11px !important;
-  font-style: normal !important;
-  font-weight: 800 !important;
-}
-
-
-.onix-notification-actions > div {
-  display: flex !important;
-  gap: 7px !important;
-  align-items: center !important;
-}
-
-.onix-notification-actions > div button:last-child {
-  border-color: rgba(255, 77, 109, 0.22) !important;
-  background: rgba(255, 77, 109, 0.08) !important;
-  color: #fecdd3 !important;
-}
-
-.onix-notification-tabs {
-  display: flex !important;
-  gap: 7px !important;
-  padding: 0 14px 12px !important;
-  overflow-x: auto !important;
-}
-
-.onix-notification-tabs button {
-  flex: 0 0 auto !important;
-  border: 1px solid rgba(255, 255, 255, 0.10) !important;
-  border-radius: 999px !important;
-  background: rgba(255, 255, 255, 0.045) !important;
-  color: rgba(255, 255, 255, 0.72) !important;
-  padding: 8px 11px !important;
-  font-size: 11px !important;
-  font-weight: 900 !important;
-}
-
-.onix-notification-tabs button.is-active {
-  border-color: rgba(168, 85, 247, 0.58) !important;
-  background: linear-gradient(135deg, rgba(168, 85, 247, 0.28), rgba(250, 204, 21, 0.10)) !important;
-  color: #fff !important;
-  box-shadow: 0 0 18px rgba(168, 85, 247, 0.18) !important;
-}
-
-.onix-notification-empty {
-  padding: 32px 16px !important;
-  text-align: center !important;
-  color: rgba(255, 255, 255, 0.58) !important;
-  font-size: 13px !important;
-  font-weight: 800 !important;
 }
 
 /* === REFERENCE HOME SCREEN PATCH v83 === */
@@ -6208,144 +5868,6 @@ body,
   }
 }
 
-
-.onix-withdraw-modal-backdrop {
-  position: fixed !important;
-  inset: 0 !important;
-  z-index: 2147483100 !important;
-  display: grid !important;
-  place-items: center !important;
-  padding: 18px !important;
-  background:
-    radial-gradient(circle at 50% 38%, rgba(45, 212, 255, 0.14), transparent 32%),
-    radial-gradient(circle at 50% 58%, rgba(168, 85, 247, 0.22), transparent 42%),
-    rgba(2, 6, 18, 0.76) !important;
-  backdrop-filter: blur(12px) !important;
-}
-
-.onix-withdraw-modal {
-  position: relative !important;
-  width: min(calc(100vw - 36px), 390px) !important;
-  overflow: hidden !important;
-  border-radius: 28px !important;
-  padding: 22px !important;
-  border: 1px solid rgba(45, 212, 255, 0.36) !important;
-  background:
-    radial-gradient(circle at 18% 10%, rgba(45, 212, 255, 0.18), transparent 36%),
-    radial-gradient(circle at 92% 18%, rgba(168, 85, 247, 0.22), transparent 40%),
-    linear-gradient(145deg, rgba(13, 11, 35, 0.98), rgba(5, 9, 24, 0.99)) !important;
-  box-shadow:
-    0 28px 80px rgba(0, 0, 0, 0.72),
-    0 0 34px rgba(45, 212, 255, 0.18),
-    0 0 42px rgba(168, 85, 247, 0.20),
-    inset 0 0 24px rgba(132, 86, 255, 0.10) !important;
-  animation: onixToastPopV60 240ms ease-out both !important;
-}
-
-.onix-withdraw-modal::before {
-  content: '' !important;
-  position: absolute !important;
-  inset: 1px !important;
-  border-radius: 27px !important;
-  border: 1px solid rgba(210, 244, 255, 0.10) !important;
-  pointer-events: none !important;
-}
-
-.onix-withdraw-modal-icon {
-  width: 58px !important;
-  height: 58px !important;
-  margin: 0 auto 14px !important;
-  border-radius: 20px !important;
-  display: grid !important;
-  place-items: center !important;
-  font-size: 30px !important;
-  font-weight: 900 !important;
-  color: #7ef9ff !important;
-  background:
-    radial-gradient(circle at 40% 35%, rgba(45, 212, 255, 0.28), rgba(9, 42, 66, 0.94) 72%) !important;
-  border: 1px solid rgba(45, 212, 255, 0.28) !important;
-  box-shadow: 0 0 28px rgba(45, 212, 255, 0.16), inset 0 0 14px rgba(45, 212, 255, 0.10) !important;
-}
-
-.onix-withdraw-modal-title {
-  position: relative !important;
-  z-index: 2 !important;
-  margin: 0 !important;
-  text-align: center !important;
-  font-family: 'Orbitron', 'Exo 2', system-ui, sans-serif !important;
-  font-size: 18px !important;
-  font-weight: 900 !important;
-  letter-spacing: 0.03em !important;
-  color: #ffffff !important;
-}
-
-.onix-withdraw-modal-text {
-  position: relative !important;
-  z-index: 2 !important;
-  margin: 12px 0 18px !important;
-  text-align: center !important;
-  font-family: 'Exo 2', system-ui, sans-serif !important;
-  font-size: 14px !important;
-  line-height: 1.38 !important;
-  font-weight: 800 !important;
-  color: #dbeafe !important;
-}
-
-.onix-withdraw-support-button {
-  position: relative !important;
-  z-index: 2 !important;
-  width: 100% !important;
-  min-height: 48px !important;
-  border: 0 !important;
-  border-radius: 17px !important;
-  color: #07111f !important;
-  font-family: 'Exo 2', system-ui, sans-serif !important;
-  font-size: 15px !important;
-  font-weight: 900 !important;
-  letter-spacing: 0.01em !important;
-  background: linear-gradient(135deg, #7ef9ff, #a78bfa 54%, #facc15) !important;
-  box-shadow: 0 14px 30px rgba(45, 212, 255, 0.16), 0 12px 24px rgba(168, 85, 247, 0.14) !important;
-}
-
-.onix-withdraw-close-button {
-  position: relative !important;
-  z-index: 2 !important;
-  width: 100% !important;
-  margin-top: 10px !important;
-  min-height: 42px !important;
-  border-radius: 15px !important;
-  border: 1px solid rgba(148, 163, 184, 0.18) !important;
-  color: #cbd5e1 !important;
-  font-family: 'Exo 2', system-ui, sans-serif !important;
-  font-size: 13px !important;
-  font-weight: 800 !important;
-  background: rgba(15, 23, 42, 0.68) !important;
-}
-
-.onix-wallet-unlock-modal .onix-withdraw-modal-icon {
-  color: #facc15 !important;
-  background:
-    radial-gradient(circle at 38% 32%, rgba(250, 204, 21, 0.40), rgba(64, 32, 120, 0.94) 72%) !important;
-  border-color: rgba(250, 204, 21, 0.38) !important;
-  box-shadow: 0 0 30px rgba(250, 204, 21, 0.20), inset 0 0 16px rgba(168, 85, 247, 0.20) !important;
-}
-
-.onix-wallet-unlock-button {
-  position: relative !important;
-  z-index: 2 !important;
-  width: 100% !important;
-  min-height: 48px !important;
-  border: 0 !important;
-  border-radius: 17px !important;
-  color: #12081f !important;
-  font-family: 'Exo 2', system-ui, sans-serif !important;
-  font-size: 15px !important;
-  font-weight: 900 !important;
-  letter-spacing: 0.01em !important;
-  background: linear-gradient(135deg, #facc15, #a78bfa 52%, #7ef9ff) !important;
-  box-shadow: 0 14px 30px rgba(250, 204, 21, 0.18), 0 12px 24px rgba(168, 85, 247, 0.16) !important;
-}
-
 /* ONIX style for old reward/offline/season modal cards */
 .onix-modal-layer {
   position: fixed !important;
@@ -7891,9 +7413,6 @@ div.fixed.inset-0.z-\[90\] button.bg-yellow-400 {
 .onix-admin-secondary{width:100%!important;margin-top:10px!important;display:block!important;}
 .onix-admin-input{width:100%!important;border-radius:16px!important;border:1px solid rgba(124,58,237,.22)!important;background:rgba(5,8,24,.92)!important;color:#fff!important;padding:12px!important;outline:none!important;font-weight:900!important;}
 .onix-admin-textarea{min-height:92px!important;resize:none!important;}
-.onix-admin-player-tools{display:grid!important;grid-template-columns:1fr auto!important;gap:8px!important;margin:10px 0 8px!important;}
-.onix-admin-player-tools select{min-width:0!important;border-radius:16px!important;border:1px solid rgba(124,58,237,.22)!important;background:rgba(5,8,24,.92)!important;color:#fff!important;padding:12px!important;outline:none!important;font-weight:900!important;}
-.onix-admin-player-tools button{border:0!important;border-radius:16px!important;background:linear-gradient(135deg,#2dd4ff,#c026d3)!important;color:#fff!important;font-weight:1000!important;padding:0 16px!important;}
 .onix-admin-search-line{display:grid!important;grid-template-columns:1fr auto!important;gap:8px!important;}
 .onix-admin-search-line button{border:0!important;border-radius:16px!important;background:linear-gradient(135deg,#2dd4ff,#c026d3)!important;color:#fff!important;font-weight:1000!important;padding:0 16px!important;}
 .onix-admin-metrics-grid{display:grid!important;grid-template-columns:1fr 1fr!important;gap:10px!important;margin:12px 0!important;}
@@ -11733,19 +11252,6 @@ type TransactionFilter =
   | 'season'
   | 'missions';
 
-type AppNotificationCategory = 'all' | 'new' | 'rewards' | 'news';
-
-type AppNotification = {
-  id: string;
-  type: string;
-  title: string;
-  message: string;
-  actionTab?: Tab;
-  category?: AppNotificationCategory;
-  createdAt: number;
-  readAt?: number;
-};
-
 type AdminUserSearchResult = {
   telegramId: string;
   username: string;
@@ -11802,78 +11308,6 @@ type AdminSecurityLog = {
   title: string;
   details: string;
   createdAt: number;
-};
-
-
-
-type AdminTrafficAnalytics = {
-  days: number;
-  totalPlayers: number;
-  newPlayers: number;
-  events: Record<string, number>;
-  funnel: Array<{
-    key: string;
-    label: string;
-    count: number;
-  }>;
-  promoAnalytics?: {
-    total: {
-      recent: number;
-      allTime: number;
-      rewardRecent: number;
-    };
-    codes: Array<{
-      code: string;
-      reward: number;
-      recent: number;
-      allTime: number;
-      rewardRecent: number;
-    }>;
-    recent: Array<{
-      telegramId: string;
-      username: string;
-      code: string;
-      reward: number;
-      createdAt: number;
-    }>;
-  };
-  sources: Array<{
-    source: string;
-    startParam: string;
-    campaign: string;
-    count: number;
-  }>;
-  recentEvents: Array<{
-    telegramId: string;
-    username: string;
-    event: string;
-    source?: string;
-    startParam?: string;
-    campaign?: string;
-    createdAt: number;
-  }>;
-};
-
-type AdminPlayerUsernamesPayload = {
-  filter: string;
-  total: number;
-  usernamesCount: number;
-  usernames: string[];
-  players: Array<{
-    username: string;
-    telegramId: string;
-    displayName: string;
-    balance: number;
-    totalEarned: number;
-    weeklyEarned: number;
-    totalTaps: number;
-    totalUpgradesBought: number;
-    referralsCount: number;
-    promoCodes: string[];
-    createdAt: number;
-    lastSeenAt: number;
-    hasUsername: boolean;
-  }>;
 };
 
 type AdminEconomyDashboard = {
@@ -12162,72 +11596,6 @@ type SuspiciousUser = {
 };
 
 const API_URL = 'https://onix-coin.onrender.com/api/coins';
-
-function getTelegramWebApp() {
-  return window.Telegram?.WebApp || (WebApp as any);
-}
-
-function getTelegramInitData() {
-  return getTelegramWebApp()?.initData || '';
-}
-
-function getTelegramUnsafe() {
-  return getTelegramWebApp()?.initDataUnsafe || {};
-}
-
-function getTelegramUser() {
-  return getTelegramUnsafe()?.user || null;
-}
-
-function getTelegramStartParam() {
-  return getTelegramUnsafe()?.start_param || null;
-}
-
-function getTelegramUsername() {
-  const user = getTelegramUser();
-  const fullName = `${user?.first_name || ''} ${user?.last_name || ''}`.trim();
-
-  return fullName || user?.username || 'Spieler';
-}
-
-function waitForTelegramId(timeoutMs = 2500): Promise<string> {
-  const existingId = getTelegramId();
-
-  if (existingId) {
-    return Promise.resolve(existingId);
-  }
-
-  return new Promise((resolve) => {
-    const startedAt = Date.now();
-    const timer = window.setInterval(() => {
-      const telegramId = getTelegramId();
-
-      if (telegramId || Date.now() - startedAt >= timeoutMs) {
-        window.clearInterval(timer);
-        resolve(telegramId);
-      }
-    }, 100);
-  });
-}
-
-axios.interceptors.request.use((config) => {
-  const telegramInitData = getTelegramInitData();
-  const telegramId = getTelegramId();
-  const headers = new axios.AxiosHeaders(config.headers);
-
-  if (telegramInitData) {
-    headers.set('X-Telegram-Init-Data', telegramInitData);
-  }
-
-  if (telegramId) {
-    headers.set('X-Telegram-Id', telegramId);
-  }
-
-  config.headers = headers;
-
-  return config;
-});
-
 const DAY_MS = 24 * 60 * 60 * 1000;
 function getOnixUtcDayKey(timestamp = Date.now()) {
   return new Date(timestamp).toISOString().slice(0, 10);
@@ -12692,11 +12060,14 @@ function OnixTapCoinVector() {
 }
 
 function getTelegramAvatarUrl() {
-  return getTelegramUser()?.photo_url || '';
+  const tg = (window as any).Telegram?.WebApp;
+  return tg?.initDataUnsafe?.user?.photo_url || '';
 }
 
 function getTelegramId() {
-  return getTelegramUser()?.id?.toString() || '';
+  const tg = window.Telegram?.WebApp;
+  if (!tg) return '';
+  return tg.initDataUnsafe?.user?.id?.toString() || '';
 }
 
 function getTransactionIcon(type: string) {
@@ -12778,6 +12149,7 @@ class AppErrorBoundary extends React.Component<
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          'X-Telegram-Init-Data': window.Telegram?.WebApp?.initData || '',
         },
         body: JSON.stringify({
           telegramId,
@@ -12977,11 +12349,6 @@ function App() {
   const [launchPanel, setLaunchPanel] = useState<LaunchPanel>('overview');
   const [adminEconomyDashboard, setAdminEconomyDashboard] =
     useState<AdminEconomyDashboard | null>(null);
-  const [adminTrafficAnalytics, setAdminTrafficAnalytics] =
-    useState<AdminTrafficAnalytics | null>(null);
-  const [adminPlayerUsernames, setAdminPlayerUsernames] =
-    useState<AdminPlayerUsernamesPayload | null>(null);
-  const [adminPlayerFilter, setAdminPlayerFilter] = useState('all');
   const [adminEconomyVisible, setAdminEconomyVisible] = useState(false);
   const [adminSearchVisible, setAdminSearchVisible] = useState(false);
   const [adminSearchQuery, setAdminSearchQuery] = useState('');
@@ -13004,18 +12371,6 @@ function App() {
   const [backendHealth, setBackendHealth] = useState<any>(null);
   const [promoModalVisible, setPromoModalVisible] = useState(false);
   const [promoCodeInput, setPromoCodeInput] = useState('');
-  const [notificationCenterVisible, setNotificationCenterVisible] = useState(false);
-  const [sideMenuVisible, setSideMenuVisible] = useState(false);
-  const [soundEnabled, setSoundEnabled] = useState(() => localStorage.getItem('onixSoundEnabled') !== 'false');
-  const [vibrationEnabled, setVibrationEnabled] = useState(() => localStorage.getItem('onixVibrationEnabled') !== 'false');
-  const [appNotifications, setAppNotifications] = useState<AppNotification[]>([]);
-  const [notificationFilter, setNotificationFilter] = useState<AppNotificationCategory>('all');
-  const unreadNotificationsCount = appNotifications.filter((item) => !Number(item.readAt || 0)).length;
-  const filteredAppNotifications = appNotifications.filter((item) => {
-    if (notificationFilter === 'all') return true;
-    if (notificationFilter === 'new') return !Number(item.readAt || 0);
-    return item.category === notificationFilter;
-  });
 
 
   useEffect(() => {
@@ -13043,11 +12398,6 @@ function App() {
   const [isClaimingOfflineReward, setIsClaimingOfflineReward] = useState(false);
   const [rewardPopupItems, setRewardPopupItems] = useState<RewardPopupItem[]>([]);
   const [rewardPopupVisible, setRewardPopupVisible] = useState(false);
-  const [dailyBonusModalVisible, setDailyBonusModalVisible] = useState(false);
-  const [withdrawSuccessModalVisible, setWithdrawSuccessModalVisible] = useState(false);
-  const [walletUnlockModalVisible, setWalletUnlockModalVisible] = useState(false);
-  const [isClaimingDailyBonus, setIsClaimingDailyBonus] = useState(false);
-  const [claimingStarterQuestId, setClaimingStarterQuestId] = useState('');
   const [toastMessages, setToastMessages] = useState<ToastMessage[]>([]);
   const [seasonHistory, setSeasonHistory] = useState<SeasonHistoryItem[]>([]);
   const [teamLeaderboard, setTeamLeaderboard] = useState<TeamLeaderboardItem[]>([]);
@@ -13081,13 +12431,13 @@ function App() {
   const [totalUpgradesBought, setTotalUpgradesBought] = useState(0);
   const [offlineClaimsCount, setOfflineClaimsCount] = useState(0);
   const [adminPanelVisible, setAdminPanelVisible] = useState(false);
-  const [adminHubPage, setAdminHubPage] = useState<'overview' | 'prizes' | 'withdrawals' | 'economy' | 'traffic' | 'search' | 'suspicious' | 'logs' | 'launch' | 'admin2'>('overview');
+  const [adminHubPage, setAdminHubPage] = useState<'overview' | 'prizes' | 'withdrawals' | 'economy' | 'search' | 'suspicious' | 'logs' | 'launch' | 'admin2'>('overview');
   const [adminPrizePreview, setAdminPrizePreview] =
     useState<AdminPrizePreviewResponse | null>(null);
   const [isAdminLoading, setIsAdminLoading] = useState(false);
 
   useEffect(() => {
-    const startParam = getTelegramStartParam() || '';
+    const startParam = window.Telegram?.WebApp?.initDataUnsafe?.start_param || '';
 
     if (startParam.startsWith('team_')) {
       joinTeamByCode(startParam.replace('team_', ''));
@@ -13138,22 +12488,14 @@ function App() {
 
   useEffect(() => {
     const loadUser = async () => {
-      let loadedTelegramId = '';
-
       try {
-        const telegramId = await waitForTelegramId();
-        loadedTelegramId = telegramId;
+        const telegramId =
+          window.Telegram?.WebApp?.initDataUnsafe?.user?.id?.toString() || '';
 
-        if (!telegramId) {
-          showToast('Telegram-ID konnte nicht abgerufen werden. Öffne die Mini-App direkt in Telegram.', 'error');
-          return;
-        }
-
-        const startParam = getTelegramStartParam();
+        const startParam =
+          window.Telegram?.WebApp?.initDataUnsafe?.start_param || null;
 
         await axios.post(`${API_URL}/create`, {
-          telegramId,
-          username: getTelegramUsername(),
           referredBy: startParam,
         });
 
@@ -13208,58 +12550,9 @@ function App() {
       setPerkLevels(normalizePerkLevels(user.perkLevels));
         setDailyStreak(Number(user.dailyStreak || 0));
         setTransactions(user.transactions || []);
-        setAppNotifications(normalizeNotifications(user.notifications || []));
-
-        const todayKey = getOnixUtcDayKey();
-        const dailyBonusKey = `dailyBonusAutoShown_${telegramId}_${todayKey}`;
-        const dailyBonusAvailable = !localStorage.getItem('dailyCooldownEnd');
-
-        if (!localStorage.getItem(`onixNewsPromocodeStart_${telegramId}`)) {
-          localStorage.setItem(`onixNewsPromocodeStart_${telegramId}`, 'true');
-          createUserNotification({
-            type: 'news_promo',
-            title: 'Neuer Promocode',
-            message: 'Der Promocode START ist aktiv. Öffne Aufgaben und löse den Code ein.',
-            actionTab: 'tasks',
-            category: 'news',
-            dedupeKey: `news_start_${telegramId}`,
-          });
-        }
-
-        if (!localStorage.getItem(`onixUpdatePromoUi_${telegramId}`)) {
-          localStorage.setItem(`onixUpdatePromoUi_${telegramId}`, 'true');
-          createUserNotification({
-            type: 'game_update',
-            title: 'Neues Update',
-            message: 'Promocodes können jetzt direkt in der Mini-App eingelöst werden.',
-            actionTab: 'tasks',
-            category: 'news',
-            dedupeKey: `update_promo_ui_${telegramId}`,
-          });
-        }
-
-        if (dailyBonusAvailable && !localStorage.getItem(`onixDailyAvailableNotice_${telegramId}_${todayKey}`)) {
-          localStorage.setItem(`onixDailyAvailableNotice_${telegramId}_${todayKey}`, 'true');
-          createUserNotification({
-            type: 'daily_bonus_ready',
-            title: 'Daily Bonus verfügbar',
-            message: 'Dein Daily Bonus ist bereit. Öffne Aufgaben und hole deine Belohnung ab.',
-            actionTab: 'tasks',
-            category: 'rewards',
-            dedupeKey: `daily_ready_${telegramId}_${todayKey}`,
-          });
-        }
-
         setAchievements(user.achievements || response.data.achievements || ACHIEVEMENTS);
         setActiveBoost(normalizeBoost(user.activeBoost));
         setBoostEndTime(Number(user.boostEndTime || 0));
-
-        if (telegramId && dailyBonusAvailable && !localStorage.getItem(dailyBonusKey)) {
-          localStorage.setItem(dailyBonusKey, 'true');
-          setTimeout(() => {
-            setDailyBonusModalVisible(true);
-          }, 1200);
-        }
 
         setTimeout(() => {
           const offlineIncome = Number(
@@ -13320,20 +12613,13 @@ function App() {
         setEnergyLevel(user.energyLevel || 1);
         setRechargeLevel(user.rechargeLevel || 1);
       applyUserStats(user);
+        applyUserStats(user);
       } catch (error) {
         console.log('Fehler beim Laden des Spielers:', error);
       } finally {
         setIsAppLoading(false);
 
-        const onboardingKey = loadedTelegramId
-          ? `onixOnboardingDone_${loadedTelegramId}`
-          : 'onixOnboardingDone_guest';
-
-        if (
-          !localStorage.getItem('onixTutorialDone') &&
-          !localStorage.getItem(onboardingKey)
-        ) {
-          setTutorialStep(0);
+        if (!localStorage.getItem('onixTutorialDone')) {
           setTutorialVisible(true);
         }
       }
@@ -13341,28 +12627,6 @@ function App() {
 
     loadUser();
   }, []);
-
-  useEffect(() => {
-    const telegramId = getTelegramId();
-
-    if (!telegramId || maxEnergy <= 0 || energy < maxEnergy) return;
-
-    const todayKey = getOnixUtcDayKey();
-    const key = `onixEnergyFullNotice_${telegramId}_${todayKey}`;
-
-    if (localStorage.getItem(key)) return;
-
-    localStorage.setItem(key, 'true');
-
-    createUserNotification({
-      type: 'energy_full',
-      title: 'Energie wieder voll',
-      message: 'Deine Energie ist vollständig aufgeladen. Du kannst wieder ONIX sammeln.',
-      actionTab: 'home',
-      category: 'news',
-      dedupeKey: `energy_full_${telegramId}_${todayKey}`,
-    });
-  }, [energy, maxEnergy]);
 
   useEffect(() => {
     const loadSeasonHistory = async () => {
@@ -13584,6 +12848,7 @@ function App() {
         setEnergyLevel(user.energyLevel || 1);
         setRechargeLevel(user.rechargeLevel || 1);
       applyUserStats(user);
+        applyUserStats(user);
       } catch (error) {
         console.log('Mining-Fehler:', error);
       } finally {
@@ -13645,7 +12910,6 @@ function App() {
       applyUserStats(user);
       showRewardPopupFromResponse(response.data);
       showReferralBonusPaidToast(response.data);
-      trackTrafficEvent('first_tap');
 
       const newNum: FloatingNumber = {
         id: Date.now(),
@@ -13682,98 +12946,6 @@ function App() {
   };
 
 
-  const normalizeNotifications = (items: any[] = []): AppNotification[] =>
-    (Array.isArray(items) ? items : [])
-      .map((item) => ({
-        id: String(item.id || `${item.createdAt || Date.now()}_${item.title || 'notification'}`),
-        type: String(item.type || 'info'),
-        title: String(item.title || 'ONIX Nachricht'),
-        message: String(item.message || ''),
-        actionTab: item.actionTab as Tab | undefined,
-        category: (item.category || (String(item.type || '').includes('reward') || String(item.type || '').includes('bonus') || String(item.type || '').includes('promo') ? 'rewards' : 'news')) as AppNotificationCategory,
-        createdAt: Number(item.createdAt || Date.now()),
-        readAt: Number(item.readAt || 0),
-      }))
-      .sort((a, b) => Number(b.createdAt || 0) - Number(a.createdAt || 0));
-
-  const loadNotifications = async () => {
-    const telegramId = getTelegramId();
-
-    if (!telegramId) return;
-
-    try {
-      const response = await axios.get(`${API_URL}/notifications/${telegramId}`);
-      setAppNotifications(normalizeNotifications(response.data.notifications || []));
-    } catch (error) {
-      console.log('Benachrichtigungen konnten nicht geladen werden:', error);
-    }
-  };
-
-  const createUserNotification = async (
-    payload: {
-      type: string;
-      title: string;
-      message: string;
-      actionTab?: Tab;
-      category?: AppNotificationCategory;
-      dedupeKey?: string;
-    }
-  ) => {
-    const telegramId = getTelegramId();
-
-    if (!telegramId) return;
-
-    try {
-      const response = await axios.post(`${API_URL}/notifications/create`, {
-        telegramId,
-        ...payload,
-      });
-      setAppNotifications(normalizeNotifications(response.data.notifications || []));
-    } catch (error) {
-      console.log('Benachrichtigung konnte nicht erstellt werden:', error);
-    }
-  };
-
-  const openNotificationCenter = async () => {
-    setNotificationCenterVisible(true);
-    await loadNotifications();
-  };
-
-  const markNotificationsRead = async () => {
-    const telegramId = getTelegramId();
-
-    setAppNotifications((prev) =>
-      prev.map((item) => ({ ...item, readAt: item.readAt || Date.now() }))
-    );
-
-    if (!telegramId) return;
-
-    try {
-      const response = await axios.post(`${API_URL}/notifications/mark-read`, {
-        telegramId,
-      });
-      setAppNotifications(normalizeNotifications(response.data.notifications || []));
-    } catch (error) {
-      console.log('Benachrichtigungen konnten nicht gelesen markiert werden:', error);
-    }
-  };
-
-  const clearNotifications = async () => {
-    const telegramId = getTelegramId();
-
-    setAppNotifications([]);
-
-    if (!telegramId) return;
-
-    try {
-      await axios.post(`${API_URL}/notifications/clear`, {
-        telegramId,
-      });
-    } catch (error) {
-      console.log('Benachrichtigungen konnten nicht gelöscht werden:', error);
-    }
-  };
-
   const syncGrowthUser = (user: any, fallbackData: any = {}) => {
     if (!user) return;
 
@@ -13782,9 +12954,6 @@ function App() {
     setTotalEarned(user.totalEarned || 0);
     setLevel(user.level || 1);
     setTransactions(user.transactions || []);
-    if (user.notifications) {
-      setAppNotifications(normalizeNotifications(user.notifications || []));
-    }
     setAchievements(user.achievements || fallbackData.achievements || ACHIEVEMENTS);
     setOwnedPerks(user.ownedPerks || []);
     setPerkLevels(normalizePerkLevels(user.perkLevels));
@@ -13809,17 +12978,11 @@ function App() {
 
   const applyPromoCode = async () => {
     const telegramId = getTelegramId();
-    const normalizedPromoCode = promoCodeInput.trim().toUpperCase();
-
-    if (!normalizedPromoCode) {
-      showToast('Bitte gib einen Promocode ein.', 'info');
-      return;
-    }
 
     try {
       const response = await axios.post(`${API_URL}/apply-promo`, {
         telegramId,
-        code: normalizedPromoCode,
+        code: promoCodeInput,
       });
 
       syncGrowthUser(response.data.user, response.data);
@@ -13839,68 +13002,6 @@ function App() {
     try {
       await loadMissions();
     } catch {}
-  };
-
-
-  const trackTrafficEvent = async (event: string, metadata: Record<string, any> = {}) => {
-    const telegramId = getTelegramId();
-
-    if (!telegramId) return;
-
-    const storageKey = `onixTrafficEvent_${telegramId}_${event}`;
-    const alwaysTrackEvents = new Set(['wallet_opened', 'withdraw_clicked', 'support_clicked']);
-
-    if (!alwaysTrackEvents.has(event) && localStorage.getItem(storageKey)) return;
-
-    try {
-      await axios.post(`${API_URL}/track-event`, {
-        telegramId,
-        username: getTelegramUsername() || username || 'Spieler',
-        event,
-        source: 'telegram_mini_app',
-        startParam: getTelegramStartParam() || '',
-        campaign: getTelegramStartParam() || '',
-        metadata,
-      });
-
-      if (!alwaysTrackEvents.has(event)) {
-        localStorage.setItem(storageKey, 'true');
-      }
-    } catch {
-      // Analytics must never block gameplay.
-    }
-  };
-
-  useEffect(() => {
-    const timer = window.setTimeout(() => {
-      trackTrafficEvent('app_opened');
-    }, 600);
-
-    return () => window.clearTimeout(timer);
-  }, []);
-
-  useEffect(() => {
-    if (activeTab === 'wallet') {
-      trackTrafficEvent('wallet_opened');
-    }
-  }, [activeTab]);
-
-  const openWalletTab = () => {
-    setWalletUnlockModalVisible(false);
-    setActiveTab('wallet');
-    trackTrafficEvent('wallet_opened');
-  };
-
-  const maybeShowWalletUnlockModal = () => {
-    const currentTelegramId = getTelegramId();
-    const storageKey = currentTelegramId
-      ? `onixWalletUnlockShown_${currentTelegramId}`
-      : 'onixWalletUnlockShown_guest';
-
-    if (localStorage.getItem(storageKey)) return;
-
-    localStorage.setItem(storageKey, 'true');
-    setWalletUnlockModalVisible(true);
   };
 
   const buyUpgrade = async (type: 'tap' | 'energy' | 'recharge' | 'miner') => {
@@ -13948,11 +13049,6 @@ function App() {
       showRewardPopupFromResponse(response.data);
       showReferralBonusPaidToast(response.data);
       refreshAfterAction();
-      trackTrafficEvent('first_upgrade', { type });
-
-      if (Number(user.totalUpgradesBought || 0) >= 1) {
-        maybeShowWalletUnlockModal();
-      }
 
       try {
         WebApp.HapticFeedback?.notificationOccurred('success');
@@ -14103,6 +13199,7 @@ function App() {
       showRewardPopupFromResponse(response.data);
       showReferralBonusPaidToast(response.data);
       refreshAfterAction();
+
       try {
         WebApp.HapticFeedback?.notificationOccurred('success');
       } catch {}
@@ -14157,6 +13254,7 @@ function App() {
       showRewardPopupFromResponse(response.data);
       showReferralBonusPaidToast(response.data);
       refreshAfterAction();
+
       try {
         WebApp.HapticFeedback?.notificationOccurred('success');
       } catch {}
@@ -14387,66 +13485,6 @@ function App() {
       try {
         WebApp.HapticFeedback?.notificationOccurred('success');
       } catch {}
-    }
-  };
-
-  const claimDailyBonus = async () => {
-    if (dailyCooldown > 0 || isClaimingDailyBonus) return;
-
-    try {
-      setIsClaimingDailyBonus(true);
-
-      const response = await axios.post(`${API_URL}/claim-task`, {
-        telegramId: getTelegramId(),
-        task: 'daily',
-      });
-
-      const user = response.data;
-      const cooldown = DAY_MS;
-
-      setBalance(user.balance);
-      setUsername(user.username || 'Spieler');
-      setWeeklyEarned(Number(user.weeklyEarned || 0));
-      setTotalEarned(user.totalEarned);
-      setLevel(user.level);
-      applyUserStats(user);
-      setDailyStreak(Number(user.dailyStreak || 0));
-      setTransactions(user.transactions || []);
-      setDailyCooldown(cooldown);
-      setDailyBonusModalVisible(false);
-
-      localStorage.setItem('dailyCooldownEnd', (Date.now() + cooldown).toString());
-      localStorage.setItem(`dailyBonusAutoShown_${getTelegramId()}_${getOnixUtcDayKey()}`, 'true');
-
-      showRewardPopupFromResponse(response.data);
-      showReferralBonusPaidToast(response.data);
-      loadMissions();
-      trackTrafficEvent('daily_bonus_claimed');
-
-      const rankBonusText =
-        Array.isArray(response.data.rankBonuses) && response.data.rankBonuses.length
-          ? `\n🏆 Rangbonus: +${formatOnix(
-              response.data.rankBonuses.reduce(
-                (sum: number, item: { bonus: number }) => sum + Number(item.bonus || 0),
-                0
-              )
-            )} ONIX`
-          : '';
-
-      showToast(
-        `🎁 Täglicher Bonus: +${formatOnix(
-          response.data.claimedDailyReward || getDailyRewardWithStreak(user.level, user.dailyStreak || 1)
-        )} ONIX\n🔥 Streak: ${user.dailyStreak || 1}/7${rankBonusText}`,
-        'success'
-      );
-
-      try {
-        WebApp.HapticFeedback?.notificationOccurred('success');
-      } catch {}
-    } catch (error: any) {
-      showToast(error?.response?.data?.message || 'Fehler beim Abrufen der Belohnung', 'error');
-    } finally {
-      setIsClaimingDailyBonus(false);
     }
   };
 
@@ -14786,8 +13824,6 @@ function App() {
       setAchievements(user.achievements || response.data.achievements || ACHIEVEMENTS);
       applyUserStats(user);
       setMissions(response.data.missions || user.missions || { daily: [], weekly: [], difficulty: 1, dailyKey: '', weeklyKey: '' });
-
-      trackTrafficEvent('mission_claimed', { missionId: mission.id, missionType });
 
       showToast(`✅ Mission abgeschlossen: +${formatOnix(response.data.missionReward.reward)} ONIX`, 'success');
     } catch (error: any) {
@@ -18293,108 +17329,6 @@ body:not(.onix-body-home-lock) {
     }
   };
 
-
-  const loadAdminTrafficAnalytics = async () => {
-    const telegramId = getTelegramId();
-
-    try {
-      setIsAdminLoading(true);
-
-      const response = await axios.get(`${API_URL}/admin-traffic-analytics`, {
-        params: {
-          telegramId,
-          days: 7,
-        },
-      });
-
-      setAdminTrafficAnalytics(response.data);
-      setAdminHubPage('traffic');
-    } catch (error: any) {
-      showToast(error?.response?.data?.message || 'Не удалось загрузить аналитику трафика', 'error');
-    } finally {
-      setIsAdminLoading(false);
-    }
-  };
-
-  const loadAdminPlayerUsernames = async (filter = adminPlayerFilter) => {
-    const telegramId = getTelegramId();
-
-    try {
-      setIsAdminLoading(true);
-      setAdminPlayerFilter(filter);
-
-      const response = await axios.get(`${API_URL}/admin-player-usernames`, {
-        params: {
-          telegramId,
-          filter,
-        },
-      });
-
-      setAdminPlayerUsernames(response.data);
-      setAdminHubPage('traffic');
-    } catch (error: any) {
-      showToast(error?.response?.data?.message || 'Не удалось загрузить игроков', 'error');
-    } finally {
-      setIsAdminLoading(false);
-    }
-  };
-
-  const copyAdminUsernames = async () => {
-    const names = adminPlayerUsernames?.usernames || [];
-
-    if (names.length === 0) {
-      showToast('Настоящих @username пока нет', 'info');
-      return;
-    }
-
-    try {
-      await navigator.clipboard.writeText(names.join('\n'));
-      showToast(`✅ Скопировано @username: ${names.length}`, 'success');
-    } catch {
-      showToast('Не удалось скопировать @username', 'error');
-    }
-  };
-
-  const exportAdminUsernamesCsv = () => {
-    const players = adminPlayerUsernames?.players || [];
-
-    if (players.length === 0) {
-      showToast('Список игроков пуст', 'info');
-      return;
-    }
-
-    const escapeCsv = (value: any) => {
-      const text = String(value ?? '').replace(/"/g, '""');
-      return `"${text}"`;
-    };
-
-    const rows = [
-      ['username', 'displayName', 'hasUsername', 'telegramId', 'balance', 'totalEarned', 'totalTaps', 'promoCodes', 'lastSeenAt'],
-      ...players.map((player) => [
-        player.username || '',
-        player.displayName || '',
-        player.hasUsername ? 'yes' : 'no',
-        player.telegramId,
-        player.balance,
-        player.totalEarned,
-        player.totalTaps,
-        player.promoCodes.join('|'),
-        player.lastSeenAt ? new Date(player.lastSeenAt).toISOString() : '',
-      ]),
-    ];
-
-    const csv = rows.map((row) => row.map(escapeCsv).join(',')).join('\n');
-    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement('a');
-
-    link.href = url;
-    link.download = `onix_players_${adminPlayerFilter}_${Date.now()}.csv`;
-    link.click();
-
-    URL.revokeObjectURL(url);
-  };
-
   const loadSuspiciousUsers = async () => {
     const telegramId = getTelegramId();
 
@@ -18493,78 +17427,10 @@ body:not(.onix-body-home-lock) {
     }
   };
 
-  const openWithdrawSupport = () => {
-    trackTrafficEvent('support_clicked');
-
-    const tg = (window as any).Telegram?.WebApp;
-
-    if (tg?.openTelegramLink) {
-      tg.openTelegramLink(WITHDRAW_SUPPORT_URL);
-      return;
-    }
-
-    try {
-      WebApp.openTelegramLink(WITHDRAW_SUPPORT_URL);
-    } catch {
-      window.open(WITHDRAW_SUPPORT_URL, '_blank', 'noopener,noreferrer');
-    }
-  };
-
-  const openExternalLink = (url: string) => {
-    const tg = (window as any).Telegram?.WebApp;
-
-    if (tg?.openTelegramLink) {
-      tg.openTelegramLink(url);
-      return;
-    }
-
-    try {
-      WebApp.openTelegramLink(url);
-    } catch {
-      window.open(url, '_blank', 'noopener,noreferrer');
-    }
-  };
-
-  const closeSideMenuAndGo = (tab: Tab, options: { tasksTab?: 'tasks' | 'temporary' | 'achievements'; launchPanel?: LaunchPanel } = {}) => {
-    if (options.tasksTab) setTasksInnerTab(options.tasksTab);
-    if (options.launchPanel) setLaunchPanel(options.launchPanel);
-    setActiveTab(tab);
-    setSideMenuVisible(false);
-  };
-
-  const openOfficialChannel = () => {
-    openExternalLink(ONIX_OFFICIAL_CHANNEL_URL);
-    setSideMenuVisible(false);
-  };
-
-  const openSupportFromMenu = () => {
-    trackTrafficEvent('support_clicked', { source: 'side_menu' });
-    openExternalLink(WITHDRAW_SUPPORT_URL);
-    setSideMenuVisible(false);
-  };
-
-  const toggleSoundSetting = () => {
-    setSoundEnabled((prev) => {
-      const next = !prev;
-      localStorage.setItem('onixSoundEnabled', String(next));
-      return next;
-    });
-  };
-
-  const toggleVibrationSetting = () => {
-    setVibrationEnabled((prev) => {
-      const next = !prev;
-      localStorage.setItem('onixVibrationEnabled', String(next));
-      return next;
-    });
-  };
-
   const requestWithdrawal = async () => {
     const telegramId = getTelegramId();
 
     if (!canWithdraw || isWithdrawalLoading) return;
-
-    trackTrafficEvent('withdraw_clicked');
 
     if (withdrawalCheck.trim().toUpperCase() !== 'ONIX') {
       showToast('Gib ONIX in die Anti-Bot-Prüfung ein', 'error');
@@ -18592,8 +17458,6 @@ body:not(.onix-body-home-lock) {
       setTransactions(user.transactions || []);
       setWithdrawalRequests(user.withdrawalRequests || []);
       setWithdrawalCheck('');
-      setWithdrawSuccessModalVisible(true);
-      trackTrafficEvent('withdraw_request_created');
       showToast('✅ Auszahlungsantrag erstellt', 'success');
       refreshAfterAction();
     } catch (error: any) {
@@ -19009,29 +17873,24 @@ body:not(.onix-body-home-lock) {
   );
   const tutorialSteps = [
     {
-      icon: '💎',
-      title: 'Willkommen bei ONIX Coin',
-      text: 'Dein Telegram Mini-App Game ist bereit. Sammle ONIX, baue Fortschritt auf und entdecke jeden Tag neue Aktionen.',
-    },
-    {
       icon: onixBoostIcons.miner,
-      title: 'Tippen & Energie nutzen',
-      text: 'Tippe auf die Münze, sammle ONIX und achte auf deine Energie. Deine Energie lädt sich automatisch wieder auf.',
+      title: 'Tippe und verdiene',
+      text: 'Tippe auf die Münze, verdiene ONIX und behalte deine Energie im Blick.',
     },
     {
       icon: onixBoostIcons.recharge,
-      title: 'Upgrades freischalten',
-      text: 'Verbessere Tap Power, Miner, Energie und Aufladung, damit dein Fortschritt im Spiel schneller wächst.',
+      title: 'Verbessere dich',
+      text: 'Kaufe Upgrades, Perks und Boosts, um schneller zu verdienen.',
     },
     {
-      icon: '🎁',
-      title: 'Aufgaben & Daily Bonus',
-      text: 'Erledige Aufgaben, hole deinen täglichen Bonus ab und halte deine Streak aktiv, um zusätzliche ONIX zu erhalten.',
+      icon: '📋',
+      title: 'Erledige Aufgaben',
+      text: 'Daily-, Weekly- und geheime Missionen bringen zusätzliche ONIX.',
     },
     {
-      icon: '💼',
-      title: 'Wallet im Blick',
-      text: 'Im Wallet siehst du Guthaben, Verlauf und Auszahlungsanträge. Bei Fragen findest du dort auch den technischen Support.',
+      icon: '🏆',
+      title: 'Tritt an',
+      text: 'Komm in die Wochen-, Team- und Saison-Toplisten, um Preise zu erhalten.',
     },
   ];
 
@@ -19053,123 +17912,8 @@ body:not(.onix-body-home-lock) {
   };
 
   const closeTutorial = () => {
-    const currentTelegramId = getTelegramId();
-    const onboardingKey = currentTelegramId
-      ? `onixOnboardingDone_${currentTelegramId}`
-      : 'onixOnboardingDone_guest';
-
-    localStorage.setItem(onboardingKey, 'true');
     localStorage.setItem('onixTutorialDone', 'true');
     setTutorialVisible(false);
-    trackTrafficEvent('onboarding_completed');
-  };
-
-
-  const starterQuestItems = [
-    {
-      id: 'starter_tap_50',
-      icon: '👆',
-      title: '50 Mal tippen',
-      text: 'Tippe auf die ONIX-Münze und starte deinen Fortschritt.',
-      reward: 5000,
-      progress: Math.min(Number(totalTaps || 0), 50),
-      target: 50,
-      ready: Number(totalTaps || 0) >= 50,
-    },
-    {
-      id: 'starter_first_upgrade',
-      icon: '⚡',
-      title: 'Erstes Upgrade kaufen',
-      text: 'Verbessere Tap Power, Miner, Energie oder Aufladung.',
-      reward: 10000,
-      progress: Math.min(Number(totalUpgradesBought || 0), 1),
-      target: 1,
-      ready: Number(totalUpgradesBought || 0) >= 1,
-    },
-    {
-      id: 'starter_daily_bonus',
-      icon: '🎁',
-      title: 'Daily Bonus abholen',
-      text: 'Hole deine tägliche Belohnung ab und starte deine Streak.',
-      reward: 10000,
-      progress: dailyCooldown > 0 || Number(dailyStreak || 0) > 0 ? 1 : 0,
-      target: 1,
-      ready: dailyCooldown > 0 || Number(dailyStreak || 0) > 0,
-    },
-    {
-      id: 'starter_complete_task',
-      icon: '📋',
-      title: 'Eine Aufgabe erledigen',
-      text: 'Schließe eine normale Aufgabe oder den Daily Bonus ab.',
-      reward: 15000,
-      progress: completedTasks.some((task) => !task.startsWith('starter_')) || dailyCooldown > 0 ? 1 : 0,
-      target: 1,
-      ready: completedTasks.some((task) => !task.startsWith('starter_')) || dailyCooldown > 0,
-    },
-    {
-      id: 'starter_invite_friend',
-      icon: '👥',
-      title: 'Freund einladen',
-      text: 'Teile deinen Einladungslink und erhalte einen Extra-Bonus.',
-      reward: 25000,
-      progress: Math.min(Number(referralsCount || 0), 1),
-      target: 1,
-      ready: Number(referralsCount || 0) >= 1,
-    },
-  ];
-
-  const visibleStarterQuests = starterQuestItems.filter(
-    (quest) => !completedTasks.includes(quest.id)
-  );
-
-  const starterQuestCompletedCount = starterQuestItems.length - visibleStarterQuests.length;
-
-  const claimStarterQuest = async (questId: string) => {
-    const quest = starterQuestItems.find((item) => item.id === questId);
-
-    if (!quest || completedTasks.includes(questId) || !quest.ready || claimingStarterQuestId) {
-      if (quest && !quest.ready) {
-        showToast('Erledige zuerst die Quest-Bedingung.', 'info');
-      }
-      return;
-    }
-
-    try {
-      setClaimingStarterQuestId(questId);
-
-      const response = await axios.post(`${API_URL}/claim-task`, {
-        telegramId: getTelegramId(),
-        task: questId,
-      });
-
-      const user = response.data;
-
-      setBalance(user.balance);
-      setUsername(user.username || 'Spieler');
-      setWeeklyEarned(Number(user.weeklyEarned || 0));
-      setTotalEarned(user.totalEarned);
-      setLevel(user.level);
-      setCompletedTasks(user.completedTasks || []);
-      setOwnedPerks(user.ownedPerks || []);
-      setTransactions(user.transactions || []);
-      setAchievements(user.achievements || response.data.achievements || ACHIEVEMENTS);
-      applyUserStats(user);
-      showRewardPopupFromResponse(response.data);
-      showReferralBonusPaidToast(response.data);
-      loadMissions();
-
-      trackTrafficEvent('starter_quest_claimed', { questId });
-
-      showToast(`🚀 Starter-Quest abgeschlossen: +${formatOnix(quest.reward)} ONIX`, 'success');
-
-      try {
-        WebApp.HapticFeedback?.notificationOccurred('success');
-      } catch {}
-    } catch (error: any) {
-      showToast(error?.response?.data?.message || 'Starter-Quest konnte nicht abgeholt werden', 'error');
-    } finally {
-      setClaimingStarterQuestId('');
-    }
   };
 
   const achievementCategories: Array<{
@@ -19255,42 +17999,18 @@ body:not(.onix-body-home-lock) {
 
   if (isAppLoading) {
     return (
-      <div className="relative flex min-h-screen items-center justify-center overflow-hidden bg-[#060114] px-5 text-white">
-        <div className="absolute inset-0">
-          <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,_rgba(114,56,255,0.35),_transparent_38%),radial-gradient(circle_at_bottom,_rgba(82,24,196,0.28),_transparent_45%),linear-gradient(180deg,_#050313_0%,_#090122_50%,_#04010f_100%)]" />
-          <div className="absolute left-1/2 top-24 h-56 w-56 -translate-x-1/2 rounded-full border border-violet-400/30 bg-violet-500/10 blur-[1px]" />
-          <div className="absolute left-1/2 top-24 h-56 w-56 -translate-x-1/2 rounded-full border-8 border-violet-500/20 blur-md" />
-          <div className="absolute left-[-8%] bottom-16 h-52 w-40 rotate-12 rounded-[28px] bg-[linear-gradient(180deg,_rgba(133,92,248,0.55),_rgba(39,14,93,0.05))] opacity-40 blur-[2px]" style={{ clipPath: 'polygon(30% 0%, 70% 0%, 100% 30%, 65% 100%, 15% 82%, 0% 30%)' }} />
-          <div className="absolute right-[-6%] top-40 h-60 w-44 -rotate-12 rounded-[28px] bg-[linear-gradient(180deg,_rgba(158,106,255,0.65),_rgba(39,14,93,0.05))] opacity-40 blur-[2px]" style={{ clipPath: 'polygon(30% 0%, 70% 0%, 100% 30%, 65% 100%, 15% 82%, 0% 30%)' }} />
-          <div className="absolute left-6 top-52 h-24 w-16 rotate-[-18deg] bg-violet-400/35 blur-[1px]" style={{ clipPath: 'polygon(34% 0%, 66% 0%, 100% 34%, 72% 100%, 18% 82%, 0% 30%)' }} />
-          <div className="absolute right-10 bottom-24 h-28 w-20 rotate-[15deg] bg-violet-300/30 blur-[1px]" style={{ clipPath: 'polygon(34% 0%, 66% 0%, 100% 34%, 72% 100%, 18% 82%, 0% 30%)' }} />
-          <div className="absolute inset-x-0 bottom-0 h-56 bg-[linear-gradient(180deg,_transparent,_rgba(80,24,184,0.18),_rgba(7,2,24,0.9))]" />
-        </div>
-
-        <div className="relative z-10 w-full max-w-sm rounded-[34px] border border-[#caa95a]/40 bg-[linear-gradient(180deg,rgba(22,14,58,0.95),rgba(9,5,28,0.98))] px-7 pb-9 pt-10 text-center shadow-[0_0_0_1px_rgba(125,77,255,0.18),0_30px_80px_rgba(6,0,25,0.75)]">
-          <div className="pointer-events-none absolute inset-x-4 top-4 h-px bg-gradient-to-r from-transparent via-[#d8b56a]/50 to-transparent" />
-          <div className="pointer-events-none absolute inset-x-7 bottom-4 h-px bg-gradient-to-r from-transparent via-violet-500/35 to-transparent" />
-          <div className="mx-auto mb-7 flex h-36 w-36 items-center justify-center rounded-full border border-[#d5b263]/60 bg-[radial-gradient(circle_at_50%_45%,_rgba(99,48,255,0.9),_rgba(22,9,52,0.96)_55%,_rgba(7,3,24,1)_100%)] shadow-[0_0_30px_rgba(132,71,255,0.4)]">
-            <div className="flex h-[112px] w-[112px] items-center justify-center rounded-full border border-[#d5b263]/60 bg-[radial-gradient(circle_at_center,_rgba(34,18,79,0.95),_rgba(10,4,30,1)_72%)]">
-              <div className="relative h-[68px] w-[68px] rotate-45 rounded-[14px] border-4 border-[#ddb869] bg-[linear-gradient(145deg,_rgba(125,73,255,0.95),_rgba(45,19,114,0.95))] shadow-[0_0_26px_rgba(125,73,255,0.45)]">
-                <div className="absolute inset-[12px] rounded-[10px] border-2 border-[#efdb9f]/70 bg-[radial-gradient(circle_at_center,_rgba(167,120,255,1),_rgba(90,40,214,0.95)_55%,_rgba(31,14,85,1)_100%)]" />
-                <div className="absolute left-1/2 top-1/2 h-4 w-4 -translate-x-1/2 -translate-y-1/2 rounded-full bg-[#f5dd8f] shadow-[0_0_18px_rgba(245,221,143,0.95)]" />
-              </div>
-            </div>
+      <div className="flex min-h-screen items-center justify-center bg-[#020617] px-6 text-white">
+        <div className="w-full max-w-sm rounded-3xl border border-yellow-400/20 bg-[#111827] p-8 text-center shadow-2xl">
+          <div className="mx-auto mb-5 flex h-20 w-20 animate-pulse items-center justify-center rounded-full bg-yellow-400 text-4xl">
+            🔗
           </div>
 
-          <h1 className="bg-gradient-to-b from-[#f9e6ac] via-[#d7b36a] to-[#a97a32] bg-clip-text text-[46px] font-black uppercase tracking-[0.08em] text-transparent">ONIX COIN</h1>
-          <div className="mx-auto mt-3 h-px w-44 bg-gradient-to-r from-transparent via-violet-300/70 to-transparent" />
-          <p className="mt-5 text-[17px] font-medium tracking-[0.02em] text-violet-100/90">Miner wird geladen...</p>
+          <h1 className="text-3xl font-black text-white">ONIX COIN</h1>
+          <p className="mt-3 text-sm text-gray-400">Miner wird geladen...</p>
 
-          <div className="mt-7 overflow-hidden rounded-full border border-violet-400/25 bg-[rgba(15,8,40,0.95)] p-[3px]">
-            <div className="relative h-4 overflow-hidden rounded-full bg-[linear-gradient(180deg,rgba(33,18,78,0.95),rgba(19,8,53,0.95))]">
-              <div className="absolute inset-y-0 left-0 w-2/3 rounded-full bg-[linear-gradient(90deg,#d3a83d_0%,#f6dd8e_46%,#f0bd39_100%)] shadow-[0_0_18px_rgba(240,189,57,0.65)]" />
-              <div className="absolute inset-y-[1px] left-[62%] w-10 rounded-full bg-white/35 blur-sm" />
-            </div>
+          <div className="mt-6 h-3 overflow-hidden rounded-full bg-gray-800">
+            <div className="h-full w-2/3 animate-pulse rounded-full bg-yellow-400" />
           </div>
-
-          <div className="mt-4 text-xs uppercase tracking-[0.35em] text-violet-200/55">Initializing ONIX Miner</div>
         </div>
       </div>
     );
@@ -19312,219 +18032,6 @@ body:not(.onix-body-home-lock) {
           </div>
         ))}
       </div>
-      {withdrawSuccessModalVisible && (
-        <div className="onix-withdraw-modal-backdrop" role="dialog" aria-modal="true">
-          <div className="onix-withdraw-modal">
-            <div className="onix-withdraw-modal-icon">✓</div>
-            <h2 className="onix-withdraw-modal-title">Auszahlungs-Quest gestartet!</h2>
-            <p className="onix-withdraw-modal-text">{WITHDRAW_SUCCESS_MESSAGE}</p>
-            <button
-              type="button"
-              className="onix-withdraw-support-button active:scale-95"
-              onClick={openWithdrawSupport}
-            >
-              Support-Chat öffnen
-            </button>
-            <button
-              type="button"
-              className="onix-withdraw-close-button active:scale-95"
-              onClick={() => setWithdrawSuccessModalVisible(false)}
-            >
-              Zurück ins Spiel
-            </button>
-          </div>
-        </div>
-      )}
-      {walletUnlockModalVisible && (
-        <div className="onix-withdraw-modal-backdrop" role="dialog" aria-modal="true">
-          <div className="onix-withdraw-modal onix-wallet-unlock-modal">
-            <div className="onix-withdraw-modal-icon">👛</div>
-            <h2 className="onix-withdraw-modal-title">Wallet freigeschaltet!</h2>
-            <p className="onix-withdraw-modal-text">
-              Öffne dein Wallet und verfolge dein ONIX-Guthaben.
-            </p>
-            <button
-              type="button"
-              className="onix-wallet-unlock-button active:scale-95"
-              onClick={openWalletTab}
-            >
-              Wallet öffnen
-            </button>
-            <button
-              type="button"
-              className="onix-withdraw-close-button active:scale-95"
-              onClick={() => setWalletUnlockModalVisible(false)}
-            >
-              Später
-            </button>
-          </div>
-        </div>
-      )}
-      {sideMenuVisible && (
-        <div className="onix-side-menu-backdrop" role="dialog" aria-modal="true" onClick={() => setSideMenuVisible(false)}>
-          <div className="onix-side-menu-panel" onClick={(event) => event.stopPropagation()}>
-            <div className="onix-side-menu-head">
-              <div>
-                <p>ONIX HUB</p>
-                <h2>Menü</h2>
-              </div>
-              <button type="button" onClick={() => setSideMenuVisible(false)} aria-label="Schließen">×</button>
-            </div>
-
-            <div className="onix-side-menu-player">
-              <div className="onix-side-avatar">{username.slice(0, 1).toUpperCase()}</div>
-              <div>
-                <strong>{username || 'Spieler'}</strong>
-                <span>ID: {getTelegramId() || 'Telegram'}</span>
-              </div>
-            </div>
-
-            <div className="onix-side-menu-group">
-              <p>Spieler</p>
-              <button type="button" onClick={() => closeSideMenuAndGo('friends')}>
-                <span>👤</span><div><strong>Profil / ID</strong><em>Spielerprofil öffnen</em></div>
-              </button>
-              <button type="button" onClick={() => closeSideMenuAndGo('tasks', { tasksTab: 'achievements' })}>
-                <span>🎯</span><div><strong>Erfolge & Statistik</strong><em>Fortschritt ansehen</em></div>
-              </button>
-              <button type="button" onClick={() => closeSideMenuAndGo('friends')}>
-                <span>👥</span><div><strong>Freund einladen</strong><em>Referral-Link teilen</em></div>
-              </button>
-            </div>
-
-            <div className="onix-side-menu-group">
-              <p>Community</p>
-              <button type="button" onClick={openOfficialChannel}>
-                <span>📢</span><div><strong>Offizieller Kanal</strong><em>News, Promocodes, Updates</em></div>
-              </button>
-              <button type="button" onClick={openSupportFromMenu}>
-                <span>💬</span><div><strong>Support</strong><em>Technischen Support öffnen</em></div>
-              </button>
-            </div>
-
-            <div className="onix-side-menu-group">
-              <p>Einstellungen</p>
-              <button type="button" onClick={toggleSoundSetting}>
-                <span>🔊</span><div><strong>Sound</strong><em>{soundEnabled ? 'Ein' : 'Aus'}</em></div><b>{soundEnabled ? 'ON' : 'OFF'}</b>
-              </button>
-              <button type="button" onClick={toggleVibrationSetting}>
-                <span>📳</span><div><strong>Vibration</strong><em>{vibrationEnabled ? 'Ein' : 'Aus'}</em></div><b>{vibrationEnabled ? 'ON' : 'OFF'}</b>
-              </button>
-            </div>
-
-            <div className="onix-side-menu-group">
-              <p>Information</p>
-              <button type="button" onClick={() => closeSideMenuAndGo('launch', { launchPanel: 'faq' })}>
-                <span>📜</span><div><strong>Regeln / FAQ</strong><em>Häufige Fragen lesen</em></div>
-              </button>
-              <button type="button" onClick={() => closeSideMenuAndGo('launch', { launchPanel: 'about' })}>
-                <span>ℹ️</span><div><strong>Über ONIX</strong><em>Projektinformationen</em></div>
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {notificationCenterVisible && (
-        <div className="onix-withdraw-modal-backdrop" role="dialog" aria-modal="true">
-          <div className="onix-notification-center">
-            <div className="onix-notification-head">
-              <div>
-                <p>ONIX CONTROL</p>
-                <h2>Benachrichtigungen</h2>
-              </div>
-              <button
-                type="button"
-                onClick={() => setNotificationCenterVisible(false)}
-                aria-label="Schließen"
-              >
-                ×
-              </button>
-            </div>
-
-            <div className="onix-notification-actions">
-              <span>{unreadNotificationsCount > 0 ? `${unreadNotificationsCount} neu` : 'Alles gelesen'}</span>
-              <div>
-                <button type="button" onClick={markNotificationsRead}>
-                  Alle lesen
-                </button>
-                <button type="button" onClick={clearNotifications}>
-                  Löschen
-                </button>
-              </div>
-            </div>
-
-            <div className="onix-notification-tabs">
-              {[
-                { id: 'all', label: 'Alle' },
-                { id: 'new', label: 'Neu' },
-                { id: 'rewards', label: 'Belohnungen' },
-                { id: 'news', label: 'News' },
-              ].map((tab) => (
-                <button
-                  key={tab.id}
-                  type="button"
-                  className={notificationFilter === tab.id ? 'is-active' : ''}
-                  onClick={() => setNotificationFilter(tab.id as AppNotificationCategory)}
-                >
-                  {tab.label}
-                </button>
-              ))}
-            </div>
-
-            <div className="onix-notification-list">
-              {filteredAppNotifications.length === 0 && (
-                <div className="onix-notification-empty">
-                  Benachrichtigungen gibt es hier noch nicht.
-                </div>
-              )}
-
-              {filteredAppNotifications.map((item) => (
-                <button
-                  key={item.id}
-                  type="button"
-                  className={`onix-notification-item ${!Number(item.readAt || 0) ? 'is-unread' : ''}`}
-                  onClick={() => {
-                    if (item.actionTab) {
-                      setActiveTab(item.actionTab);
-                    }
-                    markNotificationsRead();
-                    setNotificationCenterVisible(false);
-                  }}
-                >
-                  <div className="onix-notification-icon">
-                    {item.type === 'withdrawal_approved'
-                      ? '✅'
-                      : item.type === 'withdrawal_rejected'
-                      ? '⚠️'
-                      : item.type.includes('daily')
-                      ? '🎁'
-                      : item.type.includes('energy')
-                      ? '⚡'
-                      : item.type.includes('promo')
-                      ? '🎟'
-                      : item.type.includes('mission') || item.type.includes('task')
-                      ? '🏆'
-                      : item.type.includes('referral')
-                      ? '👥'
-                      : item.type.includes('offline')
-                      ? '💰'
-                      : item.type.includes('update')
-                      ? '🚀'
-                      : '📢'}
-                  </div>
-                  <div>
-                    <strong>{item.title}</strong>
-                    <p>{item.message}</p>
-                    <em>{formatTransactionTime(item.createdAt)}</em>
-                  </div>
-                </button>
-              ))}
-            </div>
-          </div>
-        </div>
-      )}
-
       {activeTab === 'home' && (
         <div
           aria-label="ONIX top navigation"
@@ -19547,7 +18054,6 @@ body:not(.onix-body-home-lock) {
           <button
             type="button"
             aria-label="Menü"
-            onClick={() => setSideMenuVisible(true)}
             style={{
               width: 34,
               height: 34,
@@ -19587,7 +18093,6 @@ body:not(.onix-body-home-lock) {
           <button
             type="button"
             aria-label="Benachrichtigungen"
-            onClick={openNotificationCenter}
             style={{
               width: 34,
               height: 34,
@@ -19599,36 +18104,13 @@ body:not(.onix-body-home-lock) {
               alignItems: 'center',
               justifyContent: 'center',
               background: 'transparent',
-              color: unreadNotificationsCount > 0 ? '#ff4d6d' : '#FFFFFF',
-              boxShadow: unreadNotificationsCount > 0 ? '0 0 18px rgba(255, 77, 109, 0.48)' : 'none',
+              color: '#FFFFFF',
+              boxShadow: 'none',
               outline: 'none',
               justifySelf: 'end',
-              position: 'relative',
             }}
           >
             <Bell size={19} strokeWidth={2.1} />
-            {unreadNotificationsCount > 0 && (
-              <span
-                style={{
-                  position: 'absolute',
-                  top: 2,
-                  right: 1,
-                  minWidth: 15,
-                  height: 15,
-                  padding: '0 4px',
-                  borderRadius: 999,
-                  background: '#ff2d55',
-                  color: '#fff',
-                  fontSize: 9,
-                  fontWeight: 900,
-                  lineHeight: '15px',
-                  textAlign: 'center',
-                  boxShadow: '0 0 12px rgba(255, 45, 85, 0.75)',
-                }}
-              >
-                {unreadNotificationsCount > 9 ? '9+' : unreadNotificationsCount}
-              </span>
-            )}
           </button>
         </div>
       )}
@@ -20341,112 +18823,6 @@ body:not(.onix-body-home-lock) {
 
           {tasksInnerTab === 'tasks' && (
             <div className="onix-tasks-ref-panel onix-tasks-ref-panel-main">
-              <div className="rounded-3xl border border-purple-400/25 bg-gradient-to-br from-purple-950/60 via-black/45 to-yellow-950/30 p-4 shadow-[0_0_30px_rgba(168,85,247,0.16)] backdrop-blur-xl">
-                <div className="flex items-start gap-3">
-                  <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl border border-yellow-400/25 bg-yellow-400/10 text-2xl">
-                    🎟
-                  </div>
-                  <div className="min-w-0 flex-1">
-                    <p className="text-lg font-extrabold text-white">Promocode einlösen</p>
-                    <p className="mt-1 text-sm text-gray-300">
-                      Hast du einen ONIX-Code aus dem Kanal oder einer Aktion? Gib ihn hier ein und hole deinen Bonus ab.
-                    </p>
-                  </div>
-                </div>
-
-                <div className="mt-4 flex gap-2">
-                  <input
-                    value={promoCodeInput}
-                    onChange={(event) => setPromoCodeInput(event.target.value.toUpperCase())}
-                    onKeyDown={(event) => {
-                      if (event.key === 'Enter') {
-                        applyPromoCode();
-                      }
-                    }}
-                    placeholder="Code eingeben"
-                    className="min-w-0 flex-1 rounded-2xl border border-white/10 bg-black/35 px-4 py-3 text-sm font-black uppercase tracking-[0.14em] text-white outline-none placeholder:text-gray-500"
-                  />
-                  <button
-                    type="button"
-                    onClick={applyPromoCode}
-                    className="rounded-2xl bg-yellow-400 px-4 py-3 text-sm font-black text-black shadow-[0_0_18px_rgba(250,204,21,0.28)] active:scale-95"
-                  >
-                    Aktivieren
-                  </button>
-                </div>
-
-                <button
-                  type="button"
-                  onClick={() => openExternalLink(ONIX_OFFICIAL_CHANNEL_URL)}
-                  className="mt-3 w-full rounded-2xl border border-purple-400/20 bg-white/[0.05] py-3 text-sm font-bold text-purple-100 active:scale-95"
-                >
-                  📢 Offizieller Kanal
-                </button>
-              </div>
-
-              <div className="rounded-3xl border border-yellow-400/20 bg-black/35 p-4 shadow-[0_0_28px_rgba(250,204,21,0.10)] backdrop-blur-xl">
-                <div className="mb-4 flex items-start justify-between gap-3">
-                  <div>
-                    <p className="text-lg font-extrabold text-yellow-300">🚀 Starter-Quest</p>
-                    <p className="mt-1 text-sm text-gray-300">Schließe deine ersten Schritte ab und sichere dir Bonus-ONIX.</p>
-                  </div>
-                  <div className="rounded-2xl border border-yellow-400/20 bg-yellow-400/10 px-3 py-2 text-right">
-                    <p className="text-xs text-yellow-100/80">Fortschritt</p>
-                    <p className="font-black text-yellow-300">{starterQuestCompletedCount}/{starterQuestItems.length}</p>
-                  </div>
-                </div>
-
-                {visibleStarterQuests.length > 0 ? (
-                  <div className="space-y-3">
-                    {visibleStarterQuests.map((quest) => {
-                      const progressPercent = Math.max(0, Math.min(100, (quest.progress / quest.target) * 100));
-
-                      return (
-                        <div key={quest.id} className="rounded-2xl border border-white/10 bg-white/[0.04] p-3">
-                          <div className="flex items-center gap-3">
-                            <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-yellow-400/10 text-2xl">
-                              {quest.icon}
-                            </div>
-                            <div className="min-w-0 flex-1">
-                              <div className="flex items-start justify-between gap-2">
-                                <div>
-                                  <p className="font-bold text-white">{quest.title}</p>
-                                  <p className="text-xs text-gray-400">{quest.text}</p>
-                                </div>
-                                <p className="shrink-0 text-sm font-black text-yellow-300">+{formatOnix(quest.reward)}</p>
-                              </div>
-                              <div className="mt-3 h-2 overflow-hidden rounded-full bg-white/10">
-                                <div
-                                  className="h-full rounded-full bg-gradient-to-r from-yellow-300 to-purple-400"
-                                  style={{ width: `${progressPercent}%` }}
-                                />
-                              </div>
-                              <div className="mt-2 flex items-center justify-between gap-2">
-                                <span className="text-xs text-gray-400">{formatOnix(quest.progress)} / {formatOnix(quest.target)}</span>
-                                <button
-                                  type="button"
-                                  onClick={() => claimStarterQuest(quest.id)}
-                                  disabled={!quest.ready || claimingStarterQuestId === quest.id}
-                                  className={`rounded-xl px-3 py-2 text-xs font-black transition ${quest.ready ? 'bg-yellow-400 text-black shadow-[0_0_16px_rgba(250,204,21,0.35)]' : 'bg-white/10 text-gray-400'}`}
-                                >
-                                  {claimingStarterQuestId === quest.id ? 'Lädt...' : quest.ready ? 'Abholen' : 'Offen'}
-                                </button>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                      );
-                    })}
-                  </div>
-                ) : (
-                  <div className="rounded-2xl border border-emerald-400/20 bg-emerald-400/10 p-4 text-center">
-                    <p className="text-2xl">✅</p>
-                    <p className="mt-1 font-bold text-emerald-300">Starter-Quest abgeschlossen</p>
-                    <p className="text-sm text-gray-300">Alle Start-Boni wurden abgeholt.</p>
-                  </div>
-                )}
-              </div>
-
 {!completedTasks.includes('channel') && (
 <div
             onClick={async () => {
@@ -21151,9 +19527,6 @@ body:not(.onix-body-home-lock) {
                     <button type="button" onClick={loadAdminEconomyDashboard} disabled={isAdminLoading}>
                       <span>📊</span><strong>Экономика</strong><em>балансы, выводы, конфиг</em>
                     </button>
-                    <button type="button" onClick={loadAdminTrafficAnalytics} disabled={isAdminLoading}>
-                      <span>📈</span><strong>Traffic analytics</strong><em>реклама, воронка, события</em>
-                    </button>
                     <button type="button" onClick={() => { setAdminSearchVisible(false); setAdminHubPage('search'); }} disabled={isAdminLoading}>
                       <span>🔎</span><strong>Поиск игрока</strong><em>профиль, баланс, бан</em>
                     </button>
@@ -21236,148 +19609,6 @@ body:not(.onix-body-home-lock) {
                           </div>
                         ) : <p className="onix-admin-empty">Нажми обновить, чтобы загрузить dashboard.</p>}
                         <button type="button" className="onix-admin-secondary" onClick={loadAdminEconomyDashboard} disabled={isAdminLoading}>Обновить экономику</button>
-                      </div>
-                    )}
-
-                    {adminHubPage === 'traffic' && (
-                      <div className="onix-admin-section-card">
-                        <div className="onix-admin-section-head"><strong>📈 Traffic analytics</strong><span>7 дней</span></div>
-                        {adminTrafficAnalytics ? (
-                          <>
-                            <div className="onix-admin-metrics-grid">
-                              <div><span>Новые игроки</span><strong>{formatOnix(adminTrafficAnalytics.newPlayers || 0)}</strong></div>
-                              <div><span>Всего игроков</span><strong>{formatOnix(adminTrafficAnalytics.totalPlayers || 0)}</strong></div>
-                              <div><span>Первый тап</span><strong>{formatOnix(adminTrafficAnalytics.funnel.find((item) => item.key === 'first_tap')?.count || 0)}</strong></div>
-                              <div><span>Wallet</span><strong>{formatOnix(adminTrafficAnalytics.funnel.find((item) => item.key === 'wallet_opened')?.count || 0)}</strong></div>
-                              <div><span>Promo 7 дней</span><strong>{formatOnix(adminTrafficAnalytics.promoAnalytics?.total.recent || 0)}</strong></div>
-                              <div><span>Promo всего</span><strong>{formatOnix(adminTrafficAnalytics.promoAnalytics?.total.allTime || 0)}</strong></div>
-                            </div>
-
-                            {adminTrafficAnalytics.promoAnalytics && (
-                              <>
-                                <div className="onix-admin-section-head">
-                                  <strong>🎟 Promo analytics</strong>
-                                  <span>{formatOnix(adminTrafficAnalytics.promoAnalytics.total.recent || 0)} за 7 дней</span>
-                                </div>
-
-                                <div className="onix-admin-list">
-                                  {adminTrafficAnalytics.promoAnalytics.codes.map((item) => (
-                                    <div key={item.code} className="onix-admin-row">
-                                      <div>
-                                        <strong>{item.code}</strong>
-                                        <em>reward {formatOnix(item.reward)} · total {formatOnix(item.allTime)}</em>
-                                      </div>
-                                      <b>{formatOnix(item.recent)}</b>
-                                    </div>
-                                  ))}
-                                </div>
-
-                                {adminTrafficAnalytics.promoAnalytics.recent.length > 0 && (
-                                  <>
-                                    <div className="onix-admin-section-head">
-                                      <strong>Последние промокоды</strong>
-                                      <span>{adminTrafficAnalytics.promoAnalytics.recent.length}</span>
-                                    </div>
-                                    <div className="onix-admin-list">
-                                      {adminTrafficAnalytics.promoAnalytics.recent.slice(0, 6).map((item, index) => (
-                                        <div key={`${item.telegramId}-${item.code}-${index}`} className="onix-admin-row is-column">
-                                          <strong>{item.code} · {item.username || 'Spieler'}</strong>
-                                          <em>+{formatOnix(item.reward)} ONIX · {formatTransactionTime(item.createdAt)}</em>
-                                        </div>
-                                      ))}
-                                    </div>
-                                  </>
-                                )}
-                              </>
-                            )}
-
-                            <div className="onix-admin-section-head">
-                              <strong>👥 Player usernames</strong>
-                              <span>{adminPlayerUsernames ? `${adminPlayerUsernames.usernamesCount}/${adminPlayerUsernames.total}` : 'export'}</span>
-                            </div>
-
-                            <div className="onix-admin-player-tools">
-                              <select
-                                value={adminPlayerFilter}
-                                onChange={(event) => loadAdminPlayerUsernames(event.target.value)}
-                                disabled={isAdminLoading}
-                              >
-                                <option value="all">All players</option>
-                                <option value="new7">New 7 days</option>
-                                <option value="active7">Active 7 days</option>
-                                <option value="start">START users</option>
-                                <option value="onix2026">ONIX2026 users</option>
-                                <option value="launch">LAUNCH users</option>
-                                <option value="tapped">First tap users</option>
-                                <option value="withdraw">Withdraw clicked</option>
-                                <option value="support">Support clicked</option>
-                              </select>
-                              <button type="button" onClick={() => loadAdminPlayerUsernames(adminPlayerFilter)} disabled={isAdminLoading}>
-                                Laden
-                              </button>
-                            </div>
-
-                            {adminPlayerUsernames && (
-                              <>
-                                <div className="onix-admin-actions">
-                                  <button type="button" onClick={copyAdminUsernames}>
-                                    Copy @usernames
-                                  </button>
-                                  <button type="button" onClick={exportAdminUsernamesCsv}>
-                                    Export CSV
-                                  </button>
-                                </div>
-
-                                <div className="onix-admin-list">
-                                  {adminPlayerUsernames.players.slice(0, 10).map((player) => (
-                                    <div key={`${player.telegramId}-${player.username || player.displayName}`} className="onix-admin-row is-column">
-                                      <strong>{player.username || player.displayName || 'Spieler ohne username'}</strong>
-                                      <em>
-                                        {player.username
-                                          ? 'echter Telegram @username'
-                                          : 'nur Telegram Name, kein @username'}
-                                      </em>
-                                      <em>ID: {player.telegramId} · balance {formatOnix(player.balance)} · taps {formatOnix(player.totalTaps)}</em>
-                                      <p>{player.promoCodes.length > 0 ? `Promo: ${player.promoCodes.join(', ')}` : 'Promo: —'}</p>
-                                    </div>
-                                  ))}
-                                  {adminPlayerUsernames.players.length === 0 && <p className="onix-admin-empty">Игроков по фильтру нет.</p>}
-                                </div>
-                              </>
-                            )}
-
-                            <div className="onix-admin-list">
-                              {adminTrafficAnalytics.funnel.map((item) => (
-                                <div key={item.key} className="onix-admin-row">
-                                  <div><strong>{item.label}</strong><em>{item.key}</em></div>
-                                  <b>{formatOnix(item.count)}</b>
-                                </div>
-                              ))}
-                            </div>
-
-                            <div className="onix-admin-section-head"><strong>Источники</strong><span>{adminTrafficAnalytics.sources.length}</span></div>
-                            <div className="onix-admin-list">
-                              {adminTrafficAnalytics.sources.slice(0, 6).map((item, index) => (
-                                <div key={`${item.source}-${item.startParam}-${index}`} className="onix-admin-row is-column">
-                                  <strong>{item.source || 'direct'} · {formatOnix(item.count)}</strong>
-                                  <em>{item.startParam || item.campaign || 'без startParam'}</em>
-                                </div>
-                              ))}
-                              {adminTrafficAnalytics.sources.length === 0 && <p className="onix-admin-empty">Источников пока нет.</p>}
-                            </div>
-
-                            <div className="onix-admin-section-head"><strong>Последние события</strong><span>{adminTrafficAnalytics.recentEvents.length}</span></div>
-                            <div className="onix-admin-list">
-                              {adminTrafficAnalytics.recentEvents.slice(0, 8).map((item, index) => (
-                                <div key={`${item.telegramId}-${item.event}-${index}`} className="onix-admin-row is-column">
-                                  <strong>{item.event} · {item.username || 'Spieler'}</strong>
-                                  <em>ID: {item.telegramId} · {formatTransactionTime(item.createdAt)}</em>
-                                </div>
-                              ))}
-                            </div>
-                          </>
-                        ) : <p className="onix-admin-empty">Нажми обновить, чтобы загрузить аналитику рекламы.</p>}
-                        <button type="button" className="onix-admin-secondary" onClick={loadAdminTrafficAnalytics} disabled={isAdminLoading}>Обновить аналитику</button>
                       </div>
                     )}
 
@@ -22569,15 +20800,6 @@ body:not(.onix-body-home-lock) {
                   </div>
                   <b className="onix-wallet-section-arrow-v3">›</b>
                 </button>
-
-                <button type="button" className="onix-wallet-section-card-v3" onClick={openWithdrawSupport}>
-                  <span className="onix-wallet-section-icon-v3">🛡️</span>
-                  <div className="onix-wallet-section-text-v3">
-                    <strong>Technischer Support</strong>
-                    <p>ONIX-Hilfe öffnen</p>
-                  </div>
-                  <b className="onix-wallet-section-arrow-v3">›</b>
-                </button>
               </div>
             </>
           ) : (
@@ -22844,13 +21066,8 @@ body:not(.onix-body-home-lock) {
             <input
               value={promoCodeInput}
               onChange={(event) => setPromoCodeInput(event.target.value.toUpperCase())}
-              onKeyDown={(event) => {
-                if (event.key === 'Enter') {
-                  applyPromoCode();
-                }
-              }}
-              placeholder="Code eingeben"
-              className="w-full rounded-2xl bg-[#0a0f1c] px-4 py-4 text-center text-lg font-bold uppercase tracking-[0.16em] text-white outline-none"
+              placeholder="Zum Beispiel: LAUNCH"
+              className="w-full rounded-2xl bg-[#0a0f1c] px-4 py-4 text-center text-lg font-bold text-white outline-none"
             />
 
             <button
@@ -24103,104 +22320,6 @@ body:not(.onix-body-home-lock) {
                 ✅ Link kopiert
               </p>
             )}
-          </div>
-        </div>
-      )}
-
-      {dailyBonusModalVisible && (
-        <div className="onix-modal-layer fixed inset-0 z-[10002] flex items-center justify-center bg-black/75 px-4">
-          <div className="relative w-full max-w-sm overflow-hidden rounded-[2rem] border border-yellow-400/40 bg-[#090d18] p-6 text-center shadow-[0_0_45px_rgba(168,85,247,0.55)]">
-            <button
-              type="button"
-              onClick={() => setDailyBonusModalVisible(false)}
-              className="absolute right-5 top-4 z-10 text-2xl text-gray-400 active:scale-95"
-            >
-              ×
-            </button>
-
-            <div className="pointer-events-none absolute -left-16 -top-16 h-36 w-36 rounded-full bg-purple-500/30 blur-3xl" />
-            <div className="pointer-events-none absolute -bottom-20 -right-14 h-44 w-44 rounded-full bg-yellow-400/20 blur-3xl" />
-
-            <div className="relative mx-auto mb-4 flex h-20 w-20 items-center justify-center rounded-3xl border border-purple-300/30 bg-purple-500/20 text-4xl shadow-[0_0_28px_rgba(168,85,247,0.75)]">
-              💎
-            </div>
-
-            <p className="relative text-xs font-black uppercase tracking-[0.32em] text-yellow-300">
-              Daily Quest
-            </p>
-
-            <h2 className="relative mt-2 text-3xl font-black text-white">
-              Täglicher Bonus
-            </h2>
-
-            <p className="relative mt-3 text-sm leading-relaxed text-gray-300">
-              Komm jeden Tag zurück, sammle ONIX und erhöhe deinen Streak-Bonus bis Tag 7.
-            </p>
-
-            <div className="relative mt-5 rounded-3xl border border-yellow-400/20 bg-black/35 p-4">
-              <p className="text-xs text-gray-400">Heute verfügbar</p>
-              <p className="mt-1 text-4xl font-black text-yellow-300">
-                +{formatOnix(dailyRewardPreview)}
-              </p>
-              <p className="text-sm font-bold text-purple-200">ONIX</p>
-
-              <div className="mt-4 grid grid-cols-7 gap-1.5">
-                {Array.from({ length: 7 }).map((_, index) => {
-                  const day = index + 1;
-                  const isActiveDay = day === nextDailyStreakDay;
-                  const isCompletedDay = dailyCooldown > 0 && day <= nextDailyStreakDay;
-
-                  return (
-                    <div
-                      key={day}
-                      className={`rounded-xl border px-1 py-2 text-center text-[10px] font-black ${
-                        isActiveDay
-                          ? 'border-yellow-300 bg-yellow-300 text-black shadow-[0_0_16px_rgba(250,204,21,0.55)]'
-                          : isCompletedDay
-                          ? 'border-purple-400/50 bg-purple-500/25 text-purple-100'
-                          : 'border-white/10 bg-white/5 text-gray-500'
-                      }`}
-                    >
-                      {day}
-                    </div>
-                  );
-                })}
-              </div>
-
-              <div className="mt-4 flex items-center justify-between rounded-2xl bg-white/5 px-4 py-3 text-sm">
-                <span className="text-gray-400">Streak-Multiplikator</span>
-                <span className="font-black text-yellow-300">×{dailyStreakMultiplier.toFixed(1)}</span>
-              </div>
-            </div>
-
-            <button
-              type="button"
-              onClick={claimDailyBonus}
-              disabled={dailyCooldown > 0 || isClaimingDailyBonus}
-              className={`relative mt-5 w-full rounded-2xl py-4 text-lg font-black transition active:scale-95 ${
-                dailyCooldown > 0 || isClaimingDailyBonus
-                  ? 'bg-gray-700 text-gray-400'
-                  : 'bg-yellow-400 text-black shadow-[0_0_24px_rgba(250,204,21,0.45)]'
-              }`}
-            >
-              {isClaimingDailyBonus
-                ? 'Wird abgeholt...'
-                : dailyCooldown > 0
-                ? `Nächster Bonus in ${formatTime(dailyCooldown)}`
-                : 'Bonus abholen'}
-            </button>
-
-            <button
-              type="button"
-              onClick={() => {
-                setDailyBonusModalVisible(false);
-                setActiveTab('tasks');
-                setTasksInnerTab('temporary');
-              }}
-              className="relative mt-3 w-full rounded-2xl border border-purple-400/30 bg-purple-500/10 py-3 text-sm font-bold text-purple-100 active:scale-95"
-            >
-              Später in Aufgaben ansehen
-            </button>
           </div>
         </div>
       )}

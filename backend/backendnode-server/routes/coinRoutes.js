@@ -1,7 +1,7 @@
 const axios = require('axios');
+const crypto = require('crypto');
 const express = require('express');
 const mongoose = require('mongoose');
-const crypto = require('crypto');
 
 const router = express.Router();
 
@@ -9,173 +9,136 @@ const API_RATE_LIMITS = new Map();
 const ECONOMY_OVERRIDES = {};
 const APP_VERSION = process.env.APP_VERSION || '1.0.0';
 
-
-const TELEGRAM_AUTH_REQUIRED = String(process.env.TELEGRAM_AUTH_REQUIRED || 'false') === 'true';
-const TELEGRAM_AUTH_MAX_AGE_SECONDS = Number(process.env.TELEGRAM_AUTH_MAX_AGE_SECONDS || 24 * 60 * 60);
+const TELEGRAM_AUTH_MAX_AGE_SECONDS = Number(process.env.TELEGRAM_AUTH_MAX_AGE_SECONDS || 86400);
 
 function verifyTelegramInitData(initData) {
-  const botToken = process.env.BOT_TOKEN;
+  const botToken = String(process.env.BOT_TOKEN || '').trim();
+  const rawInitData = String(initData || '').trim();
 
   if (!botToken) {
-    return { ok: false, reason: 'BOT_TOKEN is not configured' };
+    throw new Error('BOT_TOKEN is not configured');
   }
 
-  if (!initData || typeof initData !== 'string') {
-    return { ok: false, reason: 'Telegram initData is missing' };
+  if (!rawInitData) {
+    return { ok: false, reason: 'missing_init_data' };
   }
 
-  const params = new URLSearchParams(initData);
-  const hash = params.get('hash');
+  const params = new URLSearchParams(rawInitData);
+  const receivedHash = params.get('hash');
 
-  if (!hash) {
-    return { ok: false, reason: 'Telegram initData hash is missing' };
+  if (!receivedHash) {
+    return { ok: false, reason: 'missing_hash' };
   }
 
   params.delete('hash');
+  params.delete('signature');
 
-  const dataCheckString = Array.from(params.entries())
+  const dataCheckString = [...params.entries()]
     .sort(([a], [b]) => a.localeCompare(b))
     .map(([key, value]) => `${key}=${value}`)
-    .join('\n');
+    .join('\
+');
 
-  const secretKey = crypto.createHmac('sha256', 'WebAppData').update(botToken).digest();
+  const secretKey = crypto
+    .createHmac('sha256', 'WebAppData')
+    .update(botToken)
+    .digest();
+
   const calculatedHash = crypto
     .createHmac('sha256', secretKey)
     .update(dataCheckString)
     .digest('hex');
 
-  const receivedHash = Buffer.from(hash, 'hex');
-  const expectedHash = Buffer.from(calculatedHash, 'hex');
+  const receivedBuffer = Buffer.from(receivedHash, 'hex');
+  const calculatedBuffer = Buffer.from(calculatedHash, 'hex');
 
-  if (receivedHash.length !== expectedHash.length || !crypto.timingSafeEqual(receivedHash, expectedHash)) {
-    return { ok: false, reason: 'Telegram initData hash is invalid' };
+  if (
+    receivedBuffer.length !== calculatedBuffer.length ||
+    !crypto.timingSafeEqual(receivedBuffer, calculatedBuffer)
+  ) {
+    return { ok: false, reason: 'invalid_hash' };
   }
 
   const authDate = Number(params.get('auth_date') || 0);
+  const nowSeconds = Math.floor(Date.now() / 1000);
 
-  if (!authDate) {
-    return { ok: false, reason: 'Telegram auth_date is missing' };
-  }
-
-  const ageSeconds = Math.floor(Date.now() / 1000) - authDate;
-
-  if (ageSeconds > TELEGRAM_AUTH_MAX_AGE_SECONDS) {
-    return { ok: false, reason: 'Telegram session is expired' };
+  if (
+    TELEGRAM_AUTH_MAX_AGE_SECONDS > 0 &&
+    (!authDate || nowSeconds - authDate > TELEGRAM_AUTH_MAX_AGE_SECONDS || authDate > nowSeconds + 60)
+  ) {
+    return { ok: false, reason: 'expired_init_data' };
   }
 
   let user = null;
-
   try {
-    user = JSON.parse(params.get('user') || 'null');
+    const rawUser = params.get('user');
+    user = rawUser ? JSON.parse(rawUser) : null;
   } catch {
-    user = null;
+    return { ok: false, reason: 'invalid_user_data' };
   }
 
-  const telegramId = user?.id ? String(user.id) : '';
-
-  if (!telegramId) {
-    return { ok: false, reason: 'Telegram user is missing' };
+  if (!user?.id) {
+    return { ok: false, reason: 'missing_user' };
   }
 
   return {
     ok: true,
-    telegramId,
-    user,
     authDate,
+    user: {
+      id: String(user.id),
+      firstName: String(user.first_name || '').trim(),
+      lastName: String(user.last_name || '').trim(),
+      username: String(user.username || '').replace(/^@/, '').trim(),
+      languageCode: String(user.language_code || 'de').trim() || 'de',
+      photoUrl: String(user.photo_url || '').trim(),
+    },
   };
 }
 
-function routeRequiresTelegramAuth(req) {
-  if (!TELEGRAM_AUTH_REQUIRED) return false;
-  if (req.path.startsWith('/admin') || req.path.startsWith('/cron')) return false;
-
-  const method = String(req.method || '').toUpperCase();
-  const publicGetPrefixes = [
-    '/health',
-    '/config',
-    '/version',
-    '/launch-info',
-    '/season-history',
-    '/leaderboard/teams',
-    '/leaderboard/weekly',
-    '/teams',
-  ];
-
-  if (method === 'GET' && publicGetPrefixes.some((path) => req.path === path || req.path.startsWith(`${path}/`))) {
-    return false;
-  }
-
-  if (req.path === '/frontend-error' || req.path === '/track-event') return false;
-
-  if (method !== 'GET') return true;
-
-  return Boolean(
-    req.params?.telegramId ||
-      req.query?.telegramId ||
-      /^\/[^/]+$/.test(req.path) ||
-      req.path.startsWith('/missions/') ||
-      req.path.startsWith('/referrals/') ||
-      req.path.startsWith('/friends-leaderboard/') ||
-      req.path.startsWith('/team-dashboard/')
-  );
+function getTelegramInitDataFromRequest(req) {
+  return String(req.headers['x-telegram-init-data'] || '').trim();
 }
 
-function getRequestedTelegramIds(req) {
-  const ids = new Set();
-  const add = (value) => {
-    if (value === undefined || value === null || value === '') return;
-    ids.add(String(value));
-  };
-
-  add(req.body?.telegramId);
-  add(req.query?.telegramId);
-  add(req.params?.telegramId);
-  add(req.headers['x-telegram-id']);
-
-  const singleUserMatch = req.path.match(/^\/([^/]+)$/);
-
-  if (singleUserMatch && !['health', 'config', 'version', 'teams', 'launch-info'].includes(singleUserMatch[1])) {
-    add(singleUserMatch[1]);
-  }
-
-  const prefixedUserMatch = req.path.match(/^\/(missions|referrals|friends-leaderboard|team-dashboard)\/([^/]+)/);
-
-  if (prefixedUserMatch) {
-    add(prefixedUserMatch[2]);
-  }
-
-  return Array.from(ids);
+function isTelegramAuthPublicPath(path) {
+  return path === '/config' || path === '/version' || path.startsWith('/cron-');
 }
 
-function requireTelegramAuth(req, res, next) {
-  if (!routeRequiresTelegramAuth(req)) {
+function telegramAuthMiddleware(req, res, next) {
+  try {
+    if (isTelegramAuthPublicPath(req.path)) {
+      return next();
+    }
+
+    const verification = verifyTelegramInitData(getTelegramInitDataFromRequest(req));
+
+    if (!verification.ok) {
+      return res.status(401).json({
+        message: 'Telegram-Authentifizierung fehlgeschlagen.',
+        code: verification.reason,
+      });
+    }
+
+    req.telegramUser = verification.user;
+    req.authenticatedTelegramId = verification.user.id;
+
+    if (req.body && Object.prototype.hasOwnProperty.call(req.body, 'telegramId')) {
+      req.body.telegramId = verification.user.id;
+    }
+
+    const queryTelegramId = req.query?.telegramId ? String(req.query.telegramId) : '';
+    if (queryTelegramId && queryTelegramId !== verification.user.id) {
+      return res.status(403).json({
+        message: 'Telegram-ID stimmt nicht mit der authentifizierten Sitzung überein.',
+      });
+    }
+
     return next();
-  }
-
-  const initData = req.headers['x-telegram-init-data'] || req.body?.telegramInitData || req.query?.telegramInitData;
-  const verification = verifyTelegramInitData(initData);
-
-  if (!verification.ok) {
-    return res.status(401).json({
-      message: 'Telegram-Sitzung konnte nicht verifiziert werden. Öffne die Mini-App erneut in Telegram.',
-      code: 'TELEGRAM_AUTH_INVALID',
+  } catch (error) {
+    console.error('Telegram auth error:', error);
+    return res.status(500).json({
+      message: 'Telegram-Authentifizierung konnte nicht geprüft werden.',
     });
   }
-
-  const requestedTelegramIds = getRequestedTelegramIds(req);
-  const mismatch = requestedTelegramIds.find((id) => id !== verification.telegramId);
-
-  if (mismatch) {
-    return res.status(403).json({
-      message: 'Telegram-ID stimmt nicht mit der aktuellen Sitzung überein.',
-      code: 'TELEGRAM_AUTH_MISMATCH',
-    });
-  }
-
-  req.telegramUser = verification.user;
-  req.telegramId = verification.telegramId;
-
-  return next();
 }
 
 
@@ -301,6 +264,17 @@ function cleanupRateLimits(now = Date.now()) {
   }
 }
 
+router.use(telegramAuthMiddleware);
+
+router.param('telegramId', (req, res, next, telegramId) => {
+  if (req.authenticatedTelegramId && String(telegramId) !== String(req.authenticatedTelegramId)) {
+    return res.status(403).json({
+      message: 'Telegram-ID stimmt nicht mit der authentifizierten Sitzung überein.',
+    });
+  }
+  return next();
+});
+
 router.use((req, res, next) => {
   try {
     if (req.path.startsWith('/admin') || req.path.startsWith('/cron')) {
@@ -360,8 +334,6 @@ router.use((req, res, next) => {
   }
 });
 
-router.use(requireTelegramAuth);
-
 const User = require('../models/User');
 
 const WeeklyPrizeSchema = new mongoose.Schema({
@@ -392,54 +364,6 @@ const WeeklyPrize =
   mongoose.models.WeeklyPrize || mongoose.model('WeeklyPrize', WeeklyPrizeSchema);
 
 
-const TRAFFIC_EVENT_NAMES = [
-  'app_opened',
-  'onboarding_completed',
-  'first_tap',
-  'first_upgrade',
-  'daily_bonus_claimed',
-  'starter_quest_claimed',
-  'wallet_opened',
-  'withdraw_clicked',
-  'withdraw_request_created',
-  'support_clicked',
-  'mission_claimed',
-];
-
-const TrafficEventSchema = new mongoose.Schema(
-  {
-    telegramId: { type: String, required: true, index: true },
-    username: { type: String, default: 'Spieler' },
-    event: { type: String, required: true, index: true },
-    source: { type: String, default: '' },
-    startParam: { type: String, default: '' },
-    campaign: { type: String, default: '' },
-    metadata: { type: mongoose.Schema.Types.Mixed, default: {} },
-    createdAt: { type: Number, default: Date.now, index: true },
-  },
-  { collection: 'traffic_events' }
-);
-
-TrafficEventSchema.index({ telegramId: 1, event: 1 }, { unique: true });
-TrafficEventSchema.index({ event: 1, createdAt: -1 });
-
-const TrafficEvent =
-  mongoose.models.TrafficEvent || mongoose.model('TrafficEvent', TrafficEventSchema);
-
-function normalizeTrafficEventName(event) {
-  const cleanEvent = String(event || '').trim().toLowerCase();
-  return TRAFFIC_EVENT_NAMES.includes(cleanEvent) ? cleanEvent : '';
-}
-
-function getAnalyticsSince(req) {
-  const days = Math.min(Math.max(Number(req.query.days || 7), 1), 90);
-  return {
-    days,
-    since: Date.now() - days * DAY_MS,
-  };
-}
-
-
 const LEVEL_COINS = 500;
 const DAY_MS = 24 * 60 * 60 * 1000;
 const MAX_OFFLINE_SECONDS = 3 * 60 * 60;
@@ -451,41 +375,6 @@ const DEFAULT_MAX_ENERGY = 500;
 const DEFAULT_TAP_POWER = 1;
 const DEFAULT_ENERGY_RECHARGE = 1;
 const DEFAULT_MINER_INCOME = 1;
-
-const STARTER_QUESTS = {
-  starter_tap_50: {
-    reward: 5000,
-    title: 'Starter-Quest: 50 Mal tippen',
-    isReady: (user) => Number(user.totalTaps || 0) >= 50,
-    message: 'Tippe zuerst 50 Mal auf die ONIX-Münze.',
-  },
-  starter_first_upgrade: {
-    reward: 10000,
-    title: 'Starter-Quest: Erstes Upgrade',
-    isReady: (user) => Number(user.totalUpgradesBought || 0) >= 1,
-    message: 'Kaufe zuerst dein erstes Upgrade.',
-  },
-  starter_daily_bonus: {
-    reward: 10000,
-    title: 'Starter-Quest: Daily Bonus',
-    isReady: (user) => Boolean(user.dailyRewardLastClaim || user.lastDailyClaimDay || Number(user.dailyStreak || 0) > 0),
-    message: 'Hole zuerst deinen Daily Bonus ab.',
-  },
-  starter_complete_task: {
-    reward: 15000,
-    title: 'Starter-Quest: Aufgabe erledigt',
-    isReady: (user) =>
-      Boolean(user.dailyRewardLastClaim || user.lastDailyClaimDay || Number(user.dailyStreak || 0) > 0) ||
-      (Array.isArray(user.completedTasks) && user.completedTasks.some((task) => !String(task).startsWith('starter_'))),
-    message: 'Erledige zuerst eine Aufgabe oder hole den Daily Bonus ab.',
-  },
-  starter_invite_friend: {
-    reward: 25000,
-    title: 'Starter-Quest: Freund eingeladen',
-    isReady: (user) => Number(user.referralsCount || 0) >= 1,
-    message: 'Lade zuerst einen Freund ein.',
-  },
-};
 const TEMP_TAP_BOOST_COST = 15000;
 const TEMP_MINING_BOOST_COST = 20000;
 const TEMP_ENERGY_REFILL_COST = 25000;
@@ -836,8 +725,6 @@ function ensureMissionStats(user, now = Date.now()) {
   if (!user.claimedDailyMissions) user.claimedDailyMissions = [];
   if (!user.claimedWeeklyMissions) user.claimedWeeklyMissions = [];
   if (!user.usedPromoCodes) user.usedPromoCodes = [];
-  if (!user.promoUsage) user.promoUsage = [];
-  if (!user.notifications) user.notifications = [];
   if (user.welcomeBonusClaimed === undefined || user.welcomeBonusClaimed === null) {
     user.welcomeBonusClaimed = false;
   }
@@ -1506,25 +1393,6 @@ function addTransaction(user, type, amount, title, status = 'completed') {
   user.transactions = user.transactions.slice(0, 50);
 }
 
-function addUserNotification(user, type, title, message, actionTab = '', category = 'news') {
-  if (!user.notifications) user.notifications = [];
-
-  const now = Date.now();
-
-  user.notifications.unshift({
-    id: `${now}_${Math.random().toString(36).slice(2, 10)}`,
-    type: String(type || 'info'),
-    title: String(title || '').slice(0, 120),
-    message: String(message || '').slice(0, 700),
-    actionTab: String(actionTab || ''),
-    category: String(category || 'news'),
-    createdAt: now,
-    readAt: 0,
-  });
-
-  user.notifications = user.notifications.slice(0, 50);
-}
-
 function prepareReferralBonusWindow(user, now = Date.now()) {
   const todayKey = getUtcDayKey(now);
   const hourKey = getUtcHourKey(now);
@@ -1774,22 +1642,6 @@ function normalizeUserFields(user) {
     user.lastMineTickAt = 0;
   }
 
-  if (user.lastEnergyRecoveryAt === undefined || user.lastEnergyRecoveryAt === null) {
-    user.lastEnergyRecoveryAt = Number(user.lastSeenAt || Date.now());
-  }
-
-  if (user.lastEnergyFullReminderAt === undefined || user.lastEnergyFullReminderAt === null) {
-    user.lastEnergyFullReminderAt = 0;
-  }
-
-  if (user.lastDailyBonusReminderDay === undefined || user.lastDailyBonusReminderDay === null) {
-    user.lastDailyBonusReminderDay = '';
-  }
-
-  if (user.reminderOptOut === undefined || user.reminderOptOut === null) {
-    user.reminderOptOut = false;
-  }
-
   if (user.lastUpgradeBuyAt === undefined || user.lastUpgradeBuyAt === null) {
     user.lastUpgradeBuyAt = 0;
   }
@@ -1808,524 +1660,17 @@ function normalizeUserFields(user) {
   return user;
 }
 
-function applyOfflineEnergyRecovery(user, now = Date.now()) {
-  normalizeUserFields(user);
-
-  const maxEnergy = Number(user.maxEnergy || DEFAULT_MAX_ENERGY);
-  const currentEnergy = Math.max(0, Number(user.energy || 0));
-  const rechargePerSecond = Math.max(1, Number(user.energyRecharge || DEFAULT_ENERGY_RECHARGE));
-  const lastRecoveryAt = Number(user.lastEnergyRecoveryAt || user.lastSeenAt || now);
-  const elapsedSeconds = Math.max(0, Math.floor((now - lastRecoveryAt) / 1000));
-
-  if (elapsedSeconds > 0 && currentEnergy < maxEnergy) {
-    user.energy = Math.min(maxEnergy, roundOnix(currentEnergy + rechargePerSecond * elapsedSeconds));
-  } else {
-    user.energy = Math.min(maxEnergy, currentEnergy);
-  }
-
-  user.lastEnergyRecoveryAt = now;
-  return user.energy;
-}
-
-
-const REMINDER_MAX_USERS_PER_RUN = Number(process.env.REMINDER_MAX_USERS_PER_RUN || 250);
-const ENERGY_FULL_REMINDER_COOLDOWN_MS = Number(process.env.ENERGY_FULL_REMINDER_COOLDOWN_MS || 6 * 60 * 60 * 1000);
-const DAILY_BONUS_REMINDER_MAX_INACTIVE_MS = Number(process.env.DAILY_BONUS_REMINDER_MAX_INACTIVE_MS || 7 * DAY_MS);
-
-function isCronRequest(req) {
-  const cronSecret = String(process.env.CRON_SECRET || '').trim();
-  if (!cronSecret) return true;
-
-  const provided =
-    String(req.query?.secret || '').trim() ||
-    String(req.headers['x-cron-secret'] || '').trim() ||
-    String(req.headers.authorization || '').replace(/^Bearer\s+/i, '').trim();
-
-  return provided === cronSecret;
-}
-
-function isDailyBonusReady(user, now = Date.now()) {
-  normalizeUserFields(user);
-
-  const todayKey = getUtcDayKey(now);
-  const lastClaimTime = Number(user.dailyRewardLastClaim || 0);
-  const lastClaimDay =
-    user.lastDailyClaimDay ||
-    (lastClaimTime ? getUtcDayKey(lastClaimTime) : '');
-
-  // Must match /claim-task daily logic exactly:
-  // blocked if the reward was already claimed today OR if 24 hours have not passed yet.
-  if (lastClaimTime && (lastClaimDay === todayKey || now - lastClaimTime < DAY_MS)) {
-    return false;
-  }
-
-  return true;
-}
-
-async function sendTelegramReminder(chatId, text) {
-  const botToken = process.env.BOT_TOKEN;
-  if (!botToken || !chatId) {
-    return { ok: false, reason: 'telegram_not_configured' };
-  }
-
-  try {
-    await axios.post(`https://api.telegram.org/bot${botToken}/sendMessage`, {
-      chat_id: String(chatId),
-      text,
-      parse_mode: 'HTML',
-      disable_web_page_preview: true,
-    });
-
-    return { ok: true };
-  } catch (error) {
-    return {
-      ok: false,
-      reason: error?.response?.data?.description || error.message || 'telegram_send_failed',
-    };
-  }
-}
-
-async function sendDueReminders(now = Date.now()) {
-  const stats = {
-    checked: 0,
-    energySent: 0,
-    dailySent: 0,
-    failed: 0,
-  };
-
-  const users = await User.find({
-    reminderOptOut: { $ne: true },
-    telegramId: { $exists: true, $ne: '' },
-  })
-    .sort({ lastSeenAt: -1 })
-    .limit(REMINDER_MAX_USERS_PER_RUN);
-
-  const todayKey = getUtcDayKey(now);
-
-  for (const user of users) {
-    stats.checked += 1;
-
-    try {
-      normalizeUserFields(user);
-
-      const beforeEnergy = Number(user.energy || 0);
-      const maxEnergy = Number(user.maxEnergy || DEFAULT_MAX_ENERGY);
-      applyOfflineEnergyRecovery(user, now);
-      const afterEnergy = Number(user.energy || 0);
-
-      const shouldSendEnergyReminder =
-        beforeEnergy < maxEnergy &&
-        afterEnergy >= maxEnergy &&
-        now - Number(user.lastEnergyFullReminderAt || 0) >= ENERGY_FULL_REMINDER_COOLDOWN_MS;
-
-      if (shouldSendEnergyReminder) {
-        const result = await sendTelegramReminder(
-          user.telegramId,
-          '⚡ <b>Deine Energie ist wieder voll!</b>\n\nKomm zurück zu <b>ONIX Coin</b> und sammle weiter ONIX.'
-        );
-
-        if (result.ok) {
-          user.lastEnergyFullReminderAt = now;
-          stats.energySent += 1;
-        } else {
-          stats.failed += 1;
-        }
-      }
-
-      const recentlyActive = now - Number(user.lastSeenAt || 0) <= DAILY_BONUS_REMINDER_MAX_INACTIVE_MS;
-      const shouldSendDailyReminder =
-        recentlyActive &&
-        isDailyBonusReady(user, now) &&
-        String(user.lastDailyBonusReminderDay || '') !== todayKey;
-
-      if (shouldSendDailyReminder) {
-        const result = await sendTelegramReminder(
-          user.telegramId,
-          '🎁 <b>Dein Daily Bonus ist bereit!</b>\n\nÖffne <b>ONIX Coin</b> und hol dir deine tägliche Belohnung.'
-        );
-
-        if (result.ok) {
-          user.lastDailyBonusReminderDay = todayKey;
-          stats.dailySent += 1;
-        } else {
-          stats.failed += 1;
-        }
-      }
-
-      if (user.isModified()) {
-        await user.save();
-      }
-    } catch {
-      stats.failed += 1;
-    }
-  }
-
-  return stats;
-}
 
 
 
 
 
-
-function isAdminRequest(secret, telegramId) {
-  const hasSecret = process.env.ADMIN_SECRET && secret === process.env.ADMIN_SECRET;
-  const hasAdminTelegramId =
+function isAdminRequest(_secret, telegramId) {
+  return Boolean(
     process.env.ADMIN_TELEGRAM_ID &&
-    String(telegramId || '') === String(process.env.ADMIN_TELEGRAM_ID);
-
-  return Boolean(hasSecret || hasAdminTelegramId);
-}
-
-
-
-router.get('/cron-reminders', async (req, res) => {
-  try {
-    if (!isCronRequest(req)) {
-      return res.status(403).json({ message: 'Forbidden' });
-    }
-
-    const stats = await sendDueReminders(Date.now());
-
-    return res.json({
-      ok: true,
-      ...stats,
-    });
-  } catch (error) {
-    return res.status(500).json({
-      ok: false,
-      message: error.message,
-    });
-  }
-});
-
-router.post('/track-event', async (req, res) => {
-  try {
-    const telegramId = String(req.body.telegramId || '').trim();
-    const event = normalizeTrafficEventName(req.body.event);
-
-    if (!telegramId || !event) {
-      return res.status(400).json({ message: 'Invalid traffic event' });
-    }
-
-    const username = String(req.body.username || 'Spieler').trim().slice(0, 64) || 'Spieler';
-    const source = String(req.body.source || '').trim().slice(0, 80);
-    const startParam = String(req.body.startParam || '').trim().slice(0, 160);
-    const campaign = String(req.body.campaign || '').trim().slice(0, 120);
-    const metadata = req.body.metadata && typeof req.body.metadata === 'object' ? req.body.metadata : {};
-    const now = Date.now();
-
-    const userUpdate = {
-      username,
-      lastSeenAt: now,
-    };
-
-    if (event === 'wallet_opened') {
-      userUpdate.walletOpenedAt = now;
-    }
-
-    if (event === 'withdraw_clicked') {
-      userUpdate.withdrawClickedAt = now;
-    }
-
-    if (event === 'support_clicked') {
-      userUpdate.supportClickedAt = now;
-    }
-
-    await User.updateOne(
-      { telegramId },
-      { $set: userUpdate },
-      { upsert: false }
-    );
-
-    await TrafficEvent.updateOne(
-      { telegramId, event },
-      {
-        $setOnInsert: {
-          telegramId,
-          event,
-          username,
-          source,
-          startParam,
-          campaign,
-          metadata,
-          createdAt: now,
-        },
-        $set: {
-          username,
-        },
-      },
-      { upsert: true }
-    );
-
-    return res.json({ ok: true });
-  } catch (error) {
-    if (error && error.code === 11000) {
-      return res.json({ ok: true, duplicate: true });
-    }
-
-    return res.status(500).json({ message: 'Traffic event could not be saved' });
-  }
-});
-
-
-function buildPromoAnalytics(users, since, promoCodesConfig) {
-  const promoCodes = Object.keys(promoCodesConfig || {});
-  const stats = promoCodes.reduce((acc, code) => {
-    acc[code] = {
-      code,
-      reward: Number(promoCodesConfig[code] || 0),
-      recent: 0,
-      allTime: 0,
-      rewardRecent: 0,
-    };
-    return acc;
-  }, {});
-
-  const recentSeen = new Set();
-  const allTimeSeen = new Set();
-  const recentRows = [];
-
-  const ensureCodeStats = (code) => {
-    const cleanCode = String(code || '').trim().toUpperCase();
-    if (!cleanCode) return null;
-
-    if (!stats[cleanCode]) {
-      stats[cleanCode] = {
-        code: cleanCode,
-        reward: 0,
-        recent: 0,
-        allTime: 0,
-        rewardRecent: 0,
-      };
-    }
-
-    return stats[cleanCode];
-  };
-
-  const addAllTime = (telegramId, code) => {
-    const cleanCode = String(code || '').trim().toUpperCase();
-    const codeStats = ensureCodeStats(cleanCode);
-    if (!codeStats || !telegramId) return;
-
-    const key = `${telegramId}:${cleanCode}`;
-    if (allTimeSeen.has(key)) return;
-
-    allTimeSeen.add(key);
-    codeStats.allTime += 1;
-  };
-
-  const addRecent = (user, code, reward, createdAt) => {
-    const telegramId = String(user.telegramId || '').trim();
-    const cleanCode = String(code || '').trim().toUpperCase();
-    const timestamp = Number(createdAt || 0);
-
-    if (!telegramId || !cleanCode || !timestamp || timestamp < since) return;
-
-    const codeStats = ensureCodeStats(cleanCode);
-    if (!codeStats) return;
-
-    const key = `${telegramId}:${cleanCode}`;
-    if (recentSeen.has(key)) return;
-
-    recentSeen.add(key);
-    codeStats.recent += 1;
-    codeStats.rewardRecent += Number(reward || codeStats.reward || 0);
-
-    recentRows.push({
-      telegramId,
-      username: user.username || 'Spieler',
-      code: cleanCode,
-      reward: Number(reward || codeStats.reward || 0),
-      createdAt: timestamp,
-    });
-  };
-
-  for (const user of users || []) {
-    const usedCodes = Array.isArray(user.usedPromoCodes) ? user.usedPromoCodes : [];
-    usedCodes.forEach((code) => addAllTime(user.telegramId, code));
-
-    const promoUsage = Array.isArray(user.promoUsage) ? user.promoUsage : [];
-    promoUsage.forEach((item) => {
-      addAllTime(user.telegramId, item.code);
-      addRecent(user, item.code, item.reward, item.createdAt);
-    });
-
-    const transactions = Array.isArray(user.transactions) ? user.transactions : [];
-    transactions.forEach((tx) => {
-      if (tx.type !== 'income_promo') return;
-
-      const match = String(tx.title || '').match(/Promocode\s+([A-Z0-9_-]+)/i);
-      const code = match ? match[1].toUpperCase() : '';
-      addAllTime(user.telegramId, code);
-      addRecent(user, code, tx.amount, tx.createdAt);
-    });
-  }
-
-  const codes = Object.values(stats).sort((a, b) => {
-    if (b.recent !== a.recent) return b.recent - a.recent;
-    return b.allTime - a.allTime;
-  });
-
-  const totals = codes.reduce(
-    (acc, item) => {
-      acc.recent += Number(item.recent || 0);
-      acc.allTime += Number(item.allTime || 0);
-      acc.rewardRecent += Number(item.rewardRecent || 0);
-      return acc;
-    },
-    { recent: 0, allTime: 0, rewardRecent: 0 }
+      String(telegramId || '') === String(process.env.ADMIN_TELEGRAM_ID)
   );
-
-  recentRows.sort((a, b) => Number(b.createdAt || 0) - Number(a.createdAt || 0));
-
-  return {
-    total: totals,
-    codes,
-    recent: recentRows.slice(0, 20),
-  };
 }
-
-
-router.get('/admin-traffic-analytics', async (req, res) => {
-  try {
-    const telegramId = req.query.telegramId;
-    const secret = req.query.secret;
-
-    if (!isAdminRequest(secret, telegramId)) {
-      return res.status(403).json({ message: 'Forbidden' });
-    }
-
-    const { days, since } = getAnalyticsSince(req);
-    const sinceDate = new Date(since);
-
-    const createdRecentlyQuery = { createdAt: { $gte: sinceDate } };
-
-    const [
-      newPlayers,
-      totalPlayers,
-      eventCounts,
-      recentEvents,
-      sources,
-      activePlayersFallback,
-      firstTapFallback,
-      firstUpgradeFallback,
-      dailyBonusFallback,
-      starterQuestFallback,
-      walletOpenedFallback,
-      withdrawFallback,
-      promoUsers,
-    ] = await Promise.all([
-      User.countDocuments(createdRecentlyQuery),
-      User.countDocuments({}),
-      TrafficEvent.aggregate([
-        { $match: { createdAt: { $gte: since } } },
-        { $group: { _id: '$event', count: { $sum: 1 } } },
-        { $sort: { count: -1 } },
-      ]),
-      TrafficEvent.find({ createdAt: { $gte: since } })
-        .sort({ createdAt: -1 })
-        .limit(20)
-        .select('telegramId username event source startParam campaign createdAt')
-        .lean(),
-      TrafficEvent.aggregate([
-        { $match: { createdAt: { $gte: since } } },
-        { $group: { _id: { source: '$source', startParam: '$startParam', campaign: '$campaign' }, count: { $sum: 1 } } },
-        { $sort: { count: -1 } },
-        { $limit: 10 },
-      ]),
-      User.countDocuments({ lastSeenAt: { $gte: since } }),
-      User.countDocuments({ ...createdRecentlyQuery, totalTaps: { $gt: 0 } }),
-      User.countDocuments({
-        ...createdRecentlyQuery,
-        $or: [
-          { totalUpgradesBought: { $gt: 0 } },
-          { tapLevel: { $gt: 1 } },
-          { minerLevel: { $gt: 1 } },
-          { energyLevel: { $gt: 1 } },
-          { rechargeLevel: { $gt: 1 } },
-        ],
-      }),
-      User.countDocuments({
-        ...createdRecentlyQuery,
-        $or: [
-          { dailyRewardLastClaim: { $gte: since } },
-          { lastDailyClaimDay: { $exists: true, $nin: ['', null] } },
-          { dailyStreak: { $gt: 0 } },
-        ],
-      }),
-      User.countDocuments({
-        ...createdRecentlyQuery,
-        completedTasks: { $elemMatch: { $regex: '^starter_' } },
-      }),
-      User.countDocuments({
-        $or: [
-          { walletOpenedAt: { $gte: since } },
-          { ...createdRecentlyQuery, 'withdrawalRequests.0': { $exists: true } },
-          { ...createdRecentlyQuery, 'transactions.type': { $in: ['withdrawal', 'income_withdrawal'] } },
-        ],
-      }),
-      User.countDocuments({
-        $or: [
-          { withdrawClickedAt: { $gte: since } },
-          { ...createdRecentlyQuery, 'withdrawalRequests.0': { $exists: true } },
-          { ...createdRecentlyQuery, 'transactions.type': 'withdrawal' },
-        ],
-      }),
-      User.find({
-        $or: [
-          { 'promoUsage.0': { $exists: true } },
-          { 'usedPromoCodes.0': { $exists: true } },
-          { 'transactions.type': 'income_promo' },
-        ],
-      })
-        .select('telegramId username usedPromoCodes promoUsage transactions')
-        .lean(),
-    ]);
-
-    const promoAnalytics = buildPromoAnalytics(promoUsers, since, getPromoCodesConfig());
-
-    const eventMap = eventCounts.reduce((acc, item) => {
-      acc[item._id] = item.count;
-      return acc;
-    }, {});
-
-    const hybridCount = (eventName, fallbackCount = 0) =>
-      Math.max(Number(eventMap[eventName] || 0), Number(fallbackCount || 0));
-
-    const funnel = [
-      { key: 'new_players', label: 'New players', count: newPlayers },
-      { key: 'app_opened', label: 'App opened', count: hybridCount('app_opened', activePlayersFallback || newPlayers) },
-      { key: 'first_tap', label: 'First tap', count: hybridCount('first_tap', firstTapFallback) },
-      { key: 'first_upgrade', label: 'First upgrade', count: hybridCount('first_upgrade', firstUpgradeFallback) },
-      { key: 'daily_bonus_claimed', label: 'Daily bonus', count: hybridCount('daily_bonus_claimed', dailyBonusFallback) },
-      { key: 'starter_quest_claimed', label: 'Starter quest', count: hybridCount('starter_quest_claimed', starterQuestFallback) },
-      { key: 'wallet_opened', label: 'Wallet opened', count: hybridCount('wallet_opened', walletOpenedFallback) },
-      { key: 'withdraw_clicked', label: 'Withdraw clicked', count: hybridCount('withdraw_clicked', withdrawFallback) },
-      { key: 'support_clicked', label: 'Support clicked', count: hybridCount('support_clicked', await User.countDocuments({ supportClickedAt: { $gte: since } })) },
-    ];
-
-    return res.json({
-      ok: true,
-      days,
-      since,
-      totalPlayers,
-      newPlayers,
-      events: eventMap,
-      funnel,
-      promoAnalytics,
-      sources: sources.map((item) => ({
-        source: item._id.source || 'direct',
-        startParam: item._id.startParam || '',
-        campaign: item._id.campaign || '',
-        count: item.count,
-      })),
-      recentEvents,
-    });
-  } catch (error) {
-    return res.status(500).json({ error: error.message });
-  }
-});
 
 
 // CRON: AUTO AWARD WEEKLY PRIZES
@@ -3085,17 +2430,6 @@ router.post('/admin-review-withdrawal', async (req, res) => {
           : 'Вывод отклонён, ONIX возвращены',
         'rejected'
       );
-
-      addUserNotification(
-        user,
-        'withdrawal_rejected',
-        'Auszahlung abgelehnt',
-        request.adminComment
-          ? request.adminComment
-          : 'Deine Auszahlungsanfrage wurde abgelehnt. Die ONIX wurden deinem Guthaben zurückgegeben.',
-        'wallet',
-        'news'
-      );
     } else {
       addTransaction(
         user,
@@ -3106,20 +2440,8 @@ router.post('/admin-review-withdrawal', async (req, res) => {
           : 'Вывод одобрен',
         'approved'
       );
-
-      addUserNotification(
-        user,
-        'withdrawal_approved',
-        'Auszahlung genehmigt',
-        request.adminComment
-          ? request.adminComment
-          : 'Deine Auszahlungsanfrage wurde genehmigt.',
-        'wallet',
-        'news'
-      );
     }
 
-    user.markModified('notifications');
     user.markModified('withdrawalRequests');
     user.updatedAt = new Date();
 
@@ -3143,268 +2465,6 @@ router.post('/admin-review-withdrawal', async (req, res) => {
 
 
 
-
-
-
-// ADMIN: PLAYER USERNAMES EXPORT
-router.get('/admin-player-usernames', async (req, res) => {
-  try {
-    const secret = req.query.secret ? String(req.query.secret) : '';
-    const telegramId = req.query.telegramId ? String(req.query.telegramId) : '';
-
-    if (!isAdminRequest(secret, telegramId)) {
-      return res.status(403).json({
-        message: 'Forbidden',
-      });
-    }
-
-    const filter = String(req.query.filter || 'all').trim().toLowerCase();
-    const since7 = Date.now() - 7 * DAY_MS;
-
-    const users = await User.find({})
-      .select('telegramId username balance totalEarned weeklyEarned totalTaps totalUpgradesBought referralsCount createdAt lastSeenAt usedPromoCodes promoUsage withdrawalRequests withdrawClickedAt supportClickedAt')
-      .sort({ lastSeenAt: -1, createdAt: -1 })
-      .limit(1000)
-      .lean();
-
-    const normalizeUsername = (value) => {
-      const raw = String(value || '').trim();
-
-      if (!raw || raw === 'Spieler') return '';
-
-      const clean = raw.startsWith('@') ? raw.slice(1) : raw;
-
-      // Telegram usernames are 5-32 chars, Latin letters, digits and underscores.
-      // Display names like "Ronny", "Siegfrid", "DanielArne" must not be converted into @links.
-      if (!/^[a-zA-Z][a-zA-Z0-9_]{4,31}$/.test(clean)) return '';
-
-      return `@${clean}`;
-    };
-
-    const hasPromoCode = (user, code) => {
-      const target = String(code || '').trim().toUpperCase();
-
-      const usedPromoCodes = Array.isArray(user.usedPromoCodes) ? user.usedPromoCodes : [];
-      const promoUsage = Array.isArray(user.promoUsage) ? user.promoUsage : [];
-
-      return (
-        usedPromoCodes.some((item) => String(item || '').toUpperCase() === target) ||
-        promoUsage.some((item) => String(item?.code || '').toUpperCase() === target)
-      );
-    };
-
-    const getPromoCodes = (user) => {
-      const codes = new Set();
-
-      (Array.isArray(user.usedPromoCodes) ? user.usedPromoCodes : []).forEach((code) => {
-        const clean = String(code || '').trim().toUpperCase();
-        if (clean) codes.add(clean);
-      });
-
-      (Array.isArray(user.promoUsage) ? user.promoUsage : []).forEach((item) => {
-        const clean = String(item?.code || '').trim().toUpperCase();
-        if (clean) codes.add(clean);
-      });
-
-      return Array.from(codes);
-    };
-
-    const matchesFilter = (user) => {
-      if (filter === 'new7') return new Date(user.createdAt || 0).getTime() >= since7;
-      if (filter === 'active7') return Number(user.lastSeenAt || 0) >= since7;
-      if (filter === 'start') return hasPromoCode(user, 'START');
-      if (filter === 'onix2026') return hasPromoCode(user, 'ONIX2026');
-      if (filter === 'launch') return hasPromoCode(user, 'LAUNCH');
-      if (filter === 'withdraw') {
-        const withdrawals = Array.isArray(user.withdrawalRequests) ? user.withdrawalRequests : [];
-        return Number(user.withdrawClickedAt || 0) > 0 || withdrawals.length > 0;
-      }
-      if (filter === 'support') return Number(user.supportClickedAt || 0) > 0;
-      if (filter === 'tapped') return Number(user.totalTaps || 0) > 0;
-
-      return true;
-    };
-
-    const players = users
-      .filter(matchesFilter)
-      .map((user) => {
-        const username = normalizeUsername(user.username);
-        const promoCodes = getPromoCodes(user);
-
-        return {
-          username,
-          telegramId: String(user.telegramId || ''),
-          displayName: String(user.username || 'Spieler'),
-          balance: roundOnix(user.balance || 0),
-          totalEarned: roundOnix(user.totalEarned || 0),
-          weeklyEarned: roundOnix(user.weeklyEarned || 0),
-          totalTaps: Number(user.totalTaps || 0),
-          totalUpgradesBought: Number(user.totalUpgradesBought || 0),
-          referralsCount: Number(user.referralsCount || 0),
-          promoCodes,
-          createdAt: user.createdAt ? new Date(user.createdAt).getTime() : 0,
-          lastSeenAt: Number(user.lastSeenAt || 0),
-          hasUsername: Boolean(username),
-        };
-      });
-
-    const usernames = players
-      .map((player) => player.username)
-      .filter(Boolean);
-
-    return res.json({
-      filter,
-      total: players.length,
-      usernamesCount: usernames.length,
-      usernames,
-      players,
-    });
-  } catch (error) {
-    return res.status(500).json({ error: error.message });
-  }
-});
-
-
-// USER NOTIFICATIONS
-router.get('/notifications/:telegramId', async (req, res) => {
-  try {
-    const user = await User.findOne({ telegramId: req.params.telegramId }).select('notifications');
-
-    if (!user) {
-      return res.status(404).json({ message: 'User not found' });
-    }
-
-    normalizeUserFields(user);
-
-    const notifications = [...(user.notifications || [])]
-      .sort((a, b) => Number(b.createdAt || 0) - Number(a.createdAt || 0))
-      .slice(0, 50);
-
-    return res.json({
-      notifications,
-      unreadCount: notifications.filter((item) => !Number(item.readAt || 0)).length,
-    });
-  } catch (error) {
-    return res.status(500).json({ error: error.message });
-  }
-});
-
-router.post('/notifications/mark-read', async (req, res) => {
-  try {
-    const { telegramId } = req.body;
-
-    const user = await User.findOne({ telegramId });
-
-    if (!user) {
-      return res.status(404).json({ message: 'User not found' });
-    }
-
-    normalizeUserFields(user);
-
-    const now = Date.now();
-
-    user.notifications = (user.notifications || []).map((item) => {
-      if (!Number(item.readAt || 0)) {
-        item.readAt = now;
-      }
-
-      return item;
-    });
-
-    user.markModified('notifications');
-    user.updatedAt = new Date();
-    await user.save();
-
-    return res.json({
-      ok: true,
-      notifications: user.notifications || [],
-      unreadCount: 0,
-    });
-  } catch (error) {
-    return res.status(500).json({ error: error.message });
-  }
-});
-
-router.post('/notifications/clear', async (req, res) => {
-  try {
-    const { telegramId } = req.body;
-
-    const user = await User.findOne({ telegramId });
-
-    if (!user) {
-      return res.status(404).json({ message: 'User not found' });
-    }
-
-    normalizeUserFields(user);
-
-    user.notifications = [];
-    user.markModified('notifications');
-    user.updatedAt = new Date();
-    await user.save();
-
-    return res.json({
-      ok: true,
-      notifications: [],
-      unreadCount: 0,
-    });
-  } catch (error) {
-    return res.status(500).json({ error: error.message });
-  }
-});
-
-router.post('/notifications/create', async (req, res) => {
-  try {
-    const { telegramId, type, title, message, actionTab, category, dedupeKey } = req.body;
-
-    const user = await User.findOne({ telegramId });
-
-    if (!user) {
-      return res.status(404).json({ message: 'User not found' });
-    }
-
-    normalizeUserFields(user);
-
-    const cleanDedupeKey = String(dedupeKey || '').slice(0, 160);
-
-    if (cleanDedupeKey) {
-      const exists = (user.notifications || []).some((item) => item.id === cleanDedupeKey);
-
-      if (exists) {
-        return res.json({
-          ok: true,
-          duplicate: true,
-          notifications: user.notifications || [],
-          unreadCount: (user.notifications || []).filter((item) => !Number(item.readAt || 0)).length,
-        });
-      }
-    }
-
-    addUserNotification(
-      user,
-      type || 'info',
-      title || 'ONIX Nachricht',
-      message || '',
-      actionTab || '',
-      category || 'news'
-    );
-
-    if (cleanDedupeKey && user.notifications && user.notifications[0]) {
-      user.notifications[0].id = cleanDedupeKey;
-    }
-
-    user.markModified('notifications');
-    user.updatedAt = new Date();
-    await user.save();
-
-    return res.json({
-      ok: true,
-      notifications: user.notifications || [],
-      unreadCount: (user.notifications || []).filter((item) => !Number(item.readAt || 0)).length,
-    });
-  } catch (error) {
-    return res.status(500).json({ error: error.message });
-  }
-});
 
 
 // PUBLIC LAUNCH INFO
@@ -3949,15 +3009,6 @@ router.post('/claim-welcome-bonus', async (req, res) => {
 
     addTransaction(user, 'income_welcome_bonus', reward, 'Welcome bonus');
 
-    addUserNotification(
-      user,
-      'reward',
-      'Welcome Bonus erhalten',
-      `Dein Welcome Bonus wurde gutgeschrieben: +${reward} ONIX.`,
-      'tasks',
-      'rewards'
-    );
-
     addSecurityLog(user, 'welcome_bonus', 'Welcome bonus claimed', `+${reward} ONIX`);
 
     const achievementBonuses = applyAchievements(user);
@@ -4021,31 +3072,11 @@ router.post('/apply-promo', async (req, res) => {
       return res.status(400).json({ message: 'Du hast diesen Promocode bereits verwendet' });
     }
 
-    const promoUsedAt = Date.now();
-
     user.usedPromoCodes.push(cleanCode);
-
-    if (!Array.isArray(user.promoUsage)) user.promoUsage = [];
-    user.promoUsage.unshift({
-      code: cleanCode,
-      reward,
-      createdAt: promoUsedAt,
-    });
-    user.promoUsage = user.promoUsage.slice(0, 20);
-
     user.balance = roundOnix(Number(user.balance || 0) + reward);
     addEarnings(user, reward);
 
     addTransaction(user, 'income_promo', reward, `Promocode ${cleanCode}`);
-
-    addUserNotification(
-      user,
-      'promo_activated',
-      'Promocode aktiviert',
-      `Code ${cleanCode}: +${reward} ONIX wurden deinem Guthaben gutgeschrieben.`,
-      'tasks',
-      'rewards'
-    );
 
     addSecurityLog(user, 'promo', 'Promo code used', `${cleanCode}: +${reward} ONIX`);
 
@@ -4399,7 +3430,6 @@ router.get('/:telegramId', async (req, res) => {
     if (frozenResponse) return frozenResponse;
 
     const now = Date.now();
-    applyOfflineEnergyRecovery(user, now);
 
     if (
       user.activeBoost &&
@@ -4415,6 +3445,18 @@ router.get('/:telegramId', async (req, res) => {
 
     const lastSeenAt = user.lastSeenAt || now;
     const offlineSeconds = Math.floor((now - lastSeenAt) / 1000);
+
+    if (offlineSeconds > 0) {
+      const offlineEnergy = roundOnix(
+        Number(user.energy || 0) +
+          Number(user.energyRecharge || DEFAULT_ENERGY_RECHARGE) * offlineSeconds
+      );
+
+      user.energy = Math.min(
+        Number(user.maxEnergy || DEFAULT_MAX_ENERGY),
+        offlineEnergy
+      );
+    }
 
     if (
   user.autoclickers > 0 &&
@@ -4457,20 +3499,32 @@ router.get('/:telegramId', async (req, res) => {
 // CREATE USER
 router.post('/create', async (req, res) => {
   try {
-    const { telegramId, username, referredBy } = req.body;
+    const telegramId = req.authenticatedTelegramId;
+    const telegramUser = req.telegramUser;
+    const { referredBy } = req.body;
 
-    if (!telegramId) {
-      return res.status(400).json({
-        message: 'Telegram ID is required',
+    if (!telegramId || !telegramUser) {
+      return res.status(401).json({
+        message: 'Telegram authentication is required',
       });
     }
+
+    const displayName =
+      [telegramUser.firstName, telegramUser.lastName].filter(Boolean).join(' ').trim() ||
+      telegramUser.username ||
+      'Spieler';
 
     let user = await User.findOne({ telegramId });
 
     if (!user) {
       user = new User({
         telegramId,
-        username: username || 'Spieler',
+        username: telegramUser.username,
+        firstName: telegramUser.firstName,
+        lastName: telegramUser.lastName,
+        displayName,
+        languageCode: telegramUser.languageCode,
+        photoUrl: telegramUser.photoUrl,
         referredBy: referredBy || null,
         completedTasks: [],
         completedAchievements: [],
@@ -4536,7 +3590,6 @@ router.post('/create', async (req, res) => {
         rechargeLevel: 1,
 
         lastSeenAt: Date.now(),
-        lastEnergyRecoveryAt: Date.now(),
         lastMineTickAt: 0,
         lastUpgradeBuyAt: 0,
         lastOfflineIncome: 0,
@@ -4559,7 +3612,7 @@ router.post('/create', async (req, res) => {
 
           refUser.referralsCount += 1;
           incrementMissionStat(refUser, 'weeklyReferrals');
-          refUser.lastReferralUsername = username || 'neuer Spieler';
+          refUser.lastReferralUsername = displayName;
           refUser.updatedAt = new Date();
 
           user.referredByUsername = refUser.username || 'Spielers';
@@ -4591,12 +3644,13 @@ router.post('/create', async (req, res) => {
     await user.save();
     } else {
       normalizeUserFields(user);
-      applyOfflineEnergyRecovery(user);
 
-      if (username && user.username !== username) {
-        user.username = username;
-      }
-
+      user.username = telegramUser.username;
+      user.firstName = telegramUser.firstName;
+      user.lastName = telegramUser.lastName;
+      user.displayName = displayName;
+      user.languageCode = telegramUser.languageCode;
+      user.photoUrl = telegramUser.photoUrl;
       user.updatedAt = new Date();
 
       // ВАЖНО:
@@ -4710,7 +3764,6 @@ router.post('/save', async (req, res) => {
         rechargeLevel: 1,
 
         lastSeenAt: Date.now(),
-        lastEnergyRecoveryAt: Date.now(),
         lastMineTickAt: 0,
         lastUpgradeBuyAt: 0,
         lastOfflineIncome: 0,
@@ -4782,7 +3835,6 @@ router.post('/buy-upgrade', async (req, res) => {
     if (frozenResponse) return frozenResponse;
 
     const now = Date.now();
-    applyOfflineEnergyRecovery(user, now);
     const lastUpgradeBuyAt = Number(user.lastUpgradeBuyAt || 0);
     const elapsedMs = now - lastUpgradeBuyAt;
 
@@ -4853,7 +3905,6 @@ router.post('/buy-upgrade', async (req, res) => {
     user.level = calculateLevel(user.totalEarned);
 
     user.lastUpgradeBuyAt = now;
-    user.lastEnergyRecoveryAt = now;
     user.updatedAt = new Date();
     user.lastSeenAt = now;
 
@@ -4986,15 +4037,6 @@ async function tryPayQualifiedReferralBonus(user) {
     'income_referral',
     referralReward,
     `Empfehlungsbonus für aktiven Freund: ${user.username || 'neuer Spieler'}`
-  );
-
-  addUserNotification(
-    refUser,
-    'referral_reward',
-    'Referral-Bonus erhalten',
-    `${user.username || 'Ein neuer Spieler'} ist aktiv geworden. +${referralReward} ONIX wurden gutgeschrieben.`,
-    'friends',
-    'rewards'
   );
 
   applyAchievements(refUser);
@@ -6016,15 +5058,6 @@ router.post('/claim-mission', async (req, res) => {
       `${missionType === 'daily' ? 'Daily' : 'Weekly'} Mission: ${mission.title}`
     );
 
-    addUserNotification(
-      user,
-      'mission_reward',
-      'Mission abgeschlossen',
-      `${mission.title}: +${mission.reward} ONIX erhalten.`,
-      'tasks',
-      'rewards'
-    );
-
     const achievementBonuses = applyAchievements(user);
     const rankBonuses = applyRankBonuses(user);
     user.level = calculateLevel(user.totalEarned);
@@ -6125,15 +5158,6 @@ router.post('/claim-task', async (req, res) => {
 
       addTransaction(user, 'income_daily', reward, `Tägliche Belohnung · Tag ${nextStreak}/7`);
 
-      addUserNotification(
-        user,
-        'daily_bonus_claimed',
-        'Daily Bonus abgeholt',
-        `Tag ${nextStreak}/7: +${reward} ONIX wurden deinem Guthaben gutgeschrieben.`,
-        'tasks',
-        'rewards'
-      );
-
       const rankBonuses = applyRankBonuses(user);
       user.level = calculateLevel(user.totalEarned);
       user.updatedAt = new Date();
@@ -6149,66 +5173,6 @@ router.post('/claim-task', async (req, res) => {
         rankBonuses,
         dailyStreak: nextStreak,
         dailyStreakMultiplier: getDailyStreakMultiplier(nextStreak),
-      });
-    }
-
-    // STARTER QUESTS
-    if (STARTER_QUESTS[task]) {
-      const quest = STARTER_QUESTS[task];
-
-      if (!Array.isArray(user.completedTasks)) {
-        user.completedTasks = [];
-      }
-
-      if (user.completedTasks.includes(task)) {
-        return res.status(400).json({
-          message: 'Starter-Quest already claimed',
-        });
-      }
-
-      if (!quest.isReady(user)) {
-        return res.status(400).json({
-          message: quest.message,
-        });
-      }
-
-      const reward = Number(quest.reward || 0);
-
-      user.balance = roundOnix(Number(user.balance || 0) + reward);
-      addEarnings(user, reward);
-      user.completedTasks.push(task);
-      addTransaction(user, 'income_task', reward, quest.title);
-
-      addUserNotification(
-        user,
-        'task_reward',
-        'Starter-Quest abgeschlossen',
-        `${quest.title}: +${reward} ONIX erhalten.`,
-        'tasks',
-        'rewards'
-      );
-
-      const achievementBonuses = applyAchievements(user);
-      const rankBonuses = applyRankBonuses(user);
-      user.level = calculateLevel(user.totalEarned);
-      user.updatedAt = new Date();
-      user.lastSeenAt = Date.now();
-
-      await user.save();
-
-      return res.json({
-        ...user.toObject({ flattenMaps: true }),
-        perkLevels: getPerkLevelsPayload(user),
-        achievements: getAchievementsPayload(user),
-        referralLimit: getReferralLimitPayload(user),
-        missions: getMissionsPayload(user),
-        starterQuestReward: {
-          id: task,
-          title: quest.title,
-          reward,
-        },
-        rankBonuses,
-        achievementBonuses,
       });
     }
 
@@ -6253,15 +5217,6 @@ router.post('/claim-task', async (req, res) => {
       user.completedTasks.push('channel');
       addTransaction(user, 'income_task', 25000, 'Aufgabe: Kanal abonnieren');
 
-      addUserNotification(
-        user,
-        'task_reward',
-        'Aufgabe abgeschlossen',
-        'Kanal-Aufgabe: +25000 ONIX erhalten.',
-        'tasks',
-        'rewards'
-      );
-
       const rankBonuses = applyRankBonuses(user);
       user.level = calculateLevel(user.totalEarned);
       user.updatedAt = new Date();
@@ -6304,15 +5259,6 @@ router.post('/claim-task', async (req, res) => {
         'income_task',
         economyConfig.referralReward,
         'Aufgabe: Freund einladen'
-      );
-
-      addUserNotification(
-        user,
-        'referral_reward',
-        'Freunde-Bonus erhalten',
-        `Aufgabe Freund einladen: +${economyConfig.referralReward} ONIX erhalten.`,
-        'friends',
-        'rewards'
       );
 
       const rankBonuses = applyRankBonuses(user);
@@ -6376,16 +5322,6 @@ router.post('/claim-offline-income', async (req, res) => {
     user.balance = roundOnix(Number(user.balance || 0) + claimedAmount);
     addEarnings(user, claimedAmount);
     addTransaction(user, 'income_offline', claimedAmount, 'Offline-Mining');
-
-    addUserNotification(
-      user,
-      'offline_income',
-      'Passiver Ertrag abgeholt',
-      `Offline-Mining: +${roundOnix(claimedAmount)} ONIX wurden gutgeschrieben.`,
-      'home',
-      'rewards'
-    );
-
     user.offlineClaimsCount = Number(user.offlineClaimsCount || 0) + 1;
     incrementMissionStat(user, 'dailyOfflineClaims');
     incrementMissionStat(user, 'weeklyOfflineClaims');
@@ -6454,7 +5390,6 @@ router.post('/mine-tick', async (req, res) => {
     if (frozenResponse) return frozenResponse;
 
     const now = Date.now();
-    applyOfflineEnergyRecovery(user, now);
     const lastMineTickAt = Number(user.lastMineTickAt || 0);
     const elapsedMs = now - lastMineTickAt;
 
@@ -6497,7 +5432,6 @@ router.post('/mine-tick', async (req, res) => {
     );
 
     user.lastMineTickAt = now;
-    user.lastEnergyRecoveryAt = now;
     user.updatedAt = new Date();
     user.lastSeenAt = now;
 
@@ -6544,9 +5478,6 @@ router.post('/refill-energy', async (req, res) => {
     const frozenResponse = ensureUserNotFrozen(user, res);
     if (frozenResponse) return frozenResponse;
 
-    const now = Date.now();
-    applyOfflineEnergyRecovery(user, now);
-
     const maxEnergy = Number(user.maxEnergy || DEFAULT_MAX_ENERGY);
     const currentEnergy = Number(user.energy || 0);
 
@@ -6562,10 +5493,9 @@ router.post('/refill-energy', async (req, res) => {
 
     user.balance = roundOnix(Number(user.balance || 0) - cost);
     user.energy = maxEnergy;
-    user.lastEnergyRecoveryAt = now;
     addTransaction(user, 'expense_boost', -cost, 'Energie auf 100 % aufgefüllt');
     user.updatedAt = new Date();
-    user.lastSeenAt = now;
+    user.lastSeenAt = Date.now();
 
     await user.save();
 
@@ -6712,9 +5642,6 @@ router.post('/tap', async (req, res) => {
     const frozenResponse = ensureUserNotFrozen(user, res);
     if (frozenResponse) return frozenResponse;
 
-    const now = Date.now();
-    applyOfflineEnergyRecovery(user, now);
-
     const energyCost = getEnergyCost(user);
 
     if (Number(user.energy || 0) < energyCost) {
@@ -6723,6 +5650,7 @@ router.post('/tap', async (req, res) => {
       });
     }
 
+    const now = Date.now();
     const oneSecondAgo = now - 1000;
 
     user.tapTimestamps = user.tapTimestamps.filter((time) => {
@@ -6754,7 +5682,6 @@ router.post('/tap', async (req, res) => {
     user.balance = roundOnix(Number(user.balance || 0) + points);
     addEarnings(user, points);
     user.energy = Math.max(0, roundOnix(Number(user.energy || 0) - energyCost));
-    user.lastEnergyRecoveryAt = now;
     user.totalTaps = Number(user.totalTaps || 0) + 1;
     incrementMissionStat(user, 'dailyTaps');
     incrementMissionStat(user, 'weeklyTaps');
