@@ -36,8 +36,7 @@ function verifyTelegramInitData(initData) {
   const dataCheckString = [...params.entries()]
     .sort(([a], [b]) => a.localeCompare(b))
     .map(([key, value]) => `${key}=${value}`)
-    .join('\
-');
+    .join('\n');
 
   const secretKey = crypto
     .createHmac('sha256', 'WebAppData')
