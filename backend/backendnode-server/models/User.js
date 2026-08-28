@@ -9,9 +9,48 @@ const userSchema = new mongoose.Schema(
       index: true,
     },
 
+    // Legacy in-game display name. Kept unchanged so existing UI/referral logic is safe.
     username: {
       type: String,
       default: 'Spieler',
+    },
+
+    // Verified Telegram profile fields. These are populated only from signed
+    // Telegram Mini App initData when it is available.
+    telegramUsername: {
+      type: String,
+      default: '',
+      trim: true,
+    },
+
+    firstName: {
+      type: String,
+      default: '',
+      trim: true,
+    },
+
+    lastName: {
+      type: String,
+      default: '',
+      trim: true,
+    },
+
+    displayName: {
+      type: String,
+      default: 'Spieler',
+      trim: true,
+    },
+
+    languageCode: {
+      type: String,
+      default: '',
+      trim: true,
+    },
+
+    photoUrl: {
+      type: String,
+      default: '',
+      trim: true,
     },
 
     balance: {

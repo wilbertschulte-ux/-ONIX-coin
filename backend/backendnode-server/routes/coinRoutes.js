@@ -3464,7 +3464,27 @@ router.get('/:telegramId', async (req, res) => {
 // CREATE USER
 router.post('/create', async (req, res) => {
   try {
-    const { telegramId, username, referredBy } = req.body;
+    const {
+      telegramId: bodyTelegramId,
+      username: bodyUsername,
+      referredBy,
+      initData: bodyInitData,
+    } = req.body;
+
+    // Step 3: use verified Telegram identity when available, but keep the
+    // legacy body fields as a fallback. This deliberately does NOT protect
+    // gameplay routes yet, so taps/progress cannot be broken by this step.
+    const initData = req.get('x-telegram-init-data') || bodyInitData || '';
+    const authResult = initData
+      ? validateTelegramInitData(initData, process.env.BOT_TOKEN)
+      : { ok: false, user: null };
+    const telegramUser = authResult.ok && authResult.user ? authResult.user : null;
+
+    const telegramId = String(telegramUser?.id ?? bodyTelegramId ?? '');
+    const firstName = String(telegramUser?.first_name || '').trim();
+    const lastName = String(telegramUser?.last_name || '').trim();
+    const verifiedDisplayName = [firstName, lastName].filter(Boolean).join(' ').trim();
+    const displayName = verifiedDisplayName || String(bodyUsername || '').trim() || 'Spieler';
 
     if (!telegramId) {
       return res.status(400).json({
@@ -3477,7 +3497,13 @@ router.post('/create', async (req, res) => {
     if (!user) {
       user = new User({
         telegramId,
-        username: username || 'Spieler',
+        username: displayName,
+        telegramUsername: telegramUser?.username || '',
+        firstName,
+        lastName,
+        displayName,
+        languageCode: telegramUser?.language_code || '',
+        photoUrl: telegramUser?.photo_url || '',
         referredBy: referredBy || null,
         completedTasks: [],
         completedAchievements: [],
@@ -3565,7 +3591,7 @@ router.post('/create', async (req, res) => {
 
           refUser.referralsCount += 1;
           incrementMissionStat(refUser, 'weeklyReferrals');
-          refUser.lastReferralUsername = username || 'neuer Spieler';
+          refUser.lastReferralUsername = displayName || 'neuer Spieler';
           refUser.updatedAt = new Date();
 
           user.referredByUsername = refUser.username || 'Spielers';
@@ -3594,12 +3620,26 @@ router.post('/create', async (req, res) => {
 
       const referralBonus = await tryPayQualifiedReferralBonus(user);
 
-    await user.save();
+      await user.save();
     } else {
       normalizeUserFields(user);
 
-      if (username && user.username !== username) {
-        user.username = username;
+      // Only signed initData is allowed to refresh Telegram-specific fields.
+      if (telegramUser) {
+        user.telegramUsername = telegramUser.username || '';
+        user.firstName = firstName;
+        user.lastName = lastName;
+        user.displayName = displayName;
+        user.languageCode = telegramUser.language_code || '';
+        user.photoUrl = telegramUser.photo_url || '';
+
+        // Keep the legacy display-name field in sync without changing its
+        // meaning to @username. This avoids breaking existing screens.
+        if (displayName && user.username !== displayName) {
+          user.username = displayName;
+        }
+      } else if (bodyUsername && user.username !== bodyUsername) {
+        user.username = bodyUsername;
       }
 
       user.updatedAt = new Date();
@@ -3610,14 +3650,14 @@ router.post('/create', async (req, res) => {
 
       const referralBonus = await tryPayQualifiedReferralBonus(user);
 
-    await user.save();
+      await user.save();
     }
 
     return res.json({
       ...user.toObject({ flattenMaps: true }),
       achievements: getAchievementsPayload(user),
       referralLimit: getReferralLimitPayload(user),
-        missions: getMissionsPayload(user),
+      missions: getMissionsPayload(user),
     });
   } catch (error) {
     return res.status(500).json({
