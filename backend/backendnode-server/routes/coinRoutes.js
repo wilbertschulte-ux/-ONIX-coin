@@ -1,4 +1,5 @@
 const axios = require('axios');
+const crypto = require('crypto');
 const express = require('express');
 const mongoose = require('mongoose');
 
@@ -7,6 +8,112 @@ const router = express.Router();
 const API_RATE_LIMITS = new Map();
 const ECONOMY_OVERRIDES = {};
 const APP_VERSION = process.env.APP_VERSION || '1.0.0';
+
+// Diagnostic-only Telegram Mini App authentication check.
+// This endpoint does not create/update users and does not affect gameplay.
+function validateTelegramInitData(initData, botToken) {
+  if (!initData || typeof initData !== 'string') {
+    return { ok: false, error: 'initData is missing' };
+  }
+
+  if (!botToken) {
+    return { ok: false, error: 'BOT_TOKEN is not configured on the server' };
+  }
+
+  const params = new URLSearchParams(initData);
+  const receivedHash = params.get('hash');
+
+  if (!receivedHash || !/^[a-f0-9]{64}$/i.test(receivedHash)) {
+    return { ok: false, error: 'Telegram hash is missing or invalid' };
+  }
+
+  params.delete('hash');
+
+  const dataCheckString = [...params.entries()]
+    .sort(([a], [b]) => a.localeCompare(b))
+    .map(([key, value]) => `${key}=${value}`)
+    .join('\n');
+
+  // Telegram Mini Apps validation algorithm:
+  // secret_key = HMAC_SHA256(bot_token, key="WebAppData")
+  // hash = HMAC_SHA256(data_check_string, key=secret_key)
+  const secretKey = crypto
+    .createHmac('sha256', 'WebAppData')
+    .update(botToken)
+    .digest();
+
+  const calculatedHash = crypto
+    .createHmac('sha256', secretKey)
+    .update(dataCheckString)
+    .digest('hex');
+
+  const expected = Buffer.from(calculatedHash, 'hex');
+  const actual = Buffer.from(receivedHash, 'hex');
+
+  if (expected.length !== actual.length || !crypto.timingSafeEqual(expected, actual)) {
+    return { ok: false, error: 'Telegram signature verification failed' };
+  }
+
+  const authDateRaw = params.get('auth_date');
+  const authDate = Number(authDateRaw || 0);
+  const nowSeconds = Math.floor(Date.now() / 1000);
+  const ageSeconds = authDate > 0 ? nowSeconds - authDate : null;
+
+  let user = null;
+  const rawUser = params.get('user');
+  if (rawUser) {
+    try {
+      user = JSON.parse(rawUser);
+    } catch (error) {
+      return { ok: false, error: 'Telegram user payload is not valid JSON' };
+    }
+  }
+
+  return {
+    ok: true,
+    user,
+    authDate: authDate || null,
+    ageSeconds,
+    queryId: params.get('query_id') || null,
+    startParam: params.get('start_param') || null,
+  };
+}
+
+router.post('/telegram-auth-test', express.json(), (req, res) => {
+  const initData =
+    req.get('x-telegram-init-data') ||
+    req.body?.initData ||
+    '';
+
+  const result = validateTelegramInitData(initData, process.env.BOT_TOKEN);
+
+  if (!result.ok) {
+    return res.status(401).json({
+      ok: false,
+      error: result.error,
+    });
+  }
+
+  return res.json({
+    ok: true,
+    message: 'Telegram initData signature is valid',
+    user: result.user
+      ? {
+          id: result.user.id ?? null,
+          first_name: result.user.first_name ?? '',
+          last_name: result.user.last_name ?? '',
+          username: result.user.username ?? '',
+          language_code: result.user.language_code ?? '',
+          photo_url: result.user.photo_url ?? '',
+          is_premium: Boolean(result.user.is_premium),
+        }
+      : null,
+    auth_date: result.authDate,
+    auth_age_seconds: result.ageSeconds,
+    query_id_present: Boolean(result.queryId),
+    start_param: result.startParam,
+  });
+});
 
 
 function escapeRegExpValue(value) {
