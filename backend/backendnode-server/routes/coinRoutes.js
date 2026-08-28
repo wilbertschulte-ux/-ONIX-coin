@@ -1957,43 +1957,83 @@ router.get('/season-history', async (req, res) => {
 
 
 
-// ADMIN: SEARCH USERS
+// ADMIN: SEARCH / LIST USERS
 router.get('/admin-search-users', async (req, res) => {
   try {
     const secret = req.query.secret ? String(req.query.secret) : '';
     const telegramId = req.query.telegramId ? String(req.query.telegramId) : '';
     const query = req.query.query ? String(req.query.query).trim() : '';
+    const page = Math.max(Number.parseInt(String(req.query.page || '1'), 10) || 1, 1);
+    const requestedLimit = Number.parseInt(String(req.query.limit || '50'), 10) || 50;
+    const limit = Math.min(Math.max(requestedLimit, 1), 100);
 
     if (!isAdminRequest(secret, telegramId)) {
       return res.status(403).json({ message: 'Forbidden' });
     }
 
-    if (!query) {
-      return res.json({ users: [] });
+    const filter = {};
+
+    if (query) {
+      const searchRegex = new RegExp(escapeRegExpValue(query), 'i');
+      filter.$or = [
+        { telegramId: searchRegex },
+        { username: searchRegex },
+        { telegramUsername: searchRegex },
+        { firstName: searchRegex },
+        { lastName: searchRegex },
+        { displayName: searchRegex },
+      ];
     }
 
-    const users = await User.find({
-      $or: [
-        { telegramId: { $regex: query, $options: 'i' } },
-        { username: { $regex: query, $options: 'i' } },
-      ],
-    })
-      .limit(20)
-      .select('telegramId username balance totalEarned weeklyEarned referralsCount totalTaps isSuspicious isFrozen frozenReason');
+    const [users, total] = await Promise.all([
+      User.find(filter)
+        .sort({ createdAt: -1, _id: -1 })
+        .skip((page - 1) * limit)
+        .limit(limit)
+        .select(
+          'telegramId username telegramUsername firstName lastName displayName languageCode photoUrl balance totalEarned weeklyEarned referralsCount totalTaps level selectedTitle league isSuspicious isFrozen frozenReason createdAt updatedAt'
+        ),
+      User.countDocuments(filter),
+    ]);
+
+    const totalPages = Math.max(Math.ceil(total / limit), 1);
 
     return res.json({
       users: users.map((user) => ({
         telegramId: user.telegramId,
-        username: user.username || 'Spieler',
+        username: user.username || user.displayName || 'Spieler',
+        telegramUsername: user.telegramUsername || '',
+        firstName: user.firstName || '',
+        lastName: user.lastName || '',
+        displayName: user.displayName || user.username || 'Spieler',
+        languageCode: user.languageCode || '',
+        photoUrl: user.photoUrl || '',
+        telegramProfileUrl: user.telegramUsername
+          ? `https://t.me/${String(user.telegramUsername).replace(/^@+/, '')}`
+          : '',
         balance: roundOnix(user.balance || 0),
         totalEarned: roundOnix(user.totalEarned || 0),
         weeklyEarned: roundOnix(user.weeklyEarned || 0),
         referralsCount: Number(user.referralsCount || 0),
         totalTaps: Number(user.totalTaps || 0),
+        level: Number(user.level || 1),
+        selectedTitle: user.selectedTitle || 'ONIX Player',
+        league: user.league || getLeagueByTotalEarned(user.totalEarned),
         isSuspicious: Boolean(user.isSuspicious),
         isFrozen: Boolean(user.isFrozen),
         frozenReason: user.frozenReason || '',
+        createdAt: user.createdAt || null,
+        updatedAt: user.updatedAt || null,
       })),
+      pagination: {
+        page,
+        limit,
+        total,
+        totalPages,
+        hasNextPage: page < totalPages,
+        hasPrevPage: page > 1,
+      },
+      query,
     });
   } catch (error) {
     return res.status(500).json({ error: error.message });
