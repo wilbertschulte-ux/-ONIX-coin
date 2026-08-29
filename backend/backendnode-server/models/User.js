@@ -560,6 +560,11 @@ const userSchema = new mongoose.Schema(
       default: 0,
     },
 
+    minerRemainder: {
+      type: Number,
+      default: 0,
+    },
+
     lastUpgradeBuyAt: {
       type: Number,
       default: 0,

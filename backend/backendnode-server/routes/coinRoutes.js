@@ -327,9 +327,9 @@ const WeeklyPrize =
   mongoose.models.WeeklyPrize || mongoose.model('WeeklyPrize', WeeklyPrizeSchema);
 
 
-const LEVEL_COINS = 500;
+const LEVEL_COINS = 10000;
 const DAY_MS = 24 * 60 * 60 * 1000;
-const MAX_OFFLINE_SECONDS = 3 * 60 * 60;
+const MAX_OFFLINE_SECONDS = 6 * 60 * 60;
 const MAX_TAPS_PER_SECOND = 12;
 const MAX_PAID_REFERRALS_PER_DAY = getEconomyConfig().maxPaidReferralsPerDay;
 const MAX_PAID_REFERRALS_PER_HOUR = getNumberEnv('MAX_PAID_REFERRALS_PER_HOUR', 5);
@@ -337,7 +337,8 @@ const DEFAULT_ENERGY = 500;
 const DEFAULT_MAX_ENERGY = 500;
 const DEFAULT_TAP_POWER = 1;
 const DEFAULT_ENERGY_RECHARGE = 1;
-const DEFAULT_MINER_INCOME = 1;
+const DEFAULT_MINER_INCOME = 1; // legacy/display field
+const DEFAULT_MINER_RATE_PER_MINUTE = 20;
 const TEMP_TAP_BOOST_COST = 15000;
 const TEMP_MINING_BOOST_COST = 20000;
 const TEMP_ENERGY_REFILL_COST = 25000;
@@ -709,7 +710,7 @@ function getDailyMissions(user) {
       description: `Mache heute ${100 * difficulty} Taps`,
       goal: 100 * difficulty,
       progress: Number(stats.dailyTaps || 0),
-      reward: 10000 * difficulty,
+      reward: 4000,
       category: 'daily',
       secret: false,
     },
@@ -719,7 +720,7 @@ function getDailyMissions(user) {
       description: 'Kaufe heute 1 Upgrade',
       goal: 1,
       progress: Number(stats.dailyUpgrades || 0),
-      reward: 15000 * difficulty,
+      reward: 4000,
       category: 'daily',
       secret: false,
     },
@@ -729,7 +730,7 @@ function getDailyMissions(user) {
       description: 'Hole heute Offline-Einkommen ab',
       goal: 1,
       progress: Number(stats.dailyOfflineClaims || 0),
-      reward: 12000 * difficulty,
+      reward: 4000,
       category: 'daily',
       secret: false,
     },
@@ -739,7 +740,7 @@ function getDailyMissions(user) {
       description: 'Öffne heute 1 Truhe',
       goal: 1,
       progress: Number(stats.dailyChests || 0),
-      reward: 25000 * difficulty,
+      reward: 3000,
       category: 'secret',
       secret: true,
       unlocked: Number(stats.dailyChests || 0) > 0,
@@ -765,7 +766,7 @@ function getWeeklyMissions(user) {
       description: `Mache ${1000 * difficulty} Taps pro Woche`,
       goal: 1000 * difficulty,
       progress: Number(stats.weeklyTaps || 0),
-      reward: 50000 * difficulty,
+      reward: 10000,
       category: 'weekly',
       secret: false,
     },
@@ -775,7 +776,7 @@ function getWeeklyMissions(user) {
       description: `Verdiene ${100000 * difficulty} ONIX pro Woche`,
       goal: 100000 * difficulty,
       progress: Number(user.weeklyEarned || 0),
-      reward: 75000 * difficulty,
+      reward: 10000,
       category: 'weekly',
       secret: false,
     },
@@ -785,7 +786,7 @@ function getWeeklyMissions(user) {
       description: `Kaufe ${3 * difficulty} Upgrades pro Woche`,
       goal: 3 * difficulty,
       progress: Number(stats.weeklyUpgrades || 0),
-      reward: 60000 * difficulty,
+      reward: 10000,
       category: 'weekly',
       secret: false,
     },
@@ -795,7 +796,7 @@ function getWeeklyMissions(user) {
       description: 'Lade 1 aktiven Freund pro Woche ein',
       goal: 1,
       progress: Number(stats.weeklyReferrals || 0),
-      reward: 100000 * difficulty,
+      reward: 5000,
       category: 'secret',
       secret: true,
       unlocked: Number(stats.weeklyReferrals || 0) > 0,
@@ -897,7 +898,7 @@ function getEnergyCost(user) {
 function getDailyRewardForUser(user) {
   const level = getPerkLevel(user, 'daily_plus');
   const baseReward = getDailyReward(user.level);
-  const multiplier = 1 + 0.1 * level;
+  const multiplier = 1 + 0.05 * level;
 
   return Math.round(baseReward * multiplier);
 }
@@ -909,12 +910,13 @@ function getDailyRewardWithStreakForUser(user, streakDay) {
 }
 
 function getMinerIncome(user) {
-  const minerLevel = getPerkLevel(user, 'miner_plus');
+  const minerPerkLevel = getPerkLevel(user, 'miner_plus');
   const luckyLevel = getPerkLevel(user, 'lucky_miner');
-  const baseIncome = Number(user.autoclickers || DEFAULT_MINER_INCOME);
-  const multiplier = 1 + 0.05 * minerLevel + 0.03 * luckyLevel;
+  const minerLevel = Math.max(1, Number(user.minerLevel || 1));
+  const baseIncomePerMinute = DEFAULT_MINER_RATE_PER_MINUTE + (minerLevel - 1) * 3;
+  const multiplier = 1 + 0.05 * minerPerkLevel + 0.03 * luckyLevel;
 
-  return Math.max(1, roundOnix(baseIncome * multiplier));
+  return Math.max(1, baseIncomePerMinute * multiplier);
 }
 
 function getReferralRewardForUser(user) {
@@ -939,9 +941,14 @@ function getBoostDurationMultiplier(user) {
 function getMaxEnergyWithPerks(user) {
   const level = getPerkLevel(user, 'energy_max_pro');
   const energyLevel = Math.max(1, Number(user.energyLevel || 1));
-  const upgradedEnergy = DEFAULT_MAX_ENERGY + (energyLevel - 1) * 500;
+  const upgradedEnergy = DEFAULT_MAX_ENERGY + (energyLevel - 1) * 150;
 
-  return upgradedEnergy + level * 500;
+  return upgradedEnergy + level * 300;
+}
+
+function getEnergyRechargeForUser(user) {
+  const rechargeLevel = Math.max(1, Number(user.rechargeLevel || 1));
+  return 1 + Math.floor((rechargeLevel - 1) / 4);
 }
 function getNumberEnv(name, fallback) {
   if (Object.prototype.hasOwnProperty.call(ECONOMY_OVERRIDES, name)) {
@@ -958,33 +965,33 @@ function getNumberEnv(name, fallback) {
 
 function getPromoCodesConfig() {
   return {
-    START: getNumberEnv('PROMO_START_REWARD', 25000),
-    ONIX2026: getNumberEnv('PROMO_ONIX2026_REWARD', 50000),
-    LAUNCH: getNumberEnv('PROMO_LAUNCH_REWARD', 75000),
+    START: getNumberEnv('PROMO_START_REWARD', 5000),
+    ONIX2026: getNumberEnv('PROMO_ONIX2026_REWARD', 10000),
+    LAUNCH: getNumberEnv('PROMO_LAUNCH_REWARD', 15000),
   };
 }
 
 function getWelcomeBonusAmount() {
-  return getNumberEnv('WELCOME_BONUS', 10000);
+  return getNumberEnv('WELCOME_BONUS', 5000);
 }
 
 function getEconomyConfig() {
   return {
     onixEurPer1000: getNumberEnv('ONIX_EUR_PER_1000', 0.68),
     minWithdrawOnix: getNumberEnv('MIN_WITHDRAW_ONIX', 750000),
-    referralReward: getNumberEnv('REFERRAL_REWARD', 75000),
-    referredUserReward: getNumberEnv('REFERRED_USER_REWARD', 15000),
+    referralReward: getNumberEnv('REFERRAL_REWARD', 25000),
+    referredUserReward: getNumberEnv('REFERRED_USER_REWARD', 5000),
     welcomeBonus: getWelcomeBonusAmount(),
     maxPaidReferralsPerDay: getNumberEnv('MAX_PAID_REFERRALS_PER_DAY', 10),
     maxPaidReferralsPerHour: getNumberEnv('MAX_PAID_REFERRALS_PER_HOUR', 5),
     chestCost: getNumberEnv('CHEST_COST', 50000),
-    dailyMissionBaseReward: getNumberEnv('DAILY_MISSION_BASE_REWARD', 10000),
-    weeklyMissionBaseReward: getNumberEnv('WEEKLY_MISSION_BASE_REWARD', 50000),
+    dailyMissionBaseReward: getNumberEnv('DAILY_MISSION_BASE_REWARD', 4000),
+    weeklyMissionBaseReward: getNumberEnv('WEEKLY_MISSION_BASE_REWARD', 10000),
     seasonPrizes: {
-      top1: getNumberEnv('SEASON_PRIZE_TOP_1', 250000),
-      top2: getNumberEnv('SEASON_PRIZE_TOP_2', 150000),
-      top3: getNumberEnv('SEASON_PRIZE_TOP_3', 75000),
-      top10: getNumberEnv('SEASON_PRIZE_TOP_10', 25000),
+      top1: getNumberEnv('SEASON_PRIZE_TOP_1', 100000),
+      top2: getNumberEnv('SEASON_PRIZE_TOP_2', 60000),
+      top3: getNumberEnv('SEASON_PRIZE_TOP_3', 40000),
+      top10: getNumberEnv('SEASON_PRIZE_TOP_10', 15000),
       top50: getNumberEnv('SEASON_PRIZE_TOP_50', 5000),
     },
     upgradeBaseCosts: {
@@ -1019,154 +1026,154 @@ const ACHIEVEMENTS = [
     id: 'first_tap',
     title: 'Erster Tap',
     description: 'Tippe zum ersten Mal auf die Münze',
-    reward: 500,
+    reward: 250,
     goal: 1,
   },
   {
     id: 'taps_100',
     title: '100 Taps',
     description: 'Mache 100 Taps',
-    reward: 2500,
+    reward: 1000,
     goal: 100,
   },
   {
     id: 'taps_1000',
     title: '1.000 Taps',
     description: 'Mache 1.000 Taps',
-    reward: 10000,
+    reward: 4000,
     goal: 1000,
   },
   {
     id: 'first_upgrade',
     title: 'Erstes Upgrade',
     description: 'Kaufe ein beliebiges Upgrade',
-    reward: 2500,
+    reward: 1500,
     goal: 1,
   },
   {
     id: 'miner_level_5',
     title: 'Miner Lvl. 5',
     description: 'Bringe den Miner auf Level 5',
-    reward: 10000,
+    reward: 5000,
     goal: 5,
   },
   {
     id: 'first_boost',
     title: 'Erster Boost',
     description: 'Aktiviere einen temporären Boost',
-    reward: 5000,
+    reward: 2500,
     goal: 1,
   },
   {
     id: 'first_offline_claim',
     title: 'Erstes Offline-Einkommen',
     description: 'Hole das Offline-Einkommen des Miners ab',
-    reward: 5000,
+    reward: 2500,
     goal: 1,
   },
   {
     id: 'first_friend',
     title: 'Erster Freund',
     description: 'Lade deinen ersten Freund ein',
-    reward: 25000,
+    reward: 5000,
     goal: 1,
   },
   {
     id: 'taps_10000',
     title: '10.000 Taps',
     description: 'Mache 10.000 Taps',
-    reward: 50000,
+    reward: 15000,
     goal: 10000,
   },
   {
     id: 'weekly_100k',
     title: '100.000 ONIX pro Woche',
     description: 'Verdiene 100.000 ONIX in einer Woche',
-    reward: 25000,
+    reward: 10000,
     goal: 100000,
   },
   {
     id: 'all_perks',
     title: 'Perk-Sammler',
     description: 'Kaufe alle permanenten Perks',
-    reward: 75000,
+    reward: 30000,
     goal: 10,
   },
   {
     id: 'rank_gold',
     title: 'Gold-Rang',
     description: 'Erreiche Gold I',
-    reward: 50000,
+    reward: 20000,
     goal: 750000,
   },
   {
     id: 'rank_diamond',
     title: 'Diamond-Spieler',
     description: 'Erreiche Diamond',
-    reward: 250000,
+    reward: 75000,
     goal: 5000000,
   },
   {
     id: 'friends_5',
     title: '5 Freunde',
     description: 'Lade 5 Freunde ein',
-    reward: 100000,
+    reward: 20000,
     goal: 5,
   },
   {
     id: 'streak_7',
     title: '7 Tage in Folge',
     description: 'Erreiche Tag 7 der Daily-Streak',
-    reward: 50000,
+    reward: 15000,
     goal: 7,
   },
   {
     id: 'taps_50000',
     title: '50.000 Taps',
     description: 'Mache 50.000 Taps',
-    reward: 150000,
+    reward: 35000,
     goal: 50000,
   },
   {
     id: 'taps_100000',
     title: '100.000 Taps',
     description: 'Mache 100.000 Taps',
-    reward: 300000,
+    reward: 60000,
     goal: 100000,
   },
   {
     id: 'earned_1m',
     title: 'ONIX-Millionär',
     description: 'Verdiene insgesamt 1.000.000 ONIX',
-    reward: 100000,
+    reward: 25000,
     goal: 1000000,
   },
   {
     id: 'friends_10',
     title: '10 Freunde',
     description: 'Lade 10 Freunde ein',
-    reward: 200000,
+    reward: 40000,
     goal: 10,
   },
   {
     id: 'upgrade_master',
     title: 'Upgrade-Meister',
     description: 'Kaufe 25 Upgrades',
-    reward: 100000,
+    reward: 25000,
     goal: 25,
   },
   {
     id: 'boost_master',
     title: 'Boost Master',
     description: 'Nutze 10 Boosts',
-    reward: 75000,
+    reward: 20000,
     goal: 10,
   },
   {
     id: 'offline_master',
     title: 'Offline-Meister',
     description: 'Hole 10-mal Offline-Einkommen ab',
-    reward: 75000,
+    reward: 20000,
     goal: 10,
   },
 ];
@@ -1437,7 +1444,8 @@ function getRechargeUpgradeCost(rechargeLevel) {
 }
 
 function getDailyReward(level) {
-  return Math.min(15000 + Number(level || 1) * 500, 50000);
+  const safeLevel = Math.max(1, Number(level || 1));
+  return Math.min(2500 + Math.floor((safeLevel - 1) / 10) * 100, 3000);
 }
 
 function getUtcDayKey(timestamp) {
@@ -1534,14 +1542,15 @@ function normalizeUserFields(user) {
   user.balance = roundOnix(user.balance);
   if (user.energy === undefined || user.energy === null) user.energy = DEFAULT_ENERGY;
   user.energy = Math.max(0, roundOnix(user.energy));
-  if (user.maxEnergy === undefined || user.maxEnergy === null) user.maxEnergy = DEFAULT_MAX_ENERGY;
-  user.maxEnergy = Math.max(DEFAULT_MAX_ENERGY, roundOnix(user.maxEnergy));
+  user.maxEnergy = Math.max(DEFAULT_MAX_ENERGY, roundOnix(getMaxEnergyWithPerks(user)));
+  user.energy = Math.min(Number(user.energy || 0), Number(user.maxEnergy || DEFAULT_MAX_ENERGY));
   if (user.tapPower === undefined || user.tapPower === null) user.tapPower = DEFAULT_TAP_POWER;
   user.tapPower = Math.max(1, roundOnix(user.tapPower));
-  if (user.energyRecharge === undefined || user.energyRecharge === null) user.energyRecharge = DEFAULT_ENERGY_RECHARGE;
-  user.energyRecharge = Math.max(1, roundOnix(user.energyRecharge));
-  if (user.autoclickers === undefined || user.autoclickers === null) user.autoclickers = DEFAULT_MINER_INCOME;
+  user.energyRecharge = Math.max(1, roundOnix(getEnergyRechargeForUser(user)));
+  if (user.autoclickers === undefined || user.autoclickers === null) user.autoclickers = 1;
   user.autoclickers = Math.max(1, roundOnix(user.autoclickers));
+  if (user.minerRemainder === undefined || user.minerRemainder === null) user.minerRemainder = 0;
+  user.minerRemainder = Math.max(0, Number(user.minerRemainder || 0));
   if (user.totalEarned === undefined || user.totalEarned === null) user.totalEarned = 0;
   user.totalEarned = roundOnix(user.totalEarned);
   if (user.weeklyEarned === undefined || user.weeklyEarned === null) user.weeklyEarned = 0;
@@ -3495,7 +3504,7 @@ router.get('/:telegramId', async (req, res) => {
       const countedSeconds = Math.min(offlineSeconds, getMaxOfflineSeconds(user));
 
       offlineSecondsForPopup = countedSeconds;
-      offlineIncome = roundOnix(getMinerIncome(user) * countedSeconds);
+      offlineIncome = roundOnix(getMinerIncome(user) * (countedSeconds / 60));
 
       if (offlineIncome > 0) {
         user.pendingOfflineIncome += offlineIncome;
@@ -3944,12 +3953,13 @@ router.post('/buy-upgrade', async (req, res) => {
 
     if (type === 'recharge') {
       user.rechargeLevel = Number(user.rechargeLevel || 1) + 1;
-      user.energyRecharge = Math.max(1, roundOnix(Number(user.energyRecharge || DEFAULT_ENERGY_RECHARGE) + 1));
+      user.energyRecharge = getEnergyRechargeForUser(user);
     }
 
     if (type === 'miner') {
       user.minerLevel = Number(user.minerLevel || 1) + 1;
-      user.autoclickers = Math.max(1, roundOnix(Number(user.autoclickers || DEFAULT_MINER_INCOME) + 1));
+      // Keep autoclickers as a legacy/display field. Actual miner income is derived from minerLevel.
+      user.autoclickers = Math.max(1, Number(user.minerLevel || 1));
     }
 
     user.totalUpgradesBought = Number(user.totalUpgradesBought || 0) + 1;
@@ -4124,10 +4134,10 @@ function getLeagueByTotalEarned(totalEarned) {
 }
 
 function getSeasonPrizeByPlace(place) {
-  if (place === 1) return 250000;
-  if (place === 2) return 150000;
-  if (place === 3) return 75000;
-  if (place >= 4 && place <= 10) return 25000;
+  if (place === 1) return 100000;
+  if (place === 2) return 60000;
+  if (place === 3) return 40000;
+  if (place >= 4 && place <= 10) return 15000;
   if (place >= 11 && place <= 50) return 5000;
 
   return 0;
@@ -5472,7 +5482,12 @@ router.post('/mine-tick', async (req, res) => {
       user.activeBoost === 'mining' && Number(user.boostEndTime || 0) > now;
 
     const multiplier = isMiningBoostActive ? 2 : 1;
-    const income = roundOnix(getMinerIncome(user) * multiplier);
+    const elapsedForIncomeMs = lastMineTickAt > 0 ? Math.max(0, elapsedMs) : 1000;
+    const rawMinerIncome =
+      getMinerIncome(user) * (elapsedForIncomeMs / 60000) * multiplier +
+      Number(user.minerRemainder || 0);
+    const income = Math.max(0, Math.floor(rawMinerIncome));
+    user.minerRemainder = Math.max(0, rawMinerIncome - income);
 
     if (income > 0) {
       user.balance = roundOnix(Number(user.balance || 0) + income);
