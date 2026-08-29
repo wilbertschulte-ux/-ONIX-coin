@@ -12307,6 +12307,19 @@ function App() {
   const [level, setLevel] = useState(1);
   const [totalEarned, setTotalEarned] = useState(0);
   const [activeTab, setActiveTab] = useState<Tab>('home');
+  const [headerMenuVisible, setHeaderMenuVisible] = useState(false);
+  const [headerNotificationsVisible, setHeaderNotificationsVisible] = useState(false);
+  const [headerNotificationsEnabled, setHeaderNotificationsEnabled] = useState(() => {
+    try { return localStorage.getItem('onix_notifications_enabled') !== '0'; } catch { return true; }
+  });
+
+  const toggleHeaderNotifications = () => {
+    setHeaderNotificationsEnabled((current) => {
+      const next = !current;
+      try { localStorage.setItem('onix_notifications_enabled', next ? '1' : '0'); } catch {}
+      return next;
+    });
+  };
 
   useEffect(() => {
     const html = document.documentElement;
@@ -18105,6 +18118,35 @@ body:not(.onix-body-home-lock) {
           </div>
         ))}
       </div>
+      {headerMenuVisible && (
+        <div role="dialog" aria-modal="true" onClick={() => setHeaderMenuVisible(false)} style={{ position: 'fixed', inset: 0, zIndex: 5000, background: 'rgba(0,0,0,.62)', display: 'flex' }}>
+          <div onClick={(event) => event.stopPropagation()} style={{ width: 'min(84vw, 330px)', height: '100%', padding: '28px 20px', background: 'linear-gradient(180deg,#0b0b28,#080817 72%)', borderRight: '1px solid rgba(168,85,247,.45)', boxShadow: '20px 0 50px rgba(0,0,0,.45)' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 28 }}>
+              <div><div style={{ color: '#67e8f9', fontSize: 11, fontWeight: 900, letterSpacing: '.18em' }}>ONIX CONTROL</div><div style={{ fontSize: 24, fontWeight: 1000 }}>Menü</div></div>
+              <button type="button" onClick={() => setHeaderMenuVisible(false)} style={{ width: 38, height: 38, borderRadius: 12, border: '1px solid rgba(168,85,247,.35)', background: 'rgba(15,12,45,.9)', color: '#fff', fontSize: 24 }}>×</button>
+            </div>
+            <div style={{ padding: 16, borderRadius: 18, border: '1px solid rgba(168,85,247,.25)', background: 'rgba(10,10,35,.8)', marginBottom: 14 }}>
+              <div style={{ fontWeight: 900, marginBottom: 8 }}>🌐 Sprache</div><div style={{ color: '#c4b5fd', fontSize: 14 }}>Deutsch</div>
+            </div>
+            <button type="button" onClick={toggleHeaderNotifications} style={{ width: '100%', padding: 16, borderRadius: 18, border: '1px solid rgba(168,85,247,.25)', background: 'rgba(10,10,35,.8)', color: '#fff', textAlign: 'left' }}>
+              <div style={{ fontWeight: 900, marginBottom: 8 }}>🔔 Benachrichtigungen</div><div style={{ color: headerNotificationsEnabled ? '#67e8f9' : '#a1a1aa', fontSize: 14 }}>{headerNotificationsEnabled ? 'Eingeschaltet' : 'Ausgeschaltet'}</div>
+            </button>
+          </div>
+        </div>
+      )}
+
+      {headerNotificationsVisible && (
+        <div role="dialog" aria-modal="true" onClick={() => setHeaderNotificationsVisible(false)} style={{ position: 'fixed', inset: 0, zIndex: 5000, background: 'rgba(0,0,0,.68)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 20 }}>
+          <div onClick={(event) => event.stopPropagation()} style={{ width: 'min(100%, 390px)', maxHeight: '72vh', overflowY: 'auto', padding: 22, borderRadius: 26, border: '1px solid rgba(168,85,247,.42)', background: 'linear-gradient(145deg,#121039,#080817)', boxShadow: '0 24px 70px rgba(0,0,0,.55)' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 18 }}>
+              <div><div style={{ color: '#67e8f9', fontSize: 11, fontWeight: 900, letterSpacing: '.15em' }}>ONIX CONTROL</div><div style={{ fontSize: 22, fontWeight: 1000 }}>Benachrichtigungen</div></div>
+              <button type="button" onClick={() => setHeaderNotificationsVisible(false)} style={{ width: 38, height: 38, borderRadius: 12, border: '1px solid rgba(168,85,247,.35)', background: 'rgba(15,12,45,.9)', color: '#fff', fontSize: 24 }}>×</button>
+            </div>
+            {!headerNotificationsEnabled ? <div style={{ padding: 18, borderRadius: 18, background: 'rgba(8,8,28,.85)', color: '#c4b5fd' }}>Benachrichtigungen sind ausgeschaltet. Du kannst sie im Menü einschalten.</div> : <div style={{ padding: 18, borderRadius: 18, background: 'rgba(8,8,28,.85)' }}><div style={{ fontWeight: 900, marginBottom: 6 }}>✓ Benachrichtigungen aktiv</div><div style={{ color: '#c4b5fd', fontSize: 14 }}>Neue ONIX-Meldungen werden hier angezeigt.</div></div>}
+          </div>
+        </div>
+      )}
+
       {activeTab === 'home' && (
         <div
           aria-label="ONIX top navigation"
@@ -18127,6 +18169,7 @@ body:not(.onix-body-home-lock) {
           <button
             type="button"
             aria-label="Menü"
+            onClick={() => setHeaderMenuVisible(true)}
             style={{
               width: 34,
               height: 34,
@@ -18166,6 +18209,7 @@ body:not(.onix-body-home-lock) {
           <button
             type="button"
             aria-label="Benachrichtigungen"
+            onClick={() => setHeaderNotificationsVisible(true)}
             style={{
               width: 34,
               height: 34,
