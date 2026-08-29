@@ -941,7 +941,7 @@ function getBoostDurationMultiplier(user) {
 function getMaxEnergyWithPerks(user) {
   const level = getPerkLevel(user, 'energy_max_pro');
   const energyLevel = Math.max(1, Number(user.energyLevel || 1));
-  const upgradedEnergy = DEFAULT_MAX_ENERGY + (energyLevel - 1) * 150;
+  const upgradedEnergy = DEFAULT_MAX_ENERGY + (energyLevel - 1) * 250;
 
   return upgradedEnergy + level * 300;
 }
