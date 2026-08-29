@@ -19657,9 +19657,23 @@ body:not(.onix-body-home-lock) {
                         {adminUserListTotalPages > 1 && <p className="onix-admin-muted" style={{ textAlign: 'center', marginTop: 8 }}>Страница {adminUserListPage} из {adminUserListTotalPages}</p>}
                         {adminSelectedUser && (
                           <div className="onix-admin-user-card">
-                            <strong>{adminSelectedUser.displayName || adminSelectedUser.username}</strong><span>{adminSelectedUser.telegramUsername ? `@${String(adminSelectedUser.telegramUsername).replace(/^@+/, '')} · ` : ''}ID: {adminSelectedUser.telegramId}</span>
+                            <div style={{ display: 'flex', gap: 12, alignItems: 'center' }}>
+                              {adminSelectedUser.photoUrl && <img src={adminSelectedUser.photoUrl} alt="" style={{ width: 52, height: 52, borderRadius: '50%', objectFit: 'cover' }} />}
+                              <div style={{ minWidth: 0 }}><strong>{adminSelectedUser.displayName || adminSelectedUser.username}</strong><span style={{ display: 'block' }}>{adminSelectedUser.telegramUsername ? `@${String(adminSelectedUser.telegramUsername).replace(/^@+/, '')} · ` : ''}ID: {adminSelectedUser.telegramId}</span><span style={{ display: 'block' }}>Язык: {adminSelectedUser.languageCode || '—'} · {adminSelectedUser.isFrozen ? '🚫 Заблокирован' : '✅ Активен'}</span></div>
+                            </div>
                             {adminSelectedUser.telegramProfileUrl && <a href={adminSelectedUser.telegramProfileUrl} target="_blank" rel="noreferrer" className="onix-admin-secondary" style={{ textAlign: 'center', textDecoration: 'none' }}>Открыть Telegram-профиль ↗</a>}
-                            <div className="onix-admin-metrics-grid"><div><span>Баланс</span><strong>{formatOnix(adminSelectedUser.balance)}</strong></div><div><span>Всего</span><strong>{formatOnix(adminSelectedUser.totalEarned)}</strong></div></div>
+                            <div className="onix-admin-metrics-grid">
+                              <div><span>Баланс</span><strong>{formatOnix(adminSelectedUser.balance)}</strong></div><div><span>Заработано</span><strong>{formatOnix(adminSelectedUser.totalEarned)}</strong></div>
+                              <div><span>Уровень</span><strong>{formatOnix(adminSelectedUser.level)}</strong></div><div><span>Тапов</span><strong>{formatOnix(adminSelectedUser.totalTaps)}</strong></div>
+                              <div><span>Энергия</span><strong>{formatOnix(adminSelectedUser.energy)} / {formatOnix(adminSelectedUser.maxEnergy)}</strong></div><div><span>Сила тапа</span><strong>{formatOnix(adminSelectedUser.tapPower)}</strong></div>
+                              <div><span>Рефералов</span><strong>{formatOnix(adminSelectedUser.referralsCount)}</strong></div><div><span>Заданий</span><strong>{formatOnix(adminSelectedUser.completedTasksCount)}</strong></div>
+                              <div><span>Промокодов</span><strong>{formatOnix(adminSelectedUser.usedPromoCodesCount)}</strong></div><div><span>Выводов</span><strong>{formatOnix(adminSelectedUser.withdrawalRequestsCount)}</strong></div>
+                            </div>
+                            <div className="onix-admin-list">
+                              <div className="onix-admin-row is-column"><strong>Улучшения</strong><em>Tap {adminSelectedUser.tapLevel || 1} · Miner {adminSelectedUser.minerLevel || 1} · Energy {adminSelectedUser.energyLevel || 1} · Recharge {adminSelectedUser.rechargeLevel || 1}</em></div>
+                              <div className="onix-admin-row is-column"><strong>Регистрация</strong><em>{adminSelectedUser.createdAt ? new Date(adminSelectedUser.createdAt).toLocaleString('de-DE') : '—'}</em></div>
+                              <div className="onix-admin-row is-column"><strong>Последняя активность</strong><em>{adminSelectedUser.lastTapAt ? new Date(adminSelectedUser.lastTapAt).toLocaleString('de-DE') : (adminSelectedUser.updatedAt ? new Date(adminSelectedUser.updatedAt).toLocaleString('de-DE') : '—')}</em></div>
+                            </div>
                             <input value={adminAdjustAmount} onChange={(event) => setAdminAdjustAmount(event.target.value)} placeholder="Сумма +/-" className="onix-admin-input" />
                             <input value={adminActionReason} onChange={(event) => setAdminActionReason(event.target.value)} placeholder="Причина" className="onix-admin-input" />
                             <div className="onix-admin-actions"><button type="button" onClick={adjustAdminUserBalance} disabled={isAdminLoading}>Изменить баланс</button><button type="button" onClick={toggleAdminUserBan} disabled={isAdminLoading}>{adminSelectedUser.isFrozen ? 'Разбанить' : 'Забанить'}</button></div>
