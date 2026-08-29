@@ -17716,7 +17716,7 @@ body:not(.onix-body-home-lock) {
     { label: 'ONIX-Guthaben', value: formatOnix(balance) },
     { label: 'Insgesamt verdient', value: formatOnix(totalEarned) },
     { label: 'Taps gesamt', value: formatOnix(totalTaps) },
-    { label: 'Miner-Ertrag / Sek.', value: formatOnix(autoclickers) },
+    { label: 'Miner-Ertrag / Min.', value: formatOnix(Math.max(20, 20 + (minerLevel - 1) * 3)) },
     { label: 'Tap-Stärke', value: formatOnix(tapPower) },
     { label: 'Max. Energie', value: formatOnix(maxEnergy) },
     { label: 'Energie-Regeneration', value: `+${formatOnix(energyRecharge)}/Sek.` },
@@ -17745,10 +17745,11 @@ body:not(.onix-body-home-lock) {
   const engineerLevel = getPerkLevel('engineer');
 
   const minerBaseMultiplier = 1 + 0.05 * minerPlusLevel + 0.03 * luckyMinerLevel;
-  const minerIncomePerSecond = Number(
-    Math.max(1, autoclickers * minerBaseMultiplier * miningMultiplier).toFixed(0)
+  const minerBaseIncomePerMinute = 20 + Math.max(0, minerLevel - 1) * 3;
+  const minerIncomePerMinute = Number(
+    Math.max(1, minerBaseIncomePerMinute * minerBaseMultiplier * miningMultiplier).toFixed(0)
   );
-  const minerIncomePerHour = minerIncomePerSecond * 60 * 60;
+  const minerIncomePerHour = minerIncomePerMinute * 60;
 
   const effectiveTapEnergyCost = Math.max(
     1,
@@ -17758,8 +17759,8 @@ body:not(.onix-body-home-lock) {
   const effectiveDailyPreview = Math.round(
     baseDailyPreview * (1 + 0.1 * dailyPlusLevel)
   );
-  const maxOfflineHours = 3 + offlineProLevel;
-  const maxOfflineIncome = minerIncomePerSecond * maxOfflineHours * 60 * 60;
+  const maxOfflineHours = 6 + offlineProLevel;
+  const maxOfflineIncome = minerIncomePerMinute * maxOfflineHours * 60;
 
   const upgradeDiscountMultiplier = Math.max(0.85, 1 - 0.05 * engineerLevel);
 
@@ -17771,10 +17772,10 @@ body:not(.onix-body-home-lock) {
   );
 
   const minerUpgradeProgress = Math.min((balance / nextMinerCost) * 100, 100);
-  const nextMinerIncomePerSecond = Number(
-    Math.max(1, (autoclickers + 1) * minerBaseMultiplier * miningMultiplier).toFixed(0)
+  const nextMinerIncomePerMinute = Number(
+    Math.max(1, (minerBaseIncomePerMinute + 3) * minerBaseMultiplier * miningMultiplier).toFixed(0)
   );
-  const minerIncomeIncrease = nextMinerIncomePerSecond - minerIncomePerSecond;
+  const minerIncomeIncrease = nextMinerIncomePerMinute - minerIncomePerMinute;
 
   const upgradeCards: Array<{
     type: 'tap' | 'miner' | 'energy' | 'recharge';
@@ -17808,9 +17809,9 @@ body:not(.onix-body-home-lock) {
       level: minerLevel,
       cost: nextMinerCost,
       currentLabel: 'Aktuell',
-      currentValue: `+${formatOnix(minerIncomePerSecond)} ONIX/Sek.`,
+      currentValue: `+${formatOnix(minerIncomePerMinute)} ONIX/Min.`,
       nextLabel: 'Nach Upgrade',
-      nextValue: `+${formatOnix(nextMinerIncomePerSecond)} ONIX/Sek.`,
+      nextValue: `+${formatOnix(nextMinerIncomePerMinute)} ONIX/Min.`,
     },
     {
       type: 'energy',
@@ -17822,7 +17823,7 @@ body:not(.onix-body-home-lock) {
       currentLabel: 'Aktuell',
       currentValue: `${maxEnergy.toLocaleString('ru-RU')} Energie`,
       nextLabel: 'Nach Upgrade',
-      nextValue: `${(maxEnergy + 500).toLocaleString('ru-RU')} Energie`,
+      nextValue: `${(maxEnergy + 250).toLocaleString('ru-RU')} Energie`,
     },
     {
       type: 'recharge',
@@ -18536,7 +18537,7 @@ body:not(.onix-body-home-lock) {
             accent: 'gold',
             title: 'Miner',
             level: minerLevel,
-            subtitle: `+${formatOnix(minerIncomePerSecond)} ONIX pro Sek.`,
+            subtitle: `+${formatOnix(minerIncomePerMinute)} ONIX pro Min.`,
             price: nextMinerCost,
             priceType: 'onix',
             disabled: balance < nextMinerCost,
