@@ -12487,7 +12487,86 @@ function App() {
       pt: [[/\bAufgaben\b/g,'Tarefas'],[/\bBelohnung\b/g,'Recompensa'],[/\bFortschritt\b/g,'Progresso'],[/\bErreicht\b/g,'Alcançado'],[/\bAktuell\b/g,'Atual'],[/\bAuswählen\b/g,'Selecionar'],[/\bTäglich(?:e|er|en)?\b/g,'Diárias'],[/\bWöchentlich(?:e|er|en)?\b/g,'Semanais'],[/\bEinkommen\b/g,'Renda'],[/\bAuszahlung(?:en)?\b/g,'Saque'],[/\bAnträge\b/g,'Solicitações'],[/\bTransaktionen\b/g,'Transações'],[/\bGuthaben\b/g,'Saldo'],[/\bEnergie\b/g,'Energia'],[/\bRänge\b/g,'Ranks'],[/\bTitel\b/g,'Títulos']]
     };
     for (const [pattern,replacement] of legacyTokens[appLanguage] || []) out = out.replace(pattern, replacement);
-    return out;
+
+    // STEP 13.8: canonical game vocabulary. These values can arrive from old
+    // MongoDB transactions / backend mission payloads or legacy JSX in English/German.
+    const gameTerms: Record<string, Partial<Record<AppLanguage, string>>> = {
+      'Bronze I': {de:'Bronze I',en:'Bronze I',ru:'Бронза I',uk:'Бронза I',tr:'Bronz I',es:'Bronce I',fr:'Bronze I',it:'Bronzo I',pl:'Brąz I',pt:'Bronze I'},
+      'Bronze II': {de:'Bronze II',en:'Bronze II',ru:'Бронза II',uk:'Бронза II',tr:'Bronz II',es:'Bronce II',fr:'Bronze II',it:'Bronzo II',pl:'Brąz II',pt:'Bronze II'},
+      'Bronze III': {de:'Bronze III',en:'Bronze III',ru:'Бронза III',uk:'Бронза III',tr:'Bronz III',es:'Bronce III',fr:'Bronze III',it:'Bronzo III',pl:'Brąz III',pt:'Bronze III'},
+      'Silver I': {de:'Silber I',en:'Silver I',ru:'Серебро I',uk:'Срібло I',tr:'Gümüş I',es:'Plata I',fr:'Argent I',it:'Argento I',pl:'Srebro I',pt:'Prata I'},
+      'Silver II': {de:'Silber II',en:'Silver II',ru:'Серебро II',uk:'Срібло II',tr:'Gümüş II',es:'Plata II',fr:'Argent II',it:'Argento II',pl:'Srebro II',pt:'Prata II'},
+      'Silver III': {de:'Silber III',en:'Silver III',ru:'Серебро III',uk:'Срібло III',tr:'Gümüş III',es:'Plata III',fr:'Argent III',it:'Argento III',pl:'Srebro III',pt:'Prata III'},
+      'Gold I': {de:'Gold I',en:'Gold I',ru:'Золото I',uk:'Золото I',tr:'Altın I',es:'Oro I',fr:'Or I',it:'Oro I',pl:'Złoto I',pt:'Ouro I'},
+      'Gold II': {de:'Gold II',en:'Gold II',ru:'Золото II',uk:'Золото II',tr:'Altın II',es:'Oro II',fr:'Or II',it:'Oro II',pl:'Złoto II',pt:'Ouro II'},
+      'Gold III': {de:'Gold III',en:'Gold III',ru:'Золото III',uk:'Золото III',tr:'Altın III',es:'Oro III',fr:'Or III',it:'Oro III',pl:'Złoto III',pt:'Ouro III'},
+      'Platinum': {de:'Platin',en:'Platinum',ru:'Платина',uk:'Платина',tr:'Platin',es:'Platino',fr:'Platine',it:'Platino',pl:'Platyna',pt:'Platina'},
+      'Diamond': {de:'Diamant',en:'Diamond',ru:'Алмаз',uk:'Діамант',tr:'Elmas',es:'Diamante',fr:'Diamant',it:'Diamante',pl:'Diament',pt:'Diamante'},
+      'Master': {de:'Meister',en:'Master',ru:'Мастер',uk:'Майстер',tr:'Usta',es:'Maestro',fr:'Maître',it:'Maestro',pl:'Mistrz',pt:'Mestre'},
+      'Legend': {de:'Legende',en:'Legend',ru:'Легенда',uk:'Легенда',tr:'Efsane',es:'Leyenda',fr:'Légende',it:'Leggenda',pl:'Legenda',pt:'Lenda'},
+      'Tap Master': {de:'Tap-Meister',en:'Tap Master',ru:'Мастер тапа',uk:'Майстер тапу',tr:'Dokunma Ustası',es:'Maestro del toque',fr:'Maître du tap',it:'Maestro tap',pl:'Mistrz tapnięć',pt:'Mestre do toque'},
+      'Miner': {de:'Miner',en:'Miner',ru:'Майнер',uk:'Майнер',tr:'Madenci',es:'Minero',fr:'Mineur',it:'Minatore',pl:'Górnik',pt:'Minerador'},
+      'Referral Master': {de:'Empfehlungsmeister',en:'Referral Master',ru:'Мастер рефералов',uk:'Майстер рефералів',tr:'Referans Ustası',es:'Maestro de referidos',fr:'Maître des parrainages',it:'Maestro referral',pl:'Mistrz poleceń',pt:'Mestre de indicações'},
+      'Boost Master': {de:'Boost-Meister',en:'Boost Master',ru:'Мастер бустов',uk:'Майстер бустів',tr:'Boost Ustası',es:'Maestro de boosts',fr:'Maître des boosts',it:'Maestro boost',pl:'Mistrz boostów',pt:'Mestre de boosts'},
+      'Perk Collector': {de:'Perk-Sammler',en:'Perk Collector',ru:'Коллекционер перков',uk:'Колекціонер перків',tr:'Perk Koleksiyoncusu',es:'Coleccionista de perks',fr:'Collectionneur de perks',it:'Collezionista di perk',pl:'Kolekcjoner perków',pt:'Colecionador de perks'},
+      'MAX': {de:'MAX',en:'MAX',ru:'МАКС.',uk:'МАКС.',tr:'MAKS.',es:'MÁX.',fr:'MAX.',it:'MAX',pl:'MAKS.',pt:'MÁX.'},
+      'FULL': {de:'VOLL',en:'FULL',ru:'ПОЛНАЯ',uk:'ПОВНА',tr:'DOLU',es:'LLENA',fr:'PLEINE',it:'PIENA',pl:'PEŁNA',pt:'CHEIA'},
+      'Team': {de:'Team',en:'Team',ru:'Команда',uk:'Команда',tr:'Takım',es:'Equipo',fr:'Équipe',it:'Squadra',pl:'Drużyna',pt:'Equipe'},
+      'Level': {de:'Level',en:'Level',ru:'Уровень',uk:'Рівень',tr:'Seviye',es:'Nivel',fr:'Niveau',it:'Livello',pl:'Poziom',pt:'Nível'},
+      'Erstes Upgrade': {en:'First upgrade',ru:'Первое улучшение',uk:'Перше покращення',tr:'İlk yükseltme',es:'Primera mejora',fr:'Première amélioration',it:'Primo potenziamento',pl:'Pierwsze ulepszenie',pt:'Primeira melhoria'},
+      'Miner Lvl. 5': {en:'Miner Lv. 5',ru:'Майнер ур. 5',uk:'Майнер рів. 5',tr:'Madenci Sv. 5',es:'Minero Nv. 5',fr:'Mineur niv. 5',it:'Minatore liv. 5',pl:'Górnik poz. 5',pt:'Minerador Nv. 5'},
+      'Erster Boost': {en:'First boost',ru:'Первый буст',uk:'Перший буст',tr:'İlk boost',es:'Primer boost',fr:'Premier boost',it:'Primo boost',pl:'Pierwszy boost',pt:'Primeiro boost'},
+      'Erstes Offline-Einkommen': {en:'First offline income',ru:'Первый офлайн-доход',uk:'Перший офлайн-дохід',tr:'İlk çevrimdışı gelir',es:'Primer ingreso offline',fr:'Premier revenu hors ligne',it:'Primo guadagno offline',pl:'Pierwszy dochód offline',pt:'Primeira renda offline'},
+      'Erster Freund': {en:'First friend',ru:'Первый друг',uk:'Перший друг',tr:'İlk arkadaş',es:'Primer amigo',fr:'Premier ami',it:'Primo amico',pl:'Pierwszy znajomy',pt:'Primeiro amigo'},
+      'Gold-Rang': {en:'Gold rank',ru:'Золотой ранг',uk:'Золотий ранг',tr:'Altın rütbe',es:'Rango Oro',fr:'Rang Or',it:'Rango Oro',pl:'Ranga Złota',pt:'Rank Ouro'},
+      'Diamond-Spieler': {en:'Diamond player',ru:'Алмазный игрок',uk:'Діамантовий гравець',tr:'Elmas oyuncu',es:'Jugador Diamante',fr:'Joueur Diamant',it:'Giocatore Diamante',pl:'Diamentowy gracz',pt:'Jogador Diamante'},
+      'Upgrade-Meister': {en:'Upgrade Master',ru:'Мастер улучшений',uk:'Майстер покращень',tr:'Yükseltme Ustası',es:'Maestro de mejoras',fr:'Maître des améliorations',it:'Maestro potenziamenti',pl:'Mistrz ulepszeń',pt:'Mestre de melhorias'},
+      'Offline-Meister': {en:'Offline Master',ru:'Мастер офлайна',uk:'Майстер офлайну',tr:'Çevrimdışı Ustası',es:'Maestro offline',fr:'Maître hors ligne',it:'Maestro offline',pl:'Mistrz offline',pt:'Mestre offline'},
+      'ONIX-Millionär': {en:'ONIX Millionaire',ru:'ONIX-миллионер',uk:'ONIX-мільйонер',tr:'ONIX Milyoneri',es:'Millonario ONIX',fr:'Millionnaire ONIX',it:'Milionario ONIX',pl:'Milioner ONIX',pt:'Milionário ONIX'},
+      '5 Freunde': {en:'5 friends',ru:'5 друзей',uk:'5 друзів',tr:'5 arkadaş',es:'5 amigos',fr:'5 amis',it:'5 amici',pl:'5 znajomych',pt:'5 amigos'},
+      '10 Freunde': {en:'10 friends',ru:'10 друзей',uk:'10 друзів',tr:'10 arkadaş',es:'10 amigos',fr:'10 amis',it:'10 amici',pl:'10 znajomych',pt:'10 amigos'},
+      '7 Tage in Folge': {en:'7-day streak',ru:'Серия 7 дней',uk:'Серія 7 днів',tr:'7 günlük seri',es:'Racha de 7 días',fr:'Série de 7 jours',it:'Serie di 7 giorni',pl:'Seria 7 dni',pt:'Sequência de 7 dias'},
+      '100.000 ONIX pro Woche': {en:'100,000 ONIX per week',ru:'100 000 ONIX за неделю',uk:'100 000 ONIX за тиждень',tr:'Haftada 100.000 ONIX',es:'100.000 ONIX por semana',fr:'100 000 ONIX par semaine',it:'100.000 ONIX a settimana',pl:'100 000 ONIX tygodniowo',pt:'100.000 ONIX por semana'},
+      'Miner hat verdient': {en:'Miner earned',ru:'Майнер заработал',uk:'Майнер заробив',tr:'Madenci kazandı',es:'El minero ganó',fr:'Le mineur a gagné',it:'Il minatore ha guadagnato',pl:'Górnik zarobił',pt:'O minerador ganhou'},
+      'Während du weg warst': {en:'While you were away',ru:'Пока тебя не было:',uk:'Поки тебе не було:',tr:'Sen yokken:',es:'Mientras no estabas:',fr:'Pendant ton absence :',it:'Mentre eri via:',pl:'Podczas twojej nieobecności:',pt:'Enquanto você estava fora:'},
+      'Wähle einen anderen Filter.': {en:'Choose another filter.',ru:'Выберите другой фильтр.',uk:'Оберіть інший фільтр.',tr:'Başka bir filtre seçin.',es:'Elige otro filtro.',fr:'Choisissez un autre filtre.',it:'Scegli un altro filtro.',pl:'Wybierz inny filtr.',pt:'Escolha outro filtro.'},
+      'Truhe geöffnet': {en:'Chest opened',ru:'Сундук открыт',uk:'Скриню відкрито',tr:'Sandık açıldı',es:'Cofre abierto',fr:'Coffre ouvert',it:'Forziere aperto',pl:'Skrzynia otwarta',pt:'Baú aberto'},
+      'Tapper des Tages': {en:'Tapper of the day',ru:'Таппер дня',uk:'Тапер дня',tr:'Günün dokunucusu',es:'Tapper del día',fr:'Tapper du jour',it:'Tapper del giorno',pl:'Tapper dnia',pt:'Tapper do dia'},
+      'Upgrade des Tages': {en:'Upgrade of the day',ru:'Улучшение дня',uk:'Покращення дня',tr:'Günün yükseltmesi',es:'Mejora del día',fr:'Amélioration du jour',it:'Potenziamento del giorno',pl:'Ulepszenie dnia',pt:'Melhoria do dia'},
+      'Miner abholen': {en:'Claim miner income',ru:'Забрать доход майнера',uk:'Забрати дохід майнера',tr:'Madenci gelirini al',es:'Cobrar ingreso del minero',fr:'Récupérer le revenu du mineur',it:'Ritira il guadagno del minatore',pl:'Odbierz dochód górnika',pt:'Coletar renda do minerador'},
+      'Geheim: ONIX-Glück': {en:'Secret: ONIX Luck',ru:'Секрет: удача ONIX',uk:'Секрет: удача ONIX',tr:'Gizli: ONIX Şansı',es:'Secreto: Suerte ONIX',fr:'Secret : Chance ONIX',it:'Segreto: Fortuna ONIX',pl:'Sekret: Szczęście ONIX',pt:'Segredo: Sorte ONIX'},
+      'Tapper der Woche': {en:'Tapper of the week',ru:'Таппер недели',uk:'Тапер тижня',tr:'Haftanın dokunucusu',es:'Tapper de la semana',fr:'Tapper de la semaine',it:'Tapper della settimana',pl:'Tapper tygodnia',pt:'Tapper da semana'},
+      'Wochenverdienst': {en:'Weekly earnings',ru:'Заработок за неделю',uk:'Тижневий заробіток',tr:'Haftalık kazanç',es:'Ganancias semanales',fr:'Gains hebdomadaires',it:'Guadagno settimanale',pl:'Tygodniowy zarobek',pt:'Ganhos semanais'},
+      'Ingenieur der Woche': {en:'Engineer of the week',ru:'Инженер недели',uk:'Інженер тижня',tr:'Haftanın mühendisi',es:'Ingeniero de la semana',fr:'Ingénieur de la semaine',it:'Ingegnere della settimana',pl:'Inżynier tygodnia',pt:'Engenheiro da semana'},
+      'Geheim: Rekrutierer': {en:'Secret: Recruiter',ru:'Секрет: рекрутер',uk:'Секрет: рекрутер',tr:'Gizli: İşe Alımcı',es:'Secreto: Reclutador',fr:'Secret : Recruteur',it:'Segreto: Reclutatore',pl:'Sekret: Rekruter',pt:'Segredo: Recrutador'},
+    };
+    const directTerm = gameTerms[source]?.[appLanguage];
+    if (directTerm) return directTerm;
+
+    // Dynamic German fragments returned by the backend / old transaction history.
+    const dynamicRules: Partial<Record<AppLanguage, Array<[RegExp, string]>>> = {
+      ru: [
+        [/^Daily Mission:\s*/i,'Ежедневная миссия: '],[/^Weekly Mission:\s*/i,'Еженедельная миссия: '],
+        [/^Tägliche Mission:\s*/i,'Ежедневная миссия: '],[/^Wöchentliche Mission:\s*/i,'Еженедельная миссия: '],
+        [/^Auszahlungsantrag/i,'Заявка на вывод'],[/^Tap-Stärke-Upgrade$/i,'Улучшение силы тапа'],[/^Energie-Upgrade$/i,'Улучшение энергии'],[/^Regenerations-Upgrade$/i,'Улучшение восстановления'],[/^Miner-Upgrade$/i,'Улучшение майнера'],[/^Upgrade-Kauf$/i,'Покупка улучшения'],
+        [/^Truhe: seltener Bonus/i,'Сундук: редкий бонус'],[/^Truhe geöffnet$/i,'Сундук открыт'],[/^Saisonpreis: Platz\s*/i,'Приз сезона: место '],
+        [/^Tägliche Belohnung · Tag\s*/i,'Ежедневная награда · день '],[/^Aufgabe: Kanal abonnieren$/i,'Задание: подписаться на канал'],[/^Team-Aufgabe:\s*/i,'Командное задание: '],
+        [/\bhat verdient\b/gi,'заработал'],[/\bpro Min\.?\b/gi,'в мин.'],[/\bpro Woche\b/gi,'за неделю'],[/\bLevel\s*(\d+)/gi,'Уровень $1'],
+        [/\bStd\./g,'ч.'],[/\bMin\./g,'мин.'],[/\bSek\./g,'сек.'],[/\bTaps gesamt\b/gi,'Всего тапов']
+      ],
+      en: [[/^Tägliche Belohnung · Tag\s*/i,'Daily reward · day '],[/^Auszahlungsantrag/i,'Withdrawal request'],[/\bStd\./g,'h'],[/\bMin\./g,'min'],[/\bSek\./g,'sec']],
+      uk: [[/^Auszahlungsantrag/i,'Заявка на виведення'],[/\bStd\./g,'год.'],[/\bMin\./g,'хв.'],[/\bSek\./g,'с.']],
+      tr: [[/^Auszahlungsantrag/i,'Çekim talebi'],[/\bStd\./g,'sa'],[/\bMin\./g,'dk'],[/\bSek\./g,'sn']],
+      es: [[/^Auszahlungsantrag/i,'Solicitud de retiro'],[/\bStd\./g,'h'],[/\bMin\./g,'min'],[/\bSek\./g,'s']],
+      fr: [[/^Auszahlungsantrag/i,'Demande de retrait'],[/\bStd\./g,'h'],[/\bMin\./g,'min'],[/\bSek\./g,'s']],
+      it: [[/^Auszahlungsantrag/i,'Richiesta di prelievo'],[/\bStd\./g,'h'],[/\bMin\./g,'min'],[/\bSek\./g,'s']],
+      pl: [[/^Auszahlungsantrag/i,'Wniosek o wypłatę'],[/\bStd\./g,'godz.'],[/\bMin\./g,'min'],[/\bSek\./g,'s']],
+      pt: [[/^Auszahlungsantrag/i,'Solicitação de saque'],[/\bStd\./g,'h'],[/\bMin\./g,'min'],[/\bSek\./g,'s']]
+    };
+    for (const [pattern,replacement] of dynamicRules[appLanguage] || []) out = out.replace(pattern, replacement);
+    // Some direct canonical terms are reached only after legacy token replacement.
+    const translatedOut = gameTerms[out]?.[appLanguage];
+    return translatedOut || out;
   };
 
 
@@ -21752,7 +21831,7 @@ body:not(.onix-body-home-lock) {
 
                                 <div className="min-w-0">
                                   <p className="truncate text-sm font-bold text-white">
-                                    {transaction.title || 'Transaktion'}
+                                    {uiText(transaction.title || 'Transaktion')}
                                   </p>
                                   <p className="text-xs text-gray-500">
                                     {formatTransactionTime(transaction.createdAt)}
@@ -23098,7 +23177,7 @@ body:not(.onix-body-home-lock) {
                     <div className="flex min-w-0 items-center gap-3">
                       <span className="text-2xl">{item.icon}</span>
                       <p className="truncate text-sm font-bold text-white">
-                        {item.title}
+                        {uiText(item.title)}
                       </p>
                     </div>
 
@@ -23131,13 +23210,13 @@ body:not(.onix-body-home-lock) {
             </div>
 
             <h3 className="text-2xl font-bold text-white mb-2">
-              Miner hat verdient
+              {uiText('Miner hat verdient')}
             </h3>
 
             <p className="text-gray-400 mb-4">
               {offlineRewardTime
-                ? `Während du weg warst ${offlineRewardTime}`
-                : 'Während du weg warst'}
+                ? `${uiText('Während du weg warst')} ${uiText(offlineRewardTime)}`
+                : uiText('Während du weg warst')}
             </p>
 
             <p className="text-4xl font-bold text-yellow-400 mb-6">
@@ -23153,7 +23232,7 @@ body:not(.onix-body-home-lock) {
                   : 'bg-yellow-400 active:scale-95'
               }`}
             >
-              {isClaimingOfflineReward ? 'Wird abgeholt...' : 'Abholen'}
+              {isClaimingOfflineReward ? uiText('Wird abgeholt...') : uiText('Abholen')}
             </button>
           </div>
         </div>
