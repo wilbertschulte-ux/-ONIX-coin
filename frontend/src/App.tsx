@@ -7422,6 +7422,34 @@ div.fixed.inset-0.z-\[90\] button.bg-yellow-400 {
 .onix-admin-user-card{margin-top:12px!important;border-radius:20px!important;border:1px solid rgba(45,212,255,.18)!important;background:rgba(8,18,39,.82)!important;padding:14px!important;display:grid!important;gap:10px!important;}
 .onix-admin-user-card > strong{font-size:18px!important;color:#fff!important;}
 .onix-admin-user-card > span{color:rgba(218,208,255,.62)!important;font-size:12px!important;font-weight:800!important;}
+
+.onix-admin-hub-page.is-player-profile{max-height:none!important;overflow:visible!important;}
+.onix-admin-detail-scroll.is-player-profile{min-height:auto!important;overflow:visible!important;overscroll-behavior:auto!important;padding-bottom:24px!important;}
+.onix-admin-player-profile{padding:16px!important;gap:14px!important;overflow:visible!important;}
+.onix-admin-profile-back{width:100%!important;border:1px solid rgba(124,58,237,.24)!important;border-radius:15px!important;background:rgba(8,10,30,.9)!important;color:#d9d2ff!important;padding:11px 14px!important;font-weight:900!important;text-align:left!important;}
+.onix-admin-profile-head{display:grid!important;grid-template-columns:auto minmax(0,1fr)!important;gap:12px!important;align-items:center!important;}
+.onix-admin-profile-head img{width:54px!important;height:54px!important;border-radius:18px!important;object-fit:cover!important;border:1px solid rgba(45,212,255,.34)!important;}
+.onix-admin-profile-head strong{display:block!important;color:#fff!important;font-size:19px!important;font-weight:1000!important;line-height:1.05!important;}
+.onix-admin-profile-head span,.onix-admin-profile-head em{display:block!important;margin-top:4px!important;color:rgba(218,208,255,.65)!important;font-size:12px!important;font-style:normal!important;font-weight:800!important;overflow-wrap:anywhere!important;}
+.onix-admin-profile-head b{grid-column:1/-1!important;width:max-content!important;border-radius:999px!important;padding:7px 10px!important;font-size:11px!important;font-weight:1000!important;}
+.onix-admin-profile-head b.is-active{background:rgba(34,197,94,.12)!important;border:1px solid rgba(34,197,94,.28)!important;color:#86efac!important;}
+.onix-admin-profile-head b.is-banned{background:rgba(239,68,68,.12)!important;border:1px solid rgba(239,68,68,.28)!important;color:#fca5a5!important;}
+.onix-admin-profile-link{margin-top:0!important;text-align:center!important;text-decoration:none!important;}
+.onix-admin-profile-section{border-radius:18px!important;border:1px solid rgba(124,58,237,.18)!important;background:rgba(5,8,24,.62)!important;padding:13px!important;}
+.onix-admin-profile-section-title{display:flex!important;align-items:center!important;justify-content:space-between!important;gap:10px!important;margin-bottom:10px!important;}
+.onix-admin-profile-section-title strong{color:#fff!important;font-size:14px!important;font-weight:1000!important;}
+.onix-admin-profile-section-title span{color:#7ef9ff!important;font-size:11px!important;font-weight:900!important;text-transform:uppercase!important;}
+.onix-admin-profile-metrics{margin:0!important;gap:8px!important;}
+.onix-admin-profile-metrics div{padding:10px!important;min-width:0!important;}
+.onix-admin-profile-metrics span{font-size:10px!important;}
+.onix-admin-profile-metrics strong{font-size:14px!important;overflow-wrap:anywhere!important;}
+.onix-admin-profile-info-list{display:grid!important;gap:8px!important;}
+.onix-admin-profile-info-list>div{border-radius:14px!important;background:rgba(9,12,34,.82)!important;padding:10px 11px!important;}
+.onix-admin-profile-info-list span{display:block!important;color:rgba(218,208,255,.52)!important;font-size:10px!important;font-weight:900!important;text-transform:uppercase!important;letter-spacing:.04em!important;}
+.onix-admin-profile-info-list strong{display:block!important;margin-top:4px!important;color:#fff!important;font-size:12px!important;line-height:1.35!important;overflow-wrap:anywhere!important;}
+.onix-admin-profile-controls .onix-admin-input{margin-top:8px!important;}
+@media (max-width:380px){.onix-admin-profile-metrics{grid-template-columns:1fr 1fr!important}.onix-admin-profile-metrics strong{font-size:13px!important}.onix-admin-player-profile{padding:12px!important}}
+
 .onix-admin-config-grid{display:grid!important;grid-template-columns:1fr 1fr!important;gap:8px!important;margin-top:12px!important;}
 .onix-admin-config-grid label{color:rgba(218,208,255,.68)!important;font-size:11px!important;font-weight:900!important;}
 
@@ -19488,7 +19516,7 @@ body:not(.onix-body-home-lock) {
             )}
 
             {profilePanel === 'admin' && isAdmin() && (
-              <div className="onix-profile-v75-panel onix-admin-hub-panel onix-admin-hub-page">
+              <div className={`onix-profile-v75-panel onix-admin-hub-panel onix-admin-hub-page${adminHubPage === 'search' && adminSelectedUser ? ' is-player-profile' : ''}`}>
                 <div className="onix-admin-sticky-top">
                   <div className="onix-profile-v75-panel-title onix-profile-v75-detail-title">
                     <button
@@ -19577,7 +19605,7 @@ body:not(.onix-body-home-lock) {
                 )}
 
                 {adminHubPage !== 'overview' && (
-                  <div className="onix-admin-detail-scroll">
+                  <div className={`onix-admin-detail-scroll${adminHubPage === 'search' && adminSelectedUser ? ' is-player-profile' : ''}`}>
                     {adminHubPage === 'prizes' && (
                       <div className="onix-admin-section-card">
                         <div className="onix-admin-section-head"><strong>🏆 Призы недели</strong><span>{adminPrizePreview?.week || '—'}</span></div>
@@ -19656,27 +19684,58 @@ body:not(.onix-body-home-lock) {
                         )}
                         {adminUserListTotalPages > 1 && <p className="onix-admin-muted" style={{ textAlign: 'center', marginTop: 8 }}>Страница {adminUserListPage} из {adminUserListTotalPages}</p>}
                         {adminSelectedUser && (
-                          <div className="onix-admin-user-card">
-                            <div style={{ display: 'flex', gap: 12, alignItems: 'center' }}>
-                              {adminSelectedUser.photoUrl && <img src={adminSelectedUser.photoUrl} alt="" style={{ width: 52, height: 52, borderRadius: '50%', objectFit: 'cover' }} />}
-                              <div style={{ minWidth: 0 }}><strong>{adminSelectedUser.displayName || adminSelectedUser.username}</strong><span style={{ display: 'block' }}>{adminSelectedUser.telegramUsername ? `@${String(adminSelectedUser.telegramUsername).replace(/^@+/, '')} · ` : ''}ID: {adminSelectedUser.telegramId}</span><span style={{ display: 'block' }}>Язык: {adminSelectedUser.languageCode || '—'} · {adminSelectedUser.isFrozen ? '🚫 Заблокирован' : '✅ Активен'}</span></div>
+                          <div className="onix-admin-user-card onix-admin-player-profile">
+                            <button type="button" className="onix-admin-profile-back" onClick={() => setAdminSelectedUser(null)}>← К списку игроков</button>
+
+                            <div className="onix-admin-profile-head">
+                              {adminSelectedUser.photoUrl && <img src={adminSelectedUser.photoUrl} alt="" />}
+                              <div>
+                                <strong>{adminSelectedUser.displayName || adminSelectedUser.username || 'Spieler'}</strong>
+                                <span>{adminSelectedUser.telegramUsername ? `@${String(adminSelectedUser.telegramUsername).replace(/^@+/, '')}` : 'Telegram username не указан'}</span>
+                                <em>ID: {adminSelectedUser.telegramId}</em>
+                              </div>
+                              <b className={adminSelectedUser.isFrozen ? 'is-banned' : 'is-active'}>{adminSelectedUser.isFrozen ? 'Заблокирован' : 'Активен'}</b>
                             </div>
-                            {adminSelectedUser.telegramProfileUrl && <a href={adminSelectedUser.telegramProfileUrl} target="_blank" rel="noreferrer" className="onix-admin-secondary" style={{ textAlign: 'center', textDecoration: 'none' }}>Открыть Telegram-профиль ↗</a>}
-                            <div className="onix-admin-metrics-grid">
-                              <div><span>Баланс</span><strong>{formatOnix(adminSelectedUser.balance)}</strong></div><div><span>Заработано</span><strong>{formatOnix(adminSelectedUser.totalEarned)}</strong></div>
-                              <div><span>Уровень</span><strong>{formatOnix(adminSelectedUser.level)}</strong></div><div><span>Тапов</span><strong>{formatOnix(adminSelectedUser.totalTaps)}</strong></div>
-                              <div><span>Энергия</span><strong>{formatOnix(adminSelectedUser.energy)} / {formatOnix(adminSelectedUser.maxEnergy)}</strong></div><div><span>Сила тапа</span><strong>{formatOnix(adminSelectedUser.tapPower)}</strong></div>
-                              <div><span>Рефералов</span><strong>{formatOnix(adminSelectedUser.referralsCount)}</strong></div><div><span>Заданий</span><strong>{formatOnix(adminSelectedUser.completedTasksCount)}</strong></div>
-                              <div><span>Промокодов</span><strong>{formatOnix(adminSelectedUser.usedPromoCodesCount)}</strong></div><div><span>Выводов</span><strong>{formatOnix(adminSelectedUser.withdrawalRequestsCount)}</strong></div>
+
+                            {adminSelectedUser.telegramProfileUrl && <a href={adminSelectedUser.telegramProfileUrl} target="_blank" rel="noreferrer" className="onix-admin-secondary onix-admin-profile-link">Открыть Telegram-профиль ↗</a>}
+
+                            <div className="onix-admin-profile-section">
+                              <div className="onix-admin-profile-section-title"><strong>💰 Финансы</strong><span>{adminSelectedUser.languageCode || '—'}</span></div>
+                              <div className="onix-admin-metrics-grid onix-admin-profile-metrics">
+                                <div><span>Баланс</span><strong>{formatOnix(adminSelectedUser.balance)}</strong></div>
+                                <div><span>Всего заработано</span><strong>{formatOnix(adminSelectedUser.totalEarned)}</strong></div>
+                                <div><span>Заявок на вывод</span><strong>{formatOnix(adminSelectedUser.withdrawalRequestsCount)}</strong></div>
+                                <div><span>Промокодов</span><strong>{formatOnix(adminSelectedUser.usedPromoCodesCount)}</strong></div>
+                              </div>
                             </div>
-                            <div className="onix-admin-list">
-                              <div className="onix-admin-row is-column"><strong>Улучшения</strong><em>Tap {adminSelectedUser.tapLevel || 1} · Miner {adminSelectedUser.minerLevel || 1} · Energy {adminSelectedUser.energyLevel || 1} · Recharge {adminSelectedUser.rechargeLevel || 1}</em></div>
-                              <div className="onix-admin-row is-column"><strong>Регистрация</strong><em>{adminSelectedUser.createdAt ? new Date(adminSelectedUser.createdAt).toLocaleString('de-DE') : '—'}</em></div>
-                              <div className="onix-admin-row is-column"><strong>Последняя активность</strong><em>{adminSelectedUser.lastTapAt ? new Date(adminSelectedUser.lastTapAt).toLocaleString('de-DE') : (adminSelectedUser.updatedAt ? new Date(adminSelectedUser.updatedAt).toLocaleString('de-DE') : '—')}</em></div>
+
+                            <div className="onix-admin-profile-section">
+                              <div className="onix-admin-profile-section-title"><strong>🎮 Игровая статистика</strong></div>
+                              <div className="onix-admin-metrics-grid onix-admin-profile-metrics">
+                                <div><span>Уровень</span><strong>{formatOnix(adminSelectedUser.level)}</strong></div>
+                                <div><span>Всего тапов</span><strong>{formatOnix(adminSelectedUser.totalTaps)}</strong></div>
+                                <div><span>Энергия</span><strong>{formatOnix(adminSelectedUser.energy)} / {formatOnix(adminSelectedUser.maxEnergy)}</strong></div>
+                                <div><span>Сила тапа</span><strong>{formatOnix(adminSelectedUser.tapPower)}</strong></div>
+                                <div><span>Рефералов</span><strong>{formatOnix(adminSelectedUser.referralsCount)}</strong></div>
+                                <div><span>Заданий</span><strong>{formatOnix(adminSelectedUser.completedTasksCount)}</strong></div>
+                              </div>
                             </div>
-                            <input value={adminAdjustAmount} onChange={(event) => setAdminAdjustAmount(event.target.value)} placeholder="Сумма +/-" className="onix-admin-input" />
-                            <input value={adminActionReason} onChange={(event) => setAdminActionReason(event.target.value)} placeholder="Причина" className="onix-admin-input" />
-                            <div className="onix-admin-actions"><button type="button" onClick={adjustAdminUserBalance} disabled={isAdminLoading}>Изменить баланс</button><button type="button" onClick={toggleAdminUserBan} disabled={isAdminLoading}>{adminSelectedUser.isFrozen ? 'Разбанить' : 'Забанить'}</button></div>
+
+                            <div className="onix-admin-profile-section">
+                              <div className="onix-admin-profile-section-title"><strong>⚙️ Улучшения и активность</strong></div>
+                              <div className="onix-admin-profile-info-list">
+                                <div><span>Улучшения</span><strong>Tap {adminSelectedUser.tapLevel || 1} · Miner {adminSelectedUser.minerLevel || 1} · Energy {adminSelectedUser.energyLevel || 1} · Recharge {adminSelectedUser.rechargeLevel || 1}</strong></div>
+                                <div><span>Регистрация</span><strong>{adminSelectedUser.createdAt ? new Date(adminSelectedUser.createdAt).toLocaleString('de-DE') : '—'}</strong></div>
+                                <div><span>Последняя активность</span><strong>{adminSelectedUser.lastTapAt ? new Date(adminSelectedUser.lastTapAt).toLocaleString('de-DE') : (adminSelectedUser.updatedAt ? new Date(adminSelectedUser.updatedAt).toLocaleString('de-DE') : '—')}</strong></div>
+                              </div>
+                            </div>
+
+                            <div className="onix-admin-profile-section onix-admin-profile-controls">
+                              <div className="onix-admin-profile-section-title"><strong>🛠 Управление игроком</strong></div>
+                              <input value={adminAdjustAmount} onChange={(event) => setAdminAdjustAmount(event.target.value)} placeholder="Сумма +/-" className="onix-admin-input" />
+                              <input value={adminActionReason} onChange={(event) => setAdminActionReason(event.target.value)} placeholder="Причина" className="onix-admin-input" />
+                              <div className="onix-admin-actions"><button type="button" onClick={adjustAdminUserBalance} disabled={isAdminLoading}>Изменить баланс</button><button type="button" onClick={toggleAdminUserBan} disabled={isAdminLoading}>{adminSelectedUser.isFrozen ? 'Разбанить' : 'Забанить'}</button></div>
+                            </div>
                           </div>
                         )}
                       </div>
