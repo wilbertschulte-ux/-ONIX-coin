@@ -12426,6 +12426,7 @@ function App() {
       "Du erhältst": {"en": "You receive", "ru": "Ты получишь", "uk": "Ти отримаєш", "tr": "Sen alırsın", "es": "Tú recibes", "fr": "Tu reçois", "it": "Tu ricevi", "pl": "Otrzymujesz", "pt": "Você recebe"},
       "Freund erhält": {"en": "Friend receives", "ru": "Друг получит", "uk": "Друг отримає", "tr": "Arkadaş alır", "es": "El amigo recibe", "fr": "L’ami reçoit", "it": "L’amico riceve", "pl": "Znajomy otrzymuje", "pt": "O amigo recebe"},
       "Boni heute": {"en": "Bonuses today", "ru": "Бонусы сегодня", "uk": "Бонуси сьогодні", "tr": "Bugünkü bonuslar", "es": "Bonos hoy", "fr": "Bonus aujourd’hui", "it": "Bonus oggi", "pl": "Bonusy dzisiaj", "pt": "Bônus hoje"},
+      "Letzter Preis: ": {"en":"Last prize: ","ru":"Последний приз: ","uk":"Останній приз: ","tr":"Son ödül: ","es":"Último premio: ","fr":"Dernier prix : ","it":"Ultimo premio: ","pl":"Ostatnia nagroda: ","pt":"Último prêmio: "},
       "Tägliche Missionen erledigt": {"en":"Daily missions completed","ru":"Ежедневные миссии выполнены","uk":"Щоденні місії виконано","tr":"Günlük görevler tamamlandı","es":"Misiones diarias completadas","fr":"Missions quotidiennes terminées","it":"Missioni giornaliere completate","pl":"Misje dzienne ukończone","pt":"Missões diárias concluídas"},
       "Wöchentliche Missionen erledigt": {"en":"Weekly missions completed","ru":"Еженедельные миссии выполнены","uk":"Щотижневі місії виконано","tr":"Haftalık görevler tamamlandı","es":"Misiones semanales completadas","fr":"Missions hebdomadaires terminées","it":"Missioni settimanali completate","pl":"Misje tygodniowe ukończone","pt":"Missões semanais concluídas"},
       "Aktuell": {"en":"Current","ru":"Текущий","uk":"Поточний","tr":"Mevcut","es":"Actual","fr":"Actuel","it":"Attuale","pl":"Aktualny","pt":"Atual"},
@@ -12465,6 +12466,11 @@ function App() {
       "Regeneration": {"en":"Regeneration","ru":"Восстановление","uk":"Відновлення","tr":"Yenilenme","es":"Regeneración","fr":"Régénération","it":"Rigenerazione","pl":"Regeneracja","pt":"Regeneração"},
       "Energie voll": {"en":"Energy full","ru":"Энергия полная","uk":"Енергія повна","tr":"Enerji dolu","es":"Energía llena","fr":"Énergie pleine","it":"Energia piena","pl":"Energia pełna","pt":"Energia cheia"},
       "guter Bonus": {"en":"good bonus","ru":"хороший бонус","uk":"хороший бонус","tr":"iyi bonus","es":"buen bono","fr":"bon bonus","it":"buon bonus","pl":"dobry bonus","pt":"bom bônus"},
+      "Streak-Multiplikator": {"en":"Streak multiplier","ru":"Множитель серии","uk":"Множник серії","tr":"Seri çarpanı","es":"Multiplicador de racha","fr":"Multiplicateur de série","it":"Moltiplicatore serie","pl":"Mnożnik serii","pt":"Multiplicador de sequência"},
+      "Truhe: kleiner Bonus": {"en":"Chest: small bonus","ru":"Сундук: небольшой бонус","uk":"Скриня: невеликий бонус","tr":"Sandık: küçük bonus","es":"Cofre: bono pequeño","fr":"Coffre : petit bonus","it":"Forziere: bonus piccolo","pl":"Skrzynia: mały bonus","pt":"Baú: bônus pequeno"},
+      "Truhe: guter Bonus": {"en":"Chest: good bonus","ru":"Сундук: хороший бонус","uk":"Скриня: хороший бонус","tr":"Sandık: iyi bonus","es":"Cofre: buen bono","fr":"Coffre : bon bonus","it":"Forziere: buon bonus","pl":"Skrzynia: dobry bonus","pt":"Baú: bom bônus"},
+      "Truhe: seltener Bonus": {"en":"Chest: rare bonus","ru":"Сундук: редкий бонус","uk":"Скриня: рідкісний бонус","tr":"Sandık: nadir bonus","es":"Cofre: bono raro","fr":"Coffre : bonus rare","it":"Forziere: bonus raro","pl":"Skrzynia: rzadki bonus","pt":"Baú: bônus raro"},
+      "Truhe: Jackpot": {"en":"Chest: Jackpot","ru":"Сундук: Джекпот","uk":"Скриня: Джекпот","tr":"Sandık: Büyük ikramiye","es":"Cofre: Bote","fr":"Coffre : Jackpot","it":"Forziere: Jackpot","pl":"Skrzynia: Jackpot","pt":"Baú: Jackpot"},
       "Drop": {"en":"Drop","ru":"Дроп","uk":"Дроп","tr":"Drop","es":"Drop","fr":"Drop","it":"Drop","pl":"Drop","pt":"Drop"},
       "Gold+": {"en":"Gold+","ru":"Золото+","uk":"Золото+","tr":"Altın+","es":"Oro+","fr":"Or+","it":"Oro+","pl":"Złoto+","pt":"Ouro+"},
       "Referral": {"en":"Referral","ru":"Реферал","uk":"Реферал","tr":"Referans","es":"Referido","fr":"Parrainage","it":"Referral","pl":"Polecenie","pt":"Indicação"},
@@ -12596,6 +12602,17 @@ function App() {
     };
     const directTerm = gameTerms[source]?.[appLanguage];
     if (directTerm) return directTerm;
+
+    const chestRewardMatch = source.match(/^Truhe:\s*(kleiner Bonus|guter Bonus|seltener Bonus|Jackpot)(.*)$/i);
+    if (chestRewardMatch) {
+      const canonicalChestTitle =
+        chestRewardMatch[1].toLowerCase() === 'kleiner bonus' ? 'Truhe: kleiner Bonus' :
+        chestRewardMatch[1].toLowerCase() === 'guter bonus' ? 'Truhe: guter Bonus' :
+        chestRewardMatch[1].toLowerCase() === 'seltener bonus' ? 'Truhe: seltener Bonus' :
+        'Truhe: Jackpot';
+      const localizedChestTitle = gameTerms[canonicalChestTitle]?.[appLanguage] || canonicalChestTitle;
+      return `${localizedChestTitle}${chestRewardMatch[2] || ''}`;
+    }
 
     // Dynamic German fragments returned by the backend / old transaction history.
     const dynamicRules: Partial<Record<AppLanguage, Array<[RegExp, string]>>> = {
@@ -13708,10 +13725,10 @@ function App() {
       setAchievements(user.achievements || response.data.achievements || ACHIEVEMENTS);
       setOwnedPerks(user.ownedPerks || []);
       setPerkLevels(normalizePerkLevels(user.perkLevels));
-      setLastChestReward(user.chestStats?.lastReward || '');
+      setLastChestReward(uiText(user.chestStats?.lastReward || ''));
 
       showToast(
-        `🎁 ${response.data.chest.rewardTitle}: +${formatOnix(
+        `🎁 ${uiText(response.data.chest.rewardTitle)}: +${formatOnix(
           response.data.chest.rewardAmount
         )} ONIX`,
         'success'
@@ -14039,7 +14056,7 @@ function App() {
     setWithdrawalRequests(user.withdrawalRequests || []);
     setSelectedTitle(user.selectedTitle || 'ONIX Player');
     setPerkLevels(normalizePerkLevels(user.perkLevels));
-    setLastChestReward(user.chestStats?.lastReward || '');
+    setLastChestReward(uiText(user.chestStats?.lastReward || ''));
     setTeamName(user.teamName || '');
     setLeague(user.league || 'Bronze');
     if (user.missions) setMissions(user.missions);
@@ -18607,6 +18624,24 @@ body:not(.onix-body-home-lock) {
   const areWeeklyMissionsComplete =
     missions.weekly.length > 0 && visibleWeeklyMissions.length === 0;
 
+  const maxEnergySubtitle = (value: number) => {
+    const formatted = value.toLocaleString('ru-RU');
+    const labels: Record<AppLanguage, string> = {
+      de: 'max. Energie',
+      en: 'max. Energy',
+      ru: 'макс. Энергия',
+      uk: 'макс. Енергія',
+      tr: 'maks. Enerji',
+      es: 'Energía máx.',
+      fr: 'Énergie max.',
+      it: 'Energia max',
+      pl: 'maks. Energia',
+      pt: 'Energia máx.',
+    };
+    return `${formatted} ${labels[appLanguage]}`;
+  };
+
+
   const boostCards: Array<{
     type: 'tap' | 'mining';
     icon: string;
@@ -19320,7 +19355,7 @@ body:not(.onix-body-home-lock) {
             accent: 'blue',
             title: 'Max. Energie',
             level: energyLevel,
-            subtitle: uiText(`${maxEnergy.toLocaleString('ru-RU')} max. Energie`),
+            subtitle: maxEnergySubtitle(maxEnergy),
             price: nextEnergyCost,
             priceType: 'onix',
             disabled: balance < nextEnergyCost,
@@ -19376,7 +19411,7 @@ body:not(.onix-body-home-lock) {
             accent: 'pink',
             title: 'ONIX-Truhe',
             level: null,
-            subtitle: uiText(lastChestReward ? `Letzter Preis: ${lastChestReward}` : 'Zufälliger Preis und geheime Daily-Mission'),
+            subtitle: lastChestReward ? `${uiText('Letzter Preis: ')}${uiText(lastChestReward)}` : uiText('Zufälliger Preis und geheime Daily-Mission'),
             price: Number(economyConfig.chestCost || 50000),
             priceType: 'onix',
             disabled: balance < Number(economyConfig.chestCost || 50000),
@@ -19834,7 +19869,7 @@ body:not(.onix-body-home-lock) {
                 +{formatOnix(dailyRewardPreview)} ONIX · Tag {nextDailyStreakDay}/7
               </p>
               <p className="text-xs text-yellow-400">
-                Streak-Multiplikator ×{dailyStreakMultiplier.toFixed(1)}
+                {uiText('Streak-Multiplikator')} ×{dailyStreakMultiplier.toFixed(1)}
               </p>
             </div>
 
