@@ -12490,7 +12490,6 @@ function App() {
       "Erreiche Tag 7 der Daily-Streak": {"en":"Reach day 7 of the daily streak","ru":"Достигни 7-го дня ежедневной серии","uk":"Досягни 7-го дня щоденної серії","tr":"Günlük seride 7. güne ulaş","es":"Alcanza el día 7 de la racha diaria","fr":"Atteins le jour 7 de la série quotidienne","it":"Raggiungi il giorno 7 della serie giornaliera","pl":"Osiągnij 7. dzień serii dziennej","pt":"Alcance o dia 7 da sequência diária"},
       "Verdiene insgesamt 1.000.000 ONIX": {"en":"Earn 1,000,000 ONIX in total","ru":"Заработай всего 1 000 000 ONIX","uk":"Зароби загалом 1 000 000 ONIX","tr":"Toplam 1.000.000 ONIX kazan","es":"Gana 1.000.000 ONIX en total","fr":"Gagne 1 000 000 ONIX au total","it":"Guadagna 1.000.000 ONIX in totale","pl":"Zarób łącznie 1 000 000 ONIX","pt":"Ganhe 1.000.000 ONIX no total"},
       "Lade 10 Freunde ein": {"en":"Invite 10 friends","ru":"Пригласи 10 друзей","uk":"Запроси 10 друзів","tr":"10 arkadaş davet et","es":"Invita a 10 amigos","fr":"Invite 10 amis","it":"Invita 10 amici","pl":"Zaproś 10 znajomych","pt":"Convide 10 amigos"},
-      "Kaufe 25 Upgrades": {"en":"Buy 25 upgrades","ru":"Купи 25 улучшений","uk":"Купи 25 покращень","tr":"25 yükseltme satın al","es":"Compra 25 mejoras","fr":"Achète 25 améliorations","it":"Acquista 25 potenziamenti","pl":"Kup 25 ulepszeń","pt":"Compre 25 melhorias"},
     };
     const exact = map[source]?.[appLanguage];
     if (exact) return exact;
