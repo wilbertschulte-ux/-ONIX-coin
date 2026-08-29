@@ -12448,6 +12448,20 @@ function App() {
       "Gib vor dem Antrag ONIX ein.": {"en":"Enter ONIX before submitting the request.","ru":"Перед заявкой введи ONIX.","uk":"Перед заявкою введи ONIX.","tr":"Talep göndermeden önce ONIX gir.","es":"Introduce ONIX antes de enviar la solicitud.","fr":"Saisis ONIX avant la demande.","it":"Inserisci ONIX prima della richiesta.","pl":"Wpisz ONIX przed wysłaniem wniosku.","pt":"Insira ONIX antes da solicitação."},
       "Wenn du einen Antrag erstellst, erscheint er hier.": {"en":"Your request will appear here after you create it.","ru":"После создания заявка появится здесь.","uk":"Після створення заявка з’явиться тут.","tr":"Talep oluşturduktan sonra burada görünür.","es":"Tu solicitud aparecerá aquí después de crearla.","fr":"Ta demande apparaîtra ici après sa création.","it":"La richiesta apparirà qui dopo la creazione.","pl":"Po utworzeniu wniosek pojawi się tutaj.","pt":"Sua solicitação aparecerá aqui depois de criada."},
       "Pro Freund": {"en": "Per friend", "ru": "За друга", "uk": "За друга", "tr": "Arkadaş başına", "es": "Por amigo", "fr": "Par ami", "it": "Per amico", "pl": "Za znajomego", "pt": "Por amigo"},
+      "In Bearbeitung": {"en":"In progress","ru":"В процессе","uk":"У процесі","tr":"Devam ediyor","es":"En progreso","fr":"En cours","it":"In corso","pl":"W toku","pt":"Em andamento"},
+      "Erhalten": {"en":"Claimed","ru":"Получено","uk":"Отримано","tr":"Alındı","es":"Recibido","fr":"Reçu","it":"Ricevuto","pl":"Odebrano","pt":"Recebido"},
+      "Abholen": {"en":"Claim","ru":"Забрать","uk":"Забрати","tr":"Al","es":"Recoger","fr":"Récupérer","it":"Riscatta","pl":"Odbierz","pt":"Resgatar"},
+      "Nicht genug ONIX für Auszahlung": {"en":"Not enough ONIX for withdrawal","ru":"Недостаточно ONIX для вывода","uk":"Недостатньо ONIX для виведення","tr":"Çekim için yeterli ONIX yok","es":"No hay suficiente ONIX para retirar","fr":"Pas assez d’ONIX pour le retrait","it":"ONIX insufficienti per il prelievo","pl":"Za mało ONIX do wypłaty","pt":"ONIX insuficiente para saque"},
+      "✅ Auszahlungsantrag erstellt": {"en":"✅ Withdrawal request created","ru":"✅ Заявка на вывод создана","uk":"✅ Заявку на виведення створено","tr":"✅ Çekim talebi oluşturuldu","es":"✅ Solicitud de retiro creada","fr":"✅ Demande de retrait créée","it":"✅ Richiesta di prelievo creata","pl":"✅ Utworzono wniosek o wypłatę","pt":"✅ Solicitação de saque criada"},
+      "Anträge": {"en":"Requests","ru":"Заявок","uk":"Заявок","tr":"Talep","es":"Solicitudes","fr":"Demandes","it":"Richieste","pl":"Wnioski","pt":"Solicitações"},
+      "Transaktionen": {"en":"Transactions","ru":"Транзакций","uk":"Транзакцій","tr":"İşlem","es":"Transacciones","fr":"Transactions","it":"Transazioni","pl":"Transakcje","pt":"Transações"},
+      "Alle": {"en":"All","ru":"Все","uk":"Усі","tr":"Tümü","es":"Todo","fr":"Tout","it":"Tutto","pl":"Wszystko","pt":"Tudo"},
+      "Einnahmen": {"en":"Income","ru":"Доходы","uk":"Доходи","tr":"Gelir","es":"Ingresos","fr":"Revenus","it":"Entrate","pl":"Przychody","pt":"Ganhos"},
+      "Ausgaben": {"en":"Expenses","ru":"Расходы","uk":"Витрати","tr":"Giderler","es":"Gastos","fr":"Dépenses","it":"Uscite","pl":"Wydatki","pt":"Despesas"},
+      "Auszahlungen": {"en":"Withdrawals","ru":"Выводы","uk":"Виведення","tr":"Çekimler","es":"Retiros","fr":"Retraits","it":"Prelievi","pl":"Wypłaty","pt":"Saques"},
+      "Offline-Mining": {"en":"Offline mining","ru":"Офлайн-майнинг","uk":"Офлайн-майнінг","tr":"Çevrimdışı madencilik","es":"Minería offline","fr":"Minage hors ligne","it":"Mining offline","pl":"Kopanie offline","pt":"Mineração offline"},
+      "Aktuell": {"en":"Current","ru":"Текущий","uk":"Поточний","tr":"Mevcut","es":"Actual","fr":"Actuel","it":"Attuale","pl":"Aktualny","pt":"Atual"},
+      "Abgeschlossen": {"en":"Completed","ru":"Завершено","uk":"Завершено","tr":"Tamamlandı","es":"Completado","fr":"Terminé","it":"Completato","pl":"Ukończono","pt":"Concluído"},
     };
     const exact = map[source]?.[appLanguage];
     if (exact) return exact;
@@ -12466,6 +12480,51 @@ function App() {
     for (const [from,to] of phrases[appLanguage] || []) out = out.split(from).join(to);
     return out;
   };
+
+
+  // STEP 13.6: localize legacy visible strings that are still rendered directly in JSX.
+  // This keeps old screens working while making the selected language consistent everywhere.
+  useEffect(() => {
+    if (appLanguage === 'de') return;
+    const translateElement = (root: ParentNode) => {
+      const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT);
+      const nodes: Text[] = [];
+      while (walker.nextNode()) nodes.push(walker.currentNode as Text);
+      for (const node of nodes) {
+        const raw = node.nodeValue || '';
+        const trimmed = raw.trim();
+        if (!trimmed) continue;
+        const translated = uiText(trimmed);
+        if (translated !== trimmed) {
+          const lead = raw.match(/^\s*/)?.[0] || '';
+          const tail = raw.match(/\s*$/)?.[0] || '';
+          node.nodeValue = `${lead}${translated}${tail}`;
+        }
+      }
+      const elements = root instanceof Element ? [root, ...Array.from(root.querySelectorAll('*'))] : Array.from(root.querySelectorAll('*'));
+      for (const el of elements) {
+        if (!(el instanceof HTMLElement)) continue;
+        for (const attr of ['placeholder', 'title', 'aria-label']) {
+          const value = el.getAttribute(attr);
+          if (!value) continue;
+          const translated = uiText(value);
+          if (translated !== value) el.setAttribute(attr, translated);
+        }
+      }
+    };
+    translateElement(document.body);
+    const observer = new MutationObserver((mutations) => {
+      for (const mutation of mutations) {
+        if (mutation.type === 'characterData' && mutation.target.parentNode) translateElement(mutation.target.parentNode);
+        for (const node of Array.from(mutation.addedNodes)) {
+          if (node.nodeType === Node.ELEMENT_NODE) translateElement(node as Element);
+          else if (node.nodeType === Node.TEXT_NODE && node.parentNode) translateElement(node.parentNode);
+        }
+      }
+    });
+    observer.observe(document.body, { subtree: true, childList: true, characterData: true });
+    return () => observer.disconnect();
+  }, [appLanguage]);
 
   const [selectedTitle, setSelectedTitle] = useState('ONIX Player');
   const [achievementCategory, setAchievementCategory] =
@@ -17861,7 +17920,7 @@ body:not(.onix-body-home-lock) {
     }
 
     if (withdrawAmount > balance) {
-      showToast(appLanguage === 'de' ? 'Nicht genug ONIX für Auszahlung' : (appLanguage === 'ru' ? 'Недостаточно ONIX для вывода' : 'Not enough ONIX for withdrawal'), 'error');
+      showToast(uiText('Nicht genug ONIX für Auszahlung'), 'error');
       return;
     }
 
@@ -17892,7 +17951,7 @@ body:not(.onix-body-home-lock) {
       setWithdrawalRequests(user.withdrawalRequests || []);
       setWithdrawalCheck('');
       setWithdrawalAmountInput('');
-      showToast(appLanguage === 'de' ? '✅ Auszahlungsantrag erstellt' : (appLanguage === 'ru' ? '✅ Заявка на вывод создана' : '✅ Withdrawal request created'), 'success');
+      showToast(uiText('✅ Auszahlungsantrag erstellt'), 'success');
       refreshAfterAction();
     } catch (error: any) {
       showToast(error?.response?.data?.message || 'Antrag konnte nicht erstellt werden', 'error');
