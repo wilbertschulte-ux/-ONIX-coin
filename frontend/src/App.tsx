@@ -19717,8 +19717,8 @@ body:not(.onix-body-home-lock) {
                               <div className="onix-admin-metrics-grid onix-admin-profile-metrics">
                                 <div><span>Баланс</span><strong>{formatOnix(adminSelectedUser.balance)}</strong></div>
                                 <div><span>Всего заработано</span><strong>{formatOnix(adminSelectedUser.totalEarned)}</strong></div>
-                                <div><span>Заявок на вывод</span><strong>{formatOnix(adminSelectedUser.withdrawalRequestsCount)}</strong></div>
-                                <div><span>Промокодов</span><strong>{formatOnix(adminSelectedUser.usedPromoCodesCount)}</strong></div>
+                                <div><span>Заявок на вывод</span><strong>{formatOnix(adminSelectedUser.withdrawalRequestsCount ?? 0)}</strong></div>
+                                <div><span>Промокодов</span><strong>{formatOnix(adminSelectedUser.usedPromoCodesCount ?? 0)}</strong></div>
                               </div>
                             </div>
 
@@ -19727,10 +19727,10 @@ body:not(.onix-body-home-lock) {
                               <div className="onix-admin-metrics-grid onix-admin-profile-metrics">
                                 <div><span>Уровень</span><strong>{formatOnix(adminSelectedUser.level)}</strong></div>
                                 <div><span>Всего тапов</span><strong>{formatOnix(adminSelectedUser.totalTaps)}</strong></div>
-                                <div><span>Энергия</span><strong>{formatOnix(adminSelectedUser.energy)} / {formatOnix(adminSelectedUser.maxEnergy)}</strong></div>
-                                <div><span>Сила тапа</span><strong>{formatOnix(adminSelectedUser.tapPower)}</strong></div>
+                                <div><span>Энергия</span><strong>{formatOnix(adminSelectedUser.energy ?? 0)} / {formatOnix(adminSelectedUser.maxEnergy ?? 0)}</strong></div>
+                                <div><span>Сила тапа</span><strong>{formatOnix(adminSelectedUser.tapPower ?? 0)}</strong></div>
                                 <div><span>Рефералов</span><strong>{formatOnix(adminSelectedUser.referralsCount)}</strong></div>
-                                <div><span>Заданий</span><strong>{formatOnix(adminSelectedUser.completedTasksCount)}</strong></div>
+                                <div><span>Заданий</span><strong>{formatOnix(adminSelectedUser.completedTasksCount ?? 0)}</strong></div>
                               </div>
                             </div>
 
