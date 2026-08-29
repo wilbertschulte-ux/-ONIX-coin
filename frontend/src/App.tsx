@@ -12402,6 +12402,8 @@ function App() {
       "Wallet": {"en": "Wallet", "ru": "Кошелёк", "uk": "Гаманець", "tr": "Cüzdan", "es": "Cartera", "fr": "Portefeuille", "it": "Portafoglio", "pl": "Portfel", "pt": "Carteira"},
       "Kurs": {"en": "Rate", "ru": "Курс", "uk": "Курс", "tr": "Kur", "es": "Tasa", "fr": "Taux", "it": "Tasso", "pl": "Kurs", "pt": "Taxa"},
       "Mindestauszahlung": {"en": "Minimum withdrawal", "ru": "Минимальный вывод", "uk": "Мінімальне виведення", "tr": "Minimum çekim", "es": "Retiro mínimo", "fr": "Retrait minimum", "it": "Prelievo minimo", "pl": "Minimalna wypłata", "pt": "Saque mínimo"},
+      "📈 Einkommensdiagramm": {"en":"📈 Income chart","ru":"📈 График доходов","uk":"📈 Графік доходів","tr":"📈 Gelir grafiği","es":"📈 Gráfico de ingresos","fr":"📈 Graphique des revenus","it":"📈 Grafico entrate","pl":"📈 Wykres dochodów","pt":"📈 Gráfico de ganhos"},
+      "🧾 Transaktionsverlauf": {"en":"🧾 Transaction history","ru":"🧾 История транзакций","uk":"🧾 Історія транзакцій","tr":"🧾 İşlem geçmişi","es":"🧾 Historial de transacciones","fr":"🧾 Historique des transactions","it":"🧾 Cronologia transazioni","pl":"🧾 Historia transakcji","pt":"🧾 Histórico de transações"},
       "Einkommensdiagramm": {"en": "Income chart", "ru": "График доходов", "uk": "Графік доходів", "tr": "Gelir grafiği", "es": "Gráfico de ingresos", "fr": "Graphique des revenus", "it": "Grafico entrate", "pl": "Wykres dochodów", "pt": "Gráfico de ganhos"},
       "Einnahmen der letzten 7 Tage": {"en": "Income for the last 7 days", "ru": "Доход за последние 7 дней", "uk": "Дохід за останні 7 днів", "tr": "Son 7 gün geliri", "es": "Ingresos de los últimos 7 días", "fr": "Revenus des 7 derniers jours", "it": "Entrate degli ultimi 7 giorni", "pl": "Dochód z ostatnich 7 dni", "pt": "Ganhos dos últimos 7 dias"},
       "Auszahlungsanträge": {"en": "Withdrawal requests", "ru": "Заявки на вывод", "uk": "Заявки на виведення", "tr": "Çekim talepleri", "es": "Solicitudes de retiro", "fr": "Demandes de retrait", "it": "Richieste di prelievo", "pl": "Wnioski o wypłatę", "pt": "Solicitações de saque"},
@@ -12418,20 +12420,47 @@ function App() {
       "Du erhältst": {"en": "You receive", "ru": "Ты получишь", "uk": "Ти отримаєш", "tr": "Sen alırsın", "es": "Tú recibes", "fr": "Tu reçois", "it": "Tu ricevi", "pl": "Otrzymujesz", "pt": "Você recebe"},
       "Freund erhält": {"en": "Friend receives", "ru": "Друг получит", "uk": "Друг отримає", "tr": "Arkadaş alır", "es": "El amigo recibe", "fr": "L’ami reçoit", "it": "L’amico riceve", "pl": "Znajomy otrzymuje", "pt": "O amigo recebe"},
       "Boni heute": {"en": "Bonuses today", "ru": "Бонусы сегодня", "uk": "Бонуси сьогодні", "tr": "Bugünkü bonuslar", "es": "Bonos hoy", "fr": "Bonus aujourd’hui", "it": "Bonus oggi", "pl": "Bonusy dzisiaj", "pt": "Bônus hoje"},
+      "Tägliche Missionen erledigt": {"en":"Daily missions completed","ru":"Ежедневные миссии выполнены","uk":"Щоденні місії виконано","tr":"Günlük görevler tamamlandı","es":"Misiones diarias completadas","fr":"Missions quotidiennes terminées","it":"Missioni giornaliere completate","pl":"Misje dzienne ukończone","pt":"Missões diárias concluídas"},
+      "Wöchentliche Missionen erledigt": {"en":"Weekly missions completed","ru":"Еженедельные миссии выполнены","uk":"Щотижневі місії виконано","tr":"Haftalık görevler tamamlandı","es":"Misiones semanales completadas","fr":"Missions hebdomadaires terminées","it":"Missioni settimanali completate","pl":"Misje tygodniowe ukończone","pt":"Missões semanais concluídas"},
+      "Aktuell": {"en":"Current","ru":"Текущий","uk":"Поточний","tr":"Mevcut","es":"Actual","fr":"Actuel","it":"Attuale","pl":"Aktualny","pt":"Atual"},
+      "Erreicht": {"en":"Reached","ru":"Достигнут","uk":"Досягнуто","tr":"Ulaşıldı","es":"Alcanzado","fr":"Atteint","it":"Raggiunto","pl":"Osiągnięto","pt":"Alcançado"},
+      "Auswählen": {"en":"Select","ru":"Выбрать","uk":"Обрати","tr":"Seç","es":"Elegir","fr":"Choisir","it":"Seleziona","pl":"Wybierz","pt":"Selecionar"},
+      "Aktiv": {"en":"Active","ru":"Активен","uk":"Активний","tr":"Aktif","es":"Activo","fr":"Actif","it":"Attivo","pl":"Aktywny","pt":"Ativo"},
+      "Miner-Ertrag / Min.": {"en":"Miner income / min.","ru":"Доход майнера / мин.","uk":"Дохід майнера / хв.","tr":"Madenci geliri / dk.","es":"Ingreso del minero / min.","fr":"Revenu du mineur / min.","it":"Guadagno miner / min.","pl":"Dochód górnika / min.","pt":"Renda do minerador / min."},
+      "Guthaben und Auszahlung von ONIX": {"en":"ONIX balance and withdrawal","ru":"Баланс и вывод ONIX","uk":"Баланс і виведення ONIX","tr":"ONIX bakiyesi ve çekim","es":"Saldo y retiro de ONIX","fr":"Solde et retrait ONIX","it":"Saldo e prelievo ONIX","pl":"Saldo i wypłata ONIX","pt":"Saldo e saque ONIX"},
+      "Anträge": {"en":"Requests","ru":"Заявки","uk":"Заявки","tr":"Talepler","es":"Solicitudes","fr":"Demandes","it":"Richieste","pl":"Wnioski","pt":"Solicitações"},
+      "Transaktionen": {"en":"Transactions","ru":"Транзакции","uk":"Транзакції","tr":"İşlemler","es":"Transacciones","fr":"Transactions","it":"Transazioni","pl":"Transakcje","pt":"Transações"},
+      "Einnahmen": {"en":"Income","ru":"Доход","uk":"Дохід","tr":"Gelir","es":"Ingresos","fr":"Revenus","it":"Entrate","pl":"Dochód","pt":"Ganhos"},
+      "Auszahlungen": {"en":"Withdrawals","ru":"Выводы","uk":"Виведення","tr":"Çekimler","es":"Retiros","fr":"Retraits","it":"Prelievi","pl":"Wypłaty","pt":"Saques"},
+      "Missionen": {"en":"Missions","ru":"Миссии","uk":"Місії","tr":"Görevler","es":"Misiones","fr":"Missions","it":"Missioni","pl":"Misje","pt":"Missões"},
+      "Erster Tap": {"en":"First tap","ru":"Первый тап","uk":"Перший тап","tr":"İlk dokunuş","es":"Primer toque","fr":"Premier tap","it":"Primo tap","pl":"Pierwsze tapnięcie","pt":"Primeiro toque"},
+      "Tippe zum ersten Mal auf die Münze": {"en":"Tap the coin for the first time","ru":"Тапни по монете впервые","uk":"Тапни по монеті вперше","tr":"Paraya ilk kez dokun","es":"Toca la moneda por primera vez","fr":"Tape la pièce pour la première fois","it":"Tocca la moneta per la prima volta","pl":"Dotknij monety po raz pierwszy","pt":"Toque na moeda pela primeira vez"},
+      "ONIX-Spieler": {"en":"ONIX Player","ru":"Игрок ONIX","uk":"Гравець ONIX","tr":"ONIX Oyuncusu","es":"Jugador ONIX","fr":"Joueur ONIX","it":"Giocatore ONIX","pl":"Gracz ONIX","pt":"Jogador ONIX"},
+      "Tap-Meister": {"en":"Tap Master","ru":"Мастер тапа","uk":"Майстер тапу","tr":"Dokunma Ustası","es":"Maestro del toque","fr":"Maître du tap","it":"Maestro tap","pl":"Mistrz tapnięć","pt":"Mestre do toque"},
+      "Empfehlungsmeister": {"en":"Referral Master","ru":"Мастер рефералов","uk":"Майстер рефералів","tr":"Davet Ustası","es":"Maestro de referidos","fr":"Maître du parrainage","it":"Maestro referral","pl":"Mistrz poleceń","pt":"Mestre de indicações"},
+      "Saisonjäger": {"en":"Season Hunter","ru":"Охотник за сезонами","uk":"Мисливець за сезонами","tr":"Sezon Avcısı","es":"Cazador de temporadas","fr":"Chasseur de saisons","it":"Cacciatore di stagioni","pl":"Łowca sezonów","pt":"Caçador de temporadas"},
+      "Boost-Meister": {"en":"Boost Master","ru":"Мастер бустов","uk":"Майстер бустів","tr":"Boost Ustası","es":"Maestro de boosts","fr":"Maître des boosts","it":"Maestro boost","pl":"Mistrz boostów","pt":"Mestre dos boosts"},
+      "Perk-Sammler": {"en":"Perk Collector","ru":"Коллекционер перков","uk":"Колекціонер перків","tr":"Perk Koleksiyoncusu","es":"Coleccionista de perks","fr":"Collectionneur de perks","it":"Collezionista di perk","pl":"Kolekcjoner perków","pt":"Colecionador de perks"},
+      "Badges": {"en":"Badges","ru":"значков","uk":"значків","tr":"rozet","es":"insignias","fr":"badges","it":"badge","pl":"odznak","pt":"emblemas"},
+      "Verdiene Ränge, Serien, Top-Plätze und Perks, um neue Badges freizuschalten.": {"en":"Earn ranks, streaks, top places and perks to unlock new badges.","ru":"Получай ранги, серии, места в топе и перки, чтобы открывать новые значки.","uk":"Здобувай ранги, серії, топ-місця й перки, щоб відкривати нові значки.","tr":"Yeni rozetler açmak için rütbeler, seriler, üst sıralar ve perkler kazan.","es":"Consigue rangos, rachas, puestos altos y perks para desbloquear insignias.","fr":"Gagne des rangs, séries, top places et perks pour débloquer des badges.","it":"Ottieni ranghi, serie, posizioni top e perk per sbloccare nuovi badge.","pl":"Zdobywaj rangi, serie, top miejsca i perki, aby odblokować odznaki.","pt":"Ganhe ranks, sequências, posições e perks para desbloquear emblemas."},
+      "Schalte Badges durch Fortschritt, Top-Plätze und Aktivität frei.": {"en":"Unlock badges through progress, top places and activity.","ru":"Открывай значки за прогресс, места в топе и активность.","uk":"Відкривай значки за прогрес, топ-місця й активність.","tr":"İlerleme, üst sıralar ve etkinlikle rozetleri aç.","es":"Desbloquea insignias con progreso, puestos altos y actividad.","fr":"Débloque des badges grâce à la progression, aux top places et à l’activité.","it":"Sblocca badge con progressi, posizioni top e attività.","pl":"Odblokuj odznaki za postęp, top miejsca i aktywność.","pt":"Desbloqueie emblemas com progresso, posições e atividade."},
+      "Der ausgewählte Titel erscheint direkt unter deinem Namen.": {"en":"The selected title appears directly under your name.","ru":"Выбранный титул отображается прямо под твоим именем.","uk":"Обраний титул відображається прямо під твоїм ім’ям.","tr":"Seçilen unvan adının hemen altında görünür.","es":"El título seleccionado aparece justo debajo de tu nombre.","fr":"Le titre sélectionné apparaît sous ton nom.","it":"Il titolo selezionato appare sotto il tuo nome.","pl":"Wybrany tytuł pojawia się pod twoim imieniem.","pt":"O título selecionado aparece logo abaixo do seu nome."},
+      "Gib vor dem Antrag ONIX ein.": {"en":"Enter ONIX before submitting the request.","ru":"Перед заявкой введи ONIX.","uk":"Перед заявкою введи ONIX.","tr":"Talep göndermeden önce ONIX gir.","es":"Introduce ONIX antes de enviar la solicitud.","fr":"Saisis ONIX avant la demande.","it":"Inserisci ONIX prima della richiesta.","pl":"Wpisz ONIX przed wysłaniem wniosku.","pt":"Insira ONIX antes da solicitação."},
+      "Wenn du einen Antrag erstellst, erscheint er hier.": {"en":"Your request will appear here after you create it.","ru":"После создания заявка появится здесь.","uk":"Після створення заявка з’явиться тут.","tr":"Talep oluşturduktan sonra burada görünür.","es":"Tu solicitud aparecerá aquí después de crearla.","fr":"Ta demande apparaîtra ici après sa création.","it":"La richiesta apparirà qui dopo la creazione.","pl":"Po utworzeniu wniosek pojawi się tutaj.","pt":"Sua solicitação aparecerá aqui depois de criada."},
       "Pro Freund": {"en": "Per friend", "ru": "За друга", "uk": "За друга", "tr": "Arkadaş başına", "es": "Por amigo", "fr": "Par ami", "it": "Per amico", "pl": "Za znajomego", "pt": "Por amigo"},
     };
     const exact = map[source]?.[appLanguage];
     if (exact) return exact;
     const phrases: Partial<Record<AppLanguage, Array<[string,string]>>> = {
-      en: [['Mache ','Make '],['Aktualisierung in ','Refresh in '],['Neue Missionen erscheinen in ','New missions appear in '],['Verbleibend ','Remaining '],['Offene Anträge:','Open requests:'],['Mindestens ','Minimum '],['Verfügbar ','Available '],['Maximalbetrag verwenden','Use maximum amount'],['ONIX eingeben','Enter ONIX'],['auf 100 % auffüllen','refill to 100%'],['Energieverbrauch','energy consumption'],['Energiebonus','energy bonus'],['Offline-Einkommen','offline income'],['auf Daily Reward','on daily reward'],['Boost-Zeit','boost duration'],['auf Upgrade-Kosten','on upgrade costs'],['auf Miner-Ertrag','on miner income'],['auf Empfehlungsbonus','on referral bonus'],['Daily-Streak geschützt','daily streak protected'],['Schützt den Daily-Streak','protects the daily streak'],['Letzter Preis:','Last prize:'],['Zufälliger Preis und geheime Daily-Mission','Random prize and secret daily mission']],
-      ru: [['Mache ','Сделай '],['Aktualisierung in ','Обновление через '],['Neue Missionen erscheinen in ','Новые миссии через '],['Verbleibend ','Осталось '],['Offene Anträge:','Открытые заявки:'],['Mindestens ','Минимум '],['Verfügbar ','Доступно '],['Maximalbetrag verwenden','Использовать максимум'],['ONIX eingeben','Введите ONIX'],['auf 100 % auffüllen','восстановить до 100%'],['Energieverbrauch','расход энергии'],['Energiebonus','бонус энергии'],['Offline-Einkommen','офлайн-доход'],['auf Daily Reward','к ежедневной награде'],['Boost-Zeit','время буста'],['auf Upgrade-Kosten','к стоимости улучшений'],['auf Miner-Ertrag','к доходу майнера'],['auf Empfehlungsbonus','к реферальному бонусу'],['Daily-Streak geschützt','серия дней защищена'],['Schützt den Daily-Streak','защищает серию дней'],['Letzter Preis:','Последний приз:'],['Zufälliger Preis und geheime Daily-Mission','Случайный приз и секретная ежедневная миссия']],
-      uk: [['Mache ','Зроби '],['Aktualisierung in ','Оновлення через '],['Neue Missionen erscheinen in ','Нові місії через '],['Verbleibend ','Залишилось '],['Offene Anträge:','Відкриті заявки:'],['Mindestens ','Мінімум '],['Verfügbar ','Доступно '],['Maximalbetrag verwenden','Використати максимум'],['ONIX eingeben','Введіть ONIX'],['auf 100 % auffüllen','відновити до 100%'],['Energieverbrauch','витрата енергії'],['Energiebonus','бонус енергії'],['Offline-Einkommen','офлайн-дохід'],['auf Daily Reward','до щоденної нагороди'],['Boost-Zeit','час буста'],['auf Upgrade-Kosten','до вартості покращень'],['auf Miner-Ertrag','до доходу майнера'],['auf Empfehlungsbonus','до реферального бонусу'],['Daily-Streak geschützt','серію днів захищено'],['Schützt den Daily-Streak','захищає серію днів'],['Letzter Preis:','Останній приз:']],
-      tr: [['Mache ','Yap: '],['Aktualisierung in ','Yenileme: '],['Maximalbetrag verwenden','Maksimum tutarı kullan'],['ONIX eingeben','ONIX gir'],['Energieverbrauch','enerji tüketimi'],['Energiebonus','enerji bonusu'],['Offline-Einkommen','çevrimdışı gelir'],['auf Miner-Ertrag','madenci gelirine'],['Letzter Preis:','Son ödül:']],
-      es: [['Mache ','Haz '],['Aktualisierung in ','Actualización en '],['Maximalbetrag verwenden','Usar importe máximo'],['ONIX eingeben','Introducir ONIX'],['Energieverbrauch','consumo de energía'],['Energiebonus','bono de energía'],['Offline-Einkommen','ingresos offline'],['auf Miner-Ertrag','a ingresos del minero'],['Letzter Preis:','Último premio:']],
-      fr: [['Mache ','Fais '],['Aktualisierung in ','Actualisation dans '],['Maximalbetrag verwenden','Utiliser le maximum'],['ONIX eingeben','Saisir ONIX'],['Energieverbrauch','consommation d’énergie'],['Energiebonus','bonus d’énergie'],['Offline-Einkommen','revenu hors ligne'],['auf Miner-Ertrag','sur le revenu du mineur'],['Letzter Preis:','Dernier prix :']],
-      it: [['Mache ','Fai '],['Aktualisierung in ','Aggiornamento tra '],['Maximalbetrag verwenden','Usa importo massimo'],['ONIX eingeben','Inserisci ONIX'],['Energieverbrauch','consumo energia'],['Energiebonus','bonus energia'],['Offline-Einkommen','guadagno offline'],['auf Miner-Ertrag','sul guadagno miner'],['Letzter Preis:','Ultimo premio:']],
-      pl: [['Mache ','Wykonaj '],['Aktualisierung in ','Odświeżenie za '],['Maximalbetrag verwenden','Użyj maksymalnej kwoty'],['ONIX eingeben','Wpisz ONIX'],['Energieverbrauch','zużycie energii'],['Energiebonus','bonus energii'],['Offline-Einkommen','dochód offline'],['auf Miner-Ertrag','do dochodu górnika'],['Letzter Preis:','Ostatnia nagroda:']],
-      pt: [['Mache ','Faça '],['Aktualisierung in ','Atualização em '],['Maximalbetrag verwenden','Usar valor máximo'],['ONIX eingeben','Inserir ONIX'],['Energieverbrauch','consumo de energia'],['Energiebonus','bônus de energia'],['Offline-Einkommen','renda offline'],['auf Miner-Ertrag','na renda do minerador'],['Letzter Preis:','Último prêmio:']]
+      en: [['Benötigt ','Requires '],['/Sek.','/sec.'],['Level ','Level '],['Mache ','Make '],['Aktualisierung in ','Refresh in '],['Neue Missionen erscheinen in ','New missions appear in '],['Verbleibend ','Remaining '],['Offene Anträge:','Open requests:'],['Mindestens ','Minimum '],['Verfügbar ','Available '],['Maximalbetrag verwenden','Use maximum amount'],['ONIX eingeben','Enter ONIX'],['auf 100 % auffüllen','refill to 100%'],['Energieverbrauch','energy consumption'],['Energiebonus','energy bonus'],['Offline-Einkommen','offline income'],['auf Daily Reward','on daily reward'],['Boost-Zeit','boost duration'],['auf Upgrade-Kosten','on upgrade costs'],['auf Miner-Ertrag','on miner income'],['auf Empfehlungsbonus','on referral bonus'],['Daily-Streak geschützt','daily streak protected'],['Schützt den Daily-Streak','protects the daily streak'],['Letzter Preis:','Last prize:'],['Zufälliger Preis und geheime Daily-Mission','Random prize and secret daily mission']],
+      ru: [['Benötigt ','Нужно '],['/Sek.','/сек.'],['Level ','Уровень '],['Mache ','Сделай '],['Aktualisierung in ','Обновление через '],['Neue Missionen erscheinen in ','Новые миссии через '],['Verbleibend ','Осталось '],['Offene Anträge:','Открытые заявки:'],['Mindestens ','Минимум '],['Verfügbar ','Доступно '],['Maximalbetrag verwenden','Использовать максимум'],['ONIX eingeben','Введите ONIX'],['auf 100 % auffüllen','восстановить до 100%'],['Energieverbrauch','расход энергии'],['Energiebonus','бонус энергии'],['Offline-Einkommen','офлайн-доход'],['auf Daily Reward','к ежедневной награде'],['Boost-Zeit','время буста'],['auf Upgrade-Kosten','к стоимости улучшений'],['auf Miner-Ertrag','к доходу майнера'],['auf Empfehlungsbonus','к реферальному бонусу'],['Daily-Streak geschützt','серия дней защищена'],['Schützt den Daily-Streak','защищает серию дней'],['Letzter Preis:','Последний приз:'],['Zufälliger Preis und geheime Daily-Mission','Случайный приз и секретная ежедневная миссия']],
+      uk: [['Benötigt ','Потрібно '],['/Sek.','/сек.'],['Level ','Рівень '],['Mache ','Зроби '],['Aktualisierung in ','Оновлення через '],['Neue Missionen erscheinen in ','Нові місії через '],['Verbleibend ','Залишилось '],['Offene Anträge:','Відкриті заявки:'],['Mindestens ','Мінімум '],['Verfügbar ','Доступно '],['Maximalbetrag verwenden','Використати максимум'],['ONIX eingeben','Введіть ONIX'],['auf 100 % auffüllen','відновити до 100%'],['Energieverbrauch','витрата енергії'],['Energiebonus','бонус енергії'],['Offline-Einkommen','офлайн-дохід'],['auf Daily Reward','до щоденної нагороди'],['Boost-Zeit','час буста'],['auf Upgrade-Kosten','до вартості покращень'],['auf Miner-Ertrag','до доходу майнера'],['auf Empfehlungsbonus','до реферального бонусу'],['Daily-Streak geschützt','серію днів захищено'],['Schützt den Daily-Streak','захищає серію днів'],['Letzter Preis:','Останній приз:']],
+      tr: [['Benötigt ','Gerekli '],['/Sek.','/sn.'],['Level ','Seviye '],['Mache ','Yap: '],['Aktualisierung in ','Yenileme: '],['Maximalbetrag verwenden','Maksimum tutarı kullan'],['ONIX eingeben','ONIX gir'],['Energieverbrauch','enerji tüketimi'],['Energiebonus','enerji bonusu'],['Offline-Einkommen','çevrimdışı gelir'],['auf Miner-Ertrag','madenci gelirine'],['Letzter Preis:','Son ödül:']],
+      es: [['Benötigt ','Requiere '],['/Sek.','/seg.'],['Level ','Nivel '],['Mache ','Haz '],['Aktualisierung in ','Actualización en '],['Maximalbetrag verwenden','Usar importe máximo'],['ONIX eingeben','Introducir ONIX'],['Energieverbrauch','consumo de energía'],['Energiebonus','bono de energía'],['Offline-Einkommen','ingresos offline'],['auf Miner-Ertrag','a ingresos del minero'],['Letzter Preis:','Último premio:']],
+      fr: [['Benötigt ','Requis '],['/Sek.','/sec.'],['Level ','Niveau '],['Mache ','Fais '],['Aktualisierung in ','Actualisation dans '],['Maximalbetrag verwenden','Utiliser le maximum'],['ONIX eingeben','Saisir ONIX'],['Energieverbrauch','consommation d’énergie'],['Energiebonus','bonus d’énergie'],['Offline-Einkommen','revenu hors ligne'],['auf Miner-Ertrag','sur le revenu du mineur'],['Letzter Preis:','Dernier prix :']],
+      it: [['Benötigt ','Richiede '],['/Sek.','/sec.'],['Level ','Livello '],['Mache ','Fai '],['Aktualisierung in ','Aggiornamento tra '],['Maximalbetrag verwenden','Usa importo massimo'],['ONIX eingeben','Inserisci ONIX'],['Energieverbrauch','consumo energia'],['Energiebonus','bonus energia'],['Offline-Einkommen','guadagno offline'],['auf Miner-Ertrag','sul guadagno miner'],['Letzter Preis:','Ultimo premio:']],
+      pl: [['Benötigt ','Wymaga '],['/Sek.','/sek.'],['Level ','Poziom '],['Mache ','Wykonaj '],['Aktualisierung in ','Odświeżenie za '],['Maximalbetrag verwenden','Użyj maksymalnej kwoty'],['ONIX eingeben','Wpisz ONIX'],['Energieverbrauch','zużycie energii'],['Energiebonus','bonus energii'],['Offline-Einkommen','dochód offline'],['auf Miner-Ertrag','do dochodu górnika'],['Letzter Preis:','Ostatnia nagroda:']],
+      pt: [['Benötigt ','Requer '],['/Sek.','/seg.'],['Level ','Nível '],['Mache ','Faça '],['Aktualisierung in ','Atualização em '],['Maximalbetrag verwenden','Usar valor máximo'],['ONIX eingeben','Inserir ONIX'],['Energieverbrauch','consumo de energia'],['Energiebonus','bônus de energia'],['Offline-Einkommen','renda offline'],['auf Miner-Ertrag','na renda do minerador'],['Letzter Preis:','Último prêmio:']]
     };
     let out = source;
     for (const [from,to] of phrases[appLanguage] || []) out = out.split(from).join(to);
@@ -19604,7 +19633,7 @@ body:not(.onix-body-home-lock) {
                   <div className="onix-mission-complete-card">
                     <div className="onix-mission-complete-icon">✓</div>
                     <div>
-                      <p className="font-bold text-white">Tägliche Missionen erledigt</p>
+                      <p className="font-bold text-white">{uiText('Tägliche Missionen erledigt')}</p>
                       <p className="text-sm text-gray-400">
                         Neue Missionen erscheinen in {formatMissionResetTime(dailyMissionResetMs)}
                       </p>
@@ -19703,7 +19732,7 @@ body:not(.onix-body-home-lock) {
                   <div className="onix-mission-complete-card">
                     <div className="onix-mission-complete-icon">✓</div>
                     <div>
-                      <p className="font-bold text-white">Wöchentliche Missionen erledigt</p>
+                      <p className="font-bold text-white">{uiText('Wöchentliche Missionen erledigt')}</p>
                       <p className="text-sm text-gray-400">
                         Neue Missionen erscheinen in {formatMissionResetTime(weeklyMissionResetMs)}
                       </p>
@@ -19958,14 +19987,14 @@ body:not(.onix-body-home-lock) {
                 <div className="onix-profile-v75-panel-title onix-profile-v75-detail-title">
                   <button type="button" className="onix-profile-v75-back" onClick={() => setProfilePanel('overview')}>‹</button>
                   <strong>{uiText('🎖 Badges & Titel')}</strong>
-                  <span>{profileBadges.length} Badges</span>
+                  <span>{profileBadges.length} {uiText('Badges')}</span>
                 </div>
 
                 <div className="rounded-3xl border border-violet-400/20 bg-[#0a0f1c] p-4 text-left">
                   <div className="mb-3 flex items-center justify-between gap-3">
                     <div>
                       <p className="text-sm font-bold text-white">{uiText('Deine Badges')}</p>
-                      <p className="mt-1 text-xs text-gray-500">Verdiene Ränge, Serien, Top-Plätze und Perks, um neue Badges freizuschalten.</p>
+                      <p className="mt-1 text-xs text-gray-500">{uiText('Verdiene Ränge, Serien, Top-Plätze und Perks, um neue Badges freizuschalten.')}</p>
                     </div>
                     <span className="rounded-full bg-[#111827] px-3 py-1 text-xs font-bold text-yellow-400">{profileBadges.length}</span>
                   </div>
@@ -19988,7 +20017,7 @@ body:not(.onix-body-home-lock) {
                   ) : (
                     <div className="rounded-2xl bg-[#111827] p-4 text-center">
                       <p className="text-sm font-bold text-gray-300">{uiText('Noch keine Badges')}</p>
-                      <p className="mt-1 text-xs text-gray-500">Schalte Badges durch Fortschritt, Top-Plätze und Aktivität frei.</p>
+                      <p className="mt-1 text-xs text-gray-500">{uiText('Schalte Badges durch Fortschritt, Top-Plätze und Aktivität frei.')}</p>
                     </div>
                   )}
                 </div>
@@ -19997,7 +20026,7 @@ body:not(.onix-body-home-lock) {
                   <div className="mb-3 flex items-center justify-between gap-3">
                     <div>
                       <p className="text-sm font-bold text-white">{uiText('Spielertitel wählen')}</p>
-                      <p className="mt-1 text-xs text-gray-500">Der ausgewählte Titel erscheint direkt unter deinem Namen.</p>
+                      <p className="mt-1 text-xs text-gray-500">{uiText('Der ausgewählte Titel erscheint direkt unter deinem Namen.')}</p>
                     </div>
                     <span className="rounded-full bg-[#111827] px-3 py-1 text-xs font-bold text-yellow-400">{availableTitles.length}</span>
                   </div>
@@ -20019,7 +20048,7 @@ body:not(.onix-body-home-lock) {
                         >
                           <span className="font-bold">{getProfileTitleLabel(title)}</span>
                           <em className={`not-italic text-xs font-black ${isSelectedTitle ? 'text-black' : 'text-yellow-400'}`}>
-                            {isSelectedTitle ? 'Aktiv' : 'Auswählen'}
+                            {uiText(isSelectedTitle ? 'Aktiv' : 'Auswählen')}
                           </em>
                         </button>
                       );
@@ -20290,7 +20319,7 @@ body:not(.onix-body-home-lock) {
                             ['Рефералка', 'Проверить бонусы и лимиты'],
                             ['Cron сезона', 'GitHub Actions / cron должен вызывать weekly prizes'],
                             ['Антиабуз', 'Проверить suspicious, ban/unban и security logs'],
-                          ].map(([title, text]) => <div key={title} className="onix-admin-row is-column"><strong>{title}</strong><em>{text}</em></div>)}
+                          ].map(([title, text]) => <div key={title} className="onix-admin-row is-column"><strong>{uiText(title)}</strong><em>{text}</em></div>)}
                         </div>
                       </div>
                     )}
@@ -20360,7 +20389,7 @@ body:not(.onix-body-home-lock) {
                       <div key={rank.id} className={`onix-profile-v75-rank-row ${passed ? 'is-passed' : ''} ${current ? 'is-current' : ''}`}>
                         <div className="onix-profile-v75-rank-mini"><RankIcon rank={rank} size="sm" /></div>
                         <div className="onix-profile-v75-rank-body">
-                          <div className="onix-profile-v75-rank-title"><strong>{rank.name}</strong><span>{current ? 'Aktuell' : passed ? 'Erreicht' : `Benötigt ${formatOnix(rankStepTotal)}`}</span></div>
+                          <div className="onix-profile-v75-rank-title"><strong>{uiText(rank.name)}</strong><span>{current ? uiText('Aktuell') : passed ? uiText('Erreicht') : uiText(`Benötigt ${formatOnix(rankStepTotal)}`)}</span></div>
                           {!passed && (
                             <div className="onix-task-progress">
                               <div className="onix-task-progress-text"><span className="onix-task-progress-status">{uiText('Fortschritt')}</span><span><strong>{formatOnix(rankStepCurrent)}</strong> / {formatOnix(rankStepTotal)}</span></div>
@@ -21354,7 +21383,7 @@ body:not(.onix-body-home-lock) {
                     <div>
                       <h2 className="text-2xl font-bold text-white">{uiText('Wallet')}</h2>
                       <p className="text-sm text-gray-400">
-                        Guthaben und Auszahlung von ONIX
+                        {uiText('Guthaben und Auszahlung von ONIX')}
                       </p>
                     </div>
                   </div>
@@ -21437,7 +21466,7 @@ body:not(.onix-body-home-lock) {
               {walletPanel === 'chart' && (
                 <div className="onix-wallet-panel-card shadow-xl">
                   <div className="onix-wallet-card-content">
-                    <h3 className="text-xl font-bold text-white">📈 Einkommensdiagramm</h3>
+                    <h3 className="text-xl font-bold text-white">{uiText('📈 Einkommensdiagramm')}</h3>
                     <p className="mt-1 text-sm text-gray-400">{uiText('Einnahmen der letzten 7 Tage')}</p>
 
                     <div className="onix-wallet-chart-box mt-5 flex items-end gap-2 p-4">
@@ -21451,7 +21480,7 @@ body:not(.onix-body-home-lock) {
                               }}
                             />
                           </div>
-                          <p className="text-[10px] font-bold text-gray-500">{item.label}</p>
+                          <p className="text-[10px] font-bold text-gray-500">{uiText(item.label)}</p>
                         </div>
                       ))}
                     </div>
@@ -21493,14 +21522,14 @@ body:not(.onix-body-home-lock) {
                       </p>
 
                       <p className="mt-1 text-xs text-gray-500">
-                        Offene Anträge: {formatOnix(walletPendingWithdrawal)} ONIX
+                        {uiText(`Offene Anträge: ${formatOnix(walletPendingWithdrawal)} ONIX`)}
                       </p>
                     </div>
 
                     <div className="onix-wallet-mini-card mb-3 p-3">
                       <p className="text-sm font-bold text-white">{uiText('💎 Auszahlungsbetrag')}</p>
                       <p className="mt-1 text-xs text-gray-500">
-                        Mindestens {formatOnix(minWithdrawOnix)} ONIX · Verfügbar {formatOnix(balance)} ONIX
+                        {uiText(`Mindestens ${formatOnix(minWithdrawOnix)} ONIX · Verfügbar ${formatOnix(balance)} ONIX`)}
                       </p>
                       <input
                         type="number"
@@ -21525,20 +21554,20 @@ body:not(.onix-body-home-lock) {
                         disabled={balance < minWithdrawOnix}
                         className="mt-3 text-xs font-bold text-yellow-400 disabled:opacity-40"
                       >
-                        Maximalbetrag verwenden
+                        {uiText('Maximalbetrag verwenden')}
                       </button>
                     </div>
 
                     <div className="onix-wallet-mini-card mb-3 p-3">
                       <p className="text-sm font-bold text-white">{uiText('🛡 Anti-Bot-Prüfung')}</p>
                       <p className="mt-1 text-xs text-gray-500">
-                        Gib vor dem Antrag ONIX ein.
+                        {uiText('Gib vor dem Antrag ONIX ein.')}
                       </p>
 
                       <input
                         value={withdrawalCheck}
                         onChange={(event) => setWithdrawalCheck(event.target.value)}
-                        placeholder="ONIX eingeben"
+                        placeholder={uiText('ONIX eingeben')}
                         className="mt-3 w-full px-4 py-3 text-sm outline-none"
                       />
                     </div>
@@ -21606,7 +21635,7 @@ body:not(.onix-body-home-lock) {
                       <div className="onix-wallet-mini-card p-5 text-center">
                         <p className="font-bold text-gray-300">{uiText('Noch keine Anträge')}</p>
                         <p className="mt-1 text-sm text-gray-500">
-                          Wenn du einen Antrag erstellst, erscheint er hier.
+                          {uiText('Wenn du einen Antrag erstellst, erscheint er hier.')}
                         </p>
                       </div>
                     )}
@@ -21619,7 +21648,7 @@ body:not(.onix-body-home-lock) {
                   <div className="onix-wallet-card-content">
                     <div className="mb-4 flex items-center justify-between gap-3">
                       <div>
-                        <h3 className="text-xl font-bold text-white">🧾 Transaktionsverlauf</h3>
+                        <h3 className="text-xl font-bold text-white">{uiText('🧾 Transaktionsverlauf')}</h3>
                         <p className="text-sm text-gray-400">
                           {filteredTransactions.length} Transaktionen
                         </p>
