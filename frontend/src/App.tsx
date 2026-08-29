@@ -12366,7 +12366,33 @@ function App() {
       "Rangbonus": {"en": "Rank bonus", "ru": "Бонус ранга", "uk": "Бонус рангу", "tr": "Rütbe bonusu", "es": "Bono de rango", "fr": "Bonus de rang", "it": "Bonus rango", "pl": "Bonus rangi", "pt": "Bônus de rank"},
       "Taps": {"en": "Taps", "ru": "Тапы", "uk": "Тапи", "tr": "Dokunuşlar", "es": "Toques", "fr": "Taps", "it": "Tap", "pl": "Tapnięcia", "pt": "Toques"},
       "Upgrades": {"en": "Upgrades", "ru": "Улучшения", "uk": "Покращення", "tr": "Yükseltmeler", "es": "Mejoras", "fr": "Améliorations", "it": "Potenziamenti", "pl": "Ulepszenia", "pt": "Melhorias"},
-      "Boosts": {"en": "Boosts", "ru": "Бусты", "uk": "Бусти", "tr": "Güçlendirmeler", "es": "Potenciadores", "fr": "Boosts", "it": "Boost", "pl": "Boosty", "pt": "Boosts"},
+
+      "Boosts": {"en":"Boosts","ru":"Бусты","uk":"Бусти","tr":"Güçlendirmeler","es":"Potenciadores","fr":"Boosts","it":"Boost","pl":"Boosty","pt":"Boosts"},
+      "Aufgaben": {"en":"Tasks","ru":"Задания","uk":"Завдання","tr":"Görevler","es":"Tareas","fr":"Tâches","it":"Attività","pl":"Zadania","pt":"Tarefas"},
+      "Temporäre Aufgaben": {"en":"Temporary tasks","ru":"Временные задания","uk":"Тимчасові завдання","tr":"Geçici görevler","es":"Tareas temporales","fr":"Tâches temporaires","it":"Attività temporanee","pl":"Zadania tymczasowe","pt":"Tarefas temporárias"},
+      "Alle": {"en":"All","ru":"Все","uk":"Усі","tr":"Tümü","es":"Todos","fr":"Tous","it":"Tutti","pl":"Wszystkie","pt":"Todos"},
+      "Empfehlungen": {"en":"Referrals","ru":"Рефералы","uk":"Реферали","tr":"Davetler","es":"Referidos","fr":"Parrainages","it":"Referral","pl":"Polecenia","pt":"Indicações"},
+      "Saisons": {"en":"Seasons","ru":"Сезоны","uk":"Сезони","tr":"Sezonlar","es":"Temporadas","fr":"Saisons","it":"Stagioni","pl":"Sezony","pt":"Temporadas"},
+      "Tap-Stärke": {"en":"Tap Power","ru":"Сила тапа","uk":"Сила тапу","tr":"Dokunma gücü","es":"Fuerza de toque","fr":"Puissance de tap","it":"Potenza tap","pl":"Siła tapnięcia","pt":"Força do toque"},
+      "Miner": {"en":"Miner","ru":"Майнер","uk":"Майнер","tr":"Madenci","es":"Minero","fr":"Mineur","it":"Miner","pl":"Górnik","pt":"Minerador"},
+      "Energie-Regeneration": {"en":"Energy regeneration","ru":"Восстановление энергии","uk":"Відновлення енергії","tr":"Enerji yenileme","es":"Regeneración de energía","fr":"Régénération d’énergie","it":"Rigenerazione energia","pl":"Regeneracja energii","pt":"Regeneração de energia"},
+      "Max. Energie": {"en":"Max Energy","ru":"Макс. энергия","uk":"Макс. енергія","tr":"Maks. enerji","es":"Energía máx.","fr":"Énergie max.","it":"Energia max","pl":"Maks. energia","pt":"Energia máx."},
+      "Tap-Boost": {"en":"Tap Boost","ru":"Буст тапа","uk":"Буст тапу","tr":"Dokunma güçlendirmesi","es":"Boost de toque","fr":"Boost de tap","it":"Boost tap","pl":"Boost tapnięcia","pt":"Boost de toque"},
+      "Mining-Boost": {"en":"Mining Boost","ru":"Буст майнинга","uk":"Буст майнінгу","tr":"Madencilik güçlendirmesi","es":"Boost de minería","fr":"Boost de minage","it":"Boost mining","pl":"Boost kopania","pt":"Boost de mineração"},
+      "Energie": {"en":"Energy","ru":"Энергия","uk":"Енергія","tr":"Enerji","es":"Energía","fr":"Énergie","it":"Energia","pl":"Energia","pt":"Energia"},
+      "ONIX-Truhe": {"en":"ONIX Chest","ru":"Сундук ONIX","uk":"Скриня ONIX","tr":"ONIX Sandığı","es":"Cofre ONIX","fr":"Coffre ONIX","it":"Forziere ONIX","pl":"Skrzynia ONIX","pt":"Baú ONIX"},
+      "Energy Saver": {"en":"Energy Saver","ru":"Экономия энергии","uk":"Економія енергії","tr":"Enerji tasarrufu","es":"Ahorro de energía","fr":"Économie d’énergie","it":"Risparmio energia","pl":"Oszczędzanie energii","pt":"Economia de energia"},
+      "Energy Max Pro": {"en":"Energy Max Pro","ru":"Макс. энергия Pro","uk":"Макс. енергія Pro","tr":"Maks. Enerji Pro","es":"Energía Máx. Pro","fr":"Énergie Max Pro","it":"Energia Max Pro","pl":"Maks. Energia Pro","pt":"Energia Máx. Pro"},
+      "Offline Pro": {"en":"Offline Pro","ru":"Офлайн Pro","uk":"Офлайн Pro","tr":"Çevrimdışı Pro","es":"Offline Pro","fr":"Hors ligne Pro","it":"Offline Pro","pl":"Offline Pro","pt":"Offline Pro"},
+      "Daily Plus": {"en":"Daily Plus","ru":"Ежедневный плюс","uk":"Щоденний плюс","tr":"Günlük Plus","es":"Diario Plus","fr":"Quotidien Plus","it":"Daily Plus","pl":"Dzienny Plus","pt":"Diário Plus"},
+      "Boost Master": {"en":"Boost Master","ru":"Мастер бустов","uk":"Майстер бустів","tr":"Güçlendirme ustası","es":"Maestro de boosts","fr":"Maître des boosts","it":"Maestro boost","pl":"Mistrz boostów","pt":"Mestre dos boosts"},
+      "Engineer": {"en":"Engineer","ru":"Инженер","uk":"Інженер","tr":"Mühendis","es":"Ingeniero","fr":"Ingénieur","it":"Ingegnere","pl":"Inżynier","pt":"Engenheiro"},
+      "Miner Plus": {"en":"Miner Plus","ru":"Майнер Плюс","uk":"Майнер Плюс","tr":"Madenci Plus","es":"Minero Plus","fr":"Mineur Plus","it":"Miner Plus","pl":"Górnik Plus","pt":"Minerador Plus"},
+      "Lucky Miner": {"en":"Lucky Miner","ru":"Удачливый майнер","uk":"Щасливий майнер","tr":"Şanslı madenci","es":"Minero afortunado","fr":"Mineur chanceux","it":"Miner fortunato","pl":"Szczęśliwy górnik","pt":"Minerador sortudo"},
+      "Referral Pro": {"en":"Referral Pro","ru":"Реферал Pro","uk":"Реферал Pro","tr":"Davet Pro","es":"Referidos Pro","fr":"Parrainage Pro","it":"Referral Pro","pl":"Polecenia Pro","pt":"Indicações Pro"},
+      "Streak Shield": {"en":"Streak Shield","ru":"Щит серии","uk":"Щит серії","tr":"Seri kalkanı","es":"Escudo de racha","fr":"Bouclier de série","it":"Scudo serie","pl":"Tarcza serii","pt":"Escudo de sequência"},
+      "Super-Boosts": {"en":"Super Boosts","ru":"Супер-бусты","uk":"Супер-бусти","tr":"Süper güçlendirmeler","es":"Super boosts","fr":"Super boosts","it":"Super boost","pl":"Super boosty","pt":"Super boosts"},
+      "Temporäre Boosts": {"en":"Temporary Boosts","ru":"Временные бусты","uk":"Тимчасові бусти","tr":"Geçici güçlendirmeler","es":"Boosts temporales","fr":"Boosts temporaires","it":"Boost temporanei","pl":"Boosty tymczasowe","pt":"Boosts temporários"},
       "Wallet": {"en": "Wallet", "ru": "Кошелёк", "uk": "Гаманець", "tr": "Cüzdan", "es": "Cartera", "fr": "Portefeuille", "it": "Portafoglio", "pl": "Portfel", "pt": "Carteira"},
       "Kurs": {"en": "Rate", "ru": "Курс", "uk": "Курс", "tr": "Kur", "es": "Tasa", "fr": "Taux", "it": "Tasso", "pl": "Kurs", "pt": "Taxa"},
       "Mindestauszahlung": {"en": "Minimum withdrawal", "ru": "Минимальный вывод", "uk": "Мінімальне виведення", "tr": "Minimum çekim", "es": "Retiro mínimo", "fr": "Retrait minimum", "it": "Prelievo minimo", "pl": "Minimalna wypłata", "pt": "Saque mínimo"},
@@ -12388,7 +12414,23 @@ function App() {
       "Boni heute": {"en": "Bonuses today", "ru": "Бонусы сегодня", "uk": "Бонуси сьогодні", "tr": "Bugünkü bonuslar", "es": "Bonos hoy", "fr": "Bonus aujourd’hui", "it": "Bonus oggi", "pl": "Bonusy dzisiaj", "pt": "Bônus hoje"},
       "Pro Freund": {"en": "Per friend", "ru": "За друга", "uk": "За друга", "tr": "Arkadaş başına", "es": "Por amigo", "fr": "Par ami", "it": "Per amico", "pl": "Za znajomego", "pt": "Por amigo"},
     };
-    return map[source]?.[appLanguage] || source;
+    const exact = map[source]?.[appLanguage];
+    if (exact) return exact;
+    if (appLanguage === 'de') return source;
+    const phrases: Partial<Record<AppLanguage, Array<[string,string]>>> = {
+      en: [['Mache ','Make '],['Aktualisierung in ','Refresh in '],['Neue Missionen erscheinen in ','New missions appear in '],['Verbleibend ','Remaining '],['Offene Anträge:','Open requests:'],['Mindestens ','Minimum '],['Verfügbar ','Available '],['Maximalbetrag verwenden','Use maximum amount'],['ONIX eingeben','Enter ONIX'],['auf 100 % auffüllen','refill to 100%'],['Energieverbrauch','energy consumption'],['Energiebonus','energy bonus'],['Offline-Einkommen','offline income'],['auf Daily Reward','on daily reward'],['Boost-Zeit','boost duration'],['auf Upgrade-Kosten','on upgrade costs'],['auf Miner-Ertrag','on miner income'],['auf Empfehlungsbonus','on referral bonus'],['Daily-Streak geschützt','daily streak protected'],['Schützt den Daily-Streak','protects the daily streak'],['Letzter Preis:','Last prize:'],['Zufälliger Preis und geheime Daily-Mission','Random prize and secret daily mission']],
+      ru: [['Mache ','Сделай '],['Aktualisierung in ','Обновление через '],['Neue Missionen erscheinen in ','Новые миссии через '],['Verbleibend ','Осталось '],['Offene Anträge:','Открытые заявки:'],['Mindestens ','Минимум '],['Verfügbar ','Доступно '],['Maximalbetrag verwenden','Использовать максимум'],['ONIX eingeben','Введите ONIX'],['auf 100 % auffüllen','восстановить до 100%'],['Energieverbrauch','расход энергии'],['Energiebonus','бонус энергии'],['Offline-Einkommen','офлайн-доход'],['auf Daily Reward','к ежедневной награде'],['Boost-Zeit','время буста'],['auf Upgrade-Kosten','к стоимости улучшений'],['auf Miner-Ertrag','к доходу майнера'],['auf Empfehlungsbonus','к реферальному бонусу'],['Daily-Streak geschützt','серия дней защищена'],['Schützt den Daily-Streak','защищает серию дней'],['Letzter Preis:','Последний приз:'],['Zufälliger Preis und geheime Daily-Mission','Случайный приз и секретная ежедневная миссия']],
+      uk: [['Mache ','Зроби '],['Aktualisierung in ','Оновлення через '],['Neue Missionen erscheinen in ','Нові місії через '],['Verbleibend ','Залишилось '],['Offene Anträge:','Відкриті заявки:'],['Mindestens ','Мінімум '],['Verfügbar ','Доступно '],['Maximalbetrag verwenden','Використати максимум'],['ONIX eingeben','Введіть ONIX'],['auf 100 % auffüllen','відновити до 100%'],['Energieverbrauch','витрата енергії'],['Energiebonus','бонус енергії'],['Offline-Einkommen','офлайн-дохід'],['auf Daily Reward','до щоденної нагороди'],['Boost-Zeit','час буста'],['auf Upgrade-Kosten','до вартості покращень'],['auf Miner-Ertrag','до доходу майнера'],['auf Empfehlungsbonus','до реферального бонусу'],['Daily-Streak geschützt','серію днів захищено'],['Schützt den Daily-Streak','захищає серію днів'],['Letzter Preis:','Останній приз:']],
+      tr: [['Mache ','Yap: '],['Aktualisierung in ','Yenileme: '],['Maximalbetrag verwenden','Maksimum tutarı kullan'],['ONIX eingeben','ONIX gir'],['Energieverbrauch','enerji tüketimi'],['Energiebonus','enerji bonusu'],['Offline-Einkommen','çevrimdışı gelir'],['auf Miner-Ertrag','madenci gelirine'],['Letzter Preis:','Son ödül:']],
+      es: [['Mache ','Haz '],['Aktualisierung in ','Actualización en '],['Maximalbetrag verwenden','Usar importe máximo'],['ONIX eingeben','Introducir ONIX'],['Energieverbrauch','consumo de energía'],['Energiebonus','bono de energía'],['Offline-Einkommen','ingresos offline'],['auf Miner-Ertrag','a ingresos del minero'],['Letzter Preis:','Último premio:']],
+      fr: [['Mache ','Fais '],['Aktualisierung in ','Actualisation dans '],['Maximalbetrag verwenden','Utiliser le maximum'],['ONIX eingeben','Saisir ONIX'],['Energieverbrauch','consommation d’énergie'],['Energiebonus','bonus d’énergie'],['Offline-Einkommen','revenu hors ligne'],['auf Miner-Ertrag','sur le revenu du mineur'],['Letzter Preis:','Dernier prix :']],
+      it: [['Mache ','Fai '],['Aktualisierung in ','Aggiornamento tra '],['Maximalbetrag verwenden','Usa importo massimo'],['ONIX eingeben','Inserisci ONIX'],['Energieverbrauch','consumo energia'],['Energiebonus','bonus energia'],['Offline-Einkommen','guadagno offline'],['auf Miner-Ertrag','sul guadagno miner'],['Letzter Preis:','Ultimo premio:']],
+      pl: [['Mache ','Wykonaj '],['Aktualisierung in ','Odświeżenie za '],['Maximalbetrag verwenden','Użyj maksymalnej kwoty'],['ONIX eingeben','Wpisz ONIX'],['Energieverbrauch','zużycie energii'],['Energiebonus','bonus energii'],['Offline-Einkommen','dochód offline'],['auf Miner-Ertrag','do dochodu górnika'],['Letzter Preis:','Ostatnia nagroda:']],
+      pt: [['Mache ','Faça '],['Aktualisierung in ','Atualização em '],['Maximalbetrag verwenden','Usar valor máximo'],['ONIX eingeben','Inserir ONIX'],['Energieverbrauch','consumo de energia'],['Energiebonus','bônus de energia'],['Offline-Einkommen','renda offline'],['auf Miner-Ertrag','na renda do minerador'],['Letzter Preis:','Último prêmio:']]
+    };
+    let out = source;
+    for (const [from,to] of phrases[appLanguage] || []) out = out.split(from).join(to);
+    return out;
   };
 
   const [selectedTitle, setSelectedTitle] = useState('ONIX Player');
@@ -19265,7 +19307,7 @@ body:not(.onix-body-home-lock) {
                   onClick={() => setBoostSubTab(tab.id as BoostSubTab)}
                   className={`onix-upgrades-ref-tab ${boostSubTab === tab.id ? 'onix-upgrades-ref-tab-active' : ''}`}
                 >
-                  {tab.label}
+                  {uiText(tab.label)}
                 </button>
               ))}
             </div>
@@ -19284,11 +19326,11 @@ body:not(.onix-body-home-lock) {
                   </div>
 
                   <div className="onix-upgrade-ref-main">
-                    <div className="onix-upgrade-ref-title">{item.title}</div>
+                    <div className="onix-upgrade-ref-title">{uiText(item.title)}</div>
                     {item.level !== null && item.level !== undefined && (
                       <div className="onix-upgrade-ref-level">Level {item.level}</div>
                     )}
-                    <div className="onix-upgrade-ref-subtitle">{item.subtitle}</div>
+                    <div className="onix-upgrade-ref-subtitle">{uiText(item.subtitle)}</div>
                   </div>
 
                   <button
@@ -19578,10 +19620,10 @@ body:not(.onix-body-home-lock) {
                         <div className="mb-3 flex items-start justify-between gap-3">
                           <div>
                             <p className="font-bold text-white">
-                              {mission.secret ? '🔒 ' : ''}{mission.title}
+                              {mission.secret ? '🔒 ' : ''}{uiText(mission.title)}
                             </p>
                             <p className="text-sm text-gray-400">
-                              {mission.description}
+                              {uiText(mission.description)}
                             </p>
                           </div>
 
@@ -19677,10 +19719,10 @@ body:not(.onix-body-home-lock) {
                         <div className="mb-3 flex items-start justify-between gap-3">
                           <div>
                             <p className="font-bold text-white">
-                              {mission.secret ? '🔒 ' : ''}{mission.title}
+                              {mission.secret ? '🔒 ' : ''}{uiText(mission.title)}
                             </p>
                             <p className="text-sm text-gray-400">
-                              {mission.description}
+                              {uiText(mission.description)}
                             </p>
                           </div>
 
@@ -19758,7 +19800,7 @@ body:not(.onix-body-home-lock) {
                       : 'bg-[#111827] text-gray-400'
                   }`}
                 >
-                  {category.label}
+                  {uiText(category.label)}
                 </button>
               ))}
             </div>
@@ -19781,10 +19823,10 @@ body:not(.onix-body-home-lock) {
                       <div className="mb-3 flex items-start justify-between gap-3">
                         <div>
                           <h3 className="text-lg font-bold text-white">
-                            {achievement.title}
+                            {uiText(achievement.title)}
                           </h3>
                           <p className="text-sm text-gray-400">
-                            {achievement.description}
+                            {uiText(achievement.description)}
                           </p>
                         </div>
 
@@ -20284,7 +20326,7 @@ body:not(.onix-body-home-lock) {
                     return (
                       <div key={achievement.id} className={`onix-profile-v75-achievement ${achievement.isCompleted ? 'is-done' : ''}`}>
                         <div className="onix-profile-v75-achievement-top">
-                          <div><strong>{achievement.title}</strong><p>{achievement.description}</p></div>
+                          <div><strong>{uiText(achievement.title)}</strong><p>{uiText(achievement.description)}</p></div>
                           <span>{achievement.isCompleted ? '✓' : `+${formatOnix(achievement.reward)}`}</span>
                         </div>
                         <div className="onix-task-progress">
@@ -20431,8 +20473,8 @@ body:not(.onix-body-home-lock) {
                               const progressPercent = Math.min((Number(mission.progress || 0) / Number(mission.goal || 1)) * 100, 100);
                               return (
                                 <div key={mission.id} className="onix-profile-team-mission">
-                                  <div className="onix-profile-team-mission-head"><strong>{mission.title}</strong><span>+{formatOnix(mission.reward)}</span></div>
-                                  <p>{mission.description}</p>
+                                  <div className="onix-profile-team-mission-head"><strong>{uiText(mission.title)}</strong><span>+{formatOnix(mission.reward)}</span></div>
+                                  <p>{uiText(mission.description)}</p>
                                   <div className="onix-task-progress">
                                     <div className="onix-task-progress-text"><span className="onix-task-progress-status">{uiText('Fortschritt')}</span><span><strong>{formatOnix(mission.progress)}</strong> / {formatOnix(mission.goal)}</span></div>
                                     <div className="onix-task-progress-track"><div className="onix-task-progress-fill" style={{ width: `${progressPercent}%` }} /></div>
@@ -20781,8 +20823,8 @@ body:not(.onix-body-home-lock) {
                       <div key={mission.id} className="rounded-2xl bg-[#111827] p-3">
                         <div className="mb-2 flex items-start justify-between gap-3">
                           <div>
-                            <p className="font-bold text-white">{mission.title}</p>
-                            <p className="text-xs text-gray-400">{mission.description}</p>
+                            <p className="font-bold text-white">{uiText(mission.title)}</p>
+                            <p className="text-xs text-gray-400">{uiText(mission.description)}</p>
                           </div>
 
                           <p className="shrink-0 font-bold text-yellow-400">
@@ -21586,7 +21628,7 @@ body:not(.onix-body-home-lock) {
                           onClick={() => setTransactionFilter(filter.id)}
                           className={`onix-wallet-filter-button ${transactionFilter === filter.id ? 'is-active' : ''}`}
                         >
-                          {filter.label}
+                          {uiText(filter.label)}
                         </button>
                       ))}
                     </div>
