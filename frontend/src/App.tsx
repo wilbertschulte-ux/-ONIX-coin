@@ -13725,10 +13725,10 @@ function App() {
       setAchievements(user.achievements || response.data.achievements || ACHIEVEMENTS);
       setOwnedPerks(user.ownedPerks || []);
       setPerkLevels(normalizePerkLevels(user.perkLevels));
-      setLastChestReward(uiText(user.chestStats?.lastReward || ''));
+      setLastChestReward(user.chestStats?.lastReward || '');
 
       showToast(
-        `🎁 ${uiText(response.data.chest.rewardTitle)}: +${formatOnix(
+        `🎁 ${localizeChestRewardText(response.data.chest.rewardTitle)}: +${formatOnix(
           response.data.chest.rewardAmount
         )} ONIX`,
         'success'
@@ -14056,7 +14056,7 @@ function App() {
     setWithdrawalRequests(user.withdrawalRequests || []);
     setSelectedTitle(user.selectedTitle || 'ONIX Player');
     setPerkLevels(normalizePerkLevels(user.perkLevels));
-    setLastChestReward(uiText(user.chestStats?.lastReward || ''));
+    setLastChestReward(user.chestStats?.lastReward || '');
     setTeamName(user.teamName || '');
     setLeague(user.league || 'Bronze');
     if (user.missions) setMissions(user.missions);
@@ -18624,6 +18624,85 @@ body:not(.onix-body-home-lock) {
   const areWeeklyMissionsComplete =
     missions.weekly.length > 0 && visibleWeeklyMissions.length === 0;
 
+  const localizeChestRewardText = (rawValue: string) => {
+    const raw = String(rawValue || '').trim();
+    if (!raw) return '';
+
+    const match = raw.match(
+      /^(?:Truhe|Turhe)\s*:\s*(kleiner Bonus|guter Bonus|seltener Bonus|Jackpot)\s*(.*)$/i
+    );
+
+    if (!match) return uiText(raw);
+
+    const rewardKey = match[1].toLowerCase();
+    const suffix = match[2] || '';
+
+    const titles: Record<AppLanguage, Record<string, string>> = {
+      de: {
+        'kleiner bonus': 'Truhe: kleiner Bonus',
+        'guter bonus': 'Truhe: guter Bonus',
+        'seltener bonus': 'Truhe: seltener Bonus',
+        jackpot: 'Truhe: Jackpot',
+      },
+      en: {
+        'kleiner bonus': 'Chest: small bonus',
+        'guter bonus': 'Chest: good bonus',
+        'seltener bonus': 'Chest: rare bonus',
+        jackpot: 'Chest: Jackpot',
+      },
+      ru: {
+        'kleiner bonus': 'Сундук: небольшой бонус',
+        'guter bonus': 'Сундук: хороший бонус',
+        'seltener bonus': 'Сундук: редкий бонус',
+        jackpot: 'Сундук: Джекпот',
+      },
+      uk: {
+        'kleiner bonus': 'Скриня: невеликий бонус',
+        'guter bonus': 'Скриня: хороший бонус',
+        'seltener bonus': 'Скриня: рідкісний бонус',
+        jackpot: 'Скриня: Джекпот',
+      },
+      tr: {
+        'kleiner bonus': 'Sandık: küçük bonus',
+        'guter bonus': 'Sandık: iyi bonus',
+        'seltener bonus': 'Sandık: nadir bonus',
+        jackpot: 'Sandık: Büyük ikramiye',
+      },
+      es: {
+        'kleiner bonus': 'Cofre: bono pequeño',
+        'guter bonus': 'Cofre: buen bono',
+        'seltener bonus': 'Cofre: bono raro',
+        jackpot: 'Cofre: Bote',
+      },
+      fr: {
+        'kleiner bonus': 'Coffre : petit bonus',
+        'guter bonus': 'Coffre : bon bonus',
+        'seltener bonus': 'Coffre : bonus rare',
+        jackpot: 'Coffre : Jackpot',
+      },
+      it: {
+        'kleiner bonus': 'Forziere: bonus piccolo',
+        'guter bonus': 'Forziere: buon bonus',
+        'seltener bonus': 'Forziere: bonus raro',
+        jackpot: 'Forziere: Jackpot',
+      },
+      pl: {
+        'kleiner bonus': 'Skrzynia: mały bonus',
+        'guter bonus': 'Skrzynia: dobry bonus',
+        'seltener bonus': 'Skrzynia: rzadki bonus',
+        jackpot: 'Skrzynia: Jackpot',
+      },
+      pt: {
+        'kleiner bonus': 'Baú: bônus pequeno',
+        'guter bonus': 'Baú: bom bônus',
+        'seltener bonus': 'Baú: bônus raro',
+        jackpot: 'Baú: Jackpot',
+      },
+    };
+
+    return `${titles[appLanguage][rewardKey] || raw}${suffix}`;
+  };
+
   const maxEnergySubtitle = (value: number) => {
     const formatted = value.toLocaleString('ru-RU');
     const labels: Record<AppLanguage, string> = {
@@ -19411,7 +19490,7 @@ body:not(.onix-body-home-lock) {
             accent: 'pink',
             title: 'ONIX-Truhe',
             level: null,
-            subtitle: lastChestReward ? `${uiText('Letzter Preis: ')}${uiText(lastChestReward)}` : uiText('Zufälliger Preis und geheime Daily-Mission'),
+            subtitle: lastChestReward ? `${uiText('Letzter Preis: ')}${localizeChestRewardText(lastChestReward)}` : uiText('Zufälliger Preis und geheime Daily-Mission'),
             price: Number(economyConfig.chestCost || 50000),
             priceType: 'onix',
             disabled: balance < Number(economyConfig.chestCost || 50000),
