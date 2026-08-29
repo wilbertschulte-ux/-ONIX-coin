@@ -11931,23 +11931,23 @@ function formatOnix(value: number) {
 }
 
 function getTapUpgradeCost(tapLevel: number) {
-  return Math.round(1000 * Math.pow(1.35, Number(tapLevel || 1) - 1));
+  return Math.round(1000 * Math.pow(1.20, Number(tapLevel || 1) - 1));
 }
 
 function getMinerUpgradeCost(minerLevel: number) {
-  return Math.round(2500 * Math.pow(1.38, Number(minerLevel || 1) - 1));
+  return Math.round(2500 * Math.pow(1.20, Number(minerLevel || 1) - 1));
 }
 
 function getEnergyUpgradeCost(energyLevel: number) {
-  return Math.round(1500 * Math.pow(1.25, Number(energyLevel || 1) - 1));
+  return Math.round(1500 * Math.pow(1.15, Number(energyLevel || 1) - 1));
 }
 
 function getRechargeUpgradeCost(rechargeLevel: number) {
-  return Math.round(1800 * Math.pow(1.28, Number(rechargeLevel || 1) - 1));
+  return Math.round(1800 * Math.pow(1.15, Number(rechargeLevel || 1) - 1));
 }
 
 function getDailyReward(level: number) {
-  return Math.min(15000 + Number(level || 1) * 500, 50000);
+  return Math.min(2500 + Math.floor((Math.max(1, Number(level || 1)) - 1) / 10) * 100, 3000);
 }
 
 function getDailyStreakMultiplier(streakDay: number) {
@@ -11964,7 +11964,7 @@ function getDailyRewardWithStreak(level: number, streakDay: number) {
 
 const TEMP_TAP_BOOST_COST = 15000;
 const TEMP_MINING_BOOST_COST = 20000;
-const TEMP_ENERGY_REFILL_COST = 25000;
+const TEMP_ENERGY_REFILL_COST = 18000;
 
 function getTapBoostCost(_tapPower: number) {
   return TEMP_TAP_BOOST_COST;
@@ -17757,7 +17757,7 @@ body:not(.onix-body-home-lock) {
   );
   const baseDailyPreview = getDailyReward(level);
   const effectiveDailyPreview = Math.round(
-    baseDailyPreview * (1 + 0.1 * dailyPlusLevel)
+    baseDailyPreview * (1 + 0.05 * dailyPlusLevel)
   );
   const maxOfflineHours = 6 + offlineProLevel;
   const maxOfflineIncome = minerIncomePerMinute * maxOfflineHours * 60;
@@ -18007,7 +18007,7 @@ body:not(.onix-body-home-lock) {
 
   const dailyRewardPreview = Math.round(
     getDailyRewardWithStreak(level, nextDailyStreakDay) *
-      (1 + 0.1 * dailyPlusLevel)
+      (1 + 0.05 * dailyPlusLevel)
   );
   const dailyStreakMultiplier = getDailyStreakMultiplier(nextDailyStreakDay);
   const dailyMissionResetMs = Math.max(
@@ -18569,16 +18569,16 @@ body:not(.onix-body-home-lock) {
           },
         ];
 
-        const energySaverCost = energySaverLevel >= 3 ? 0 : getPerkCost(150000, energySaverLevel + 1);
-        const energyMaxProCost = energyMaxProLevel >= 3 ? 0 : getPerkCost(175000, energyMaxProLevel + 1);
-        const boostsMasterCost = boostMasterLevel >= 3 ? 0 : getPerkCost(180000, boostMasterLevel + 1);
-        const dailyPlusCost = dailyPlusLevel >= 3 ? 0 : getPerkCost(200000, dailyPlusLevel + 1);
-        const engineerCost = engineerLevel >= 3 ? 0 : getPerkCost(250000, engineerLevel + 1);
-        const offlineProCost = offlineProLevel >= 3 ? 0 : getPerkCost(100000, offlineProLevel + 1);
-        const minerPlusCost = minerPlusLevel >= 3 ? 0 : getPerkCost(250000, minerPlusLevel + 1);
-        const luckyMinerCost = luckyMinerLevel >= 3 ? 0 : getPerkCost(300000, luckyMinerLevel + 1);
-        const referralProCost = referralProLevel >= 3 ? 0 : getPerkCost(300000, referralProLevel + 1);
-        const streakShieldCost = streakShieldLevel >= 1 ? 0 : getPerkCost(220000, streakShieldLevel + 1);
+        const energySaverCost = energySaverLevel >= 3 ? 0 : getPerkCost(75000, energySaverLevel + 1);
+        const energyMaxProCost = energyMaxProLevel >= 3 ? 0 : getPerkCost(75000, energyMaxProLevel + 1);
+        const boostsMasterCost = boostMasterLevel >= 3 ? 0 : getPerkCost(75000, boostMasterLevel + 1);
+        const dailyPlusCost = dailyPlusLevel >= 3 ? 0 : getPerkCost(75000, dailyPlusLevel + 1);
+        const engineerCost = engineerLevel >= 3 ? 0 : getPerkCost(90000, engineerLevel + 1);
+        const offlineProCost = offlineProLevel >= 3 ? 0 : getPerkCost(60000, offlineProLevel + 1);
+        const minerPlusCost = minerPlusLevel >= 3 ? 0 : getPerkCost(90000, minerPlusLevel + 1);
+        const luckyMinerCost = luckyMinerLevel >= 3 ? 0 : getPerkCost(100000, luckyMinerLevel + 1);
+        const referralProCost = referralProLevel >= 3 ? 0 : getPerkCost(100000, referralProLevel + 1);
+        const streakShieldCost = streakShieldLevel >= 1 ? 0 : getPerkCost(100000, streakShieldLevel + 1);
 
         const energyRefillCost = getEnergyRefillCost();
 
@@ -18645,7 +18645,7 @@ body:not(.onix-body-home-lock) {
             accent: 'pink',
             title: 'Energy Max Pro',
             level: energyMaxProLevel,
-            subtitle: `+${energyMaxProLevel * 500} Energiebonus`,
+            subtitle: `+${energyMaxProLevel * 300} Energiebonus`,
             price: energyMaxProCost,
             priceType: 'onix',
             disabled: energyMaxProLevel >= 3 || balance < energyMaxProCost,
@@ -18671,7 +18671,7 @@ body:not(.onix-body-home-lock) {
             accent: 'gold',
             title: 'Daily Plus',
             level: dailyPlusLevel,
-            subtitle: `+${dailyPlusLevel * 10}% auf Daily Reward`,
+            subtitle: `+${dailyPlusLevel * 5}% auf Daily Reward`,
             price: dailyPlusCost,
             priceType: 'onix',
             disabled: dailyPlusLevel >= 3 || balance < dailyPlusCost,
