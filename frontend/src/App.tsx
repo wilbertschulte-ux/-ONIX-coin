@@ -11713,7 +11713,7 @@ function formatMissionResetTime(ms: number) {
   return `${hours}Std. ${minutes}Min. ${seconds}Sek.`;
 }
 
-const DEFAULT_ONIX_EUR_PER_1000 = 0.68;
+const DEFAULT_ONIX_EUR_PER_1000 = 2 / 3;
 const DEFAULT_MIN_WITHDRAW_ONIX = 750000;
 const ADMIN_TELEGRAM_ID = String(import.meta.env.VITE_ADMIN_TELEGRAM_ID || '7887214643');
 
@@ -18430,7 +18430,7 @@ body:not(.onix-body-home-lock) {
                 <div className="onix-launch-detail-title-v3">
                   <button type="button" className="onix-profile-v75-back" onClick={() => setLaunchPanel('overview')}>‹</button>
                   <strong>{launchTitle}</strong>
-                  <span>ONIX</span>
+                  {walletPanel !== 'withdrawals' && <span>ONIX</span>}
                 </div>
 
                 {launchPanel === 'about' && (

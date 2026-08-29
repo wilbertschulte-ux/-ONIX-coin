@@ -977,7 +977,7 @@ function getWelcomeBonusAmount() {
 
 function getEconomyConfig() {
   return {
-    onixEurPer1000: getNumberEnv('ONIX_EUR_PER_1000', 0.68),
+    onixEurPer1000: getNumberEnv('ONIX_EUR_PER_1000', 2 / 3),
     minWithdrawOnix: getNumberEnv('MIN_WITHDRAW_ONIX', 750000),
     referralReward: getNumberEnv('REFERRAL_REWARD', 25000),
     referredUserReward: getNumberEnv('REFERRED_USER_REWARD', 5000),
