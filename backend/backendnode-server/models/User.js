@@ -47,6 +47,14 @@ const userSchema = new mongoose.Schema(
       trim: true,
     },
 
+    // User-selected Mini App language. Kept separate from Telegram languageCode.
+    appLanguage: {
+      type: String,
+      enum: ['de', 'ru'],
+      default: 'de',
+      trim: true,
+    },
+
     photoUrl: {
       type: String,
       default: '',

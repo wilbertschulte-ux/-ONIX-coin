@@ -12259,6 +12259,24 @@ class AppErrorBoundary extends React.Component<
 }
 
 
+type AppLanguage = 'de' | 'ru';
+
+const ONIX_I18N = {
+  de: {
+    menu: 'Menü', language: 'Sprache', german: 'Deutsch', russian: 'Русский', notifications: 'Benachrichtigungen', on: 'Eingeschaltet', off: 'Ausgeschaltet',
+    notificationsTitle: 'Benachrichtigungen', notificationsOff: 'Benachrichtigungen sind ausgeschaltet. Du kannst sie im Menü einschalten.', notificationsOnTitle: '✓ Benachrichtigungen aktiv', notificationsOnText: 'Neue ONIX-Meldungen werden hier angezeigt.',
+    navHome: 'Start', navUpgrades: 'Upgrades', navTasks: 'Aufgaben', navProfile: 'Profil', navWallet: 'Wallet', navDrop: 'Drop', balance: 'Guthaben $ONIX', boostActive: '⚡ Boost aktiv',
+    dropTagline: '{tr.dropTagline}', live: 'LIVE', realOnix: 'echte ONIX', attemptsToday: 'Versuche heute', dailyRounds: 'Täglich', rounds: 'Runden', serverLimit: 'Server-Limit', time: 'Zeit', points: 'Punkte', combo: 'Combo', danger: 'Gefahr', crystal: 'ONIX Kristall', roundEnded: 'Runde beendet!', ready: 'Bereit?', best: 'Bestwert', attemptsLeft: 'Verbleibende Versuche', rules: '30 Sekunden · 💎 +10 · 🌟 +50 · ☄️ −25', loading: 'Wird geladen…', noAttempts: 'Keine Versuche mehr', again: 'Noch einmal', startGame: 'Spiel starten', tapCrystals: '{tr.tapCrystals}', crystalLabel: 'Kristall', rare: 'Selten', hazard: 'Gefahr', rewardInfo: 'Server-Belohnung: 1 Punkt = 1 ONIX, maximal 2.500 ONIX pro Runde. Heute verdient:'
+  },
+  ru: {
+    menu: 'Меню', language: 'Язык', german: 'Deutsch', russian: 'Русский', notifications: 'Уведомления', on: 'Включены', off: 'Выключены',
+    notificationsTitle: 'Уведомления', notificationsOff: 'Уведомления выключены. Их можно включить в меню.', notificationsOnTitle: '✓ Уведомления активны', notificationsOnText: 'Новые уведомления ONIX будут отображаться здесь.',
+    navHome: 'Главная', navUpgrades: 'Улучшения', navTasks: 'Задания', navProfile: 'Профиль', navWallet: 'Кошелёк', navDrop: 'Drop', balance: 'Баланс $ONIX', boostActive: '⚡ Буст активен',
+    dropTagline: 'Лови кристаллы, собирай комбо и избегай опасностей.', live: 'LIVE', realOnix: 'реальные ONIX', attemptsToday: 'Попытки сегодня', dailyRounds: 'Ежедневно', rounds: 'раунда', serverLimit: 'Лимит сервера', time: 'Время', points: 'Очки', combo: 'Комбо', danger: 'Опасность', crystal: 'Кристалл ONIX', roundEnded: 'Раунд завершён!', ready: 'Готов?', best: 'Рекорд', attemptsLeft: 'Осталось попыток', rules: '30 секунд · 💎 +10 · 🌟 +50 · ☄️ −25', loading: 'Загрузка…', noAttempts: 'Попытки закончились', again: 'Ещё раз', startGame: 'Начать игру', tapCrystals: 'Нажимай на кристаллы!', crystalLabel: 'Кристалл', rare: 'Редкий', hazard: 'Опасность', rewardInfo: 'Награда сервера: 1 очко = 1 ONIX, максимум 2 500 ONIX за раунд. Сегодня заработано:'
+  }
+} as const;
+
+
 function App() {
   const telegramAvatarUrl = getTelegramAvatarUrl();
   useEffect(() => {
@@ -12300,6 +12318,10 @@ function App() {
     chestCost: 50000,
   });
   const [username, setUsername] = useState('Spieler');
+  const [appLanguage, setAppLanguage] = useState<AppLanguage>(() => {
+    try { return localStorage.getItem('onix_app_language') === 'ru' ? 'ru' : 'de'; } catch { return 'de'; }
+  });
+  const tr = ONIX_I18N[appLanguage];
   const [selectedTitle, setSelectedTitle] = useState('ONIX Player');
   const [achievementCategory, setAchievementCategory] =
     useState<AchievementCategory>('all');
@@ -12467,6 +12489,26 @@ function App() {
 
     void finishDropRound();
   }, [dropSeconds, dropRunning, dropScore, dropSessionId]);
+
+  useEffect(() => {
+    document.documentElement.lang = appLanguage;
+    try { localStorage.setItem('onix_app_language', appLanguage); } catch {}
+  }, [appLanguage]);
+
+  const changeAppLanguage = async (nextLanguage: AppLanguage) => {
+    setAppLanguage(nextLanguage);
+    try {
+      const telegramId = getTelegramId();
+      if (telegramId) {
+        await axios.post(`${API_URL}/language`, { telegramId, language: nextLanguage }, {
+          headers: { 'X-Telegram-Init-Data': window.Telegram?.WebApp?.initData || '' },
+        });
+      }
+      tg?.HapticFeedback?.selectionChanged?.();
+    } catch (error) {
+      console.error('Language save error:', error);
+    }
+  };
 
   const [headerMenuVisible, setHeaderMenuVisible] = useState(false);
   const [headerNotificationsVisible, setHeaderNotificationsVisible] = useState(false);
@@ -12766,6 +12808,7 @@ function App() {
 
         setBalance(user.balance || 0);
         setUsername(user.username || 'Spieler');
+        if (user.appLanguage === 'ru' || user.appLanguage === 'de') setAppLanguage(user.appLanguage);
         setWeeklyEarned(Number(user.weeklyEarned || 0));
         setEnergy(user.energy ?? 500);
         setMaxEnergy(user.maxEnergy ?? 500);
@@ -18283,14 +18326,18 @@ body:not(.onix-body-home-lock) {
         <div role="dialog" aria-modal="true" onClick={() => setHeaderMenuVisible(false)} style={{ position: 'fixed', inset: 0, zIndex: 5000, background: 'rgba(0,0,0,.62)', display: 'flex' }}>
           <div onClick={(event) => event.stopPropagation()} style={{ width: 'min(84vw, 330px)', height: '100%', padding: '28px 20px', background: 'linear-gradient(180deg,#0b0b28,#080817 72%)', borderRight: '1px solid rgba(168,85,247,.45)', boxShadow: '20px 0 50px rgba(0,0,0,.45)' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 28 }}>
-              <div><div style={{ color: '#67e8f9', fontSize: 11, fontWeight: 900, letterSpacing: '.18em' }}>ONIX CONTROL</div><div style={{ fontSize: 24, fontWeight: 1000 }}>Menü</div></div>
+              <div><div style={{ color: '#67e8f9', fontSize: 11, fontWeight: 900, letterSpacing: '.18em' }}>ONIX CONTROL</div><div style={{ fontSize: 24, fontWeight: 1000 }}>{tr.menu}</div></div>
               <button type="button" onClick={() => setHeaderMenuVisible(false)} style={{ width: 38, height: 38, borderRadius: 12, border: '1px solid rgba(168,85,247,.35)', background: 'rgba(15,12,45,.9)', color: '#fff', fontSize: 24 }}>×</button>
             </div>
             <div style={{ padding: 16, borderRadius: 18, border: '1px solid rgba(168,85,247,.25)', background: 'rgba(10,10,35,.8)', marginBottom: 14 }}>
-              <div style={{ fontWeight: 900, marginBottom: 8 }}>🌐 Sprache</div><div style={{ color: '#c4b5fd', fontSize: 14 }}>Deutsch</div>
+              <div style={{ fontWeight: 900, marginBottom: 10 }}>🌐 {tr.language}</div>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8 }}>
+                <button type="button" onClick={() => changeAppLanguage('de')} style={{ padding: '11px 10px', borderRadius: 13, border: appLanguage === 'de' ? '1px solid #67e8f9' : '1px solid rgba(168,85,247,.25)', background: appLanguage === 'de' ? 'rgba(34,211,238,.12)' : 'rgba(15,12,45,.75)', color: '#fff', fontWeight: 800 }}>🇩🇪 {tr.german}</button>
+                <button type="button" onClick={() => changeAppLanguage('ru')} style={{ padding: '11px 10px', borderRadius: 13, border: appLanguage === 'ru' ? '1px solid #67e8f9' : '1px solid rgba(168,85,247,.25)', background: appLanguage === 'ru' ? 'rgba(34,211,238,.12)' : 'rgba(15,12,45,.75)', color: '#fff', fontWeight: 800 }}>🇷🇺 {tr.russian}</button>
+              </div>
             </div>
             <button type="button" onClick={toggleHeaderNotifications} style={{ width: '100%', padding: 16, borderRadius: 18, border: '1px solid rgba(168,85,247,.25)', background: 'rgba(10,10,35,.8)', color: '#fff', textAlign: 'left' }}>
-              <div style={{ fontWeight: 900, marginBottom: 8 }}>🔔 Benachrichtigungen</div><div style={{ color: headerNotificationsEnabled ? '#67e8f9' : '#a1a1aa', fontSize: 14 }}>{headerNotificationsEnabled ? 'Eingeschaltet' : 'Ausgeschaltet'}</div>
+              <div style={{ fontWeight: 900, marginBottom: 8 }}>🔔 {tr.notifications}</div><div style={{ color: headerNotificationsEnabled ? '#67e8f9' : '#a1a1aa', fontSize: 14 }}>{headerNotificationsEnabled ? tr.on : tr.off}</div>
             </button>
           </div>
         </div>
@@ -18300,10 +18347,10 @@ body:not(.onix-body-home-lock) {
         <div role="dialog" aria-modal="true" onClick={() => setHeaderNotificationsVisible(false)} style={{ position: 'fixed', inset: 0, zIndex: 5000, background: 'rgba(0,0,0,.68)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 20 }}>
           <div onClick={(event) => event.stopPropagation()} style={{ width: 'min(100%, 390px)', maxHeight: '72vh', overflowY: 'auto', padding: 22, borderRadius: 26, border: '1px solid rgba(168,85,247,.42)', background: 'linear-gradient(145deg,#121039,#080817)', boxShadow: '0 24px 70px rgba(0,0,0,.55)' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 18 }}>
-              <div><div style={{ color: '#67e8f9', fontSize: 11, fontWeight: 900, letterSpacing: '.15em' }}>ONIX CONTROL</div><div style={{ fontSize: 22, fontWeight: 1000 }}>Benachrichtigungen</div></div>
+              <div><div style={{ color: '#67e8f9', fontSize: 11, fontWeight: 900, letterSpacing: '.15em' }}>ONIX CONTROL</div><div style={{ fontSize: 22, fontWeight: 1000 }}>{tr.notificationsTitle}</div></div>
               <button type="button" onClick={() => setHeaderNotificationsVisible(false)} style={{ width: 38, height: 38, borderRadius: 12, border: '1px solid rgba(168,85,247,.35)', background: 'rgba(15,12,45,.9)', color: '#fff', fontSize: 24 }}>×</button>
             </div>
-            {!headerNotificationsEnabled ? <div style={{ padding: 18, borderRadius: 18, background: 'rgba(8,8,28,.85)', color: '#c4b5fd' }}>Benachrichtigungen sind ausgeschaltet. Du kannst sie im Menü einschalten.</div> : <div style={{ padding: 18, borderRadius: 18, background: 'rgba(8,8,28,.85)' }}><div style={{ fontWeight: 900, marginBottom: 6 }}>✓ Benachrichtigungen aktiv</div><div style={{ color: '#c4b5fd', fontSize: 14 }}>Neue ONIX-Meldungen werden hier angezeigt.</div></div>}
+            {!headerNotificationsEnabled ? <div style={{ padding: 18, borderRadius: 18, background: 'rgba(8,8,28,.85)', color: '#c4b5fd' }}>{tr.notificationsOff}</div> : <div style={{ padding: 18, borderRadius: 18, background: 'rgba(8,8,28,.85)' }}><div style={{ fontWeight: 900, marginBottom: 6 }}>{tr.notificationsOnTitle}</div><div style={{ color: '#c4b5fd', fontSize: 14 }}>{tr.notificationsOnText}</div></div>}
           </div>
         </div>
       )}
@@ -18418,14 +18465,14 @@ body:not(.onix-body-home-lock) {
       </div>
 
       <div className="onix-balance-panel text-center pt-6 pb-4">
-        <p className="text-gray-400 text-sm">Guthaben $ONIX</p>
+        <p className="text-gray-400 text-sm">{tr.balance}</p>
 
         <p className="onix-balance-number text-6xl font-black tracking-tighter">
           {formatOnix(balance)}
         </p>
 
         {isBoostActive && (
-          <p className="text-emerald-400 text-sm mt-1">⚡ Boost aktiv</p>
+          <p className="text-emerald-400 text-sm mt-1">{tr.boostActive}</p>
         )}
       </div>
 
@@ -18434,12 +18481,12 @@ body:not(.onix-body-home-lock) {
 
       <div className="onix-nav flex">
         {[
-          { id: 'home', label: 'Start', icon: Home },
-          { id: 'boosts', label: 'Upgrades', icon: Zap },
-          { id: 'tasks', label: 'Aufgaben', icon: Trophy },
-          { id: 'friends', label: 'Profil', icon: UserCircle },
-          { id: 'wallet', label: 'Wallet', icon: Wallet },
-          { id: 'drop', label: 'Drop', icon: Rocket },
+          { id: 'home', label: tr.navHome, icon: Home },
+          { id: 'boosts', label: tr.navUpgrades, icon: Zap },
+          { id: 'tasks', label: tr.navTasks, icon: Trophy },
+          { id: 'friends', label: tr.navProfile, icon: UserCircle },
+          { id: 'wallet', label: tr.navWallet, icon: Wallet },
+          { id: 'drop', label: tr.navDrop, icon: Rocket },
         ].map((tab) => (
           <button
             key={tab.id}
@@ -18557,30 +18604,30 @@ body:not(.onix-body-home-lock) {
                 <p className="text-sm text-gray-400 mt-2">Fange Kristalle, baue Combos auf und meide Gefahren.</p>
               </div>
               <div className="rounded-2xl px-3 py-2 text-center bg-purple-500/15 border border-purple-400/30 shrink-0">
-                <div className="text-[10px] text-purple-200 font-bold">LIVE</div>
-                <div className="text-xs text-gray-400">echte ONIX</div>
+                <div className="text-[10px] text-purple-200 font-bold">{tr.live}</div>
+                <div className="text-xs text-gray-400">{tr.realOnix}</div>
               </div>
             </div>
 
             <div className="flex items-center justify-between gap-3 mb-3 rounded-2xl bg-black/20 border border-purple-400/20 px-4 py-3">
               <div>
-                <div className="text-[10px] uppercase tracking-[0.16em] text-gray-500">Versuche heute</div>
+                <div className="text-[10px] uppercase tracking-[0.16em] text-gray-500">{tr.attemptsToday}</div>
                 <div className="text-lg font-black text-white">{dropAttemptsLeft} / {dropAttemptsMax}</div>
               </div>
-              <div className="text-xs text-gray-400 text-right">Täglich {dropAttemptsMax} Runden<br/>Server-Limit</div>
+              <div className="text-xs text-gray-400 text-right">{tr.dailyRounds} {dropAttemptsMax} {tr.rounds}<br/>{tr.serverLimit}</div>
             </div>
 
             <div className="grid grid-cols-3 gap-2 mb-3">
               <div className="onix-drop-pill rounded-2xl p-3 text-center">
-                <div className="text-[10px] text-gray-400 uppercase">Zeit</div>
+                <div className="text-[10px] text-gray-400 uppercase">{tr.time}</div>
                 <div className="text-xl font-black text-cyan-300">{dropSeconds}s</div>
               </div>
               <div className="onix-drop-pill rounded-2xl p-3 text-center">
-                <div className="text-[10px] text-gray-400 uppercase">Punkte</div>
+                <div className="text-[10px] text-gray-400 uppercase">{tr.points}</div>
                 <div className="text-xl font-black text-yellow-300">{dropScore}</div>
               </div>
               <div className="onix-drop-pill rounded-2xl p-3 text-center">
-                <div className="text-[10px] text-gray-400 uppercase">Combo</div>
+                <div className="text-[10px] text-gray-400 uppercase">{tr.combo}</div>
                 <div className="text-xl font-black text-fuchsia-300">×{Math.max(1, dropCombo)}</div>
               </div>
             </div>
@@ -18599,7 +18646,7 @@ body:not(.onix-body-home-lock) {
                   }}
                   onContextMenu={(event) => event.preventDefault()}
                   onDragStart={(event) => event.preventDefault()}
-                  aria-label={object.kind === 'hazard' ? 'Gefahr' : 'ONIX Kristall'}
+                  aria-label={object.kind === 'hazard' ? tr.danger : tr.crystal}
                 >
                   {object.kind === 'hazard' ? '☄️' : object.kind === 'rare' ? '🌟' : '💎'}
                 </button>
@@ -18609,18 +18656,18 @@ body:not(.onix-body-home-lock) {
                 <div className="absolute inset-0 z-10 flex items-center justify-center p-6 bg-black/25 backdrop-blur-[2px]">
                   <div className="w-full max-w-[320px] text-center rounded-[28px] p-5 bg-[#0b1029]/90 border border-purple-400/40 shadow-2xl">
                     <div className="text-5xl mb-2">💎</div>
-                    <h3 className="text-2xl font-black text-white">{dropSeconds === 0 ? 'Runde beendet!' : 'Bereit?'}</h3>
+                    <h3 className="text-2xl font-black text-white">{dropSeconds === 0 ? tr.roundEnded : tr.ready}</h3>
                     {dropSeconds === 0 ? (
                       <>
-                        <p className="text-yellow-300 text-3xl font-black mt-2">{dropScore} Punkte</p>
-                        <p className="text-sm text-gray-400 mt-1">Bestwert: {Math.max(dropBest, dropScore)}</p>
-                        <p className="text-xs text-purple-200 mt-2">Verbleibende Versuche: {dropAttemptsLeft} / {dropAttemptsMax}</p>
+                        <p className="text-yellow-300 text-3xl font-black mt-2">{dropScore} {tr.points}</p>
+                        <p className="text-sm text-gray-400 mt-1">{tr.best}: {Math.max(dropBest, dropScore)}</p>
+                        <p className="text-xs text-purple-200 mt-2">{tr.attemptsLeft}: {dropAttemptsLeft} / {dropAttemptsMax}</p>
                         {dropReward !== null && (
                           <p className="text-emerald-300 text-lg font-black mt-2">+{dropReward.toLocaleString('de-DE')} ONIX</p>
                         )}
                       </>
                     ) : (
-                      <p className="text-sm text-gray-400 mt-2">30 Sekunden · 💎 +10 · 🌟 +50 · ☄️ −25</p>
+                      <p className="text-sm text-gray-400 mt-2">{tr.rules}</p>
                     )}
                     <button
                       type="button"
@@ -18629,7 +18676,7 @@ body:not(.onix-body-home-lock) {
                       className="mt-5 w-full rounded-2xl py-4 font-black text-lg text-white active:scale-[.98] transition-transform disabled:opacity-45 disabled:active:scale-100"
                       style={{ background: 'linear-gradient(90deg,#31d7ff,#7c3aed,#df36ff)', boxShadow: '0 0 26px rgba(126,58,237,.45)' }}
                     >
-                      {dropBusy ? 'Wird geladen…' : dropAttemptsLeft <= 0 ? 'Keine Versuche mehr' : dropSeconds === 0 ? 'Noch einmal' : 'Spiel starten'}
+                      {dropBusy ? tr.loading : dropAttemptsLeft <= 0 ? tr.noAttempts : dropSeconds === 0 ? tr.again : tr.startGame}
                     </button>
                   </div>
                 </div>
@@ -18643,13 +18690,13 @@ body:not(.onix-body-home-lock) {
             </div>
 
             <div className="grid grid-cols-3 gap-2 mt-3 text-center text-xs">
-              <div className="rounded-2xl bg-white/5 p-3"><div className="text-2xl">💎</div><b className="text-white">+10</b><p className="text-gray-500">Kristall</p></div>
-              <div className="rounded-2xl bg-white/5 p-3"><div className="text-2xl">🌟</div><b className="text-yellow-300">+50</b><p className="text-gray-500">Selten</p></div>
-              <div className="rounded-2xl bg-white/5 p-3"><div className="text-2xl">☄️</div><b className="text-rose-300">−25</b><p className="text-gray-500">Gefahr</p></div>
+              <div className="rounded-2xl bg-white/5 p-3"><div className="text-2xl">💎</div><b className="text-white">+10</b><p className="text-gray-500">{tr.crystalLabel}</p></div>
+              <div className="rounded-2xl bg-white/5 p-3"><div className="text-2xl">🌟</div><b className="text-yellow-300">+50</b><p className="text-gray-500">{tr.rare}</p></div>
+              <div className="rounded-2xl bg-white/5 p-3"><div className="text-2xl">☄️</div><b className="text-rose-300">−25</b><p className="text-gray-500">{tr.hazard}</p></div>
             </div>
 
             <p className="text-center text-[11px] text-gray-500 mt-4">
-              Server-Belohnung: 1 Punkt = 1 ONIX, maximal 2.500 ONIX pro Runde. Heute verdient: {dropDailyEarned.toLocaleString('de-DE')} ONIX.
+              {tr.rewardInfo} {dropDailyEarned.toLocaleString(appLanguage === 'ru' ? 'ru-RU' : 'de-DE')} ONIX.
             </p>
           </div>
         </div>
