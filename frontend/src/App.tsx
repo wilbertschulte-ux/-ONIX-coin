@@ -12453,14 +12453,8 @@ function App() {
       "Abholen": {"en":"Claim","ru":"Забрать","uk":"Забрати","tr":"Al","es":"Recoger","fr":"Récupérer","it":"Riscatta","pl":"Odbierz","pt":"Resgatar"},
       "Nicht genug ONIX für Auszahlung": {"en":"Not enough ONIX for withdrawal","ru":"Недостаточно ONIX для вывода","uk":"Недостатньо ONIX для виведення","tr":"Çekim için yeterli ONIX yok","es":"No hay suficiente ONIX para retirar","fr":"Pas assez d’ONIX pour le retrait","it":"ONIX insufficienti per il prelievo","pl":"Za mało ONIX do wypłaty","pt":"ONIX insuficiente para saque"},
       "✅ Auszahlungsantrag erstellt": {"en":"✅ Withdrawal request created","ru":"✅ Заявка на вывод создана","uk":"✅ Заявку на виведення створено","tr":"✅ Çekim talebi oluşturuldu","es":"✅ Solicitud de retiro creada","fr":"✅ Demande de retrait créée","it":"✅ Richiesta di prelievo creata","pl":"✅ Utworzono wniosek o wypłatę","pt":"✅ Solicitação de saque criada"},
-      "Anträge": {"en":"Requests","ru":"Заявок","uk":"Заявок","tr":"Talep","es":"Solicitudes","fr":"Demandes","it":"Richieste","pl":"Wnioski","pt":"Solicitações"},
-      "Transaktionen": {"en":"Transactions","ru":"Транзакций","uk":"Транзакцій","tr":"İşlem","es":"Transacciones","fr":"Transactions","it":"Transazioni","pl":"Transakcje","pt":"Transações"},
-      "Alle": {"en":"All","ru":"Все","uk":"Усі","tr":"Tümü","es":"Todo","fr":"Tout","it":"Tutto","pl":"Wszystko","pt":"Tudo"},
-      "Einnahmen": {"en":"Income","ru":"Доходы","uk":"Доходи","tr":"Gelir","es":"Ingresos","fr":"Revenus","it":"Entrate","pl":"Przychody","pt":"Ganhos"},
       "Ausgaben": {"en":"Expenses","ru":"Расходы","uk":"Витрати","tr":"Giderler","es":"Gastos","fr":"Dépenses","it":"Uscite","pl":"Wydatki","pt":"Despesas"},
-      "Auszahlungen": {"en":"Withdrawals","ru":"Выводы","uk":"Виведення","tr":"Çekimler","es":"Retiros","fr":"Retraits","it":"Prelievi","pl":"Wypłaty","pt":"Saques"},
       "Offline-Mining": {"en":"Offline mining","ru":"Офлайн-майнинг","uk":"Офлайн-майнінг","tr":"Çevrimdışı madencilik","es":"Minería offline","fr":"Minage hors ligne","it":"Mining offline","pl":"Kopanie offline","pt":"Mineração offline"},
-      "Aktuell": {"en":"Current","ru":"Текущий","uk":"Поточний","tr":"Mevcut","es":"Actual","fr":"Actuel","it":"Attuale","pl":"Aktualny","pt":"Atual"},
       "Abgeschlossen": {"en":"Completed","ru":"Завершено","uk":"Завершено","tr":"Tamamlandı","es":"Completado","fr":"Terminé","it":"Completato","pl":"Ukończono","pt":"Concluído"},
     };
     const exact = map[source]?.[appLanguage];
