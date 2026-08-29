@@ -18921,8 +18921,31 @@ body:not(.onix-body-home-lock) {
               type="button"
               onClick={handleTap}
               className="onix-ref-v5-tap-button"
+              style={{
+                width: '100%',
+                height: '68px',
+                minHeight: '68px',
+                marginTop: '16px',
+                borderRadius: '15px',
+                border: '1px solid rgba(168, 85, 247, 0.60)',
+                background: 'linear-gradient(180deg, #a647ff 0%, #7d1ff0 48%, #6519d7 100%)',
+                color: '#ffffff',
+                fontFamily: "'Exo 2', system-ui, sans-serif",
+                fontSize: '21px',
+                lineHeight: 1,
+                fontWeight: 900,
+                letterSpacing: '0.055em',
+                textTransform: 'uppercase',
+                boxShadow: '0 0 30px rgba(129, 55, 245, 0.68), 0 14px 34px rgba(75, 20, 180, 0.36), inset 0 1px 0 rgba(255,255,255,0.24)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: '10px',
+                flexShrink: 0,
+              }}
             >
-              ⚡ TAP!
+              <span aria-hidden="true">⚡</span>
+              <span>TAP!</span>
             </button>
           </div>
         </div>
