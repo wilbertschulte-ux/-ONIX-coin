@@ -12325,6 +12325,72 @@ function App() {
     try { return localStorage.getItem('onix_app_language') === 'ru' ? 'ru' : 'de'; } catch { return 'de'; }
   });
   const tr = ONIX_I18N[appLanguage];
+
+  const uiText = (source: string) => {
+    if (appLanguage === 'de') return source;
+    const map: Record<string, Partial<Record<AppLanguage, string>>> = {
+      "📋 Aufgaben": {"en": "📋 Tasks", "ru": "📋 Задания", "uk": "📋 Завдання", "tr": "📋 Görevler", "es": "📋 Tareas", "fr": "📋 Tâches", "it": "📋 Attività", "pl": "📋 Zadania", "pt": "📋 Tarefas"},
+      "📢 Kanal abonnieren": {"en": "📢 Subscribe to channel", "ru": "📢 Подписаться на канал", "uk": "📢 Підписатися на канал", "tr": "📢 Kanala abone ol", "es": "📢 Suscribirse al canal", "fr": "📢 S’abonner au canal", "it": "📢 Iscriviti al canale", "pl": "📢 Subskrybuj kanał", "pt": "📢 Inscrever-se no canal"},
+      "👥 Freund einladen": {"en": "👥 Invite a friend", "ru": "👥 Пригласить друга", "uk": "👥 Запросити друга", "tr": "👥 Arkadaş davet et", "es": "👥 Invitar a un amigo", "fr": "👥 Inviter un ami", "it": "👥 Invita un amico", "pl": "👥 Zaproś znajomego", "pt": "👥 Convidar um amigo"},
+      "Alle einmaligen Aufgaben sind erledigt": {"en": "All one-time tasks are completed", "ru": "Все разовые задания выполнены", "uk": "Усі одноразові завдання виконано", "tr": "Tüm tek seferlik görevler tamamlandı", "es": "Todas las tareas únicas están completadas", "fr": "Toutes les tâches uniques sont terminées", "it": "Tutte le attività una tantum sono completate", "pl": "Wszystkie jednorazowe zadania ukończone", "pt": "Todas as tarefas únicas foram concluídas"},
+      "Neue Aufgaben erscheinen später.": {"en": "New tasks will appear later.", "ru": "Новые задания появятся позже.", "uk": "Нові завдання з’являться пізніше.", "tr": "Yeni görevler daha sonra görünecek.", "es": "Habrá nuevas tareas más adelante.", "fr": "De nouvelles tâches apparaîtront plus tard.", "it": "Nuove attività appariranno più tardi.", "pl": "Nowe zadania pojawią się później.", "pt": "Novas tarefas aparecerão mais tarde."},
+      "🎁 Tägliche Belohnung": {"en": "🎁 Daily reward", "ru": "🎁 Ежедневная награда", "uk": "🎁 Щоденна нагорода", "tr": "🎁 Günlük ödül", "es": "🎁 Recompensa diaria", "fr": "🎁 Récompense quotidienne", "it": "🎁 Ricompensa giornaliera", "pl": "🎁 Nagroda dzienna", "pt": "🎁 Recompensa diária"},
+      "☀️ Tägliche Missionen": {"en": "☀️ Daily missions", "ru": "☀️ Ежедневные миссии", "uk": "☀️ Щоденні місії", "tr": "☀️ Günlük görevler", "es": "☀️ Misiones diarias", "fr": "☀️ Missions quotidiennes", "it": "☀️ Missioni giornaliere", "pl": "☀️ Misje dzienne", "pt": "☀️ Missões diárias"},
+      "📅 Wöchentliche Missionen": {"en": "📅 Weekly missions", "ru": "📅 Еженедельные миссии", "uk": "📅 Щотижневі місії", "tr": "📅 Haftalık görevler", "es": "📅 Misiones semanales", "fr": "📅 Missions hebdomadaires", "it": "📅 Missioni settimanali", "pl": "📅 Misje tygodniowe", "pt": "📅 Missões semanais"},
+      "🏆 Erfolge": {"en": "🏆 Achievements", "ru": "🏆 Достижения", "uk": "🏆 Досягнення", "tr": "🏆 Başarımlar", "es": "🏆 Logros", "fr": "🏆 Succès", "it": "🏆 Obiettivi", "pl": "🏆 Osiągnięcia", "pt": "🏆 Conquistas"},
+      "Belohnung": {"en": "Reward", "ru": "Награда", "uk": "Нагорода", "tr": "Ödül", "es": "Recompensa", "fr": "Récompense", "it": "Ricompensa", "pl": "Nagroda", "pt": "Recompensa"},
+      "Fortschritt": {"en": "Progress", "ru": "Прогресс", "uk": "Прогрес", "tr": "İlerleme", "es": "Progreso", "fr": "Progression", "it": "Progresso", "pl": "Postęp", "pt": "Progresso"},
+      "ONIX-Guthaben": {"en": "ONIX balance", "ru": "Баланс ONIX", "uk": "Баланс ONIX", "tr": "ONIX bakiyesi", "es": "Saldo ONIX", "fr": "Solde ONIX", "it": "Saldo ONIX", "pl": "Saldo ONIX", "pt": "Saldo ONIX"},
+      "Insgesamt verdient": {"en": "Total earned", "ru": "Всего заработано", "uk": "Усього зароблено", "tr": "Toplam kazanılan", "es": "Total ganado", "fr": "Total gagné", "it": "Totale guadagnato", "pl": "Łącznie zarobiono", "pt": "Total ganho"},
+      "Eingeladen": {"en": "Invited", "ru": "Приглашено", "uk": "Запрошено", "tr": "Davet edilen", "es": "Invitados", "fr": "Invités", "it": "Invitati", "pl": "Zaproszeni", "pt": "Convidados"},
+      "Erfolge": {"en": "Achievements", "ru": "Достижения", "uk": "Досягнення", "tr": "Başarımlar", "es": "Logros", "fr": "Succès", "it": "Obiettivi", "pl": "Osiągnięcia", "pt": "Conquistas"},
+      "Ränge": {"en": "Ranks", "ru": "Ранги", "uk": "Ранги", "tr": "Rütbeler", "es": "Rangos", "fr": "Rangs", "it": "Ranghi", "pl": "Rangi", "pt": "Ranks"},
+      "Badges & Titel": {"en": "Badges & titles", "ru": "Значки и титулы", "uk": "Значки й титули", "tr": "Rozetler ve unvanlar", "es": "Insignias y títulos", "fr": "Badges et titres", "it": "Badge e titoli", "pl": "Odznaki i tytuły", "pt": "Emblemas e títulos"},
+      "Statistik": {"en": "Statistics", "ru": "Статистика", "uk": "Статистика", "tr": "İstatistik", "es": "Estadísticas", "fr": "Statistiques", "it": "Statistiche", "pl": "Statystyki", "pt": "Estatísticas"},
+      "🎖 Badges & Titel": {"en": "🎖 Badges & titles", "ru": "🎖 Значки и титулы", "uk": "🎖 Значки й титули", "tr": "🎖 Rozetler ve unvanlar", "es": "🎖 Insignias y títulos", "fr": "🎖 Badges et titres", "it": "🎖 Badge e titoli", "pl": "🎖 Odznaki i tytuły", "pt": "🎖 Emblemas e títulos"},
+      "Deine Badges": {"en": "Your badges", "ru": "Твои значки", "uk": "Твої значки", "tr": "Rozetlerin", "es": "Tus insignias", "fr": "Tes badges", "it": "I tuoi badge", "pl": "Twoje odznaki", "pt": "Seus emblemas"},
+      "Noch keine Badges": {"en": "No badges yet", "ru": "Значков пока нет", "uk": "Значків поки немає", "tr": "Henüz rozet yok", "es": "Aún no hay insignias", "fr": "Aucun badge pour le moment", "it": "Nessun badge ancora", "pl": "Brak odznak", "pt": "Ainda não há emblemas"},
+      "Spielertitel wählen": {"en": "Choose player title", "ru": "Выбрать титул игрока", "uk": "Обрати титул гравця", "tr": "Oyuncu unvanı seç", "es": "Elegir título de jugador", "fr": "Choisir le titre du joueur", "it": "Scegli titolo giocatore", "pl": "Wybierz tytuł gracza", "pt": "Escolher título do jogador"},
+      "🏆 Alle Erfolge": {"en": "🏆 All achievements", "ru": "🏆 Все достижения", "uk": "🏆 Усі досягнення", "tr": "🏆 Tüm başarımlar", "es": "🏆 Todos los logros", "fr": "🏆 Tous les succès", "it": "🏆 Tutti gli obiettivi", "pl": "🏆 Wszystkie osiągnięcia", "pt": "🏆 Todas as conquistas"},
+      "🏅 Alle Ränge": {"en": "🏅 All ranks", "ru": "🏅 Все ранги", "uk": "🏅 Усі ранги", "tr": "🏅 Tüm rütbeler", "es": "🏅 Todos los rangos", "fr": "🏅 Tous les rangs", "it": "🏅 Tutti i ranghi", "pl": "🏅 Wszystkie rangi", "pt": "🏅 Todos os ranks"},
+      "📊 Spielstatistik": {"en": "📊 Game statistics", "ru": "📊 Игровая статистика", "uk": "📊 Ігрова статистика", "tr": "📊 Oyun istatistikleri", "es": "📊 Estadísticas del juego", "fr": "📊 Statistiques de jeu", "it": "📊 Statistiche di gioco", "pl": "📊 Statystyki gry", "pt": "📊 Estatísticas do jogo"},
+      "Aktuelles Team": {"en": "Current team", "ru": "Текущая команда", "uk": "Поточна команда", "tr": "Mevcut takım", "es": "Equipo actual", "fr": "Équipe actuelle", "it": "Squadra attuale", "pl": "Aktualna drużyna", "pt": "Equipe atual"},
+      "Aktuelle Woche": {"en": "Current week", "ru": "Текущая неделя", "uk": "Поточний тиждень", "tr": "Bu hafta", "es": "Semana actual", "fr": "Semaine actuelle", "it": "Settimana attuale", "pl": "Bieżący tydzień", "pt": "Semana atual"},
+      "Aktueller Platz": {"en": "Current place", "ru": "Текущее место", "uk": "Поточне місце", "tr": "Mevcut sıra", "es": "Posición actual", "fr": "Classement actuel", "it": "Posizione attuale", "pl": "Aktualne miejsce", "pt": "Posição atual"},
+      "Mitglieder": {"en": "Members", "ru": "Участники", "uk": "Учасники", "tr": "Üyeler", "es": "Miembros", "fr": "Membres", "it": "Membri", "pl": "Członkowie", "pt": "Membros"},
+      "Team-Aufgaben": {"en": "Team tasks", "ru": "Командные задания", "uk": "Командні завдання", "tr": "Takım görevleri", "es": "Tareas de equipo", "fr": "Tâches d’équipe", "it": "Attività di squadra", "pl": "Zadania drużynowe", "pt": "Tarefas da equipe"},
+      "✨ Neues Team": {"en": "✨ New team", "ru": "✨ Новая команда", "uk": "✨ Нова команда", "tr": "✨ Yeni takım", "es": "✨ Nuevo equipo", "fr": "✨ Nouvelle équipe", "it": "✨ Nuova squadra", "pl": "✨ Nowa drużyna", "pt": "✨ Nova equipe"},
+      "Beitreten": {"en": "Join", "ru": "Вступить", "uk": "Приєднатися", "tr": "Katıl", "es": "Unirse", "fr": "Rejoindre", "it": "Unisciti", "pl": "Dołącz", "pt": "Entrar"},
+      "👥 Eingeladene Spieler": {"en": "👥 Invited players", "ru": "👥 Приглашённые игроки", "uk": "👥 Запрошені гравці", "tr": "👥 Davet edilen oyuncular", "es": "👥 Jugadores invitados", "fr": "👥 Joueurs invités", "it": "👥 Giocatori invitati", "pl": "👥 Zaproszeni gracze", "pt": "👥 Jogadores convidados"},
+      "Aktueller Rang": {"en": "Current rank", "ru": "Текущий ранг", "uk": "Поточний ранг", "tr": "Mevcut rütbe", "es": "Rango actual", "fr": "Rang actuel", "it": "Rango attuale", "pl": "Aktualna ranga", "pt": "Rank atual"},
+      "Rangbonus": {"en": "Rank bonus", "ru": "Бонус ранга", "uk": "Бонус рангу", "tr": "Rütbe bonusu", "es": "Bono de rango", "fr": "Bonus de rang", "it": "Bonus rango", "pl": "Bonus rangi", "pt": "Bônus de rank"},
+      "Taps": {"en": "Taps", "ru": "Тапы", "uk": "Тапи", "tr": "Dokunuşlar", "es": "Toques", "fr": "Taps", "it": "Tap", "pl": "Tapnięcia", "pt": "Toques"},
+      "Upgrades": {"en": "Upgrades", "ru": "Улучшения", "uk": "Покращення", "tr": "Yükseltmeler", "es": "Mejoras", "fr": "Améliorations", "it": "Potenziamenti", "pl": "Ulepszenia", "pt": "Melhorias"},
+      "Boosts": {"en": "Boosts", "ru": "Бусты", "uk": "Бусти", "tr": "Güçlendirmeler", "es": "Potenciadores", "fr": "Boosts", "it": "Boost", "pl": "Boosty", "pt": "Boosts"},
+      "Wallet": {"en": "Wallet", "ru": "Кошелёк", "uk": "Гаманець", "tr": "Cüzdan", "es": "Cartera", "fr": "Portefeuille", "it": "Portafoglio", "pl": "Portfel", "pt": "Carteira"},
+      "Kurs": {"en": "Rate", "ru": "Курс", "uk": "Курс", "tr": "Kur", "es": "Tasa", "fr": "Taux", "it": "Tasso", "pl": "Kurs", "pt": "Taxa"},
+      "Mindestauszahlung": {"en": "Minimum withdrawal", "ru": "Минимальный вывод", "uk": "Мінімальне виведення", "tr": "Minimum çekim", "es": "Retiro mínimo", "fr": "Retrait minimum", "it": "Prelievo minimo", "pl": "Minimalna wypłata", "pt": "Saque mínimo"},
+      "Einkommensdiagramm": {"en": "Income chart", "ru": "График доходов", "uk": "Графік доходів", "tr": "Gelir grafiği", "es": "Gráfico de ingresos", "fr": "Graphique des revenus", "it": "Grafico entrate", "pl": "Wykres dochodów", "pt": "Gráfico de ganhos"},
+      "Einnahmen der letzten 7 Tage": {"en": "Income for the last 7 days", "ru": "Доход за последние 7 дней", "uk": "Дохід за останні 7 днів", "tr": "Son 7 gün geliri", "es": "Ingresos de los últimos 7 días", "fr": "Revenus des 7 derniers jours", "it": "Entrate degli ultimi 7 giorni", "pl": "Dochód z ostatnich 7 dni", "pt": "Ganhos dos últimos 7 dias"},
+      "Auszahlungsanträge": {"en": "Withdrawal requests", "ru": "Заявки на вывод", "uk": "Заявки на виведення", "tr": "Çekim talepleri", "es": "Solicitudes de retiro", "fr": "Demandes de retrait", "it": "Richieste di prelievo", "pl": "Wnioski o wypłatę", "pt": "Solicitações de saque"},
+      "Transaktionsverlauf": {"en": "Transaction history", "ru": "История транзакций", "uk": "Історія транзакцій", "tr": "İşlem geçmişi", "es": "Historial de transacciones", "fr": "Historique des transactions", "it": "Cronologia transazioni", "pl": "Historia transakcji", "pt": "Histórico de transações"},
+      "💸 Auszahlungsanträge": {"en": "💸 Withdrawal requests", "ru": "💸 Заявки на вывод", "uk": "💸 Заявки на виведення", "tr": "💸 Çekim talepleri", "es": "💸 Solicitudes de retiro", "fr": "💸 Demandes de retrait", "it": "💸 Richieste di prelievo", "pl": "💸 Wnioski o wypłatę", "pt": "💸 Solicitações de saque"},
+      "Fortschritt bis zur Auszahlung": {"en": "Progress to withdrawal", "ru": "Прогресс до вывода", "uk": "Прогрес до виведення", "tr": "Çekime ilerleme", "es": "Progreso hasta el retiro", "fr": "Progression vers le retrait", "it": "Progresso al prelievo", "pl": "Postęp do wypłaty", "pt": "Progresso até o saque"},
+      "💎 Auszahlungsbetrag": {"en": "💎 Withdrawal amount", "ru": "💎 Сумма вывода", "uk": "💎 Сума виведення", "tr": "💎 Çekim tutarı", "es": "💎 Importe de retiro", "fr": "💎 Montant du retrait", "it": "💎 Importo prelievo", "pl": "💎 Kwota wypłaty", "pt": "💎 Valor do saque"},
+      "Auszahlung ungefähr": {"en": "Approx. payout", "ru": "Примерная выплата", "uk": "Приблизна виплата", "tr": "Yaklaşık ödeme", "es": "Pago aproximado", "fr": "Paiement approximatif", "it": "Pagamento approssimativo", "pl": "Przybliżona wypłata", "pt": "Pagamento aproximado"},
+      "🛡 Anti-Bot-Prüfung": {"en": "🛡 Anti-bot check", "ru": "🛡 Anti-Bot проверка", "uk": "🛡 Anti-Bot перевірка", "tr": "🛡 Anti-bot kontrolü", "es": "🛡 Verificación anti-bot", "fr": "🛡 Vérification anti-bot", "it": "🛡 Controllo anti-bot", "pl": "🛡 Kontrola anti-bot", "pt": "🛡 Verificação anti-bot"},
+      "Noch keine Anträge": {"en": "No requests yet", "ru": "Заявок пока нет", "uk": "Заявок поки немає", "tr": "Henüz talep yok", "es": "Aún no hay solicitudes", "fr": "Aucune demande", "it": "Nessuna richiesta", "pl": "Brak wniosków", "pt": "Ainda não há solicitações"},
+      "Keine Transaktionen": {"en": "No transactions", "ru": "Транзакций нет", "uk": "Транзакцій немає", "tr": "İşlem yok", "es": "Sin transacciones", "fr": "Aucune transaction", "it": "Nessuna transazione", "pl": "Brak transakcji", "pt": "Sem transações"},
+      "🎟 Promocode": {"en": "🎟 Promo code", "ru": "🎟 Промокод", "uk": "🎟 Промокод", "tr": "🎟 Promosyon kodu", "es": "🎟 Código promocional", "fr": "🎟 Code promo", "it": "🎟 Codice promo", "pl": "🎟 Kod promocyjny", "pt": "🎟 Código promocional"},
+      "Lade einen Freund ein": {"en": "Invite a friend", "ru": "Пригласи друга", "uk": "Запроси друга", "tr": "Arkadaş davet et", "es": "Invita a un amigo", "fr": "Invite un ami", "it": "Invita un amico", "pl": "Zaproś znajomego", "pt": "Convide um amigo"},
+      "Du erhältst": {"en": "You receive", "ru": "Ты получишь", "uk": "Ти отримаєш", "tr": "Sen alırsın", "es": "Tú recibes", "fr": "Tu reçois", "it": "Tu ricevi", "pl": "Otrzymujesz", "pt": "Você recebe"},
+      "Freund erhält": {"en": "Friend receives", "ru": "Друг получит", "uk": "Друг отримає", "tr": "Arkadaş alır", "es": "El amigo recibe", "fr": "L’ami reçoit", "it": "L’amico riceve", "pl": "Znajomy otrzymuje", "pt": "O amigo recebe"},
+      "Boni heute": {"en": "Bonuses today", "ru": "Бонусы сегодня", "uk": "Бонуси сьогодні", "tr": "Bugünkü bonuslar", "es": "Bonos hoy", "fr": "Bonus aujourd’hui", "it": "Bonus oggi", "pl": "Bonusy dzisiaj", "pt": "Bônus hoje"},
+      "Pro Freund": {"en": "Per friend", "ru": "За друга", "uk": "За друга", "tr": "Arkadaş başına", "es": "Por amigo", "fr": "Par ami", "it": "Per amico", "pl": "Za znajomego", "pt": "Por amigo"},
+    };
+    return map[source]?.[appLanguage] || source;
+  };
+
   const [selectedTitle, setSelectedTitle] = useState('ONIX Player');
   const [achievementCategory, setAchievementCategory] =
     useState<AchievementCategory>('all');
@@ -17719,7 +17785,7 @@ body:not(.onix-body-home-lock) {
     }
 
     if (withdrawAmount > balance) {
-      showToast('Nicht genug ONIX für Auszahlung', 'error');
+      showToast(appLanguage === 'de' ? 'Nicht genug ONIX für Auszahlung' : (appLanguage === 'ru' ? 'Недостаточно ONIX для вывода' : 'Not enough ONIX for withdrawal'), 'error');
       return;
     }
 
@@ -17750,7 +17816,7 @@ body:not(.onix-body-home-lock) {
       setWithdrawalRequests(user.withdrawalRequests || []);
       setWithdrawalCheck('');
       setWithdrawalAmountInput('');
-      showToast('✅ Auszahlungsantrag erstellt', 'success');
+      showToast(appLanguage === 'de' ? '✅ Auszahlungsantrag erstellt' : (appLanguage === 'ru' ? '✅ Заявка на вывод создана' : '✅ Withdrawal request created'), 'success');
       refreshAfterAction();
     } catch (error: any) {
       showToast(error?.response?.data?.message || 'Antrag konnte nicht erstellt werden', 'error');
@@ -18220,7 +18286,7 @@ body:not(.onix-body-home-lock) {
     { id: 'seasons', label: 'Saisons' },
     { id: 'perks', label: 'Perks' },
     { id: 'daily', label: 'Daily' },
-    { id: 'ranks', label: 'Ränge' },
+    { id: 'ranks', label: uiText('Ränge') },
   ];
 
   const referralProgress = Math.min(
@@ -19248,12 +19314,12 @@ body:not(.onix-body-home-lock) {
         const tasksTabs = [
           { id: 'tasks' as const, label: 'Aufgaben' },
           { id: 'temporary' as const, label: 'Temporäre Aufgaben' },
-          { id: 'achievements' as const, label: 'Erfolge' },
+          { id: 'achievements' as const, label: uiText('Erfolge') },
         ];
 
         return (
         <div className="onix-tasks-screen onix-tasks-ref-screen px-5 mt-3 space-y-4">
-          <h2 className="text-2xl font-bold mb-6">📋 Aufgaben</h2>
+          <h2 className="text-2xl font-bold mb-6">{uiText('📋 Aufgaben')}</h2>
 
           <div className="onix-tasks-ref-tabs">
             {tasksTabs.map((tab) => (
@@ -19317,7 +19383,7 @@ body:not(.onix-body-home-lock) {
             }`}
           >
             <div>
-              <p className="font-bold">📢 Kanal abonnieren</p>
+              <p className="font-bold">{uiText('📢 Kanal abonnieren')}</p>
               <p className="text-gray-400">+25000 ONIX</p>
             </div>
 
@@ -19371,7 +19437,7 @@ body:not(.onix-body-home-lock) {
             }`}
           >
             <div>
-              <p className="font-bold">👥 Freund einladen</p>
+              <p className="font-bold">{uiText('👥 Freund einladen')}</p>
               <p className="text-gray-400">+{formatOnix(economyConfig.referralReward)} ONIX</p>
             </div>
 
@@ -19389,8 +19455,8 @@ body:not(.onix-body-home-lock) {
   <div className="onix-tasks-empty-card">
     <div className="onix-tasks-empty-icon">✓</div>
     <div>
-      <p className="font-bold">Alle einmaligen Aufgaben sind erledigt</p>
-      <p className="text-gray-400">Neue Aufgaben erscheinen später.</p>
+      <p className="font-bold">{uiText('Alle einmaligen Aufgaben sind erledigt')}</p>
+      <p className="text-gray-400">{uiText('Neue Aufgaben erscheinen später.')}</p>
     </div>
   </div>
 )}
@@ -19457,7 +19523,7 @@ body:not(.onix-body-home-lock) {
             }`}
           >
             <div>
-              <p className="font-bold">🎁 Tägliche Belohnung</p>
+              <p className="font-bold">{uiText('🎁 Tägliche Belohnung')}</p>
               <p className="text-gray-400">
                 +{formatOnix(dailyRewardPreview)} ONIX · Tag {nextDailyStreakDay}/7
               </p>
@@ -19474,7 +19540,7 @@ body:not(.onix-body-home-lock) {
 <div className="rounded-3xl border border-yellow-400/20 bg-[#111827] p-5 shadow-xl onix-mission-cycle-card">
             <div className="mb-4 flex items-center justify-between gap-3">
               <div>
-                <h3 className="text-xl font-bold text-white">☀️ Tägliche Missionen</h3>
+                <h3 className="text-xl font-bold text-white">{uiText('☀️ Tägliche Missionen')}</h3>
                 <p className="text-sm text-gray-400">
                   Aktualisierung in {formatMissionResetTime(dailyMissionResetMs)}
                 </p>
@@ -19520,7 +19586,7 @@ body:not(.onix-body-home-lock) {
                           </div>
 
                           <div className="rounded-2xl bg-[#111827] px-3 py-2 text-right">
-                            <p className="text-xs text-gray-400">Belohnung</p>
+                            <p className="text-xs text-gray-400">{uiText('Belohnung')}</p>
                             <p className="font-bold text-yellow-400">
                               +{formatOnix(mission.reward)}
                             </p>
@@ -19529,7 +19595,7 @@ body:not(.onix-body-home-lock) {
 
                           <div className="onix-task-progress">
                           <div className="onix-task-progress-text">
-                            <span className="onix-task-progress-status">Fortschritt</span>
+                            <span className="onix-task-progress-status">{uiText('Fortschritt')}</span>
                             <span><strong>{formatOnix(mission.progress)}</strong> / {formatOnix(mission.goal)}</span>
                           </div>
 
@@ -19573,7 +19639,7 @@ body:not(.onix-body-home-lock) {
 <div className="rounded-3xl border border-yellow-400/20 bg-[#111827] p-5 shadow-xl onix-mission-cycle-card">
             <div className="mb-4 flex items-center justify-between gap-3">
               <div>
-                <h3 className="text-xl font-bold text-white">📅 Wöchentliche Missionen</h3>
+                <h3 className="text-xl font-bold text-white">{uiText('📅 Wöchentliche Missionen')}</h3>
                 <p className="text-sm text-gray-400">
                   Aktualisierung in {formatMissionResetTime(weeklyMissionResetMs)}
                 </p>
@@ -19619,7 +19685,7 @@ body:not(.onix-body-home-lock) {
                           </div>
 
                           <div className="rounded-2xl bg-[#111827] px-3 py-2 text-right">
-                            <p className="text-xs text-gray-400">Belohnung</p>
+                            <p className="text-xs text-gray-400">{uiText('Belohnung')}</p>
                             <p className="font-bold text-yellow-400">
                               +{formatOnix(mission.reward)}
                             </p>
@@ -19628,7 +19694,7 @@ body:not(.onix-body-home-lock) {
 
                           <div className="onix-task-progress">
                           <div className="onix-task-progress-text">
-                            <span className="onix-task-progress-status">Fortschritt</span>
+                            <span className="onix-task-progress-status">{uiText('Fortschritt')}</span>
                             <span><strong>{formatOnix(mission.progress)}</strong> / {formatOnix(mission.goal)}</span>
                           </div>
 
@@ -19675,7 +19741,7 @@ body:not(.onix-body-home-lock) {
             <div className="onix-tasks-ref-panel onix-tasks-ref-panel-achievements">
 <div className="mt-8">
             <div className="mb-4 flex items-center justify-between gap-3">
-              <h2 className="text-2xl font-bold">🏆 Erfolge</h2>
+              <h2 className="text-2xl font-bold">{uiText('🏆 Erfolge')}</h2>
               <span className="rounded-full bg-[#111827] px-3 py-1 text-sm font-bold text-yellow-400">
                 {completedAchievementsCount} / {achievements.length}
               </span>
@@ -19723,7 +19789,7 @@ body:not(.onix-body-home-lock) {
                         </div>
 
                         <div className="rounded-2xl bg-[#0a0f1c] px-3 py-2 text-right">
-                          <p className="text-xs text-gray-400">Belohnung</p>
+                          <p className="text-xs text-gray-400">{uiText('Belohnung')}</p>
                           <p className="font-bold text-yellow-400">
                             +{formatOnix(achievement.reward)}
                           </p>
@@ -19732,7 +19798,7 @@ body:not(.onix-body-home-lock) {
 
                       <div className="onix-task-progress">
                         <div className="onix-task-progress-text">
-                          <span className="onix-task-progress-status">Fortschritt</span>
+                          <span className="onix-task-progress-status">{uiText('Fortschritt')}</span>
                           <span><strong>{formatOnix(achievement.progress)}</strong> / {formatOnix(achievement.goal)}</span>
                         </div>
 
@@ -19803,15 +19869,15 @@ body:not(.onix-body-home-lock) {
 
             <div className="onix-profile-v75-stats-grid">
               <div className="onix-profile-v75-stat">
-                <span>ONIX-Guthaben</span>
+                <span>{uiText('ONIX-Guthaben')}</span>
                 <strong>{Math.floor(balance).toLocaleString('ru-RU')}</strong>
               </div>
               <div className="onix-profile-v75-stat">
-                <span>Insgesamt verdient</span>
+                <span>{uiText('Insgesamt verdient')}</span>
                 <strong>{Math.floor(totalEarned).toLocaleString('ru-RU')}</strong>
               </div>
               <button type="button" className="onix-profile-v75-stat" onClick={() => { setProfilePanel('invited'); loadInvitedProfiles(); loadFriendLeaderboard(); }}>
-                <span>Eingeladen</span>
+                <span>{uiText('Eingeladen')}</span>
                 <strong>{referralsCount}</strong>
               </button>
               <button type="button" className="onix-profile-v75-stat" onClick={openTeamPanel}>
@@ -19822,16 +19888,16 @@ body:not(.onix-body-home-lock) {
 
             <div className="onix-profile-v75-menu">
               <button type="button" className={profilePanel === 'achievements' ? 'is-active' : ''} onClick={() => setProfilePanel(profilePanel === 'achievements' ? 'overview' : 'achievements')}>
-                <span>🏆</span><strong>Erfolge</strong><em>{completedAchievementsCount}/{achievements.length}</em><b>›</b>
+                <span>🏆</span><strong>{uiText('Erfolge')}</strong><em>{completedAchievementsCount}/{achievements.length}</em><b>›</b>
               </button>
               <button type="button" className={profilePanel === 'ranks' ? 'is-active' : ''} onClick={() => setProfilePanel(profilePanel === 'ranks' ? 'overview' : 'ranks')}>
-                <span>🏅</span><strong>Ränge</strong><em>{rankInfo.currentRank.name}</em><b>›</b>
+                <span>🏅</span><strong>{uiText('Ränge')}</strong><em>{rankInfo.currentRank.name}</em><b>›</b>
               </button>
               <button type="button" className={profilePanel === 'badges' ? 'is-active' : ''} onClick={() => setProfilePanel(profilePanel === 'badges' ? 'overview' : 'badges')}>
-                <span>🎖</span><strong>Badges & Titel</strong><em>{getProfileTitleLabel(selectedTitle || 'ONIX Player')}</em><b>›</b>
+                <span>🎖</span><strong>{uiText('Badges & Titel')}</strong><em>{getProfileTitleLabel(selectedTitle || 'ONIX Player')}</em><b>›</b>
               </button>
               <button type="button" className={profilePanel === 'stats' ? 'is-active' : ''} onClick={() => setProfilePanel(profilePanel === 'stats' ? 'overview' : 'stats')}>
-                <span>📊</span><strong>Statistik</strong><em>{formatOnix(totalTaps)} Taps</em><b>›</b>
+                <span>📊</span><strong>{uiText('Statistik')}</strong><em>{formatOnix(totalTaps)} Taps</em><b>›</b>
               </button>
               {isAdmin() && (
                 <button type="button" className={profilePanel === 'admin' ? 'is-active' : ''} onClick={() => setProfilePanel(profilePanel === 'admin' ? 'overview' : 'admin')}>
@@ -19844,14 +19910,14 @@ body:not(.onix-body-home-lock) {
               <div className="onix-profile-v75-panel">
                 <div className="onix-profile-v75-panel-title onix-profile-v75-detail-title">
                   <button type="button" className="onix-profile-v75-back" onClick={() => setProfilePanel('overview')}>‹</button>
-                  <strong>🎖 Badges & Titel</strong>
+                  <strong>{uiText('🎖 Badges & Titel')}</strong>
                   <span>{profileBadges.length} Badges</span>
                 </div>
 
                 <div className="rounded-3xl border border-violet-400/20 bg-[#0a0f1c] p-4 text-left">
                   <div className="mb-3 flex items-center justify-between gap-3">
                     <div>
-                      <p className="text-sm font-bold text-white">Deine Badges</p>
+                      <p className="text-sm font-bold text-white">{uiText('Deine Badges')}</p>
                       <p className="mt-1 text-xs text-gray-500">Verdiene Ränge, Serien, Top-Plätze und Perks, um neue Badges freizuschalten.</p>
                     </div>
                     <span className="rounded-full bg-[#111827] px-3 py-1 text-xs font-bold text-yellow-400">{profileBadges.length}</span>
@@ -19874,7 +19940,7 @@ body:not(.onix-body-home-lock) {
                     </div>
                   ) : (
                     <div className="rounded-2xl bg-[#111827] p-4 text-center">
-                      <p className="text-sm font-bold text-gray-300">Noch keine Badges</p>
+                      <p className="text-sm font-bold text-gray-300">{uiText('Noch keine Badges')}</p>
                       <p className="mt-1 text-xs text-gray-500">Schalte Badges durch Fortschritt, Top-Plätze und Aktivität frei.</p>
                     </div>
                   )}
@@ -19883,7 +19949,7 @@ body:not(.onix-body-home-lock) {
                 <div className="mt-4 rounded-3xl border border-yellow-400/20 bg-[#0a0f1c] p-4 text-left">
                   <div className="mb-3 flex items-center justify-between gap-3">
                     <div>
-                      <p className="text-sm font-bold text-white">Spielertitel wählen</p>
+                      <p className="text-sm font-bold text-white">{uiText('Spielertitel wählen')}</p>
                       <p className="mt-1 text-xs text-gray-500">Der ausgewählte Titel erscheint direkt unter deinem Namen.</p>
                     </div>
                     <span className="rounded-full bg-[#111827] px-3 py-1 text-xs font-bold text-yellow-400">{availableTitles.length}</span>
@@ -20211,7 +20277,7 @@ body:not(.onix-body-home-lock) {
 
             {profilePanel === 'achievements' && (
               <div className="onix-profile-v75-panel">
-                <div className="onix-profile-v75-panel-title onix-profile-v75-detail-title"><button type="button" className="onix-profile-v75-back" onClick={() => setProfilePanel('overview')}>‹</button><strong>🏆 Alle Erfolge</strong><span>{completedAchievementsCount}/{achievements.length}</span></div>
+                <div className="onix-profile-v75-panel-title onix-profile-v75-detail-title"><button type="button" className="onix-profile-v75-back" onClick={() => setProfilePanel('overview')}>‹</button><strong>{uiText('🏆 Alle Erfolge')}</strong><span>{completedAchievementsCount}/{achievements.length}</span></div>
                 <div className="onix-profile-v75-list">
                   {[...pendingAchievementsList, ...completedAchievementsList].map((achievement) => {
                     const progressPercent = Math.min((Number(achievement.progress || 0) / Number(achievement.goal || 1)) * 100, 100);
@@ -20222,7 +20288,7 @@ body:not(.onix-body-home-lock) {
                           <span>{achievement.isCompleted ? '✓' : `+${formatOnix(achievement.reward)}`}</span>
                         </div>
                         <div className="onix-task-progress">
-                          <div className="onix-task-progress-text"><span className="onix-task-progress-status">Fortschritt</span><span><strong>{formatOnix(achievement.progress)}</strong> / {formatOnix(achievement.goal)}</span></div>
+                          <div className="onix-task-progress-text"><span className="onix-task-progress-status">{uiText('Fortschritt')}</span><span><strong>{formatOnix(achievement.progress)}</strong> / {formatOnix(achievement.goal)}</span></div>
                           <div className="onix-task-progress-track"><div className="onix-task-progress-fill" style={{ width: `${progressPercent}%` }} /></div>
                         </div>
                       </div>
@@ -20234,7 +20300,7 @@ body:not(.onix-body-home-lock) {
 
             {profilePanel === 'ranks' && (
               <div className="onix-profile-v75-panel">
-                <div className="onix-profile-v75-panel-title onix-profile-v75-detail-title"><button type="button" className="onix-profile-v75-back" onClick={() => setProfilePanel('overview')}>‹</button><strong>🏅 Alle Ränge</strong><span>{rankInfo.currentRank.name}</span></div>
+                <div className="onix-profile-v75-panel-title onix-profile-v75-detail-title"><button type="button" className="onix-profile-v75-back" onClick={() => setProfilePanel('overview')}>‹</button><strong>{uiText('🏅 Alle Ränge')}</strong><span>{rankInfo.currentRank.name}</span></div>
                 <div className="onix-profile-v75-list">
                   {RANKS.map((rank, rankIndex) => {
                     const passed = totalEarned >= rank.threshold;
@@ -20250,7 +20316,7 @@ body:not(.onix-body-home-lock) {
                           <div className="onix-profile-v75-rank-title"><strong>{rank.name}</strong><span>{current ? 'Aktuell' : passed ? 'Erreicht' : `Benötigt ${formatOnix(rankStepTotal)}`}</span></div>
                           {!passed && (
                             <div className="onix-task-progress">
-                              <div className="onix-task-progress-text"><span className="onix-task-progress-status">Fortschritt</span><span><strong>{formatOnix(rankStepCurrent)}</strong> / {formatOnix(rankStepTotal)}</span></div>
+                              <div className="onix-task-progress-text"><span className="onix-task-progress-status">{uiText('Fortschritt')}</span><span><strong>{formatOnix(rankStepCurrent)}</strong> / {formatOnix(rankStepTotal)}</span></div>
                               <div className="onix-task-progress-track"><div className="onix-task-progress-fill" style={{ width: `${rankStepPercent}%` }} /></div>
                             </div>
                           )}
@@ -20264,7 +20330,7 @@ body:not(.onix-body-home-lock) {
 
             {profilePanel === 'stats' && (
               <div className="onix-profile-v75-panel">
-                <div className="onix-profile-v75-panel-title onix-profile-v75-detail-title"><button type="button" className="onix-profile-v75-back" onClick={() => setProfilePanel('overview')}>‹</button><strong>📊 Spielstatistik</strong><span>ONIX</span></div>
+                <div className="onix-profile-v75-panel-title onix-profile-v75-detail-title"><button type="button" className="onix-profile-v75-back" onClick={() => setProfilePanel('overview')}>‹</button><strong>{uiText('📊 Spielstatistik')}</strong><span>ONIX</span></div>
                 <div className="onix-profile-v75-stats-list">
                   {profileStats.map((item) => (
                     <div key={item.label}><span>{item.label}</span><strong>{item.value}</strong></div>
@@ -20307,7 +20373,7 @@ body:not(.onix-body-home-lock) {
                       <>
                         <div className="onix-profile-team-hero">
                           <div>
-                            <p>Aktuelles Team</p>
+                            <p>{uiText('Aktuelles Team')}</p>
                             <strong>{teamSocialDashboard.team.teamName}</strong>
                             <span>{teamSocialDashboard.team.members} Mitglieder · {teamSocialDashboard.team.place ? `#${teamSocialDashboard.team.place}` : 'kein Platz'} pro Woche</span>
                           </div>
@@ -20315,8 +20381,8 @@ body:not(.onix-body-home-lock) {
                         </div>
 
                         <div className="onix-profile-team-stats-grid">
-                          <div><span>Aktuelle Woche</span><strong>{formatOnix(teamSocialDashboard.teamContest?.activeTeamWeeklyEarned ?? teamSocialDashboard.team.weeklyEarned)}</strong></div>
-                          <div><span>Aktueller Platz</span><strong>{teamSocialDashboard.teamContest?.activeTeamPlace ? `#${teamSocialDashboard.teamContest.activeTeamPlace}` : '—'}</strong></div>
+                          <div><span>{uiText('Aktuelle Woche')}</span><strong>{formatOnix(teamSocialDashboard.teamContest?.activeTeamWeeklyEarned ?? teamSocialDashboard.team.weeklyEarned)}</strong></div>
+                          <div><span>{uiText('Aktueller Platz')}</span><strong>{teamSocialDashboard.teamContest?.activeTeamPlace ? `#${teamSocialDashboard.teamContest.activeTeamPlace}` : '—'}</strong></div>
                           <div><span>Vorheriger Platz</span><strong>{teamSocialDashboard.teamContest?.completedTeamPlace ? `#${teamSocialDashboard.teamContest.completedTeamPlace}` : '—'}</strong></div>
                           <div><span>Wochenpreis</span><strong>+{formatOnix(teamSocialDashboard.teamContest?.prize || 0)}</strong></div>
                         </div>
@@ -20345,7 +20411,7 @@ body:not(.onix-body-home-lock) {
 
                           <button type="button" className="onix-profile-team-action-card" onClick={() => setTeamDetailPanel('members')}>
                             <span>👥</span>
-                            <div><strong>Mitglieder</strong><em>{teamSocialDashboard.team.members} im Team</em></div>
+                            <div><strong>{uiText('Mitglieder')}</strong><em>{teamSocialDashboard.team.members} im Team</em></div>
                             <b>›</b>
                           </button>
                         </div>
@@ -20359,7 +20425,7 @@ body:not(.onix-body-home-lock) {
                     {teamDetailPanel === 'missions' && (
                       <div className="onix-profile-team-detail-scroll">
                         <div className="onix-profile-team-block">
-                          <div className="onix-profile-team-block-title"><strong>Team-Aufgaben</strong><span>{teamSocialDashboard.week}</span></div>
+                          <div className="onix-profile-team-block-title"><strong>{uiText('Team-Aufgaben')}</strong><span>{teamSocialDashboard.week}</span></div>
                           <div className="onix-profile-team-missions">
                             {teamSocialDashboard.teamMissions.length > 0 ? teamSocialDashboard.teamMissions.map((mission) => {
                               const progressPercent = Math.min((Number(mission.progress || 0) / Number(mission.goal || 1)) * 100, 100);
@@ -20368,7 +20434,7 @@ body:not(.onix-body-home-lock) {
                                   <div className="onix-profile-team-mission-head"><strong>{mission.title}</strong><span>+{formatOnix(mission.reward)}</span></div>
                                   <p>{mission.description}</p>
                                   <div className="onix-task-progress">
-                                    <div className="onix-task-progress-text"><span className="onix-task-progress-status">Fortschritt</span><span><strong>{formatOnix(mission.progress)}</strong> / {formatOnix(mission.goal)}</span></div>
+                                    <div className="onix-task-progress-text"><span className="onix-task-progress-status">{uiText('Fortschritt')}</span><span><strong>{formatOnix(mission.progress)}</strong> / {formatOnix(mission.goal)}</span></div>
                                     <div className="onix-task-progress-track"><div className="onix-task-progress-fill" style={{ width: `${progressPercent}%` }} /></div>
                                   </div>
                                   <button type="button" onClick={() => claimTeamMission(mission)} disabled={!mission.isCompleted || mission.isClaimed}>{mission.isClaimed ? 'Erhalten' : mission.isCompleted ? 'Abholen' : 'In Bearbeitung'}</button>
@@ -20404,7 +20470,7 @@ body:not(.onix-body-home-lock) {
                     {teamDetailPanel === 'members' && (
                       <div className="onix-profile-team-detail-scroll">
                         <div className="onix-profile-team-block">
-                          <div className="onix-profile-team-block-title"><strong>Mitglieder</strong><span>{teamSocialDashboard.team.members}</span></div>
+                          <div className="onix-profile-team-block-title"><strong>{uiText('Mitglieder')}</strong><span>{teamSocialDashboard.team.members}</span></div>
                           <div className="onix-profile-team-members">
                             {(teamSocialDashboard.team.membersList || []).length > 0 ? teamSocialDashboard.team.membersList.map((member, index) => (
                               <div key={member.telegramId} className="onix-profile-team-member">
@@ -20424,7 +20490,7 @@ body:not(.onix-body-home-lock) {
                     {teamDetailPanel === 'create' ? (
                       <div className="onix-profile-team-create-page">
                         <div className="onix-profile-team-block onix-profile-team-create-card">
-                          <div className="onix-profile-team-block-title"><strong>✨ Neues Team</strong><span>ONIX</span></div>
+                          <div className="onix-profile-team-block-title"><strong>{uiText('✨ Neues Team')}</strong><span>ONIX</span></div>
                           <p>Gib deinem Team einen Namen. Nach der Erstellung bist du automatisch das erste Mitglied, andere Spieler können das Team über die Suche finden und beitreten.</p>
                           <div className="onix-profile-team-create-input">
                             <input
@@ -20476,7 +20542,7 @@ body:not(.onix-body-home-lock) {
                                   <span>{team.members} Mitglieder · {formatOnix(team.totalEarned)} ONIX gesamt</span>
                                   <em>{team.place ? `#${team.place} pro Woche` : 'kein Platz'} · {formatOnix(team.weeklyEarned)} pro Woche</em>
                                 </div>
-                                <button type="button" onClick={() => joinTeamByName(team.teamName)}>Beitreten</button>
+                                <button type="button" onClick={() => joinTeamByName(team.teamName)}>{uiText('Beitreten')}</button>
                               </div>
                             )) : (
                               <div className="onix-profile-v75-empty">Keine Teams gefunden.</div>
@@ -20492,7 +20558,7 @@ body:not(.onix-body-home-lock) {
 
             {profilePanel === 'invited' && (
               <div className="onix-profile-v75-panel">
-                <div className="onix-profile-v75-panel-title onix-profile-v75-detail-title"><button type="button" className="onix-profile-v75-back" onClick={() => setProfilePanel('overview')}>‹</button><strong>👥 Eingeladene Spieler</strong><span>{invitedProfiles.length || referralsCount}</span></div>
+                <div className="onix-profile-v75-panel-title onix-profile-v75-detail-title"><button type="button" className="onix-profile-v75-back" onClick={() => setProfilePanel('overview')}>‹</button><strong>{uiText('👥 Eingeladene Spieler')}</strong><span>{invitedProfiles.length || referralsCount}</span></div>
                 <div className="onix-profile-v75-invited-grid">
                   {invitedProfiles.length > 0 ? invitedProfiles.map((friend) => (
                     <div key={friend.telegramId} className="onix-profile-v75-friend-card">
@@ -20613,14 +20679,14 @@ body:not(.onix-body-home-lock) {
             <div className="mt-5 rounded-2xl bg-[#0a0f1c] p-4 text-left">
               <div className="mb-3 flex items-center justify-between gap-3">
                 <div>
-                  <p className="text-xs text-gray-400">Aktueller Rang</p>
+                  <p className="text-xs text-gray-400">{uiText('Aktueller Rang')}</p>
                   <p className="mt-1 text-xl font-bold text-yellow-400">
                     {rankInfo.currentRank.name}
                   </p>
                 </div>
 
                 <div className="text-right">
-                  <p className="text-xs text-gray-400">Rangbonus</p>
+                  <p className="text-xs text-gray-400">{uiText('Rangbonus')}</p>
                   <p className="mt-1 font-bold text-emerald-400">
                     +{formatOnix(currentRankBonus)} ONIX
                   </p>
@@ -20676,7 +20742,7 @@ body:not(.onix-body-home-lock) {
                   </div>
 
                   <div className="rounded-2xl bg-[#111827] p-3">
-                    <p className="text-xs text-gray-400">Taps</p>
+                    <p className="text-xs text-gray-400">{uiText('Taps')}</p>
                     <p className="mt-1 text-sm font-bold text-yellow-400">
                       {teamSocialDashboard.team.totalTaps}
                     </p>
@@ -20781,7 +20847,7 @@ body:not(.onix-body-home-lock) {
               </div>
 
               <div className="rounded-2xl bg-[#0a0f1c] p-4">
-                <p className="text-xs text-gray-400">Insgesamt verdient</p>
+                <p className="text-xs text-gray-400">{uiText('Insgesamt verdient')}</p>
                 <p className="mt-1 text-lg font-bold text-white">
                   {formatOnix(totalEarned)}
                 </p>
@@ -20800,17 +20866,17 @@ body:not(.onix-body-home-lock) {
 
               <div className="grid grid-cols-2 gap-3">
                 <div className="rounded-2xl bg-[#111827] p-3">
-                  <p className="text-xs text-gray-400">Taps</p>
+                  <p className="text-xs text-gray-400">{uiText('Taps')}</p>
                   <p className="font-bold text-yellow-400">{formatOnix(totalTaps)}</p>
                 </div>
 
                 <div className="rounded-2xl bg-[#111827] p-3">
-                  <p className="text-xs text-gray-400">Upgrades</p>
+                  <p className="text-xs text-gray-400">{uiText('Upgrades')}</p>
                   <p className="font-bold text-yellow-400">{formatOnix(totalUpgradesBought)}</p>
                 </div>
 
                 <div className="rounded-2xl bg-[#111827] p-3">
-                  <p className="text-xs text-gray-400">Boosts</p>
+                  <p className="text-xs text-gray-400">{uiText('Boosts')}</p>
                   <p className="font-bold text-yellow-400">{formatOnix(totalBoostsUsed)}</p>
                 </div>
 
@@ -20831,7 +20897,7 @@ body:not(.onix-body-home-lock) {
                 </div>
 
                 <div className="text-right">
-                  <p className="text-xs text-gray-400">Pro Freund</p>
+                  <p className="text-xs text-gray-400">{uiText('Pro Freund')}</p>
                   <p className="mt-1 font-bold text-yellow-400">
                     +{formatOnix(economyConfig.referralReward)} ONIX
                   </p>
@@ -20868,7 +20934,7 @@ body:not(.onix-body-home-lock) {
                 </div>
 
                 <div className="rounded-2xl bg-[#0a0f1c] px-3 py-2 text-right">
-                  <p className="text-xs text-gray-400">Pro Freund</p>
+                  <p className="text-xs text-gray-400">{uiText('Pro Freund')}</p>
                   <p className="font-bold text-yellow-400">
                     +{formatOnix(economyConfig.referralReward)}
                   </p>
@@ -21239,7 +21305,7 @@ body:not(.onix-body-home-lock) {
                     <div className="onix-wallet-icon text-2xl">💼</div>
 
                     <div>
-                      <h2 className="text-2xl font-bold text-white">Wallet</h2>
+                      <h2 className="text-2xl font-bold text-white">{uiText('Wallet')}</h2>
                       <p className="text-sm text-gray-400">
                         Guthaben und Auszahlung von ONIX
                       </p>
@@ -21248,7 +21314,7 @@ body:not(.onix-body-home-lock) {
 
                   <div className="onix-wallet-balance-card">
                     <div className="w-full min-w-0">
-                      <p className="onix-wallet-balance-label">ONIX-Guthaben</p>
+                      <p className="onix-wallet-balance-label">{uiText('ONIX-Guthaben')}</p>
                       <p className="onix-wallet-balance-value">
                         {formatOnix(balance)}
                       </p>
@@ -21263,14 +21329,14 @@ body:not(.onix-body-home-lock) {
 
                   <div className="mt-3 grid grid-cols-2 gap-3">
                     <div className="onix-wallet-mini-card p-4">
-                      <p className="text-xs text-gray-400">Kurs</p>
+                      <p className="text-xs text-gray-400">{uiText('Kurs')}</p>
                       <p className="mt-1 text-sm font-bold text-white">
                         1000 ONIX = {economyConfig.onixEurPer1000.toLocaleString('ru-RU')}€
                       </p>
                     </div>
 
                     <div className="onix-wallet-mini-card p-4">
-                      <p className="text-xs text-gray-400">Mindestauszahlung</p>
+                      <p className="text-xs text-gray-400">{uiText('Mindestauszahlung')}</p>
                       <p className="mt-1 text-sm font-bold text-yellow-400">
                         {minWithdrawOnix.toLocaleString('ru-RU')} ONIX
                       </p>
@@ -21283,8 +21349,8 @@ body:not(.onix-body-home-lock) {
                 <button type="button" className="onix-wallet-section-card-v3" onClick={() => setWalletPanel('chart')}>
                   <span className="onix-wallet-section-icon-v3">📈</span>
                   <div className="onix-wallet-section-text-v3">
-                    <strong>Einkommensdiagramm</strong>
-                    <p>Einnahmen der letzten 7 Tage</p>
+                    <strong>{uiText('Einkommensdiagramm')}</strong>
+                    <p>{uiText('Einnahmen der letzten 7 Tage')}</p>
                   </div>
                   <b className="onix-wallet-section-arrow-v3">›</b>
                 </button>
@@ -21292,7 +21358,7 @@ body:not(.onix-body-home-lock) {
                 <button type="button" className="onix-wallet-section-card-v3" onClick={() => setWalletPanel('withdrawals')}>
                   <span className="onix-wallet-section-icon-v3">💸</span>
                   <div className="onix-wallet-section-text-v3">
-                    <strong>Auszahlungsanträge</strong>
+                    <strong>{uiText('Auszahlungsanträge')}</strong>
                     <p>{withdrawalRequests.length} Anträge · Fortschritt {Math.floor(withdrawProgress).toString()}%</p>
                   </div>
                   <b className="onix-wallet-section-arrow-v3">›</b>
@@ -21301,7 +21367,7 @@ body:not(.onix-body-home-lock) {
                 <button type="button" className="onix-wallet-section-card-v3" onClick={() => setWalletPanel('history')}>
                   <span className="onix-wallet-section-icon-v3">🧾</span>
                   <div className="onix-wallet-section-text-v3">
-                    <strong>Transaktionsverlauf</strong>
+                    <strong>{uiText('Transaktionsverlauf')}</strong>
                     <p>{filteredTransactions.length} Transaktionen</p>
                   </div>
                   <b className="onix-wallet-section-arrow-v3">›</b>
@@ -21325,7 +21391,7 @@ body:not(.onix-body-home-lock) {
                 <div className="onix-wallet-panel-card shadow-xl">
                   <div className="onix-wallet-card-content">
                     <h3 className="text-xl font-bold text-white">📈 Einkommensdiagramm</h3>
-                    <p className="mt-1 text-sm text-gray-400">Einnahmen der letzten 7 Tage</p>
+                    <p className="mt-1 text-sm text-gray-400">{uiText('Einnahmen der letzten 7 Tage')}</p>
 
                     <div className="onix-wallet-chart-box mt-5 flex items-end gap-2 p-4">
                       {earningChartDays.map((item) => (
@@ -21351,7 +21417,7 @@ body:not(.onix-body-home-lock) {
                   <div className="onix-wallet-card-content">
                     <div className="mb-4 flex items-center justify-between gap-3">
                       <div>
-                        <h3 className="text-xl font-bold text-white">💸 Auszahlungsanträge</h3>
+                        <h3 className="text-xl font-bold text-white">{uiText('💸 Auszahlungsanträge')}</h3>
                         <p className="text-sm text-gray-400">
                           {withdrawalRequests.length} Anträge
                         </p>
@@ -21360,7 +21426,7 @@ body:not(.onix-body-home-lock) {
 
                     <div className="onix-wallet-mini-card mb-3 p-3">
                       <div className="mb-3 flex items-center justify-between gap-3 text-sm">
-                        <span className="text-gray-400">Fortschritt bis zur Auszahlung</span>
+                        <span className="text-gray-400">{uiText('Fortschritt bis zur Auszahlung')}</span>
                         <span className="font-bold text-yellow-400">
                           {Math.floor(withdrawProgress).toString()}%
                         </span>
@@ -21385,7 +21451,7 @@ body:not(.onix-body-home-lock) {
                     </div>
 
                     <div className="onix-wallet-mini-card mb-3 p-3">
-                      <p className="text-sm font-bold text-white">💎 Auszahlungsbetrag</p>
+                      <p className="text-sm font-bold text-white">{uiText('💎 Auszahlungsbetrag')}</p>
                       <p className="mt-1 text-xs text-gray-500">
                         Mindestens {formatOnix(minWithdrawOnix)} ONIX · Verfügbar {formatOnix(balance)} ONIX
                       </p>
@@ -21401,7 +21467,7 @@ body:not(.onix-body-home-lock) {
                         className="mt-3 w-full px-4 py-3 text-sm outline-none"
                       />
                       <div className="mt-3 flex items-center justify-between gap-3 text-sm">
-                        <span className="text-gray-400">Auszahlung ungefähr</span>
+                        <span className="text-gray-400">{uiText('Auszahlung ungefähr')}</span>
                         <strong className="text-yellow-400">
                           ≈ {(Math.max(0, Number(withdrawalAmountInput) || 0) * onixEurRate).toFixed(2)} €
                         </strong>
@@ -21417,7 +21483,7 @@ body:not(.onix-body-home-lock) {
                     </div>
 
                     <div className="onix-wallet-mini-card mb-3 p-3">
-                      <p className="text-sm font-bold text-white">🛡 Anti-Bot-Prüfung</p>
+                      <p className="text-sm font-bold text-white">{uiText('🛡 Anti-Bot-Prüfung')}</p>
                       <p className="mt-1 text-xs text-gray-500">
                         Gib vor dem Antrag ONIX ein.
                       </p>
@@ -21491,7 +21557,7 @@ body:not(.onix-body-home-lock) {
                       </div>
                     ) : (
                       <div className="onix-wallet-mini-card p-5 text-center">
-                        <p className="font-bold text-gray-300">Noch keine Anträge</p>
+                        <p className="font-bold text-gray-300">{uiText('Noch keine Anträge')}</p>
                         <p className="mt-1 text-sm text-gray-500">
                           Wenn du einen Antrag erstellst, erscheint er hier.
                         </p>
@@ -21564,7 +21630,7 @@ body:not(.onix-body-home-lock) {
                       </div>
                     ) : (
                       <div className="onix-wallet-mini-card p-5 text-center">
-                        <p className="font-bold text-gray-300">Keine Transaktionen</p>
+                        <p className="font-bold text-gray-300">{uiText('Keine Transaktionen')}</p>
                         <p className="mt-1 text-sm text-gray-500">
                           Wähle einen anderen Filter.
                         </p>
@@ -21592,7 +21658,7 @@ body:not(.onix-body-home-lock) {
           <div className="w-full max-w-sm rounded-3xl border border-yellow-400/30 bg-[#111827] p-6 shadow-2xl">
             <div className="mb-5 flex items-start justify-between gap-3">
               <div>
-                <h2 className="text-2xl font-bold text-white">🎟 Promocode</h2>
+                <h2 className="text-2xl font-bold text-white">{uiText('🎟 Promocode')}</h2>
                 <p className="mt-1 text-sm text-gray-400">
                   Gib den Kampagnen-Promocode ein
                 </p>
@@ -22805,26 +22871,26 @@ body:not(.onix-body-home-lock) {
               👥
             </div>
 
-            <h2 className="text-2xl font-bold text-white">Lade einen Freund ein</h2>
+            <h2 className="text-2xl font-bold text-white">{uiText('Lade einen Freund ein')}</h2>
             <p className="mt-2 text-sm text-gray-400">
               Teile deinen Link und erhalte ONIX für neue Spieler
             </p>
 
             <div className="mt-3 grid grid-cols-2 gap-3">
               <div className="rounded-2xl bg-[#0a0f1c] p-4">
-                <p className="text-xs text-gray-400">Du erhältst</p>
+                <p className="text-xs text-gray-400">{uiText('Du erhältst')}</p>
                 <p className="mt-1 font-bold text-yellow-400">+{formatOnix(economyConfig.referralReward)}</p>
               </div>
 
               <div className="rounded-2xl bg-[#0a0f1c] p-4">
-                <p className="text-xs text-gray-400">Freund erhält</p>
+                <p className="text-xs text-gray-400">{uiText('Freund erhält')}</p>
                 <p className="mt-1 font-bold text-emerald-400">+{formatOnix(economyConfig.referredUserReward)}</p>
               </div>
             </div>
 
             <div className="mt-5 rounded-2xl bg-[#0a0f1c] p-4 text-left">
               <div className="mb-2 flex items-center justify-between text-sm">
-                <span className="text-gray-400">Boni heute</span>
+                <span className="text-gray-400">{uiText('Boni heute')}</span>
                 <span className="font-bold text-yellow-400">
                   {referralLimit.used} / {referralLimit.max}
                 </span>
