@@ -12319,49 +12319,61 @@ function App() {
   const [dropSeconds, setDropSeconds] = useState(30);
   const [dropScore, setDropScore] = useState(0);
   const [dropCombo, setDropCombo] = useState(0);
-  const [dropBest, setDropBest] = useState(() => {
-    try { return Number(localStorage.getItem('onix_drop_demo_best') || 0); } catch { return 0; }
-  });
-  const getDropDayKey = () => {
-    const now = new Date();
-    const year = now.getFullYear();
-    const month = String(now.getMonth() + 1).padStart(2, '0');
-    const day = String(now.getDate()).padStart(2, '0');
-    return `${year}-${month}-${day}`;
-  };
-  const [dropAttemptsLeft, setDropAttemptsLeft] = useState(() => {
-    try {
-      const today = getDropDayKey();
-      const storedDay = localStorage.getItem('onix_drop_demo_attempts_day');
-      if (storedDay !== today) {
-        localStorage.setItem('onix_drop_demo_attempts_day', today);
-        localStorage.setItem('onix_drop_demo_attempts_left', '3');
-        return 3;
-      }
-      const stored = Number(localStorage.getItem('onix_drop_demo_attempts_left'));
-      return Number.isFinite(stored) ? Math.max(0, Math.min(3, stored)) : 3;
-    } catch {
-      return 3;
-    }
-  });
+  const [dropBest, setDropBest] = useState(0);
+  const [dropAttemptsLeft, setDropAttemptsLeft] = useState(3);
+  const [dropAttemptsMax, setDropAttemptsMax] = useState(3);
+  const [dropDailyEarned, setDropDailyEarned] = useState(0);
+  const [dropSessionId, setDropSessionId] = useState('');
+  const [dropReward, setDropReward] = useState<number | null>(null);
+  const [dropBusy, setDropBusy] = useState(false);
+  const [dropStatusLoading, setDropStatusLoading] = useState(false);
   const [dropObjects, setDropObjects] = useState<DropObject[]>([]);
 
-  const startOnixDropDemo = () => {
-    if (dropAttemptsLeft <= 0) {
+  const applyDropStatus = (data: any) => {
+    if (!data || typeof data !== 'object') return;
+    if (Number.isFinite(Number(data.attemptsLeft))) setDropAttemptsLeft(Math.max(0, Number(data.attemptsLeft)));
+    if (Number.isFinite(Number(data.attemptsMax))) setDropAttemptsMax(Math.max(1, Number(data.attemptsMax)));
+    if (Number.isFinite(Number(data.dailyEarned))) setDropDailyEarned(Math.max(0, Number(data.dailyEarned)));
+    if (Number.isFinite(Number(data.bestScore))) setDropBest(Math.max(0, Number(data.bestScore)));
+  };
+
+  const loadOnixDropStatus = async () => {
+    const telegramId = getTelegramId();
+    if (!telegramId) return;
+    setDropStatusLoading(true);
+    try {
+      const response = await axios.get(`${API_URL}/onix-drop/status/${telegramId}`);
+      applyDropStatus(response.data);
+    } catch (error) {
+      console.error('ONIX Drop status error:', error);
+    } finally {
+      setDropStatusLoading(false);
+    }
+  };
+
+  const startOnixDropDemo = async () => {
+    const telegramId = getTelegramId();
+    if (!telegramId || dropAttemptsLeft <= 0 || dropBusy) {
       tg?.HapticFeedback?.notificationOccurred?.('error');
       return;
     }
-    const nextAttempts = dropAttemptsLeft - 1;
-    setDropAttemptsLeft(nextAttempts);
+    setDropBusy(true);
     try {
-      localStorage.setItem('onix_drop_demo_attempts_day', getDropDayKey());
-      localStorage.setItem('onix_drop_demo_attempts_left', String(nextAttempts));
-    } catch {}
-    setDropScore(0);
-    setDropCombo(0);
-    setDropSeconds(30);
-    setDropObjects([]);
-    setDropRunning(true);
+      const response = await axios.post(`${API_URL}/onix-drop/start`, { telegramId });
+      applyDropStatus(response.data);
+      setDropSessionId(String(response.data?.sessionId || ''));
+      setDropReward(null);
+      setDropScore(0);
+      setDropCombo(0);
+      setDropSeconds(Number(response.data?.durationSeconds || 30));
+      setDropObjects([]);
+      setDropRunning(true);
+    } catch (error: any) {
+      applyDropStatus(error?.response?.data);
+      tg?.HapticFeedback?.notificationOccurred?.('error');
+    } finally {
+      setDropBusy(false);
+    }
   };
 
   const catchDropObject = (object: DropObject) => {
@@ -12420,16 +12432,41 @@ function App() {
   }, [activeTab, dropRunning]);
 
   useEffect(() => {
+    if (activeTab === 'drop') loadOnixDropStatus();
+  }, [activeTab]);
+
+  useEffect(() => {
     if (!dropRunning || dropSeconds > 0) return;
     setDropRunning(false);
     setDropObjects([]);
-    setDropBest((best) => {
-      const next = Math.max(best, dropScore);
-      try { localStorage.setItem('onix_drop_demo_best', String(next)); } catch {}
-      return next;
-    });
-    tg?.HapticFeedback?.notificationOccurred?.('success');
-  }, [dropSeconds, dropRunning, dropScore]);
+
+    const finishDropRound = async () => {
+      const telegramId = getTelegramId();
+      if (!telegramId || !dropSessionId) return;
+      setDropBusy(true);
+      try {
+        const response = await axios.post(`${API_URL}/onix-drop/finish`, {
+          telegramId,
+          sessionId: dropSessionId,
+          score: dropScore,
+        });
+        applyDropStatus(response.data);
+        setDropReward(Math.max(0, Number(response.data?.reward || 0)));
+        if (Number.isFinite(Number(response.data?.balance))) setBalance(Number(response.data.balance));
+        if (Number.isFinite(Number(response.data?.level))) setLevel(Number(response.data.level));
+        tg?.HapticFeedback?.notificationOccurred?.('success');
+      } catch (error) {
+        console.error('ONIX Drop finish error:', error);
+        setDropReward(0);
+        tg?.HapticFeedback?.notificationOccurred?.('error');
+      } finally {
+        setDropSessionId('');
+        setDropBusy(false);
+      }
+    };
+
+    void finishDropRound();
+  }, [dropSeconds, dropRunning, dropScore, dropSessionId]);
 
   const [headerMenuVisible, setHeaderMenuVisible] = useState(false);
   const [headerNotificationsVisible, setHeaderNotificationsVisible] = useState(false);
@@ -18520,17 +18557,17 @@ body:not(.onix-body-home-lock) {
                 <p className="text-sm text-gray-400 mt-2">Fange Kristalle, baue Combos auf und meide Gefahren.</p>
               </div>
               <div className="rounded-2xl px-3 py-2 text-center bg-purple-500/15 border border-purple-400/30 shrink-0">
-                <div className="text-[10px] text-purple-200 font-bold">DEMO</div>
-                <div className="text-xs text-gray-400">ohne Auszahlung</div>
+                <div className="text-[10px] text-purple-200 font-bold">LIVE</div>
+                <div className="text-xs text-gray-400">echte ONIX</div>
               </div>
             </div>
 
             <div className="flex items-center justify-between gap-3 mb-3 rounded-2xl bg-black/20 border border-purple-400/20 px-4 py-3">
               <div>
                 <div className="text-[10px] uppercase tracking-[0.16em] text-gray-500">Versuche heute</div>
-                <div className="text-lg font-black text-white">{dropAttemptsLeft} / 3</div>
+                <div className="text-lg font-black text-white">{dropAttemptsLeft} / {dropAttemptsMax}</div>
               </div>
-              <div className="text-xs text-gray-400 text-right">Täglich 3 Runden<br/>Reset um Mitternacht</div>
+              <div className="text-xs text-gray-400 text-right">Täglich {dropAttemptsMax} Runden<br/>Server-Limit</div>
             </div>
 
             <div className="grid grid-cols-3 gap-2 mb-3">
@@ -18577,7 +18614,10 @@ body:not(.onix-body-home-lock) {
                       <>
                         <p className="text-yellow-300 text-3xl font-black mt-2">{dropScore} Punkte</p>
                         <p className="text-sm text-gray-400 mt-1">Bestwert: {Math.max(dropBest, dropScore)}</p>
-                        <p className="text-xs text-purple-200 mt-2">Verbleibende Versuche: {dropAttemptsLeft} / 3</p>
+                        <p className="text-xs text-purple-200 mt-2">Verbleibende Versuche: {dropAttemptsLeft} / {dropAttemptsMax}</p>
+                        {dropReward !== null && (
+                          <p className="text-emerald-300 text-lg font-black mt-2">+{dropReward.toLocaleString('de-DE')} ONIX</p>
+                        )}
                       </>
                     ) : (
                       <p className="text-sm text-gray-400 mt-2">30 Sekunden · 💎 +10 · 🌟 +50 · ☄️ −25</p>
@@ -18585,11 +18625,11 @@ body:not(.onix-body-home-lock) {
                     <button
                       type="button"
                       onClick={startOnixDropDemo}
-                      disabled={dropAttemptsLeft <= 0}
+                      disabled={dropAttemptsLeft <= 0 || dropBusy || dropStatusLoading}
                       className="mt-5 w-full rounded-2xl py-4 font-black text-lg text-white active:scale-[.98] transition-transform disabled:opacity-45 disabled:active:scale-100"
                       style={{ background: 'linear-gradient(90deg,#31d7ff,#7c3aed,#df36ff)', boxShadow: '0 0 26px rgba(126,58,237,.45)' }}
                     >
-                      {dropAttemptsLeft <= 0 ? 'Keine Versuche mehr' : dropSeconds === 0 ? 'Noch einmal' : 'Spiel starten'}
+                      {dropBusy ? 'Wird geladen…' : dropAttemptsLeft <= 0 ? 'Keine Versuche mehr' : dropSeconds === 0 ? 'Noch einmal' : 'Spiel starten'}
                     </button>
                   </div>
                 </div>
@@ -18609,7 +18649,7 @@ body:not(.onix-body-home-lock) {
             </div>
 
             <p className="text-center text-[11px] text-gray-500 mt-4">
-              Testmodus: Punkte verändern dein ONIX-Guthaben noch nicht. Server-Belohnungen verbinden wir erst nach deiner Freigabe.
+              Server-Belohnung: 1 Punkt = 1 ONIX, maximal 2.500 ONIX pro Runde. Heute verdient: {dropDailyEarned.toLocaleString('de-DE')} ONIX.
             </p>
           </div>
         </div>
