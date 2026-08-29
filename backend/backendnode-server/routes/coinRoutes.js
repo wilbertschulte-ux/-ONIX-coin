@@ -3578,7 +3578,7 @@ router.post('/language', async (req, res) => {
     const language = String(req.body?.language || '').toLowerCase();
 
     if (!telegramId) return res.status(400).json({ message: 'Telegram ID is required' });
-    if (!['de', 'ru'].includes(language)) return res.status(400).json({ message: 'Unsupported language' });
+    if (!['de', 'en', 'ru', 'uk', 'tr', 'es', 'fr', 'it', 'pl', 'pt'].includes(language)) return res.status(400).json({ message: 'Unsupported language' });
 
     const user = await User.findOne({ telegramId });
     if (!user) return res.status(404).json({ message: 'User not found' });
@@ -3635,7 +3635,7 @@ router.post('/create', async (req, res) => {
         lastName,
         displayName,
         languageCode: telegramUser?.language_code || '',
-        appLanguage: String(telegramUser?.language_code || '').toLowerCase().startsWith('ru') ? 'ru' : 'de',
+        appLanguage: (() => { const l=String(telegramUser?.language_code||'').toLowerCase().split('-')[0]; return ['de','en','ru','uk','tr','es','fr','it','pl','pt'].includes(l) ? l : 'de'; })(),
         photoUrl: telegramUser?.photo_url || '',
         referredBy: referredBy || null,
         completedTasks: [],
@@ -3764,9 +3764,7 @@ router.post('/create', async (req, res) => {
         user.lastName = lastName;
         user.displayName = displayName;
         user.languageCode = telegramUser.language_code || '';
-        if (!['de', 'ru'].includes(String(user.appLanguage || ''))) {
-          user.appLanguage = String(telegramUser.language_code || '').toLowerCase().startsWith('ru') ? 'ru' : 'de';
-        }
+        if (!['de','en','ru','uk','tr','es','fr','it','pl','pt'].includes(String(user.appLanguage || ''))) { const l=String(telegramUser.language_code||'').toLowerCase().split('-')[0]; user.appLanguage=['de','en','ru','uk','tr','es','fr','it','pl','pt'].includes(l) ? l : 'de'; }
         user.photoUrl = telegramUser.photo_url || '';
 
         // Keep the legacy display-name field in sync without changing its
