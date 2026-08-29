@@ -1427,43 +1427,6 @@ function getReferralLimitPayload(user, now = Date.now()) {
   };
 }
 
-
-// ONIX Drop mini-game economy. The daily cap is deliberately small so the
-// mini-game improves retention without becoming a dominant ONIX source.
-const ONIX_DROP_DAILY_ATTEMPTS = 3;
-const ONIX_DROP_MAX_REWARD_PER_RUN = 2500;
-const ONIX_DROP_SESSION_MS = 60 * 1000;
-const ONIX_DROP_MIN_RUN_MS = 5 * 1000;
-
-function prepareOnixDropDay(user, now = Date.now()) {
-  const dayKey = getUtcDayKey(now);
-  if (!user.onixDrop || user.onixDrop.dayKey !== dayKey) {
-    user.onixDrop = {
-      dayKey,
-      attemptsUsed: 0,
-      dailyEarned: 0,
-      bestScore: Number(user.onixDrop?.bestScore || 0),
-      sessionId: '',
-      sessionStartedAt: 0,
-      sessionExpiresAt: 0,
-    };
-  }
-}
-
-function getOnixDropPayload(user, now = Date.now()) {
-  prepareOnixDropDay(user, now);
-  const attemptsUsed = Number(user.onixDrop.attemptsUsed || 0);
-  return {
-    attemptsUsed,
-    attemptsMax: ONIX_DROP_DAILY_ATTEMPTS,
-    attemptsLeft: Math.max(ONIX_DROP_DAILY_ATTEMPTS - attemptsUsed, 0),
-    dailyEarned: Number(user.onixDrop.dailyEarned || 0),
-    bestScore: Number(user.onixDrop.bestScore || 0),
-    maxRewardPerRun: ONIX_DROP_MAX_REWARD_PER_RUN,
-    resetAt: getNextUtcDayStart(now),
-  };
-}
-
 function getTapUpgradeCost(tapLevel) {
   return Math.round(1000 * Math.pow(1.20, Number(tapLevel || 1) - 1));
 }
@@ -5820,89 +5783,6 @@ router.post('/tap', async (req, res) => {
     return res.status(500).json({
       error: error.message,
     });
-  }
-});
-
-// ---------------- ONIX Drop mini-game ----------------
-router.get('/onix-drop/status/:telegramId', async (req, res) => {
-  try {
-    const user = await User.findOne({ telegramId: String(req.params.telegramId || '') });
-    if (!user) return res.status(404).json({ error: 'User not found' });
-    prepareOnixDropDay(user);
-    await user.save();
-    return res.json(getOnixDropPayload(user));
-  } catch (error) {
-    return res.status(500).json({ error: error.message });
-  }
-});
-
-router.post('/onix-drop/start', async (req, res) => {
-  try {
-    const telegramId = String(req.body?.telegramId || '');
-    const user = await User.findOne({ telegramId });
-    if (!user) return res.status(404).json({ error: 'User not found' });
-
-    const now = Date.now();
-    prepareOnixDropDay(user, now);
-    if (Number(user.onixDrop.attemptsUsed || 0) >= ONIX_DROP_DAILY_ATTEMPTS) {
-      return res.status(429).json({ error: 'No ONIX Drop attempts left today', ...getOnixDropPayload(user, now) });
-    }
-
-    // Starting a round consumes the attempt. This prevents unlimited restarts
-    // until a perfect round is achieved.
-    const sessionId = crypto.randomUUID();
-    user.onixDrop.attemptsUsed = Number(user.onixDrop.attemptsUsed || 0) + 1;
-    user.onixDrop.sessionId = sessionId;
-    user.onixDrop.sessionStartedAt = now;
-    user.onixDrop.sessionExpiresAt = now + ONIX_DROP_SESSION_MS;
-    await user.save();
-
-    return res.json({
-      sessionId,
-      durationSeconds: 30,
-      ...getOnixDropPayload(user, now),
-    });
-  } catch (error) {
-    return res.status(500).json({ error: error.message });
-  }
-});
-
-router.post('/onix-drop/finish', async (req, res) => {
-  try {
-    const telegramId = String(req.body?.telegramId || '');
-    const sessionId = String(req.body?.sessionId || '');
-    const submittedScore = Math.max(0, Math.floor(Number(req.body?.score || 0)));
-    const user = await User.findOne({ telegramId });
-    if (!user) return res.status(404).json({ error: 'User not found' });
-
-    const now = Date.now();
-    prepareOnixDropDay(user, now);
-    const startedAt = Number(user.onixDrop.sessionStartedAt || 0);
-    const expiresAt = Number(user.onixDrop.sessionExpiresAt || 0);
-    if (!sessionId || sessionId !== String(user.onixDrop.sessionId || '')) {
-      return res.status(400).json({ error: 'Invalid or already used ONIX Drop session' });
-    }
-    if (now < startedAt + ONIX_DROP_MIN_RUN_MS || now > expiresAt) {
-      user.onixDrop.sessionId = '';
-      await user.save();
-      return res.status(400).json({ error: 'ONIX Drop session timing is invalid' });
-    }
-
-    const reward = Math.min(submittedScore, ONIX_DROP_MAX_REWARD_PER_RUN);
-    user.onixDrop.sessionId = '';
-    user.onixDrop.sessionStartedAt = 0;
-    user.onixDrop.sessionExpiresAt = 0;
-    user.onixDrop.dailyEarned = Number(user.onixDrop.dailyEarned || 0) + reward;
-    user.onixDrop.bestScore = Math.max(Number(user.onixDrop.bestScore || 0), submittedScore);
-    user.balance = Number(user.balance || 0) + reward;
-    user.totalEarned = Number(user.totalEarned || 0) + reward;
-    user.level = calculateLevel(user.totalEarned);
-    user.lastSeenAt = now;
-    await user.save();
-
-    return res.json({ reward, balance: user.balance, level: user.level, ...getOnixDropPayload(user, now) });
-  } catch (error) {
-    return res.status(500).json({ error: error.message });
   }
 });
 

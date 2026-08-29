@@ -565,17 +565,6 @@ const userSchema = new mongoose.Schema(
       default: 0,
     },
 
-
-    onixDrop: {
-      dayKey: { type: String, default: '' },
-      attemptsUsed: { type: Number, default: 0 },
-      dailyEarned: { type: Number, default: 0 },
-      bestScore: { type: Number, default: 0 },
-      sessionId: { type: String, default: '' },
-      sessionStartedAt: { type: Number, default: 0 },
-      sessionExpiresAt: { type: Number, default: 0 },
-    },
-
     lastUpgradeBuyAt: {
       type: Number,
       default: 0,
