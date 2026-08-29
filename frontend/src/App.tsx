@@ -12322,9 +12322,41 @@ function App() {
   const [dropBest, setDropBest] = useState(() => {
     try { return Number(localStorage.getItem('onix_drop_demo_best') || 0); } catch { return 0; }
   });
+  const getDropDayKey = () => {
+    const now = new Date();
+    const year = now.getFullYear();
+    const month = String(now.getMonth() + 1).padStart(2, '0');
+    const day = String(now.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+  };
+  const [dropAttemptsLeft, setDropAttemptsLeft] = useState(() => {
+    try {
+      const today = getDropDayKey();
+      const storedDay = localStorage.getItem('onix_drop_demo_attempts_day');
+      if (storedDay !== today) {
+        localStorage.setItem('onix_drop_demo_attempts_day', today);
+        localStorage.setItem('onix_drop_demo_attempts_left', '3');
+        return 3;
+      }
+      const stored = Number(localStorage.getItem('onix_drop_demo_attempts_left'));
+      return Number.isFinite(stored) ? Math.max(0, Math.min(3, stored)) : 3;
+    } catch {
+      return 3;
+    }
+  });
   const [dropObjects, setDropObjects] = useState<DropObject[]>([]);
 
   const startOnixDropDemo = () => {
+    if (dropAttemptsLeft <= 0) {
+      tg?.HapticFeedback?.notificationOccurred?.('error');
+      return;
+    }
+    const nextAttempts = dropAttemptsLeft - 1;
+    setDropAttemptsLeft(nextAttempts);
+    try {
+      localStorage.setItem('onix_drop_demo_attempts_day', getDropDayKey());
+      localStorage.setItem('onix_drop_demo_attempts_left', String(nextAttempts));
+    } catch {}
     setDropScore(0);
     setDropCombo(0);
     setDropSeconds(30);
@@ -18474,7 +18506,7 @@ body:not(.onix-body-home-lock) {
             .onix-drop-shell{background:radial-gradient(circle at 50% 10%,rgba(54,207,255,.18),transparent 30%),linear-gradient(180deg,rgba(44,20,97,.92),rgba(5,9,28,.98));border:1px solid rgba(153,74,255,.45);box-shadow:0 0 36px rgba(124,58,237,.2);}
             .onix-drop-arena{position:relative;height:min(56vh,500px);min-height:390px;overflow:hidden;background:radial-gradient(circle at 50% 82%,rgba(134,43,255,.3),transparent 30%),linear-gradient(180deg,#080b25 0%,#150734 65%,#080b1d 100%);border:1px solid rgba(79,211,255,.28);box-shadow:inset 0 0 50px rgba(90,40,220,.22);}
             .onix-drop-arena:before{content:'';position:absolute;inset:0;background:linear-gradient(90deg,transparent 49.5%,rgba(85,214,255,.06) 50%,transparent 50.5%),linear-gradient(rgba(154,78,255,.05) 1px,transparent 1px);background-size:100% 100%,100% 52px;pointer-events:none;}
-            .onix-drop-object{position:absolute;transform:translate(-50%,-50%);width:54px;height:54px;border-radius:18px;display:grid;place-items:center;font-size:30px;filter:drop-shadow(0 0 13px rgba(89,226,255,.85));touch-action:manipulation;user-select:none;z-index:3;}
+            .onix-drop-object{position:absolute;transform:translate(-50%,-50%);width:58px;height:58px;border:0;background:transparent;border-radius:18px;display:grid;place-items:center;font-size:32px;filter:drop-shadow(0 0 13px rgba(89,226,255,.85));touch-action:none;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none;-webkit-user-drag:none;cursor:pointer;z-index:3;padding:0;outline:none;}
             .onix-drop-object.rare{width:60px;height:60px;font-size:34px;filter:drop-shadow(0 0 18px rgba(255,216,54,.95));}
             .onix-drop-object.hazard{filter:drop-shadow(0 0 16px rgba(255,67,114,.9));}
             .onix-drop-pill{background:rgba(4,9,28,.72);border:1px solid rgba(129,74,255,.38);box-shadow:inset 0 0 18px rgba(106,52,217,.12);}
@@ -18491,6 +18523,14 @@ body:not(.onix-body-home-lock) {
                 <div className="text-[10px] text-purple-200 font-bold">DEMO</div>
                 <div className="text-xs text-gray-400">ohne Auszahlung</div>
               </div>
+            </div>
+
+            <div className="flex items-center justify-between gap-3 mb-3 rounded-2xl bg-black/20 border border-purple-400/20 px-4 py-3">
+              <div>
+                <div className="text-[10px] uppercase tracking-[0.16em] text-gray-500">Versuche heute</div>
+                <div className="text-lg font-black text-white">{dropAttemptsLeft} / 3</div>
+              </div>
+              <div className="text-xs text-gray-400 text-right">Täglich 3 Runden<br/>Reset um Mitternacht</div>
             </div>
 
             <div className="grid grid-cols-3 gap-2 mb-3">
@@ -18515,7 +18555,13 @@ body:not(.onix-body-home-lock) {
                   type="button"
                   className={`onix-drop-object ${object.kind === 'rare' ? 'rare' : object.kind === 'hazard' ? 'hazard' : ''}`}
                   style={{ left: `${object.x}%`, top: `${object.y}%`, rotate: `${object.rotate}deg` }}
-                  onClick={() => catchDropObject(object)}
+                  onPointerDown={(event) => {
+                    event.preventDefault();
+                    event.stopPropagation();
+                    catchDropObject(object);
+                  }}
+                  onContextMenu={(event) => event.preventDefault()}
+                  onDragStart={(event) => event.preventDefault()}
                   aria-label={object.kind === 'hazard' ? 'Gefahr' : 'ONIX Kristall'}
                 >
                   {object.kind === 'hazard' ? '☄️' : object.kind === 'rare' ? '🌟' : '💎'}
@@ -18531,6 +18577,7 @@ body:not(.onix-body-home-lock) {
                       <>
                         <p className="text-yellow-300 text-3xl font-black mt-2">{dropScore} Punkte</p>
                         <p className="text-sm text-gray-400 mt-1">Bestwert: {Math.max(dropBest, dropScore)}</p>
+                        <p className="text-xs text-purple-200 mt-2">Verbleibende Versuche: {dropAttemptsLeft} / 3</p>
                       </>
                     ) : (
                       <p className="text-sm text-gray-400 mt-2">30 Sekunden · 💎 +10 · 🌟 +50 · ☄️ −25</p>
@@ -18538,10 +18585,11 @@ body:not(.onix-body-home-lock) {
                     <button
                       type="button"
                       onClick={startOnixDropDemo}
-                      className="mt-5 w-full rounded-2xl py-4 font-black text-lg text-white active:scale-[.98] transition-transform"
+                      disabled={dropAttemptsLeft <= 0}
+                      className="mt-5 w-full rounded-2xl py-4 font-black text-lg text-white active:scale-[.98] transition-transform disabled:opacity-45 disabled:active:scale-100"
                       style={{ background: 'linear-gradient(90deg,#31d7ff,#7c3aed,#df36ff)', boxShadow: '0 0 26px rgba(126,58,237,.45)' }}
                     >
-                      {dropSeconds === 0 ? 'Noch einmal' : 'Spiel starten'}
+                      {dropAttemptsLeft <= 0 ? 'Keine Versuche mehr' : dropSeconds === 0 ? 'Noch einmal' : 'Spiel starten'}
                     </button>
                   </div>
                 </div>
