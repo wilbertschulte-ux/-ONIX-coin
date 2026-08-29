@@ -11248,7 +11248,15 @@ div.fixed.inset-0.z-\[90\] button.bg-yellow-400 {
 `;
 
 
-type Tab = 'home' | 'boosts' | 'tasks' | 'friends' | 'wallet' | 'launch';
+type Tab = 'home' | 'boosts' | 'tasks' | 'friends' | 'wallet' | 'drop' | 'launch';
+type DropObject = {
+  id: number;
+  x: number;
+  y: number;
+  kind: 'crystal' | 'rare' | 'hazard';
+  rotate: number;
+};
+
 
 type BoostSubTab = 'tapping' | 'boosts' | 'other';
 
@@ -12307,6 +12315,90 @@ function App() {
   const [level, setLevel] = useState(1);
   const [totalEarned, setTotalEarned] = useState(0);
   const [activeTab, setActiveTab] = useState<Tab>('home');
+  const [dropRunning, setDropRunning] = useState(false);
+  const [dropSeconds, setDropSeconds] = useState(30);
+  const [dropScore, setDropScore] = useState(0);
+  const [dropCombo, setDropCombo] = useState(0);
+  const [dropBest, setDropBest] = useState(() => {
+    try { return Number(localStorage.getItem('onix_drop_demo_best') || 0); } catch { return 0; }
+  });
+  const [dropObjects, setDropObjects] = useState<DropObject[]>([]);
+
+  const startOnixDropDemo = () => {
+    setDropScore(0);
+    setDropCombo(0);
+    setDropSeconds(30);
+    setDropObjects([]);
+    setDropRunning(true);
+  };
+
+  const catchDropObject = (object: DropObject) => {
+    if (!dropRunning) return;
+    setDropObjects((items) => items.filter((item) => item.id !== object.id));
+
+    if (object.kind === 'hazard') {
+      setDropScore((score) => Math.max(0, score - 25));
+      setDropCombo(0);
+      tg?.HapticFeedback?.notificationOccurred?.('error');
+      return;
+    }
+
+    const base = object.kind === 'rare' ? 50 : 10;
+    const comboBonus = Math.min(dropCombo, 10) * (object.kind === 'rare' ? 3 : 2);
+    setDropScore((score) => score + base + comboBonus);
+    setDropCombo((combo) => combo + 1);
+    tg?.HapticFeedback?.impactOccurred?.(object.kind === 'rare' ? 'medium' : 'light');
+  };
+
+  useEffect(() => {
+    if (activeTab !== 'drop' || !dropRunning) return;
+
+    const spawnTimer = window.setInterval(() => {
+      const roll = Math.random();
+      const kind: DropObject['kind'] = roll < 0.1 ? 'hazard' : roll < 0.24 ? 'rare' : 'crystal';
+      setDropObjects((items) => [
+        ...items.slice(-16),
+        {
+          id: Date.now() + Math.floor(Math.random() * 100000),
+          x: 7 + Math.random() * 86,
+          y: -12,
+          kind,
+          rotate: Math.floor(Math.random() * 40 - 20),
+        },
+      ]);
+    }, 470);
+
+    const moveTimer = window.setInterval(() => {
+      setDropObjects((items) =>
+        items
+          .map((item) => ({ ...item, y: item.y + (item.kind === 'rare' ? 2.2 : item.kind === 'hazard' ? 2.8 : 2.5) }))
+          .filter((item) => item.y < 108)
+      );
+    }, 55);
+
+    const clockTimer = window.setInterval(() => {
+      setDropSeconds((seconds) => Math.max(0, seconds - 1));
+    }, 1000);
+
+    return () => {
+      window.clearInterval(spawnTimer);
+      window.clearInterval(moveTimer);
+      window.clearInterval(clockTimer);
+    };
+  }, [activeTab, dropRunning]);
+
+  useEffect(() => {
+    if (!dropRunning || dropSeconds > 0) return;
+    setDropRunning(false);
+    setDropObjects([]);
+    setDropBest((best) => {
+      const next = Math.max(best, dropScore);
+      try { localStorage.setItem('onix_drop_demo_best', String(next)); } catch {}
+      return next;
+    });
+    tg?.HapticFeedback?.notificationOccurred?.('success');
+  }, [dropSeconds, dropRunning, dropScore]);
+
   const [headerMenuVisible, setHeaderMenuVisible] = useState(false);
   const [headerNotificationsVisible, setHeaderNotificationsVisible] = useState(false);
   const [headerNotificationsEnabled, setHeaderNotificationsEnabled] = useState(() => {
@@ -18232,7 +18324,7 @@ body:not(.onix-body-home-lock) {
         </div>
       )}
 
-      {activeTab !== 'home' && activeTab !== 'boosts' && activeTab !== 'friends' && activeTab !== 'tasks' && activeTab !== 'wallet' && activeTab !== 'launch' && (
+      {activeTab !== 'home' && activeTab !== 'boosts' && activeTab !== 'friends' && activeTab !== 'tasks' && activeTab !== 'wallet' && activeTab !== 'drop' && activeTab !== 'launch' && (
         <>
       <div className="onix-rank-panel px-5 pt-4">
         <div className="flex justify-between mb-2">
@@ -18278,7 +18370,7 @@ body:not(.onix-body-home-lock) {
           { id: 'tasks', label: 'Aufgaben', icon: Trophy },
           { id: 'friends', label: 'Profil', icon: UserCircle },
           { id: 'wallet', label: 'Wallet', icon: Wallet },
-          { id: 'launch', label: 'Starten', icon: Rocket },
+          { id: 'drop', label: 'Drop', icon: Rocket },
         ].map((tab) => (
           <button
             key={tab.id}
@@ -18372,6 +18464,105 @@ body:not(.onix-body-home-lock) {
             >
               ⚡ TAP!
             </button>
+          </div>
+        </div>
+      )}
+
+      {activeTab === 'drop' && (
+        <div className="px-4 pt-4 pb-28 min-h-[calc(var(--oc-app-height)-150px)] overflow-y-auto">
+          <style>{`
+            .onix-drop-shell{background:radial-gradient(circle at 50% 10%,rgba(54,207,255,.18),transparent 30%),linear-gradient(180deg,rgba(44,20,97,.92),rgba(5,9,28,.98));border:1px solid rgba(153,74,255,.45);box-shadow:0 0 36px rgba(124,58,237,.2);}
+            .onix-drop-arena{position:relative;height:min(56vh,500px);min-height:390px;overflow:hidden;background:radial-gradient(circle at 50% 82%,rgba(134,43,255,.3),transparent 30%),linear-gradient(180deg,#080b25 0%,#150734 65%,#080b1d 100%);border:1px solid rgba(79,211,255,.28);box-shadow:inset 0 0 50px rgba(90,40,220,.22);}
+            .onix-drop-arena:before{content:'';position:absolute;inset:0;background:linear-gradient(90deg,transparent 49.5%,rgba(85,214,255,.06) 50%,transparent 50.5%),linear-gradient(rgba(154,78,255,.05) 1px,transparent 1px);background-size:100% 100%,100% 52px;pointer-events:none;}
+            .onix-drop-object{position:absolute;transform:translate(-50%,-50%);width:54px;height:54px;border-radius:18px;display:grid;place-items:center;font-size:30px;filter:drop-shadow(0 0 13px rgba(89,226,255,.85));touch-action:manipulation;user-select:none;z-index:3;}
+            .onix-drop-object.rare{width:60px;height:60px;font-size:34px;filter:drop-shadow(0 0 18px rgba(255,216,54,.95));}
+            .onix-drop-object.hazard{filter:drop-shadow(0 0 16px rgba(255,67,114,.9));}
+            .onix-drop-pill{background:rgba(4,9,28,.72);border:1px solid rgba(129,74,255,.38);box-shadow:inset 0 0 18px rgba(106,52,217,.12);}
+          `}</style>
+
+          <div className="onix-drop-shell rounded-[30px] p-4">
+            <div className="flex items-start justify-between gap-3 mb-4">
+              <div>
+                <div className="text-[11px] uppercase tracking-[0.24em] text-cyan-300 font-black">ONIX ARCADE</div>
+                <h2 className="text-3xl font-black text-white leading-none mt-1">💎 ONIX Drop</h2>
+                <p className="text-sm text-gray-400 mt-2">Fange Kristalle, baue Combos auf und meide Gefahren.</p>
+              </div>
+              <div className="rounded-2xl px-3 py-2 text-center bg-purple-500/15 border border-purple-400/30 shrink-0">
+                <div className="text-[10px] text-purple-200 font-bold">DEMO</div>
+                <div className="text-xs text-gray-400">ohne Auszahlung</div>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-3 gap-2 mb-3">
+              <div className="onix-drop-pill rounded-2xl p-3 text-center">
+                <div className="text-[10px] text-gray-400 uppercase">Zeit</div>
+                <div className="text-xl font-black text-cyan-300">{dropSeconds}s</div>
+              </div>
+              <div className="onix-drop-pill rounded-2xl p-3 text-center">
+                <div className="text-[10px] text-gray-400 uppercase">Punkte</div>
+                <div className="text-xl font-black text-yellow-300">{dropScore}</div>
+              </div>
+              <div className="onix-drop-pill rounded-2xl p-3 text-center">
+                <div className="text-[10px] text-gray-400 uppercase">Combo</div>
+                <div className="text-xl font-black text-fuchsia-300">×{Math.max(1, dropCombo)}</div>
+              </div>
+            </div>
+
+            <div className="onix-drop-arena rounded-[26px]">
+              {dropObjects.map((object) => (
+                <button
+                  key={object.id}
+                  type="button"
+                  className={`onix-drop-object ${object.kind === 'rare' ? 'rare' : object.kind === 'hazard' ? 'hazard' : ''}`}
+                  style={{ left: `${object.x}%`, top: `${object.y}%`, rotate: `${object.rotate}deg` }}
+                  onClick={() => catchDropObject(object)}
+                  aria-label={object.kind === 'hazard' ? 'Gefahr' : 'ONIX Kristall'}
+                >
+                  {object.kind === 'hazard' ? '☄️' : object.kind === 'rare' ? '🌟' : '💎'}
+                </button>
+              ))}
+
+              {!dropRunning && (
+                <div className="absolute inset-0 z-10 flex items-center justify-center p-6 bg-black/25 backdrop-blur-[2px]">
+                  <div className="w-full max-w-[320px] text-center rounded-[28px] p-5 bg-[#0b1029]/90 border border-purple-400/40 shadow-2xl">
+                    <div className="text-5xl mb-2">💎</div>
+                    <h3 className="text-2xl font-black text-white">{dropSeconds === 0 ? 'Runde beendet!' : 'Bereit?'}</h3>
+                    {dropSeconds === 0 ? (
+                      <>
+                        <p className="text-yellow-300 text-3xl font-black mt-2">{dropScore} Punkte</p>
+                        <p className="text-sm text-gray-400 mt-1">Bestwert: {Math.max(dropBest, dropScore)}</p>
+                      </>
+                    ) : (
+                      <p className="text-sm text-gray-400 mt-2">30 Sekunden · 💎 +10 · 🌟 +50 · ☄️ −25</p>
+                    )}
+                    <button
+                      type="button"
+                      onClick={startOnixDropDemo}
+                      className="mt-5 w-full rounded-2xl py-4 font-black text-lg text-white active:scale-[.98] transition-transform"
+                      style={{ background: 'linear-gradient(90deg,#31d7ff,#7c3aed,#df36ff)', boxShadow: '0 0 26px rgba(126,58,237,.45)' }}
+                    >
+                      {dropSeconds === 0 ? 'Noch einmal' : 'Spiel starten'}
+                    </button>
+                  </div>
+                </div>
+              )}
+
+              {dropRunning && (
+                <div className="absolute left-1/2 -translate-x-1/2 bottom-3 z-[2] px-4 py-2 rounded-full text-xs font-bold text-cyan-100 bg-black/50 border border-cyan-300/20 pointer-events-none">
+                  Kristalle antippen!
+                </div>
+              )}
+            </div>
+
+            <div className="grid grid-cols-3 gap-2 mt-3 text-center text-xs">
+              <div className="rounded-2xl bg-white/5 p-3"><div className="text-2xl">💎</div><b className="text-white">+10</b><p className="text-gray-500">Kristall</p></div>
+              <div className="rounded-2xl bg-white/5 p-3"><div className="text-2xl">🌟</div><b className="text-yellow-300">+50</b><p className="text-gray-500">Selten</p></div>
+              <div className="rounded-2xl bg-white/5 p-3"><div className="text-2xl">☄️</div><b className="text-rose-300">−25</b><p className="text-gray-500">Gefahr</p></div>
+            </div>
+
+            <p className="text-center text-[11px] text-gray-500 mt-4">
+              Testmodus: Punkte verändern dein ONIX-Guthaben noch nicht. Server-Belohnungen verbinden wir erst nach deiner Freigabe.
+            </p>
           </div>
         </div>
       )}
