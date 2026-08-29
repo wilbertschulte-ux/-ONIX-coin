@@ -12462,6 +12462,9 @@ function App() {
       "Ausgaben": {"en":"Expenses","ru":"Расходы","uk":"Витрати","tr":"Giderler","es":"Gastos","fr":"Dépenses","it":"Uscite","pl":"Wydatki","pt":"Despesas"},
       "Offline-Mining": {"en":"Offline mining","ru":"Офлайн-майнинг","uk":"Офлайн-майнінг","tr":"Çevrimdışı madencilik","es":"Minería offline","fr":"Minage hors ligne","it":"Mining offline","pl":"Kopanie offline","pt":"Mineração offline"},
       "Abgeschlossen": {"en":"Completed","ru":"Завершено","uk":"Завершено","tr":"Tamamlandı","es":"Completado","fr":"Terminé","it":"Completato","pl":"Ukończono","pt":"Concluído"},
+      "Regeneration": {"en":"Regeneration","ru":"Восстановление","uk":"Відновлення","tr":"Yenilenme","es":"Regeneración","fr":"Régénération","it":"Rigenerazione","pl":"Regeneracja","pt":"Regeneração"},
+      "Energie voll": {"en":"Energy full","ru":"Энергия полная","uk":"Енергія повна","tr":"Enerji dolu","es":"Energía llena","fr":"Énergie pleine","it":"Energia piena","pl":"Energia pełna","pt":"Energia cheia"},
+      "guter Bonus": {"en":"good bonus","ru":"хороший бонус","uk":"хороший бонус","tr":"iyi bonus","es":"buen bono","fr":"bon bonus","it":"buon bonus","pl":"dobry bonus","pt":"bom bônus"},
       "Drop": {"en":"Drop","ru":"Дроп","uk":"Дроп","tr":"Drop","es":"Drop","fr":"Drop","it":"Drop","pl":"Drop","pt":"Drop"},
       "Gold+": {"en":"Gold+","ru":"Золото+","uk":"Золото+","tr":"Altın+","es":"Oro+","fr":"Or+","it":"Oro+","pl":"Złoto+","pt":"Ouro+"},
       "Referral": {"en":"Referral","ru":"Реферал","uk":"Реферал","tr":"Referans","es":"Referido","fr":"Parrainage","it":"Referral","pl":"Polecenie","pt":"Indicação"},
@@ -12522,7 +12525,13 @@ function App() {
         [/\bTitel aktualisiert\b/gi,'Титул обновлён'],[/\bGenutzte Boosts\b/gi,'Использовано бустов'],[/\bGekaufte Upgrades\b/gi,'Куплено улучшений'],[/\bOffline-Abholungen\b/gi,'Получено офлайн-доходов'],
         [/\bNutze\s+(\d+)\s+Boosts\b/gi,'Используй $1 бустов'],[/\bHole\s+(\d+)-mal\s+Offline-Einkommen\s+ab\b/gi,'Забери офлайн-доход $1 раз'],
         [/\b(\d[\d .]*)\s*ONIX\s+oder\s+mehr\b/gi,'$1 ONIX или больше'],[/\bMiner-Upgrade\b/gi,'Улучшение майнера'],
-        [/\bgesamt\b/gi,'всего']],
+        [/\bgesamt\b/gi,'всего'],
+        [/\bpro\s+неделю\b/gi,'за неделю'],
+        [/\bpro\s+Tap\b/gi,'за тап'],
+        [/\bmax\.\s*Энергия\b/gi,'макс. энергии'],
+        [/\bmax\.\s*Energie\b/gi,'макс. энергии'],
+        [/\bTruhe:\s*guter Bonus\b/gi,'Сундук: хороший бонус'],
+        [/\bTurhe:\s*guter Bonus\b/gi,'Сундук: хороший бонус']],
       uk: [[/\bAufgaben\b/g,'Завдання'],[/\bBelohnung\b/g,'Нагорода'],[/\bFortschritt\b/g,'Прогрес'],[/\bErreicht\b/g,'Досягнуто'],[/\bAktuell\b/g,'Поточний'],[/\bAuswählen\b/g,'Обрати'],[/\bTäglich(?:e|er|en)?\b/g,'Щоденні'],[/\bWöchentlich(?:e|er|en)?\b/g,'Щотижневі'],[/\bEinkommen\b/g,'Дохід'],[/\bAuszahlung(?:en)?\b/g,'Виведення'],[/\bAnträge\b/g,'Заявки'],[/\bTransaktionen\b/g,'Транзакції'],[/\bGuthaben\b/g,'Баланс'],[/\bEnergie\b/g,'Енергія'],[/\bRänge\b/g,'Ранги'],[/\bTitel\b/g,'Титули'],[/\bWoche\b/g,'тиждень'],[/\bTage\b/g,'днів'],[/\bStunden?\b/g,'годин'],[/\bMinuten?\b/g,'хвилин'],[/\bSekunden?\b/g,'секунд'],[/\bVerdiene\b/g,'Зароби'],[/\bMiner\b/g,'Майнер']],
       tr: [[/\bAufgaben\b/g,'Görevler'],[/\bBelohnung\b/g,'Ödül'],[/\bFortschritt\b/g,'İlerleme'],[/\bErreicht\b/g,'Ulaşıldı'],[/\bAktuell\b/g,'Mevcut'],[/\bAuswählen\b/g,'Seç'],[/\bTäglich(?:e|er|en)?\b/g,'Günlük'],[/\bWöchentlich(?:e|er|en)?\b/g,'Haftalık'],[/\bEinkommen\b/g,'Gelir'],[/\bAuszahlung(?:en)?\b/g,'Çekim'],[/\bAnträge\b/g,'Talepler'],[/\bTransaktionen\b/g,'İşlemler'],[/\bGuthaben\b/g,'Bakiye'],[/\bEnergie\b/g,'Enerji'],[/\bRänge\b/g,'Rütbeler'],[/\bTitel\b/g,'Unvanlar']],
       es: [[/\bAufgaben\b/g,'Tareas'],[/\bBelohnung\b/g,'Recompensa'],[/\bFortschritt\b/g,'Progreso'],[/\bErreicht\b/g,'Alcanzado'],[/\bAktuell\b/g,'Actual'],[/\bAuswählen\b/g,'Elegir'],[/\bTäglich(?:e|er|en)?\b/g,'Diarias'],[/\bWöchentlich(?:e|er|en)?\b/g,'Semanales'],[/\bEinkommen\b/g,'Ingresos'],[/\bAuszahlung(?:en)?\b/g,'Retiro'],[/\bAnträge\b/g,'Solicitudes'],[/\bTransaktionen\b/g,'Transacciones'],[/\bGuthaben\b/g,'Saldo'],[/\bEnergie\b/g,'Energía'],[/\bRänge\b/g,'Rangos'],[/\bTitel\b/g,'Títulos']],
@@ -18907,7 +18916,7 @@ body:not(.onix-body-home-lock) {
             <div className="onix-ref-v5-energy-text">
               <Zap className="onix-ref-v5-energy-icon" />
               <span><strong>{Math.floor(energy).toLocaleString('ru-RU')}</strong> / {maxEnergy.toLocaleString('ru-RU')}</span>
-              <span className="onix-ref-v5-energy-status">{energy >= maxEnergy ? 'Energie voll' : 'Regeneration'}</span>
+              <span className="onix-ref-v5-energy-status">{uiText(energy >= maxEnergy ? 'Energie voll' : 'Regeneration')}</span>
             </div>
 
             <div className="onix-ref-v5-energy-track">
@@ -19311,7 +19320,7 @@ body:not(.onix-body-home-lock) {
             accent: 'blue',
             title: 'Max. Energie',
             level: energyLevel,
-            subtitle: `${maxEnergy.toLocaleString('ru-RU')} max. Energie`,
+            subtitle: uiText(`${maxEnergy.toLocaleString('ru-RU')} max. Energie`),
             price: nextEnergyCost,
             priceType: 'onix',
             disabled: balance < nextEnergyCost,
@@ -19367,7 +19376,7 @@ body:not(.onix-body-home-lock) {
             accent: 'pink',
             title: 'ONIX-Truhe',
             level: null,
-            subtitle: lastChestReward ? `Letzter Preis: ${lastChestReward}` : 'Zufälliger Preis und geheime Daily-Mission',
+            subtitle: uiText(lastChestReward ? `Letzter Preis: ${lastChestReward}` : 'Zufälliger Preis und geheime Daily-Mission'),
             price: Number(economyConfig.chestCost || 50000),
             priceType: 'onix',
             disabled: balance < Number(economyConfig.chestCost || 50000),
