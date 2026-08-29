@@ -341,67 +341,67 @@ const DEFAULT_MINER_INCOME = 1; // legacy/display field
 const DEFAULT_MINER_RATE_PER_MINUTE = 20;
 const TEMP_TAP_BOOST_COST = 15000;
 const TEMP_MINING_BOOST_COST = 20000;
-const TEMP_ENERGY_REFILL_COST = 25000;
+const TEMP_ENERGY_REFILL_COST = 18000;
 
 const PERKS = {
   offline_pro: {
     id: 'offline_pro',
     title: 'Offline Pro',
-    baseCost: 100000,
+    baseCost: 60000,
     maxLevel: 3,
   },
   energy_saver: {
     id: 'energy_saver',
     title: 'Energy Saver',
-    baseCost: 150000,
+    baseCost: 75000,
     maxLevel: 3,
   },
   daily_plus: {
     id: 'daily_plus',
     title: 'Daily Plus',
-    baseCost: 200000,
+    baseCost: 75000,
     maxLevel: 3,
   },
   miner_plus: {
     id: 'miner_plus',
     title: 'Miner Plus',
-    baseCost: 250000,
+    baseCost: 90000,
     maxLevel: 3,
   },
   boost_master: {
     id: 'boost_master',
     title: 'Boost Master',
-    baseCost: 180000,
+    baseCost: 75000,
     maxLevel: 3,
   },
   streak_shield: {
     id: 'streak_shield',
     title: 'Streak Shield',
-    baseCost: 220000,
+    baseCost: 100000,
     maxLevel: 1,
   },
   lucky_miner: {
     id: 'lucky_miner',
     title: 'Lucky Miner',
-    baseCost: 300000,
+    baseCost: 100000,
     maxLevel: 3,
   },
   referral_pro: {
     id: 'referral_pro',
     title: 'Referral Pro',
-    baseCost: 300000,
+    baseCost: 100000,
     maxLevel: 3,
   },
   energy_max_pro: {
     id: 'energy_max_pro',
     title: 'Energy Max Pro',
-    baseCost: 175000,
+    baseCost: 75000,
     maxLevel: 3,
   },
   engineer: {
     id: 'engineer',
     title: 'Engineer',
-    baseCost: 250000,
+    baseCost: 90000,
     maxLevel: 3,
   },
 };
@@ -1001,16 +1001,16 @@ function getEconomyConfig() {
       recharge: getNumberEnv('UPGRADE_RECHARGE_BASE_COST', 650),
     },
     perkBaseCosts: {
-      offline_pro: getNumberEnv('PERK_OFFLINE_PRO_BASE_COST', 100000),
-      energy_saver: getNumberEnv('PERK_ENERGY_SAVER_BASE_COST', 150000),
-      daily_plus: getNumberEnv('PERK_DAILY_PLUS_BASE_COST', 200000),
-      miner_plus: getNumberEnv('PERK_MINER_PLUS_BASE_COST', 250000),
-      boost_master: getNumberEnv('PERK_BOOST_MASTER_BASE_COST', 180000),
-      streak_shield: getNumberEnv('PERK_STREAK_SHIELD_BASE_COST', 220000),
-      lucky_miner: getNumberEnv('PERK_LUCKY_MINER_BASE_COST', 300000),
-      referral_pro: getNumberEnv('PERK_REFERRAL_PRO_BASE_COST', 300000),
-      energy_max_pro: getNumberEnv('PERK_ENERGY_MAX_PRO_BASE_COST', 175000),
-      engineer: getNumberEnv('PERK_ENGINEER_BASE_COST', 250000),
+      offline_pro: getNumberEnv('PERK_OFFLINE_PRO_BASE_COST', 60000),
+      energy_saver: getNumberEnv('PERK_ENERGY_SAVER_BASE_COST', 75000),
+      daily_plus: getNumberEnv('PERK_DAILY_PLUS_BASE_COST', 75000),
+      miner_plus: getNumberEnv('PERK_MINER_PLUS_BASE_COST', 90000),
+      boost_master: getNumberEnv('PERK_BOOST_MASTER_BASE_COST', 75000),
+      streak_shield: getNumberEnv('PERK_STREAK_SHIELD_BASE_COST', 100000),
+      lucky_miner: getNumberEnv('PERK_LUCKY_MINER_BASE_COST', 100000),
+      referral_pro: getNumberEnv('PERK_REFERRAL_PRO_BASE_COST', 100000),
+      energy_max_pro: getNumberEnv('PERK_ENERGY_MAX_PRO_BASE_COST', 75000),
+      engineer: getNumberEnv('PERK_ENGINEER_BASE_COST', 90000),
     },
   };
 }
@@ -1428,19 +1428,19 @@ function getReferralLimitPayload(user, now = Date.now()) {
 }
 
 function getTapUpgradeCost(tapLevel) {
-  return Math.round(1000 * Math.pow(1.35, Number(tapLevel || 1) - 1));
+  return Math.round(1000 * Math.pow(1.20, Number(tapLevel || 1) - 1));
 }
 
 function getMinerUpgradeCost(minerLevel) {
-  return Math.round(2500 * Math.pow(1.38, Number(minerLevel || 1) - 1));
+  return Math.round(2500 * Math.pow(1.20, Number(minerLevel || 1) - 1));
 }
 
 function getEnergyUpgradeCost(energyLevel) {
-  return Math.round(1500 * Math.pow(1.25, Number(energyLevel || 1) - 1));
+  return Math.round(1500 * Math.pow(1.15, Number(energyLevel || 1) - 1));
 }
 
 function getRechargeUpgradeCost(rechargeLevel) {
-  return Math.round(1800 * Math.pow(1.28, Number(rechargeLevel || 1) - 1));
+  return Math.round(1800 * Math.pow(1.15, Number(rechargeLevel || 1) - 1));
 }
 
 function getDailyReward(level) {
@@ -4989,16 +4989,16 @@ router.post('/open-chest', async (req, res) => {
     let rewardTitle = '';
 
     if (roll < 0.45) {
-      rewardAmount = 25000;
+      rewardAmount = 15000;
       rewardTitle = 'Truhe: kleiner Bonus';
     } else if (roll < 0.75) {
-      rewardAmount = 60000;
+      rewardAmount = 40000;
       rewardTitle = 'Truhe: guter Bonus';
     } else if (roll < 0.93) {
-      rewardAmount = 125000;
+      rewardAmount = 75000;
       rewardTitle = 'Truhe: seltener Bonus';
     } else {
-      rewardAmount = 300000;
+      rewardAmount = 150000;
       rewardTitle = 'Truhe: Jackpot';
     }
 
