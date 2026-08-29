@@ -20945,7 +20945,6 @@ body:not(.onix-body-home-lock) {
                     ? '💸 Auszahlungsanträge'
                     : '🧾 Transaktionsverlauf'}
                 </strong>
-                <span>ONIX</span>
               </div>
 
               {walletPanel === 'chart' && (
