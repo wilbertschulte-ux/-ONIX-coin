@@ -12439,6 +12439,7 @@ function App() {
     };
   }, [activeTab]);
   const [withdrawalCheck, setWithdrawalCheck] = useState('');
+  const [withdrawalAmountInput, setWithdrawalAmountInput] = useState('');
   const [shareCardVisible, setShareCardVisible] = useState(false);
   const [achievements, setAchievements] = useState<Achievement[]>(ACHIEVEMENTS);
   const [channelJoined, setChannelJoined] = useState(false);
@@ -17488,8 +17489,19 @@ body:not(.onix-body-home-lock) {
 
   const requestWithdrawal = async () => {
     const telegramId = getTelegramId();
+    const withdrawAmount = Math.floor(Number(withdrawalAmountInput.replace(/\s/g, '').replace(',', '.')));
 
-    if (!canWithdraw || isWithdrawalLoading) return;
+    if (isWithdrawalLoading) return;
+
+    if (!Number.isFinite(withdrawAmount) || withdrawAmount < minWithdrawOnix) {
+      showToast(`Mindestauszahlung ${formatOnix(minWithdrawOnix)} ONIX`, 'error');
+      return;
+    }
+
+    if (withdrawAmount > balance) {
+      showToast('Nicht genug ONIX für Auszahlung', 'error');
+      return;
+    }
 
     if (withdrawalCheck.trim().toUpperCase() !== 'ONIX') {
       showToast('Gib ONIX in die Anti-Bot-Prüfung ein', 'error');
@@ -17497,7 +17509,7 @@ body:not(.onix-body-home-lock) {
     }
 
     const confirmed = window.confirm(
-      `Auszahlungsantrag erstellen ${formatOnix(minWithdrawOnix)} ONIX?`
+      `Auszahlungsantrag über ${formatOnix(withdrawAmount)} ONIX (≈ ${(withdrawAmount * onixEurRate).toFixed(2)} €) erstellen?`
     );
 
     if (!confirmed) return;
@@ -17507,7 +17519,7 @@ body:not(.onix-body-home-lock) {
 
       const response = await axios.post(`${API_URL}/request-withdrawal`, {
         telegramId,
-        amount: minWithdrawOnix,
+        amount: withdrawAmount,
         withdrawalCheck,
       });
 
@@ -17517,6 +17529,7 @@ body:not(.onix-body-home-lock) {
       setTransactions(user.transactions || []);
       setWithdrawalRequests(user.withdrawalRequests || []);
       setWithdrawalCheck('');
+      setWithdrawalAmountInput('');
       showToast('✅ Auszahlungsantrag erstellt', 'success');
       refreshAfterAction();
     } catch (error: any) {
@@ -20999,6 +21012,38 @@ body:not(.onix-body-home-lock) {
                     </div>
 
                     <div className="onix-wallet-mini-card mb-3 p-3">
+                      <p className="text-sm font-bold text-white">💎 Auszahlungsbetrag</p>
+                      <p className="mt-1 text-xs text-gray-500">
+                        Mindestens {formatOnix(minWithdrawOnix)} ONIX · Verfügbar {formatOnix(balance)} ONIX
+                      </p>
+                      <input
+                        type="number"
+                        inputMode="numeric"
+                        min={minWithdrawOnix}
+                        max={Math.floor(balance)}
+                        step="1"
+                        value={withdrawalAmountInput}
+                        onChange={(event) => setWithdrawalAmountInput(event.target.value)}
+                        placeholder={`${formatOnix(minWithdrawOnix)} ONIX oder mehr`}
+                        className="mt-3 w-full px-4 py-3 text-sm outline-none"
+                      />
+                      <div className="mt-3 flex items-center justify-between gap-3 text-sm">
+                        <span className="text-gray-400">Auszahlung ungefähr</span>
+                        <strong className="text-yellow-400">
+                          ≈ {(Math.max(0, Number(withdrawalAmountInput) || 0) * onixEurRate).toFixed(2)} €
+                        </strong>
+                      </div>
+                      <button
+                        type="button"
+                        onClick={() => setWithdrawalAmountInput(String(Math.floor(balance)))}
+                        disabled={balance < minWithdrawOnix}
+                        className="mt-3 text-xs font-bold text-yellow-400 disabled:opacity-40"
+                      >
+                        Maximalbetrag verwenden
+                      </button>
+                    </div>
+
+                    <div className="onix-wallet-mini-card mb-3 p-3">
                       <p className="text-sm font-bold text-white">🛡 Anti-Bot-Prüfung</p>
                       <p className="mt-1 text-xs text-gray-500">
                         Gib vor dem Antrag ONIX ein.
@@ -21014,7 +21059,13 @@ body:not(.onix-body-home-lock) {
 
                     <button
                       onClick={requestWithdrawal}
-                      disabled={!canWithdraw || isWithdrawalLoading}
+                      disabled={
+                        !canWithdraw ||
+                        isWithdrawalLoading ||
+                        !Number.isFinite(Number(withdrawalAmountInput)) ||
+                        Number(withdrawalAmountInput) < minWithdrawOnix ||
+                        Number(withdrawalAmountInput) > balance
+                      }
                       className="onix-wallet-primary-button mb-4 w-full py-3 text-base active:scale-95 disabled:cursor-not-allowed"
                     >
                       {isWithdrawalLoading
