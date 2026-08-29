@@ -12322,7 +12322,13 @@ function App() {
   });
   const [username, setUsername] = useState('Spieler');
   const [appLanguage, setAppLanguage] = useState<AppLanguage>(() => {
-    try { return localStorage.getItem('onix_app_language') === 'ru' ? 'ru' : 'de'; } catch { return 'de'; }
+    try {
+      const saved = localStorage.getItem('onix_app_language');
+      const supported: AppLanguage[] = ['de', 'en', 'ru', 'uk', 'tr', 'es', 'fr', 'it', 'pl', 'pt'];
+      return supported.includes(saved as AppLanguage) ? (saved as AppLanguage) : 'de';
+    } catch {
+      return 'de';
+    }
   });
   const tr = ONIX_I18N[appLanguage];
 
@@ -12416,7 +12422,6 @@ function App() {
     };
     const exact = map[source]?.[appLanguage];
     if (exact) return exact;
-    if (appLanguage === 'de') return source;
     const phrases: Partial<Record<AppLanguage, Array<[string,string]>>> = {
       en: [['Mache ','Make '],['Aktualisierung in ','Refresh in '],['Neue Missionen erscheinen in ','New missions appear in '],['Verbleibend ','Remaining '],['Offene Anträge:','Open requests:'],['Mindestens ','Minimum '],['Verfügbar ','Available '],['Maximalbetrag verwenden','Use maximum amount'],['ONIX eingeben','Enter ONIX'],['auf 100 % auffüllen','refill to 100%'],['Energieverbrauch','energy consumption'],['Energiebonus','energy bonus'],['Offline-Einkommen','offline income'],['auf Daily Reward','on daily reward'],['Boost-Zeit','boost duration'],['auf Upgrade-Kosten','on upgrade costs'],['auf Miner-Ertrag','on miner income'],['auf Empfehlungsbonus','on referral bonus'],['Daily-Streak geschützt','daily streak protected'],['Schützt den Daily-Streak','protects the daily streak'],['Letzter Preis:','Last prize:'],['Zufälliger Preis und geheime Daily-Mission','Random prize and secret daily mission']],
       ru: [['Mache ','Сделай '],['Aktualisierung in ','Обновление через '],['Neue Missionen erscheinen in ','Новые миссии через '],['Verbleibend ','Осталось '],['Offene Anträge:','Открытые заявки:'],['Mindestens ','Минимум '],['Verfügbar ','Доступно '],['Maximalbetrag verwenden','Использовать максимум'],['ONIX eingeben','Введите ONIX'],['auf 100 % auffüllen','восстановить до 100%'],['Energieverbrauch','расход энергии'],['Energiebonus','бонус энергии'],['Offline-Einkommen','офлайн-доход'],['auf Daily Reward','к ежедневной награде'],['Boost-Zeit','время буста'],['auf Upgrade-Kosten','к стоимости улучшений'],['auf Miner-Ertrag','к доходу майнера'],['auf Empfehlungsbonus','к реферальному бонусу'],['Daily-Streak geschützt','серия дней защищена'],['Schützt den Daily-Streak','защищает серию дней'],['Letzter Preis:','Последний приз:'],['Zufälliger Preis und geheime Daily-Mission','Случайный приз и секретная ежедневная миссия']],
