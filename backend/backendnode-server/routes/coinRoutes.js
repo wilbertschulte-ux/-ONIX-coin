@@ -79,6 +79,23 @@ function validateTelegramInitData(initData, botToken) {
   };
 }
 
+
+function requireTelegramMiniAppUser(req, res, next) {
+  const initData = req.get('x-telegram-init-data') || '';
+  const result = validateTelegramInitData(initData, process.env.BOT_TOKEN);
+
+  if (!result.ok || !result.user?.id) {
+    return res.status(401).json({
+      message: 'Telegram authentication required',
+      error: result.ok ? 'Telegram user is missing' : result.error,
+    });
+  }
+
+  req.telegramAuth = result;
+  req.telegramUserId = String(result.user.id);
+  return next();
+}
+
 router.post('/telegram-auth-test', express.json(), (req, res) => {
   const initData =
     req.get('x-telegram-init-data') ||
@@ -5750,13 +5767,14 @@ router.post('/activate-boost', async (req, res) => {
 });
 
 // TAP COIN — BACKEND ANTI-CHEAT
-router.post('/tap', async (req, res) => {
+router.post('/tap', requireTelegramMiniAppUser, async (req, res) => {
   try {
-    const { telegramId } = req.body;
+    const requestedTelegramId = String(req.body?.telegramId || '');
+    const telegramId = req.telegramUserId;
 
-    if (!telegramId) {
-      return res.status(400).json({
-        message: 'Telegram ID is required',
+    if (requestedTelegramId && requestedTelegramId !== telegramId) {
+      return res.status(403).json({
+        message: 'Telegram ID does not match authenticated user',
       });
     }
 
