@@ -1953,12 +1953,15 @@ router.post('/admin-award-weekly-prizes', async (req, res) => {
 
 
 // SEASON PRIZE POPUP FOR USER
-router.post('/season-prize-popup', async (req, res) => {
+router.post('/season-prize-popup', requireTelegramMiniAppUser, async (req, res) => {
   try {
-    const { telegramId } = req.body;
+    const requestedTelegramId = String(req.body?.telegramId || '');
+    const telegramId = req.telegramUserId;
 
-    if (!telegramId) {
-      return res.status(400).json({ message: 'Telegram ID is required' });
+    if (requestedTelegramId && requestedTelegramId !== telegramId) {
+      return res.status(403).json({
+        message: 'Telegram ID does not match authenticated user',
+      });
     }
 
     const user = await User.findOne({ telegramId });
@@ -3596,12 +3599,17 @@ router.get('/:telegramId', async (req, res) => {
 });
 
 // APP LANGUAGE
-router.post('/language', async (req, res) => {
+router.post('/language', requireTelegramMiniAppUser, async (req, res) => {
   try {
-    const telegramId = String(req.body?.telegramId || '');
+    const requestedTelegramId = String(req.body?.telegramId || '');
+    const telegramId = req.telegramUserId;
     const language = String(req.body?.language || '').toLowerCase();
 
-    if (!telegramId) return res.status(400).json({ message: 'Telegram ID is required' });
+    if (requestedTelegramId && requestedTelegramId !== telegramId) {
+      return res.status(403).json({
+        message: 'Telegram ID does not match authenticated user',
+      });
+    }
     if (!['de', 'en', 'ru', 'uk', 'tr', 'es', 'fr', 'it', 'pl', 'pt'].includes(language)) return res.status(400).json({ message: 'Unsupported language' });
 
     const user = await User.findOne({ telegramId });
@@ -3618,7 +3626,7 @@ router.post('/language', async (req, res) => {
 });
 
 // CREATE USER
-router.post('/create', async (req, res) => {
+router.post('/create', requireTelegramMiniAppUser, async (req, res) => {
   try {
     const {
       telegramId: bodyTelegramId,
@@ -3636,7 +3644,12 @@ router.post('/create', async (req, res) => {
       : { ok: false, user: null };
     const telegramUser = authResult.ok && authResult.user ? authResult.user : null;
 
-    const telegramId = String(telegramUser?.id ?? bodyTelegramId ?? '');
+    const telegramId = req.telegramUserId;
+    if (bodyTelegramId && String(bodyTelegramId) !== telegramId) {
+      return res.status(403).json({
+        message: 'Telegram ID does not match authenticated user',
+      });
+    }
     const firstName = String(telegramUser?.first_name || '').trim();
     const lastName = String(telegramUser?.last_name || '').trim();
     const verifiedDisplayName = [firstName, lastName].filter(Boolean).join(' ').trim();
@@ -3828,13 +3841,15 @@ router.post('/create', async (req, res) => {
 // This route is kept only for compatibility.
 // Important game economy fields are no longer accepted from frontend.
 // Balance, totalEarned, levels, upgrades, boosts and miners are changed only by backend routes.
-router.post('/save', async (req, res) => {
+router.post('/save', requireTelegramMiniAppUser, async (req, res) => {
   try {
-    const { telegramId, data } = req.body;
+    const { data } = req.body;
+    const requestedTelegramId = String(req.body?.telegramId || '');
+    const telegramId = req.telegramUserId;
 
-    if (!telegramId) {
-      return res.status(400).json({
-        message: 'Telegram ID is required',
+    if (requestedTelegramId && requestedTelegramId !== telegramId) {
+      return res.status(403).json({
+        message: 'Telegram ID does not match authenticated user',
       });
     }
 
@@ -4358,12 +4373,16 @@ router.get('/teams', async (req, res) => {
 
 
 // SET TEAM NAME
-router.post('/set-team', async (req, res) => {
+router.post('/set-team', requireTelegramMiniAppUser, async (req, res) => {
   try {
-    const { telegramId, teamName } = req.body;
+    const { teamName } = req.body;
+    const requestedTelegramId = String(req.body?.telegramId || '');
+    const telegramId = req.telegramUserId;
 
-    if (!telegramId) {
-      return res.status(400).json({ message: 'Telegram ID is required' });
+    if (requestedTelegramId && requestedTelegramId !== telegramId) {
+      return res.status(403).json({
+        message: 'Telegram ID does not match authenticated user',
+      });
     }
 
     const cleanTeamName = String(teamName || '').trim().slice(0, 24);
@@ -4408,12 +4427,16 @@ router.post('/set-team', async (req, res) => {
 
 
 // CREATE TEAM
-router.post('/create-team', async (req, res) => {
+router.post('/create-team', requireTelegramMiniAppUser, async (req, res) => {
   try {
-    const { telegramId, teamName } = req.body;
+    const { teamName } = req.body;
+    const requestedTelegramId = String(req.body?.telegramId || '');
+    const telegramId = req.telegramUserId;
 
-    if (!telegramId) {
-      return res.status(400).json({ message: 'Telegram ID is required' });
+    if (requestedTelegramId && requestedTelegramId !== telegramId) {
+      return res.status(403).json({
+        message: 'Telegram ID does not match authenticated user',
+      });
     }
 
     const cleanTeamName = normalizeTeamNameValue(teamName);
@@ -4476,12 +4499,16 @@ router.post('/create-team', async (req, res) => {
 
 
 // JOIN TEAM BY CODE
-router.post('/join-team', async (req, res) => {
+router.post('/join-team', requireTelegramMiniAppUser, async (req, res) => {
   try {
-    const { telegramId, teamCode, teamName } = req.body;
+    const { teamCode, teamName } = req.body;
+    const requestedTelegramId = String(req.body?.telegramId || '');
+    const telegramId = req.telegramUserId;
 
-    if (!telegramId) {
-      return res.status(400).json({ message: 'Telegram ID is required' });
+    if (requestedTelegramId && requestedTelegramId !== telegramId) {
+      return res.status(403).json({
+        message: 'Telegram ID does not match authenticated user',
+      });
     }
 
     const cleanTeamName = String(teamName || decodeTeamCode(teamCode) || '')
@@ -4531,12 +4558,15 @@ router.post('/join-team', async (req, res) => {
 
 
 // LEAVE TEAM
-router.post('/leave-team', async (req, res) => {
+router.post('/leave-team', requireTelegramMiniAppUser, async (req, res) => {
   try {
-    const { telegramId } = req.body;
+    const requestedTelegramId = String(req.body?.telegramId || '');
+    const telegramId = req.telegramUserId;
 
-    if (!telegramId) {
-      return res.status(400).json({ message: 'Telegram ID is required' });
+    if (requestedTelegramId && requestedTelegramId !== telegramId) {
+      return res.status(403).json({
+        message: 'Telegram ID does not match authenticated user',
+      });
     }
 
     const user = await User.findOne({ telegramId });
@@ -4607,12 +4637,16 @@ router.get('/team-dashboard/:telegramId', async (req, res) => {
 });
 
 // CLAIM TEAM MISSION
-router.post('/claim-team-mission', async (req, res) => {
+router.post('/claim-team-mission', requireTelegramMiniAppUser, async (req, res) => {
   try {
-    const { telegramId, missionId } = req.body;
+    const { missionId } = req.body;
+    const requestedTelegramId = String(req.body?.telegramId || '');
+    const telegramId = req.telegramUserId;
 
-    if (!telegramId) {
-      return res.status(400).json({ message: 'Telegram ID is required' });
+    if (requestedTelegramId && requestedTelegramId !== telegramId) {
+      return res.status(403).json({
+        message: 'Telegram ID does not match authenticated user',
+      });
     }
 
     const user = await User.findOne({ telegramId });
@@ -4681,12 +4715,15 @@ router.post('/claim-team-mission', async (req, res) => {
 });
 
 // CLAIM TEAM WEEKLY PRIZE
-router.post('/claim-team-prize', async (req, res) => {
+router.post('/claim-team-prize', requireTelegramMiniAppUser, async (req, res) => {
   try {
-    const { telegramId } = req.body;
+    const requestedTelegramId = String(req.body?.telegramId || '');
+    const telegramId = req.telegramUserId;
 
-    if (!telegramId) {
-      return res.status(400).json({ message: 'Telegram ID is required' });
+    if (requestedTelegramId && requestedTelegramId !== telegramId) {
+      return res.status(403).json({
+        message: 'Telegram ID does not match authenticated user',
+      });
     }
 
     const user = await User.findOne({ telegramId });
@@ -4797,12 +4834,16 @@ router.get('/friends-leaderboard/:telegramId', async (req, res) => {
 });
 
 // SELECT PROFILE TITLE
-router.post('/select-title', async (req, res) => {
+router.post('/select-title', requireTelegramMiniAppUser, async (req, res) => {
   try {
-    const { telegramId, title } = req.body;
+    const { title } = req.body;
+    const requestedTelegramId = String(req.body?.telegramId || '');
+    const telegramId = req.telegramUserId;
 
-    if (!telegramId) {
-      return res.status(400).json({ message: 'Telegram ID is required' });
+    if (requestedTelegramId && requestedTelegramId !== telegramId) {
+      return res.status(403).json({
+        message: 'Telegram ID does not match authenticated user',
+      });
     }
 
     const allowedTitles = [
@@ -5631,12 +5672,15 @@ router.post('/mine-tick', requireTelegramMiniAppUser, async (req, res) => {
 
 
 // REFILL ENERGY — fills energy to max for a fixed ONIX price
-router.post('/refill-energy', async (req, res) => {
+router.post('/refill-energy', requireTelegramMiniAppUser, async (req, res) => {
   try {
-    const { telegramId } = req.body;
+    const requestedTelegramId = String(req.body?.telegramId || '');
+    const telegramId = req.telegramUserId;
 
-    if (!telegramId) {
-      return res.status(400).json({ message: 'Telegram ID is required' });
+    if (requestedTelegramId && requestedTelegramId !== telegramId) {
+      return res.status(403).json({
+        message: 'Telegram ID does not match authenticated user',
+      });
     }
 
     const user = await User.findOne({ telegramId });
