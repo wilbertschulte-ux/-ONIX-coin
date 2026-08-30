@@ -4848,12 +4848,16 @@ router.post('/select-title', async (req, res) => {
 });
 
 // REQUEST WITHDRAWAL — creates a pending withdrawal request
-router.post('/request-withdrawal', async (req, res) => {
+router.post('/request-withdrawal', requireTelegramMiniAppUser, async (req, res) => {
   try {
-    const { telegramId, amount, withdrawalCheck } = req.body;
+    const { amount, withdrawalCheck } = req.body;
+    const requestedTelegramId = String(req.body?.telegramId || '');
+    const telegramId = req.telegramUserId;
 
-    if (!telegramId) {
-      return res.status(400).json({ message: 'Telegram ID is required' });
+    if (requestedTelegramId && requestedTelegramId !== telegramId) {
+      return res.status(403).json({
+        message: 'Telegram ID does not match authenticated user',
+      });
     }
 
     const economyConfig = getEconomyConfig();
@@ -5888,9 +5892,18 @@ router.post('/tap', requireTelegramMiniAppUser, async (req, res) => {
 });
 
 // ---------------- ONIX Drop mini-game ----------------
-router.get('/onix-drop/status/:telegramId', async (req, res) => {
+router.get('/onix-drop/status/:telegramId', requireTelegramMiniAppUser, async (req, res) => {
   try {
-    const user = await User.findOne({ telegramId: String(req.params.telegramId || '') });
+    const requestedTelegramId = String(req.params.telegramId || '');
+    const telegramId = req.telegramUserId;
+
+    if (requestedTelegramId && requestedTelegramId !== telegramId) {
+      return res.status(403).json({
+        message: 'Telegram ID does not match authenticated user',
+      });
+    }
+
+    const user = await User.findOne({ telegramId });
     if (!user) return res.status(404).json({ error: 'User not found' });
     prepareOnixDropDay(user);
     await user.save();
@@ -5900,9 +5913,17 @@ router.get('/onix-drop/status/:telegramId', async (req, res) => {
   }
 });
 
-router.post('/onix-drop/start', async (req, res) => {
+router.post('/onix-drop/start', requireTelegramMiniAppUser, async (req, res) => {
   try {
-    const telegramId = String(req.body?.telegramId || '');
+    const requestedTelegramId = String(req.body?.telegramId || '');
+    const telegramId = req.telegramUserId;
+
+    if (requestedTelegramId && requestedTelegramId !== telegramId) {
+      return res.status(403).json({
+        message: 'Telegram ID does not match authenticated user',
+      });
+    }
+
     const user = await User.findOne({ telegramId });
     if (!user) return res.status(404).json({ error: 'User not found' });
 
@@ -5931,9 +5952,17 @@ router.post('/onix-drop/start', async (req, res) => {
   }
 });
 
-router.post('/onix-drop/finish', async (req, res) => {
+router.post('/onix-drop/finish', requireTelegramMiniAppUser, async (req, res) => {
   try {
-    const telegramId = String(req.body?.telegramId || '');
+    const requestedTelegramId = String(req.body?.telegramId || '');
+    const telegramId = req.telegramUserId;
+
+    if (requestedTelegramId && requestedTelegramId !== telegramId) {
+      return res.status(403).json({
+        message: 'Telegram ID does not match authenticated user',
+      });
+    }
+
     const sessionId = String(req.body?.sessionId || '');
     const submittedScore = Math.max(0, Math.floor(Number(req.body?.score || 0)));
     const user = await User.findOne({ telegramId });
