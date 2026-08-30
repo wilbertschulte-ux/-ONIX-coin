@@ -8,6 +8,11 @@ const router = express.Router();
 const API_RATE_LIMITS = new Map();
 const ECONOMY_OVERRIDES = {};
 const APP_VERSION = process.env.APP_VERSION || '1.0.0';
+const TELEGRAM_INIT_DATA_MAX_AGE_SECONDS = Math.max(
+  300,
+  Number(process.env.TELEGRAM_INIT_DATA_MAX_AGE_SECONDS || 24 * 60 * 60)
+);
+const TELEGRAM_INIT_DATA_MAX_FUTURE_SKEW_SECONDS = 60;
 
 // Diagnostic-only Telegram Mini App authentication check.
 // This endpoint does not create/update users and does not affect gameplay.
@@ -57,7 +62,25 @@ function validateTelegramInitData(initData, botToken) {
   const authDateRaw = params.get('auth_date');
   const authDate = Number(authDateRaw || 0);
   const nowSeconds = Math.floor(Date.now() / 1000);
-  const ageSeconds = authDate > 0 ? nowSeconds - authDate : null;
+
+  if (!Number.isFinite(authDate) || authDate <= 0) {
+    return { ok: false, error: 'Telegram auth_date is missing or invalid' };
+  }
+
+  const ageSeconds = nowSeconds - authDate;
+
+  if (ageSeconds < -TELEGRAM_INIT_DATA_MAX_FUTURE_SKEW_SECONDS) {
+    return { ok: false, error: 'Telegram initData auth_date is in the future' };
+  }
+
+  if (ageSeconds > TELEGRAM_INIT_DATA_MAX_AGE_SECONDS) {
+    return {
+      ok: false,
+      error: 'Telegram initData has expired',
+      authDate,
+      ageSeconds,
+    };
+  }
 
   let user = null;
   const rawUser = params.get('user');
