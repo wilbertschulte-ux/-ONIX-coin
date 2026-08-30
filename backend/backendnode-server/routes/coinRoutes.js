@@ -333,17 +333,20 @@ function getRouteRateLimit(pathname) {
 
 router.use((req, res, next) => {
   try {
-    if (req.path.startsWith('/admin') || req.path.startsWith('/cron')) {
-      return next();
-    }
+    const isAdminOrCronPath =
+      req.path.startsWith('/admin') || req.path.startsWith('/cron');
 
     const identity = getSignedRateLimitIdentity(req);
     const routeKey = `${identity}:${req.method}:${req.path}`;
     const globalKey = `${identity}:global`;
     const now = Date.now();
 
-    const routeLimit = getRouteRateLimit(req.path);
-    const globalLimit = { maxRequests: 1200, windowMs: 60 * 1000 };
+    const routeLimit = isAdminOrCronPath
+      ? { maxRequests: 120, windowMs: 60 * 1000 }
+      : getRouteRateLimit(req.path);
+    const globalLimit = isAdminOrCronPath
+      ? { maxRequests: 240, windowMs: 60 * 1000 }
+      : { maxRequests: 1200, windowMs: 60 * 1000 };
 
     const updateBucket = (bucketKey, maxRequests, windowMs) => {
       const item = API_RATE_LIMITS.get(bucketKey) || {
@@ -1777,13 +1780,55 @@ function normalizeUserFields(user) {
 
 
 
-function isAdminRequest(secret, telegramId) {
-  const hasSecret = process.env.ADMIN_SECRET && secret === process.env.ADMIN_SECRET;
-  const hasAdminTelegramId =
-    process.env.ADMIN_TELEGRAM_ID &&
-    String(telegramId || '') === String(process.env.ADMIN_TELEGRAM_ID);
+function safeSecretEquals(providedValue, expectedValue) {
+  const provided = String(providedValue || '');
+  const expected = String(expectedValue || '');
 
-  return Boolean(hasSecret || hasAdminTelegramId);
+  if (!provided || !expected) return false;
+
+  const providedBuffer = Buffer.from(provided, 'utf8');
+  const expectedBuffer = Buffer.from(expected, 'utf8');
+
+  if (providedBuffer.length !== expectedBuffer.length) return false;
+
+  return crypto.timingSafeEqual(providedBuffer, expectedBuffer);
+}
+
+function isAdminRequest(req, secret, telegramId) {
+  // Server-side ADMIN_SECRET remains available for emergency/manual admin calls.
+  if (process.env.ADMIN_SECRET && safeSecretEquals(secret, process.env.ADMIN_SECRET)) {
+    return true;
+  }
+
+  if (!process.env.ADMIN_TELEGRAM_ID) return false;
+
+  // A raw telegramId from query/body is never sufficient for admin access.
+  // Admin Telegram identity must come from cryptographically signed Mini App initData.
+  const initData = req.get('x-telegram-init-data') || '';
+  const auth = validateTelegramInitData(initData, process.env.BOT_TOKEN);
+
+  if (!auth.ok || !auth.user?.id) return false;
+
+  const signedTelegramId = String(auth.user.id);
+  const configuredAdminId = String(process.env.ADMIN_TELEGRAM_ID);
+
+  if (signedTelegramId !== configuredAdminId) return false;
+
+  // If the frontend also sends telegramId, it must match the signed identity.
+  if (telegramId && String(telegramId) !== signedTelegramId) return false;
+
+  return true;
+}
+
+function isCronRequest(req) {
+  const headerSecret = req.get('x-cron-secret') || '';
+  const querySecret = req.query.secret ? String(req.query.secret) : '';
+  const providedSecret = headerSecret || querySecret;
+
+  return Boolean(
+    process.env.CRON_SECRET &&
+    safeSecretEquals(providedSecret, process.env.CRON_SECRET)
+  );
 }
 
 
@@ -1792,9 +1837,7 @@ function isAdminRequest(secret, telegramId) {
 
 router.get('/cron-award-weekly-prizes', async (req, res) => {
   try {
-    const secret = req.query.secret ? String(req.query.secret) : '';
-
-    if (!process.env.CRON_SECRET || secret !== process.env.CRON_SECRET) {
+    if (!isCronRequest(req)) {
       return res.status(403).json({ message: 'Forbidden' });
     }
 
@@ -1882,7 +1925,7 @@ router.get('/admin-weekly-prize-preview', async (req, res) => {
     const secret = req.query.secret ? String(req.query.secret) : '';
     const telegramId = req.query.telegramId ? String(req.query.telegramId) : '';
 
-    if (!isAdminRequest(secret, telegramId)) {
+    if (!isAdminRequest(req, secret, telegramId)) {
       return res.status(403).json({
         message: 'Forbidden',
       });
@@ -1928,7 +1971,7 @@ router.post('/admin-award-weekly-prizes', async (req, res) => {
   try {
     const { secret, confirm, week, telegramId } = req.body;
 
-    if (!isAdminRequest(secret, telegramId)) {
+    if (!isAdminRequest(req, secret, telegramId)) {
       return res.status(403).json({
         message: 'Forbidden',
       });
@@ -2119,7 +2162,7 @@ router.get('/admin-search-users', async (req, res) => {
     const requestedLimit = Number.parseInt(String(req.query.limit || '50'), 10) || 50;
     const limit = Math.min(Math.max(requestedLimit, 1), 100);
 
-    if (!isAdminRequest(secret, telegramId)) {
+    if (!isAdminRequest(req, secret, telegramId)) {
       return res.status(403).json({ message: 'Forbidden' });
     }
 
@@ -2199,7 +2242,7 @@ router.get('/admin-user-profile/:targetTelegramId', async (req, res) => {
     const telegramId = req.query.telegramId ? String(req.query.telegramId) : '';
     const { targetTelegramId } = req.params;
 
-    if (!isAdminRequest(secret, telegramId)) {
+    if (!isAdminRequest(req, secret, telegramId)) {
       return res.status(403).json({ message: 'Forbidden' });
     }
 
@@ -2270,7 +2313,7 @@ router.post('/admin-adjust-balance', async (req, res) => {
   try {
     const { secret, telegramId, targetTelegramId, amount, reason } = req.body;
 
-    if (!isAdminRequest(secret, telegramId)) {
+    if (!isAdminRequest(req, secret, telegramId)) {
       return res.status(403).json({ message: 'Forbidden' });
     }
 
@@ -2337,7 +2380,7 @@ router.post('/admin-ban-user', async (req, res) => {
   try {
     const { secret, telegramId, targetTelegramId, ban, reason } = req.body;
 
-    if (!isAdminRequest(secret, telegramId)) {
+    if (!isAdminRequest(req, secret, telegramId)) {
       return res.status(403).json({ message: 'Forbidden' });
     }
 
@@ -2387,7 +2430,7 @@ router.get('/admin-security-logs', async (req, res) => {
     const secret = req.query.secret ? String(req.query.secret) : '';
     const telegramId = req.query.telegramId ? String(req.query.telegramId) : '';
 
-    if (!isAdminRequest(secret, telegramId)) {
+    if (!isAdminRequest(req, secret, telegramId)) {
       return res.status(403).json({ message: 'Forbidden' });
     }
 
@@ -2429,7 +2472,7 @@ router.get('/admin-suspicious-users', async (req, res) => {
     const secret = req.query.secret ? String(req.query.secret) : '';
     const telegramId = req.query.telegramId ? String(req.query.telegramId) : '';
 
-    if (!isAdminRequest(secret, telegramId)) {
+    if (!isAdminRequest(req, secret, telegramId)) {
       return res.status(403).json({ message: 'Forbidden' });
     }
 
@@ -2468,7 +2511,7 @@ router.post('/admin-freeze-user', async (req, res) => {
   try {
     const { secret, telegramId, targetTelegramId, freeze, reason } = req.body;
 
-    if (!isAdminRequest(secret, telegramId)) {
+    if (!isAdminRequest(req, secret, telegramId)) {
       return res.status(403).json({ message: 'Forbidden' });
     }
 
@@ -2510,7 +2553,7 @@ router.get('/admin-withdrawals', async (req, res) => {
     const telegramId = req.query.telegramId ? String(req.query.telegramId) : '';
     const status = req.query.status ? String(req.query.status) : 'pending';
 
-    if (!isAdminRequest(secret, telegramId)) {
+    if (!isAdminRequest(req, secret, telegramId)) {
       return res.status(403).json({ message: 'Forbidden' });
     }
 
@@ -2567,7 +2610,7 @@ router.post('/admin-review-withdrawal', async (req, res) => {
   try {
     const { secret, telegramId, userTelegramId, requestIndex, action, adminComment } = req.body;
 
-    if (!isAdminRequest(secret, telegramId)) {
+    if (!isAdminRequest(req, secret, telegramId)) {
       return res.status(403).json({ message: 'Forbidden' });
     }
 
@@ -2720,7 +2763,7 @@ router.get('/admin-backup', async (req, res) => {
     const secret = req.query.secret ? String(req.query.secret) : '';
     const telegramId = req.query.telegramId ? String(req.query.telegramId) : '';
 
-    if (!isAdminRequest(secret, telegramId)) {
+    if (!isAdminRequest(req, secret, telegramId)) {
       return res.status(403).json({ message: 'Forbidden' });
     }
 
@@ -2749,7 +2792,7 @@ router.get('/admin-frontend-errors', async (req, res) => {
     const secret = req.query.secret ? String(req.query.secret) : '';
     const telegramId = req.query.telegramId ? String(req.query.telegramId) : '';
 
-    if (!isAdminRequest(secret, telegramId)) {
+    if (!isAdminRequest(req, secret, telegramId)) {
       return res.status(403).json({ message: 'Forbidden' });
     }
 
@@ -2789,7 +2832,7 @@ router.get('/admin-economy-config', async (req, res) => {
     const secret = req.query.secret ? String(req.query.secret) : '';
     const telegramId = req.query.telegramId ? String(req.query.telegramId) : '';
 
-    if (!isAdminRequest(secret, telegramId)) {
+    if (!isAdminRequest(req, secret, telegramId)) {
       return res.status(403).json({ message: 'Forbidden' });
     }
 
@@ -2807,7 +2850,7 @@ router.post('/admin-economy-config', async (req, res) => {
   try {
     const { secret, telegramId, updates } = req.body;
 
-    if (!isAdminRequest(secret, telegramId)) {
+    if (!isAdminRequest(req, secret, telegramId)) {
       return res.status(403).json({ message: 'Forbidden' });
     }
 
@@ -2849,7 +2892,7 @@ router.post('/admin-broadcast', async (req, res) => {
   try {
     const { secret, telegramId, message, dryRun } = req.body;
 
-    if (!isAdminRequest(secret, telegramId)) {
+    if (!isAdminRequest(req, secret, telegramId)) {
       return res.status(403).json({ message: 'Forbidden' });
     }
 
@@ -2913,7 +2956,7 @@ router.get('/admin-export-users.csv', async (req, res) => {
     const secret = req.query.secret ? String(req.query.secret) : '';
     const telegramId = req.query.telegramId ? String(req.query.telegramId) : '';
 
-    if (!isAdminRequest(secret, telegramId)) {
+    if (!isAdminRequest(req, secret, telegramId)) {
       return res.status(403).send('Forbidden');
     }
 
@@ -2969,7 +3012,7 @@ router.get('/admin-operations', async (req, res) => {
     const secret = req.query.secret ? String(req.query.secret) : '';
     const telegramId = req.query.telegramId ? String(req.query.telegramId) : '';
 
-    if (!isAdminRequest(secret, telegramId)) {
+    if (!isAdminRequest(req, secret, telegramId)) {
       return res.status(403).json({ message: 'Forbidden' });
     }
 
@@ -3015,7 +3058,7 @@ router.post('/admin-user-note', async (req, res) => {
   try {
     const { secret, telegramId, targetTelegramId, text } = req.body;
 
-    if (!isAdminRequest(secret, telegramId)) {
+    if (!isAdminRequest(req, secret, telegramId)) {
       return res.status(403).json({ message: 'Forbidden' });
     }
 
@@ -3061,7 +3104,7 @@ router.get('/admin-economy-dashboard', async (req, res) => {
     const secret = req.query.secret ? String(req.query.secret) : '';
     const telegramId = req.query.telegramId ? String(req.query.telegramId) : '';
 
-    if (!isAdminRequest(secret, telegramId)) {
+    if (!isAdminRequest(req, secret, telegramId)) {
       return res.status(403).json({ message: 'Forbidden' });
     }
 
