@@ -5433,13 +5433,14 @@ router.post('/claim-task', async (req, res) => {
 });
 
 // CLAIM OFFLINE INCOME
-router.post('/claim-offline-income', async (req, res) => {
+router.post('/claim-offline-income', requireTelegramMiniAppUser, async (req, res) => {
   try {
-    const { telegramId } = req.body;
+    const requestedTelegramId = String(req.body?.telegramId || '');
+    const telegramId = req.telegramUserId;
 
-    if (!telegramId) {
-      return res.status(400).json({
-        message: 'Telegram ID is required',
+    if (requestedTelegramId && requestedTelegramId !== telegramId) {
+      return res.status(403).json({
+        message: 'Telegram ID does not match authenticated user',
       });
     }
 
@@ -5509,13 +5510,14 @@ router.post('/claim-offline-income', async (req, res) => {
 
 
 // MINE TICK — BACKEND ONLINE MINING
-router.post('/mine-tick', async (req, res) => {
+router.post('/mine-tick', requireTelegramMiniAppUser, async (req, res) => {
   try {
-    const { telegramId } = req.body;
+    const requestedTelegramId = String(req.body?.telegramId || '');
+    const telegramId = req.telegramUserId;
 
-    if (!telegramId) {
-      return res.status(400).json({
-        message: 'Telegram ID is required',
+    if (requestedTelegramId && requestedTelegramId !== telegramId) {
+      return res.status(403).json({
+        message: 'Telegram ID does not match authenticated user',
       });
     }
 
