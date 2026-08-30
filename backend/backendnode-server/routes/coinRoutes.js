@@ -255,41 +255,80 @@ function cleanupRateLimits(now = Date.now()) {
   }
 }
 
+function getSignedRateLimitIdentity(req) {
+  const initData = req.get('x-telegram-init-data') || '';
+  const auth = validateTelegramInitData(initData, process.env.BOT_TOKEN);
+
+  if (auth.ok && auth.user?.id) {
+    return `tg:${String(auth.user.id)}`;
+  }
+
+  // Never trust telegramId supplied in body/query/params for rate-limit identity:
+  // an attacker could rotate fake IDs to bypass throttling.
+  return `ip:${String(req.ip || req.socket?.remoteAddress || 'unknown')}`;
+}
+
+function getRouteRateLimit(pathname) {
+  const path = String(pathname || '');
+
+  // Tap has its own per-second anti-cheat as well. Keep this ceiling high
+  // enough for normal play while blocking request floods.
+  if (path === '/tap') return { maxRequests: 900, windowMs: 60 * 1000 };
+
+  // Money / irreversible actions.
+  if (path === '/request-withdrawal') return { maxRequests: 5, windowMs: 60 * 1000 };
+  if (path === '/apply-promo') return { maxRequests: 10, windowMs: 60 * 1000 };
+  if (path === '/open-chest') return { maxRequests: 30, windowMs: 60 * 1000 };
+
+  // ONIX Drop should never need rapid start/finish spam.
+  if (path === '/onix-drop/start') return { maxRequests: 10, windowMs: 60 * 1000 };
+  if (path === '/onix-drop/finish') return { maxRequests: 10, windowMs: 60 * 1000 };
+
+  // Reward / progression mutations.
+  if (
+    path === '/claim-welcome-bonus' ||
+    path === '/claim-mission' ||
+    path === '/claim-task' ||
+    path === '/claim-team-mission' ||
+    path === '/claim-team-prize' ||
+    path === '/season-prize-popup'
+  ) {
+    return { maxRequests: 30, windowMs: 60 * 1000 };
+  }
+
+  if (
+    path === '/buy-upgrade' ||
+    path === '/buy-perk' ||
+    path === '/activate-boost' ||
+    path === '/refill-energy'
+  ) {
+    return { maxRequests: 60, windowMs: 60 * 1000 };
+  }
+
+  return { maxRequests: 180, windowMs: 60 * 1000 };
+}
+
 router.use((req, res, next) => {
   try {
     if (req.path.startsWith('/admin') || req.path.startsWith('/cron')) {
       return next();
     }
 
-    const identity = String(
-      req.body?.telegramId ||
-        req.query?.telegramId ||
-        req.params?.telegramId ||
-        req.headers['x-telegram-id'] ||
-        req.ip ||
-        'unknown'
-    );
-
-    const key = `${identity}:${req.path}`;
+    const identity = getSignedRateLimitIdentity(req);
+    const routeKey = `${identity}:${req.method}:${req.path}`;
     const globalKey = `${identity}:global`;
     const now = Date.now();
-    const windowMs = 60 * 1000;
-    const routeMaxRequests = req.path.includes('/tap')
-      ? 900
-      : req.path.includes('/request-withdrawal')
-      ? 8
-      : req.path.includes('/apply-promo')
-      ? 15
-      : 180;
-    const globalMaxRequests = 1200;
 
-    const updateBucket = (bucketKey, maxRequests) => {
+    const routeLimit = getRouteRateLimit(req.path);
+    const globalLimit = { maxRequests: 1200, windowMs: 60 * 1000 };
+
+    const updateBucket = (bucketKey, maxRequests, windowMs) => {
       const item = API_RATE_LIMITS.get(bucketKey) || {
         count: 0,
         startedAt: now,
       };
 
-      if (now - item.startedAt > windowMs) {
+      if (now - item.startedAt >= windowMs) {
         item.count = 0;
         item.startedAt = now;
       }
@@ -297,14 +336,38 @@ router.use((req, res, next) => {
       item.count += 1;
       API_RATE_LIMITS.set(bucketKey, item);
 
-      return item.count <= maxRequests;
+      return {
+        allowed: item.count <= maxRequests,
+        retryAfterSeconds: Math.max(
+          1,
+          Math.ceil((windowMs - (now - item.startedAt)) / 1000)
+        ),
+      };
     };
 
     cleanupRateLimits(now);
 
-    if (!updateBucket(globalKey, globalMaxRequests) || !updateBucket(key, routeMaxRequests)) {
+    const globalResult = updateBucket(
+      globalKey,
+      globalLimit.maxRequests,
+      globalLimit.windowMs
+    );
+    const routeResult = updateBucket(
+      routeKey,
+      routeLimit.maxRequests,
+      routeLimit.windowMs
+    );
+
+    if (!globalResult.allowed || !routeResult.allowed) {
+      const retryAfterSeconds = Math.max(
+        globalResult.allowed ? 0 : globalResult.retryAfterSeconds,
+        routeResult.allowed ? 0 : routeResult.retryAfterSeconds
+      );
+
+      res.set('Retry-After', String(retryAfterSeconds));
       return res.status(429).json({
         message: 'Zu viele Anfragen. Versuch es später erneut.',
+        retryAfterSeconds,
       });
     }
 
