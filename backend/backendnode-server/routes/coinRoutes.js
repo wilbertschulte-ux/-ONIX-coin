@@ -3284,9 +3284,16 @@ router.get('/leaderboard/teams', async (req, res) => {
 
 
 // REFERRALS LIST FOR PROFILE
-router.get('/referrals/:telegramId', async (req, res) => {
+router.get('/referrals/:telegramId', requireTelegramMiniAppUser, async (req, res) => {
   try {
-    const { telegramId } = req.params;
+    const requestedTelegramId = String(req.params.telegramId || '');
+    const telegramId = req.telegramUserId;
+
+    if (requestedTelegramId && requestedTelegramId !== telegramId) {
+      return res.status(403).json({
+        message: 'Telegram ID does not match authenticated user',
+      });
+    }
 
     if (!telegramId) {
       return res.status(400).json({ message: 'Telegram ID is required' });
@@ -3508,9 +3515,16 @@ router.get('/teams', async (req, res) => {
 
 
 // GET USER
-router.get('/:telegramId', async (req, res) => {
+router.get('/:telegramId', requireTelegramMiniAppUser, async (req, res) => {
   try {
-    const { telegramId } = req.params;
+    const requestedTelegramId = String(req.params.telegramId || '');
+    const telegramId = req.telegramUserId;
+
+    if (requestedTelegramId && requestedTelegramId !== telegramId) {
+      return res.status(403).json({
+        message: 'Telegram ID does not match authenticated user',
+      });
+    }
 
     if (!telegramId) {
       return res.status(400).json({
@@ -4604,9 +4618,16 @@ router.post('/leave-team', requireTelegramMiniAppUser, async (req, res) => {
 });
 
 // TEAM SOCIAL DASHBOARD
-router.get('/team-dashboard/:telegramId', async (req, res) => {
+router.get('/team-dashboard/:telegramId', requireTelegramMiniAppUser, async (req, res) => {
   try {
-    const { telegramId } = req.params;
+    const requestedTelegramId = String(req.params.telegramId || '');
+    const telegramId = req.telegramUserId;
+
+    if (requestedTelegramId && requestedTelegramId !== telegramId) {
+      return res.status(403).json({
+        message: 'Telegram ID does not match authenticated user',
+      });
+    }
 
     const user = await User.findOne({ telegramId });
 
@@ -4806,9 +4827,16 @@ router.post('/claim-team-prize', requireTelegramMiniAppUser, async (req, res) =>
 });
 
 // FRIENDS LEADERBOARD
-router.get('/friends-leaderboard/:telegramId', async (req, res) => {
+router.get('/friends-leaderboard/:telegramId', requireTelegramMiniAppUser, async (req, res) => {
   try {
-    const { telegramId } = req.params;
+    const requestedTelegramId = String(req.params.telegramId || '');
+    const telegramId = req.telegramUserId;
+
+    if (requestedTelegramId && requestedTelegramId !== telegramId) {
+      return res.status(403).json({
+        message: 'Telegram ID does not match authenticated user',
+      });
+    }
 
     const users = await User.find({
       $or: [{ referredBy: telegramId }, { telegramId }],
@@ -5184,9 +5212,16 @@ router.post('/open-chest', requireTelegramMiniAppUser, async (req, res) => {
 
 
 // MISSIONS PAYLOAD
-router.get('/missions/:telegramId', async (req, res) => {
+router.get('/missions/:telegramId', requireTelegramMiniAppUser, async (req, res) => {
   try {
-    const { telegramId } = req.params;
+    const requestedTelegramId = String(req.params.telegramId || '');
+    const telegramId = req.telegramUserId;
+
+    if (requestedTelegramId && requestedTelegramId !== telegramId) {
+      return res.status(403).json({
+        message: 'Telegram ID does not match authenticated user',
+      });
+    }
 
     const user = await User.findOne({ telegramId });
 
