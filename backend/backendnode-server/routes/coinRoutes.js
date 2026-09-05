@@ -2878,9 +2878,17 @@ router.get('/version', async (req, res) => {
 });
 
 // FRONTEND ERROR LOG
-router.post('/frontend-error', async (req, res) => {
+router.post('/frontend-error', requireTelegramMiniAppUser, async (req, res) => {
   try {
-    const { telegramId, message, stack, appVersion } = req.body;
+    const { message, stack, appVersion } = req.body;
+    const requestedTelegramId = String(req.body?.telegramId || '');
+    const telegramId = req.telegramUserId;
+
+    if (requestedTelegramId && requestedTelegramId !== telegramId) {
+      return res.status(403).json({
+        message: 'Telegram ID does not match authenticated user',
+      });
+    }
 
     const user = telegramId ? await User.findOne({ telegramId }) : null;
 
@@ -3612,7 +3620,32 @@ router.get('/referrals/:telegramId', requireTelegramMiniAppUser, async (req, res
 router.get('/leaderboard/weekly', async (req, res) => {
   try {
     const currentWeek = getWeekKey();
-    const telegramId = req.query.telegramId ? String(req.query.telegramId) : '';
+    const requestedTelegramId = req.query.telegramId
+      ? String(req.query.telegramId)
+      : '';
+    let telegramId = '';
+
+    if (requestedTelegramId) {
+      const initData = req.get('x-telegram-init-data') || '';
+      const authResult = validateTelegramInitData(
+        initData,
+        process.env.BOT_TOKEN
+      );
+
+      if (!authResult.ok || !authResult.user?.id) {
+        return res.status(401).json({
+          message: 'Telegram authentication required',
+        });
+      }
+
+      telegramId = String(authResult.user.id);
+
+      if (requestedTelegramId !== telegramId) {
+        return res.status(403).json({
+          message: 'Telegram ID does not match authenticated user',
+        });
+      }
+    }
 
     await User.updateMany(
       {
