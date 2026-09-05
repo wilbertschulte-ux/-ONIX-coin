@@ -437,6 +437,10 @@ const LEVEL_COINS = 10000;
 const DAY_MS = 24 * 60 * 60 * 1000;
 const MAX_OFFLINE_SECONDS = 6 * 60 * 60;
 const MAX_TAPS_PER_SECOND = 12;
+const TAP_SUSTAINED_WINDOW_MS = 5000;
+const TAP_SUSTAINED_MAX_IN_WINDOW = 55;
+const TAP_RATE_VIOLATION_WINDOW_MS = 60 * 1000;
+const TAP_RATE_VIOLATIONS_BEFORE_FLAG = 3;
 const MAX_PAID_REFERRALS_PER_DAY = getEconomyConfig().maxPaidReferralsPerDay;
 const MAX_PAID_REFERRALS_PER_HOUR = getNumberEnv('MAX_PAID_REFERRALS_PER_HOUR', 5);
 const DEFAULT_ENERGY = 500;
@@ -4300,6 +4304,40 @@ function ensureUserNotFrozen(user, res) {
   return null;
 }
 
+function getRecentSecurityLogCount(user, type, sinceMs) {
+  const logs = Array.isArray(user.securityLogs) ? user.securityLogs : [];
+  return logs.filter((entry) => {
+    return (
+      entry &&
+      entry.type === type &&
+      Number(entry.createdAt || 0) >= Number(sinceMs || 0)
+    );
+  }).length;
+}
+
+function registerTapRateViolation(user, now, details) {
+  const since = now - TAP_RATE_VIOLATION_WINDOW_MS;
+  const previousViolations = getRecentSecurityLogCount(
+    user,
+    'tap_rate_limit',
+    since
+  );
+
+  addSecurityLog(
+    user,
+    'tap_rate_limit',
+    'Tap rate limit exceeded',
+    details
+  );
+
+  if (previousViolations + 1 >= TAP_RATE_VIOLATIONS_BEFORE_FLAG) {
+    addSuspiciousReason(
+      user,
+      'Repeated impossible tap speed detected'
+    );
+  }
+}
+
 function isReferralQualified(user) {
   // Важно: НЕ используем totalEarned/balance для проверки,
   // потому что новый игрок получает стартовый бонус 15 000 ONIX по реферальной ссылке.
@@ -6035,12 +6073,47 @@ router.post('/tap', requireTelegramMiniAppUser, async (req, res) => {
 
     const now = Date.now();
     const oneSecondAgo = now - 1000;
+    const sustainedWindowStart = now - TAP_SUSTAINED_WINDOW_MS;
 
-    user.tapTimestamps = user.tapTimestamps.filter((time) => {
-      return Number(time) > oneSecondAgo;
-    });
+    // Keep only the window needed for anti-cheat checks.
+    user.tapTimestamps = user.tapTimestamps
+      .map((time) => Number(time))
+      .filter((time) => Number.isFinite(time) && time > sustainedWindowStart);
 
-    if (user.tapTimestamps.length >= MAX_TAPS_PER_SECOND) {
+    const tapsLastSecond = user.tapTimestamps.filter(
+      (time) => time > oneSecondAgo
+    ).length;
+
+    if (tapsLastSecond >= MAX_TAPS_PER_SECOND) {
+      registerTapRateViolation(
+        user,
+        now,
+        `${tapsLastSecond + 1} tap attempts within ~1 second`
+      );
+      user.updatedAt = new Date();
+      user.lastSeenAt = now;
+      await user.save();
+
+      return res.status(429).json({
+        message: 'Too many taps',
+      });
+    }
+
+    if (user.tapTimestamps.length >= TAP_SUSTAINED_MAX_IN_WINDOW) {
+      addSuspiciousReason(
+        user,
+        'Sustained impossible tap speed detected'
+      );
+      addSecurityLog(
+        user,
+        'tap_sustained_limit',
+        'Sustained tap rate blocked',
+        `${user.tapTimestamps.length + 1} tap attempts within ${TAP_SUSTAINED_WINDOW_MS / 1000} seconds`
+      );
+      user.updatedAt = new Date();
+      user.lastSeenAt = now;
+      await user.save();
+
       return res.status(429).json({
         message: 'Too many taps',
       });
