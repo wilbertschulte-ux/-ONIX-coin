@@ -3824,6 +3824,11 @@ router.get('/:telegramId', requireTelegramMiniAppUser, async (req, res) => {
     user.lastOfflineIncome = user.pendingOfflineIncome;
     user.lastOfflineSeconds = user.pendingOfflineSeconds;
     user.lastSeenAt = now;
+
+    // Offline time has already been converted into pending offline income above.
+    // Reset the online miner baseline so /mine-tick cannot pay the same elapsed
+    // time a second time immediately after the app opens.
+    user.lastMineTickAt = now;
     user.updatedAt = new Date();
 
     const referralBonus = await tryPayQualifiedReferralBonus(user);
@@ -4189,9 +4194,16 @@ router.post('/save', requireTelegramMiniAppUser, async (req, res) => {
     const safeEnergy = Number(data.energy);
 
     if (Number.isFinite(safeEnergy)) {
+      // Client save data may only reduce energy, never restore it.
+      // Energy increases must come from server-authoritative recharge/refill logic.
+      const currentEnergy = Number(user.energy || 0);
       user.energy = Math.max(
         0,
-        Math.min(Number(user.maxEnergy || DEFAULT_MAX_ENERGY), safeEnergy)
+        Math.min(
+          Number(user.maxEnergy || DEFAULT_MAX_ENERGY),
+          currentEnergy,
+          safeEnergy
+        )
       );
     }
 
@@ -5925,7 +5937,15 @@ router.post('/mine-tick', requireTelegramMiniAppUser, async (req, res) => {
       user.activeBoost === 'mining' && Number(user.boostEndTime || 0) > now;
 
     const multiplier = isMiningBoostActive ? 2 : 1;
-    const elapsedForIncomeMs = lastMineTickAt > 0 ? Math.max(0, elapsedMs) : 1000;
+
+    // Online mining ticks are expected roughly once per second. Never convert
+    // a long client pause/background period into uncapped online income;
+    // legitimate offline earnings are handled separately and capped there.
+    const elapsedForIncomeMs =
+      lastMineTickAt > 0
+        ? Math.min(Math.max(0, elapsedMs), 5000)
+        : 1000;
+
     const rawMinerIncome =
       getMinerIncome(user) * (elapsedForIncomeMs / 60000) * multiplier +
       Number(user.minerRemainder || 0);
@@ -6402,10 +6422,16 @@ router.post('/onix-drop/finish', requireTelegramMiniAppUser, async (req, res) =>
     user.onixDrop.sessionId = '';
     user.onixDrop.sessionStartedAt = 0;
     user.onixDrop.sessionExpiresAt = 0;
-    user.onixDrop.dailyEarned = Number(user.onixDrop.dailyEarned || 0) + reward;
-    user.onixDrop.bestScore = Math.max(Number(user.onixDrop.bestScore || 0), submittedScore);
-    user.balance = Number(user.balance || 0) + reward;
-    user.totalEarned = Number(user.totalEarned || 0) + reward;
+    user.onixDrop.dailyEarned = roundOnix(
+      Number(user.onixDrop.dailyEarned || 0) + reward
+    );
+    user.onixDrop.bestScore = Math.max(
+      Number(user.onixDrop.bestScore || 0),
+      submittedScore
+    );
+    user.balance = roundOnix(Number(user.balance || 0) + reward);
+    addEarnings(user, reward);
+    addTransaction(user, 'income_onix_drop', reward, 'ONIX Drop');
     user.level = calculateLevel(user.totalEarned);
     user.lastSeenAt = now;
     await user.save();
