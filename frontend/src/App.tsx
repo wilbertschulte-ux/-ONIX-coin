@@ -12331,6 +12331,18 @@ function App() {
     }
   });
   const tr = ONIX_I18N[appLanguage];
+  const promoUi = {
+    de: { label: 'Promocode', helper: 'Gib deinen Kampagnen-Promocode ein', placeholder: 'Zum Beispiel: GG5000', activate: 'Aktivieren', once: 'Jeder Promocode kann nur einmal verwendet werden.', success: 'Promocode aktiviert', error: 'Promocode konnte nicht aktiviert werden' },
+    en: { label: 'Promo code', helper: 'Enter your campaign promo code', placeholder: 'For example: GG5000', activate: 'Activate', once: 'Each promo code can only be used once.', success: 'Promo code activated', error: 'Promo code could not be activated' },
+    ru: { label: 'Промокод', helper: 'Введите промокод из рекламной кампании', placeholder: 'Например: GG5000', activate: 'Активировать', once: 'Каждый промокод можно использовать только один раз.', success: 'Промокод активирован', error: 'Не удалось активировать промокод' },
+    uk: { label: 'Промокод', helper: 'Введіть промокод з рекламної кампанії', placeholder: 'Наприклад: GG5000', activate: 'Активувати', once: 'Кожен промокод можна використати лише один раз.', success: 'Промокод активовано', error: 'Не вдалося активувати промокод' },
+    tr: { label: 'Promosyon kodu', helper: 'Kampanya promosyon kodunu gir', placeholder: 'Örneğin: GG5000', activate: 'Etkinleştir', once: 'Her promosyon kodu yalnızca bir kez kullanılabilir.', success: 'Promosyon kodu etkinleştirildi', error: 'Promosyon kodu etkinleştirilemedi' },
+    es: { label: 'Código promocional', helper: 'Introduce el código promocional de la campaña', placeholder: 'Por ejemplo: GG5000', activate: 'Activar', once: 'Cada código promocional solo se puede usar una vez.', success: 'Código promocional activado', error: 'No se pudo activar el código promocional' },
+    fr: { label: 'Code promo', helper: 'Saisis le code promo de la campagne', placeholder: 'Par exemple : GG5000', activate: 'Activer', once: 'Chaque code promo ne peut être utilisé qu’une seule fois.', success: 'Code promo activé', error: 'Impossible d’activer le code promo' },
+    it: { label: 'Codice promo', helper: 'Inserisci il codice promo della campagna', placeholder: 'Ad esempio: GG5000', activate: 'Attiva', once: 'Ogni codice promo può essere utilizzato una sola volta.', success: 'Codice promo attivato', error: 'Impossibile attivare il codice promo' },
+    pl: { label: 'Kod promocyjny', helper: 'Wpisz kod promocyjny z kampanii', placeholder: 'Na przykład: GG5000', activate: 'Aktywuj', once: 'Każdy kod promocyjny można wykorzystać tylko raz.', success: 'Kod promocyjny aktywowany', error: 'Nie udało się aktywować kodu promocyjnego' },
+    pt: { label: 'Código promocional', helper: 'Digite o código promocional da campanha', placeholder: 'Por exemplo: GG5000', activate: 'Ativar', once: 'Cada código promocional só pode ser usado uma vez.', success: 'Código promocional ativado', error: 'Não foi possível ativar o código promocional' },
+  }[appLanguage];
 
   const uiText = (source: string) => {
     if (appLanguage === 'de') return source;
@@ -13633,11 +13645,11 @@ function App() {
       setPromoCodeInput('');
       setPromoModalVisible(false);
       showToast(
-        `🎟 Promocode aktiviert: +${formatOnix(response.data.promo.reward)} ONIX`,
+        `🎟 ${promoUi.success}: +${formatOnix(response.data.promo.reward)} ONIX`,
         'success'
       );
     } catch (error: any) {
-      showToast(error?.response?.data?.message || 'Promocode konnte nicht aktiviert werden', 'error');
+      showToast(error?.response?.data?.message || promoUi.error, 'error');
     }
   };
 
@@ -18803,8 +18815,22 @@ body:not(.onix-body-home-lock) {
                 ))}
               </div>
             </div>
-            <button type="button" onClick={toggleHeaderNotifications} style={{ width: '100%', padding: 16, borderRadius: 18, border: '1px solid rgba(168,85,247,.25)', background: 'rgba(10,10,35,.8)', color: '#fff', textAlign: 'left' }}>
+            <button type="button" onClick={toggleHeaderNotifications} style={{ width: '100%', padding: 16, borderRadius: 18, border: '1px solid rgba(168,85,247,.25)', background: 'rgba(10,10,35,.8)', color: '#fff', textAlign: 'left', marginBottom: 14 }}>
               <div style={{ fontWeight: 900, marginBottom: 8 }}>🔔 {tr.notifications}</div><div style={{ color: headerNotificationsEnabled ? '#67e8f9' : '#a1a1aa', fontSize: 14 }}>{headerNotificationsEnabled ? tr.on : tr.off}</div>
+            </button>
+            <button
+              type="button"
+              onClick={() => {
+                setHeaderMenuVisible(false);
+                setPromoModalVisible(true);
+              }}
+              style={{ width: '100%', padding: 16, borderRadius: 18, border: '1px solid rgba(250,204,21,.45)', background: 'linear-gradient(135deg,rgba(250,204,21,.12),rgba(10,10,35,.88))', color: '#fff', textAlign: 'left', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12 }}
+            >
+              <div>
+                <div style={{ fontWeight: 1000, marginBottom: 6 }}>🎟 {promoUi.label}</div>
+                <div style={{ color: '#fde68a', fontSize: 13 }}>{promoUi.helper}</div>
+              </div>
+              <span style={{ flex: '0 0 auto', padding: '5px 8px', borderRadius: 999, background: '#facc15', color: '#111827', fontSize: 10, fontWeight: 1000, letterSpacing: '.08em' }}>NEW</span>
             </button>
           </div>
         </div>
@@ -22078,9 +22104,9 @@ body:not(.onix-body-home-lock) {
           <div className="w-full max-w-sm rounded-3xl border border-yellow-400/30 bg-[#111827] p-6 shadow-2xl">
             <div className="mb-5 flex items-start justify-between gap-3">
               <div>
-                <h2 className="text-2xl font-bold text-white">{uiText('🎟 Promocode')}</h2>
+                <h2 className="text-2xl font-bold text-white">🎟 {promoUi.label}</h2>
                 <p className="mt-1 text-sm text-gray-400">
-                  Gib den Kampagnen-Promocode ein
+                  {promoUi.helper}
                 </p>
               </div>
 
@@ -22095,7 +22121,7 @@ body:not(.onix-body-home-lock) {
             <input
               value={promoCodeInput}
               onChange={(event) => setPromoCodeInput(event.target.value.toUpperCase())}
-              placeholder="Zum Beispiel: LAUNCH"
+              placeholder={promoUi.placeholder}
               className="w-full rounded-2xl bg-[#0a0f1c] px-4 py-4 text-center text-lg font-bold text-white outline-none"
             />
 
@@ -22103,11 +22129,11 @@ body:not(.onix-body-home-lock) {
               onClick={applyPromoCode}
               className="mt-4 w-full rounded-2xl bg-yellow-400 py-4 text-lg font-bold text-black active:scale-95"
             >
-              Aktivieren
+              {promoUi.activate}
             </button>
 
             <p className="mt-3 text-center text-xs text-gray-500">
-              Ein Promocode kann nur einmal verwendet werden.
+              {promoUi.once}
             </p>
           </div>
         </div>
