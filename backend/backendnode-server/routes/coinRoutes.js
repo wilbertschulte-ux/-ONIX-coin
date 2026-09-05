@@ -122,6 +122,46 @@ function requireTelegramMiniAppUser(req, res, next) {
 const SENSITIVE_REWARD_LOCKS = new Map();
 const SENSITIVE_REWARD_LOCK_TTL_MS = 15 * 1000;
 
+const WITHDRAWAL_MUTATION_LOCKS = new Map();
+const WITHDRAWAL_MUTATION_LOCK_TTL_MS = 30 * 1000;
+
+function withdrawalMutationGuardByTelegramId(telegramId, res) {
+  const key = String(telegramId || '');
+  if (!key) return null;
+
+  const now = Date.now();
+  const existing = WITHDRAWAL_MUTATION_LOCKS.get(key);
+
+  if (existing && now - existing.startedAt < WITHDRAWAL_MUTATION_LOCK_TTL_MS) {
+    return res.status(409).json({
+      message: 'Withdrawal request already in progress',
+      code: 'WITHDRAWAL_REQUEST_IN_PROGRESS',
+    });
+  }
+
+  WITHDRAWAL_MUTATION_LOCKS.set(key, { startedAt: now });
+
+  let released = false;
+  const release = () => {
+    if (released) return;
+    released = true;
+    const current = WITHDRAWAL_MUTATION_LOCKS.get(key);
+    if (current && current.startedAt === now) {
+      WITHDRAWAL_MUTATION_LOCKS.delete(key);
+    }
+  };
+
+  res.once('finish', release);
+  res.once('close', release);
+  return false;
+}
+
+function withdrawalMutationGuard(req, res, next) {
+  const blocked = withdrawalMutationGuardByTelegramId(req.telegramUserId, res);
+  if (blocked) return blocked;
+  return next();
+}
+
 function sensitiveRewardMutationGuard(req, res, next) {
   const telegramId = String(req.telegramUserId || '');
 
@@ -2670,6 +2710,12 @@ router.post('/admin-review-withdrawal', async (req, res) => {
       return res.status(403).json({ message: 'Forbidden' });
     }
 
+    const withdrawalLockResponse = withdrawalMutationGuardByTelegramId(
+      userTelegramId,
+      res
+    );
+    if (withdrawalLockResponse) return withdrawalLockResponse;
+
     if (!['approved', 'rejected'].includes(action)) {
       return res.status(400).json({ message: 'Action must be approved or rejected' });
     }
@@ -5136,7 +5182,7 @@ router.post('/select-title', requireTelegramMiniAppUser, async (req, res) => {
 });
 
 // REQUEST WITHDRAWAL — creates a pending withdrawal request
-router.post('/request-withdrawal', requireTelegramMiniAppUser, async (req, res) => {
+router.post('/request-withdrawal', requireTelegramMiniAppUser, withdrawalMutationGuard, async (req, res) => {
   try {
     const { amount, withdrawalCheck } = req.body;
     const requestedTelegramId = String(req.body?.telegramId || '');
