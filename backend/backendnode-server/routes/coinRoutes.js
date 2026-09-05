@@ -1590,6 +1590,13 @@ const ONIX_DROP_MAX_REWARD_PER_RUN = 2500;
 const ONIX_DROP_SESSION_MS = 60 * 1000;
 const ONIX_DROP_MIN_RUN_MS = 5 * 1000;
 
+// Client score is still submitted by the Mini App, so the backend must reject
+// physically impossible score growth instead of only capping the payout.
+// The current game lasts 30 seconds; this ceiling is deliberately generous
+// enough for legitimate fast play while blocking forged 2500-point payloads.
+const ONIX_DROP_MAX_SCORE_PER_SECOND = 45;
+const ONIX_DROP_SCORE_GRACE = 100;
+
 function prepareOnixDropDay(user, now = Date.now()) {
   const dayKey = getUtcDayKey(now);
   if (!user.onixDrop || user.onixDrop.dayKey !== dayKey) {
@@ -6305,6 +6312,44 @@ router.post('/onix-drop/finish', requireTelegramMiniAppUser, async (req, res) =>
       user.onixDrop.sessionId = '';
       await user.save();
       return res.status(400).json({ error: 'ONIX Drop session timing is invalid' });
+    }
+
+    const elapsedMs = Math.max(0, now - startedAt);
+    const elapsedSeconds = Math.min(
+      30,
+      Math.max(1, elapsedMs / 1000)
+    );
+    const maxPlausibleScore = Math.min(
+      ONIX_DROP_MAX_REWARD_PER_RUN,
+      Math.ceil(
+        elapsedSeconds * ONIX_DROP_MAX_SCORE_PER_SECOND +
+          ONIX_DROP_SCORE_GRACE
+      )
+    );
+
+    if (submittedScore > maxPlausibleScore) {
+      addSuspiciousReason(
+        user,
+        'Impossible ONIX Drop score detected'
+      );
+      addSecurityLog(
+        user,
+        'onix_drop_score',
+        'Impossible ONIX Drop score blocked',
+        `Submitted ${submittedScore}; plausible max ${maxPlausibleScore}; elapsed ${Math.round(elapsedMs / 1000)}s`
+      );
+
+      // Consume the session so a forged finish cannot be retried with many
+      // different scores against the same round.
+      user.onixDrop.sessionId = '';
+      user.onixDrop.sessionStartedAt = 0;
+      user.onixDrop.sessionExpiresAt = 0;
+      user.lastSeenAt = now;
+      await user.save();
+
+      return res.status(400).json({
+        error: 'ONIX Drop score is invalid',
+      });
     }
 
     const reward = Math.min(submittedScore, ONIX_DROP_MAX_REWARD_PER_RUN);
