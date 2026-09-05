@@ -18836,6 +18836,94 @@ body:not(.onix-body-home-lock) {
         </div>
       )}
 
+      {promoModalVisible && (
+        <div
+          role="dialog"
+          aria-modal="true"
+          onClick={() => setPromoModalVisible(false)}
+          style={{
+            position: 'fixed',
+            inset: 0,
+            zIndex: 5100,
+            background: 'rgba(0,0,0,.74)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            padding: 20,
+          }}
+        >
+          <div
+            onClick={(event) => event.stopPropagation()}
+            style={{
+              width: 'min(100%, 390px)',
+              padding: 24,
+              borderRadius: 26,
+              border: '1px solid rgba(250,204,21,.38)',
+              background: 'linear-gradient(145deg,#121039,#080817)',
+              boxShadow: '0 24px 70px rgba(0,0,0,.6)',
+            }}
+          >
+            <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 12, marginBottom: 20 }}>
+              <div>
+                <div style={{ color: '#fde68a', fontSize: 11, fontWeight: 900, letterSpacing: '.14em' }}>ONIX BONUS</div>
+                <div style={{ marginTop: 4, color: '#fff', fontSize: 24, fontWeight: 1000 }}>🎟 {promoUi.label}</div>
+                <div style={{ marginTop: 6, color: '#a1a1aa', fontSize: 14 }}>{promoUi.helper}</div>
+              </div>
+              <button
+                type="button"
+                onClick={() => setPromoModalVisible(false)}
+                style={{ width: 38, height: 38, flex: '0 0 auto', borderRadius: 12, border: '1px solid rgba(168,85,247,.35)', background: 'rgba(15,12,45,.9)', color: '#fff', fontSize: 24 }}
+              >
+                ×
+              </button>
+            </div>
+
+            <input
+              value={promoCodeInput}
+              onChange={(event) => setPromoCodeInput(event.target.value.toUpperCase())}
+              placeholder={promoUi.placeholder}
+              autoCapitalize="characters"
+              autoCorrect="off"
+              spellCheck={false}
+              style={{
+                width: '100%',
+                boxSizing: 'border-box',
+                padding: '15px 16px',
+                borderRadius: 16,
+                border: '1px solid rgba(168,85,247,.32)',
+                background: '#0a0f1c',
+                color: '#fff',
+                textAlign: 'center',
+                fontSize: 18,
+                fontWeight: 900,
+                outline: 'none',
+              }}
+            />
+
+            <button
+              type="button"
+              onClick={applyPromoCode}
+              disabled={!promoCodeInput.trim()}
+              style={{
+                width: '100%',
+                marginTop: 14,
+                padding: '15px 16px',
+                borderRadius: 16,
+                border: 0,
+                background: promoCodeInput.trim() ? '#facc15' : '#52525b',
+                color: promoCodeInput.trim() ? '#111827' : '#d4d4d8',
+                fontSize: 17,
+                fontWeight: 1000,
+              }}
+            >
+              {promoUi.activate}
+            </button>
+
+            <div style={{ marginTop: 12, color: '#71717a', textAlign: 'center', fontSize: 12 }}>{promoUi.once}</div>
+          </div>
+        </div>
+      )}
+
       {headerNotificationsVisible && (
         <div role="dialog" aria-modal="true" onClick={() => setHeaderNotificationsVisible(false)} style={{ position: 'fixed', inset: 0, zIndex: 5000, background: 'rgba(0,0,0,.68)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 20 }}>
           <div onClick={(event) => event.stopPropagation()} style={{ width: 'min(100%, 390px)', maxHeight: '72vh', overflowY: 'auto', padding: 22, borderRadius: 26, border: '1px solid rgba(168,85,247,.42)', background: 'linear-gradient(145deg,#121039,#080817)', boxShadow: '0 24px 70px rgba(0,0,0,.55)' }}>
@@ -22099,45 +22187,6 @@ body:not(.onix-body-home-lock) {
 
 
 
-      {promoModalVisible && (
-        <div className="fixed inset-0 z-[90] flex items-center justify-center bg-black/70 px-4">
-          <div className="w-full max-w-sm rounded-3xl border border-yellow-400/30 bg-[#111827] p-6 shadow-2xl">
-            <div className="mb-5 flex items-start justify-between gap-3">
-              <div>
-                <h2 className="text-2xl font-bold text-white">🎟 {promoUi.label}</h2>
-                <p className="mt-1 text-sm text-gray-400">
-                  {promoUi.helper}
-                </p>
-              </div>
-
-              <button
-                onClick={() => setPromoModalVisible(false)}
-                className="text-2xl text-gray-400"
-              >
-                ×
-              </button>
-            </div>
-
-            <input
-              value={promoCodeInput}
-              onChange={(event) => setPromoCodeInput(event.target.value.toUpperCase())}
-              placeholder={promoUi.placeholder}
-              className="w-full rounded-2xl bg-[#0a0f1c] px-4 py-4 text-center text-lg font-bold text-white outline-none"
-            />
-
-            <button
-              onClick={applyPromoCode}
-              className="mt-4 w-full rounded-2xl bg-yellow-400 py-4 text-lg font-bold text-black active:scale-95"
-            >
-              {promoUi.activate}
-            </button>
-
-            <p className="mt-3 text-center text-xs text-gray-500">
-              {promoUi.once}
-            </p>
-          </div>
-        </div>
-      )}
 
       {shareCardVisible && (
         <div className="fixed inset-0 z-[90] flex items-center justify-center bg-black/70 px-4">
