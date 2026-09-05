@@ -119,6 +119,51 @@ function requireTelegramMiniAppUser(req, res, next) {
   return next();
 }
 
+const SENSITIVE_REWARD_LOCKS = new Map();
+const SENSITIVE_REWARD_LOCK_TTL_MS = 15 * 1000;
+
+function sensitiveRewardMutationGuard(req, res, next) {
+  const telegramId = String(req.telegramUserId || '');
+
+  if (!telegramId) {
+    return res.status(401).json({
+      message: 'Telegram authentication required',
+    });
+  }
+
+  const now = Date.now();
+  const existing = SENSITIVE_REWARD_LOCKS.get(telegramId);
+
+  if (existing && now - existing.startedAt < SENSITIVE_REWARD_LOCK_TTL_MS) {
+    return res.status(409).json({
+      message: 'Reward request already in progress',
+      code: 'REWARD_REQUEST_IN_PROGRESS',
+    });
+  }
+
+  SENSITIVE_REWARD_LOCKS.set(telegramId, {
+    startedAt: now,
+    path: req.path,
+  });
+
+  let released = false;
+
+  const release = () => {
+    if (released) return;
+    released = true;
+
+    const current = SENSITIVE_REWARD_LOCKS.get(telegramId);
+    if (current && current.startedAt === now) {
+      SENSITIVE_REWARD_LOCKS.delete(telegramId);
+    }
+  };
+
+  res.once('finish', release);
+  res.once('close', release);
+
+  return next();
+}
+
 router.post('/telegram-auth-test', express.json(), (req, res) => {
   const initData =
     req.get('x-telegram-init-data') ||
@@ -3206,7 +3251,7 @@ router.get('/admin-economy-dashboard', async (req, res) => {
 
 
 // CLAIM WELCOME BONUS
-router.post('/claim-welcome-bonus', requireTelegramMiniAppUser, async (req, res) => {
+router.post('/claim-welcome-bonus', requireTelegramMiniAppUser, sensitiveRewardMutationGuard, async (req, res) => {
   try {
     const requestedTelegramId = String(req.body?.telegramId || '');
     const telegramId = req.telegramUserId;
@@ -3267,7 +3312,7 @@ router.post('/claim-welcome-bonus', requireTelegramMiniAppUser, async (req, res)
 });
 
 // APPLY PROMO CODE
-router.post('/apply-promo', requireTelegramMiniAppUser, async (req, res) => {
+router.post('/apply-promo', requireTelegramMiniAppUser, sensitiveRewardMutationGuard, async (req, res) => {
   try {
     const { code } = req.body;
     const requestedTelegramId = String(req.body?.telegramId || '');
@@ -4825,7 +4870,7 @@ router.get('/team-dashboard/:telegramId', requireTelegramMiniAppUser, async (req
 });
 
 // CLAIM TEAM MISSION
-router.post('/claim-team-mission', requireTelegramMiniAppUser, async (req, res) => {
+router.post('/claim-team-mission', requireTelegramMiniAppUser, sensitiveRewardMutationGuard, async (req, res) => {
   try {
     const { missionId } = req.body;
     const requestedTelegramId = String(req.body?.telegramId || '');
@@ -4903,7 +4948,7 @@ router.post('/claim-team-mission', requireTelegramMiniAppUser, async (req, res) 
 });
 
 // CLAIM TEAM WEEKLY PRIZE
-router.post('/claim-team-prize', requireTelegramMiniAppUser, async (req, res) => {
+router.post('/claim-team-prize', requireTelegramMiniAppUser, sensitiveRewardMutationGuard, async (req, res) => {
   try {
     const requestedTelegramId = String(req.body?.telegramId || '');
     const telegramId = req.telegramUserId;
@@ -5282,7 +5327,7 @@ router.post('/buy-perk', requireTelegramMiniAppUser, async (req, res) => {
 });
 
 // OPEN CHEST — RANDOM SHOP REWARD
-router.post('/open-chest', requireTelegramMiniAppUser, async (req, res) => {
+router.post('/open-chest', requireTelegramMiniAppUser, sensitiveRewardMutationGuard, async (req, res) => {
   try {
     const requestedTelegramId = String(req.body?.telegramId || '');
     const telegramId = req.telegramUserId;
@@ -5406,7 +5451,7 @@ router.get('/missions/:telegramId', requireTelegramMiniAppUser, async (req, res)
 });
 
 // CLAIM DAILY / WEEKLY MISSION
-router.post('/claim-mission', requireTelegramMiniAppUser, async (req, res) => {
+router.post('/claim-mission', requireTelegramMiniAppUser, sensitiveRewardMutationGuard, async (req, res) => {
   try {
     const { missionId, missionType } = req.body;
     const requestedTelegramId = String(req.body?.telegramId || '');
@@ -5495,7 +5540,7 @@ router.post('/claim-mission', requireTelegramMiniAppUser, async (req, res) => {
 });
 
 // CLAIM TASK
-router.post('/claim-task', requireTelegramMiniAppUser, async (req, res) => {
+router.post('/claim-task', requireTelegramMiniAppUser, sensitiveRewardMutationGuard, async (req, res) => {
   try {
     const { task } = req.body;
     const requestedTelegramId = String(req.body?.telegramId || '');
