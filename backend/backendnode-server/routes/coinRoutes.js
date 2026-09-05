@@ -1163,6 +1163,8 @@ function getPromoCodesConfig() {
     START: getNumberEnv('PROMO_START_REWARD', 5000),
     ONIX2026: getNumberEnv('PROMO_ONIX2026_REWARD', 10000),
     LAUNCH: getNumberEnv('PROMO_LAUNCH_REWARD', 15000),
+    GG5000: getNumberEnv('PROMO_GG5000_REWARD', 5000),
+    WW10000: getNumberEnv('PROMO_WW10000_REWARD', 10000),
   };
 }
 
