@@ -1730,6 +1730,51 @@ function getPreviousWeekKey(timestamp = Date.now()) {
   return getWeekKey(Number(timestamp) - 7 * 24 * 60 * 60 * 1000);
 }
 
+const ECONOMY_ANOMALY_WINDOW_MS = 60 * 60 * 1000;
+const ECONOMY_ANOMALY_SINGLE_EARNING = 250000;
+const ECONOMY_ANOMALY_HOURLY_EARNING = 300000;
+
+function recordEconomyEarningForAnomalyDetection(user, value) {
+  const amount = roundOnix(value);
+  if (!Number.isFinite(amount) || amount <= 0) return;
+
+  const now = Date.now();
+  const since = now - ECONOMY_ANOMALY_WINDOW_MS;
+  const logs = Array.isArray(user.securityLogs) ? user.securityLogs : [];
+
+  let recentEarned = 0;
+  for (const entry of logs) {
+    if (!entry || entry.type !== 'economy_earning') continue;
+    if (Number(entry.createdAt || 0) < since) continue;
+
+    const parsed = Number(entry.details || 0);
+    if (Number.isFinite(parsed) && parsed > 0) {
+      recentEarned += parsed;
+    }
+  }
+
+  addSecurityLog(
+    user,
+    'economy_earning',
+    'Server-side ONIX earning',
+    String(amount)
+  );
+
+  if (amount >= ECONOMY_ANOMALY_SINGLE_EARNING) {
+    addSuspiciousReason(
+      user,
+      'Unusually large single ONIX earning detected'
+    );
+  }
+
+  if (recentEarned + amount >= ECONOMY_ANOMALY_HOURLY_EARNING) {
+    addSuspiciousReason(
+      user,
+      'Unusually high ONIX earnings within one hour'
+    );
+  }
+}
+
 function addEarnings(user, amount) {
   const value = roundOnix(amount);
   const currentWeek = getWeekKey();
@@ -1741,6 +1786,9 @@ function addEarnings(user, amount) {
 
   user.totalEarned = roundOnix(Number(user.totalEarned || 0) + value);
   user.weeklyEarned = roundOnix(Number(user.weeklyEarned || 0) + value);
+
+  // Detection only: never blocks or removes legitimate earnings.
+  recordEconomyEarningForAnomalyDetection(user, value);
 }
 
 function getDailyStreakMultiplier(streakDay) {
