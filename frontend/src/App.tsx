@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Zap, Trophy, Home, Star, Wallet, UserCircle, Rocket, Menu, Bell } from 'lucide-react';
 import WebApp from '@twa-dev/sdk';
 import axios from 'axios';
+import { createTranslator, type AppLanguage } from './i18n';
 import onixLogoCrystal from './assets/onix-logo-crystal.webp';
 import onixBoostTapStrengthIcon from './assets/onix-boost-icons/boost-tap-strength.png';
 import onixBoostCoinMultiplierIcon from './assets/onix-boost-icons/boost-coin-multiplier.png';
@@ -12259,7 +12260,7 @@ class AppErrorBoundary extends React.Component<
 }
 
 
-type AppLanguage = 'de' | 'en' | 'ru' | 'uk' | 'tr' | 'es' | 'fr' | 'it' | 'pl' | 'pt';
+
 
 const ONIX_I18N = {
   de: { menu:'Menü',language:'Sprache',notifications:'Benachrichtigungen',on:'Eingeschaltet',off:'Ausgeschaltet',notificationsTitle:'Benachrichtigungen',notificationsOff:'Benachrichtigungen sind ausgeschaltet. Du kannst sie im Menü einschalten.',notificationsOnTitle:'✓ Benachrichtigungen aktiv',notificationsOnText:'Neue ONIX-Meldungen werden hier angezeigt.',navHome:'Start',navUpgrades:'Upgrades',navTasks:'Aufgaben',navProfile:'Profil',navWallet:'Wallet',navDrop:'Drop',balance:'Guthaben $ONIX',boostActive:'⚡ Boost aktiv',dropTagline:'Fange Kristalle, baue Combos auf und meide Gefahren.',live:'LIVE',realOnix:'echte ONIX',attemptsToday:'Versuche heute',dailyRounds:'Täglich',rounds:'Runden',serverLimit:'Server-Limit',time:'Zeit',points:'Punkte',combo:'Combo',danger:'Gefahr',crystal:'ONIX Kristall',roundEnded:'Runde beendet!',ready:'Bereit?',best:'Bestwert',attemptsLeft:'Verbleibende Versuche',rules:'30 Sekunden · 💎 +10 · 🌟 +50 · ☄️ −25',loading:'Wird geladen…',noAttempts:'Keine Versuche mehr',again:'Noch einmal',startGame:'Spiel starten',tapCrystals:'Tippe auf die Kristalle!',crystalLabel:'Kristall',rare:'Selten',hazard:'Gefahr',rewardInfo:'Server-Belohnung: 1 Punkt = 1 ONIX, maximal 2.500 ONIX pro Runde. Heute verdient:' },
@@ -12331,6 +12332,7 @@ function App() {
     }
   });
   const tr = ONIX_I18N[appLanguage];
+  const t = createTranslator(appLanguage);
   const promoUi = {
     de: { label: 'Promocode', helper: 'Gib deinen Kampagnen-Promocode ein', placeholder: 'Zum Beispiel: GG5000', activate: 'Aktivieren', once: 'Jeder Promocode kann nur einmal verwendet werden.', success: 'Promocode aktiviert', error: 'Promocode konnte nicht aktiviert werden' },
     en: { label: 'Promo code', helper: 'Enter your campaign promo code', placeholder: 'For example: GG5000', activate: 'Activate', once: 'Each promo code can only be used once.', success: 'Promo code activated', error: 'Promo code could not be activated' },
@@ -18804,11 +18806,11 @@ body:not(.onix-body-home-lock) {
         <div role="dialog" aria-modal="true" onClick={() => setHeaderMenuVisible(false)} style={{ position: 'fixed', inset: 0, zIndex: 5000, background: 'rgba(0,0,0,.62)', display: 'flex' }}>
           <div onClick={(event) => event.stopPropagation()} style={{ width: 'min(84vw, 330px)', height: '100%', padding: '28px 20px', background: 'linear-gradient(180deg,#0b0b28,#080817 72%)', borderRight: '1px solid rgba(168,85,247,.45)', boxShadow: '20px 0 50px rgba(0,0,0,.45)' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 28 }}>
-              <div><div style={{ color: '#67e8f9', fontSize: 11, fontWeight: 900, letterSpacing: '.18em' }}>ONIX CONTROL</div><div style={{ fontSize: 24, fontWeight: 1000 }}>{tr.menu}</div></div>
+              <div><div style={{ color: '#67e8f9', fontSize: 11, fontWeight: 900, letterSpacing: '.18em' }}>ONIX CONTROL</div><div style={{ fontSize: 24, fontWeight: 1000 }}>{t('common.menu')}</div></div>
               <button type="button" onClick={() => setHeaderMenuVisible(false)} style={{ width: 38, height: 38, borderRadius: 12, border: '1px solid rgba(168,85,247,.35)', background: 'rgba(15,12,45,.9)', color: '#fff', fontSize: 24 }}>×</button>
             </div>
             <div style={{ padding: 16, borderRadius: 18, border: '1px solid rgba(168,85,247,.25)', background: 'rgba(10,10,35,.8)', marginBottom: 14 }}>
-              <div style={{ fontWeight: 900, marginBottom: 10 }}>🌐 {tr.language}</div>
+              <div style={{ fontWeight: 900, marginBottom: 10 }}>🌐 {t('common.language')}</div>
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8 }}>
                 {ONIX_LANGUAGES.map((item) => (
                   <button key={item.code} type="button" onClick={() => changeAppLanguage(item.code)} style={{ padding: '11px 8px', borderRadius: 13, border: appLanguage === item.code ? '1px solid #67e8f9' : '1px solid rgba(168,85,247,.25)', background: appLanguage === item.code ? 'rgba(34,211,238,.12)' : 'rgba(15,12,45,.75)', color: '#fff', fontWeight: 800, fontSize: 13 }}>{item.flag} {item.label}</button>
@@ -19062,12 +19064,12 @@ body:not(.onix-body-home-lock) {
 
       <div className="onix-nav flex">
         {[
-          { id: 'home', label: tr.navHome, icon: Home },
-          { id: 'boosts', label: tr.navUpgrades, icon: Zap },
-          { id: 'tasks', label: tr.navTasks, icon: Trophy },
-          { id: 'friends', label: tr.navProfile, icon: UserCircle },
-          { id: 'wallet', label: tr.navWallet, icon: Wallet },
-          { id: 'drop', label: tr.navDrop, icon: Rocket },
+          { id: 'home', label: t('nav.home'), icon: Home },
+          { id: 'boosts', label: t('nav.upgrades'), icon: Zap },
+          { id: 'tasks', label: t('nav.tasks'), icon: Trophy },
+          { id: 'friends', label: t('nav.profile'), icon: UserCircle },
+          { id: 'wallet', label: t('nav.wallet'), icon: Wallet },
+          { id: 'drop', label: t('nav.drop'), icon: Rocket },
         ].map((tab) => (
           <button
             key={tab.id}
@@ -19820,7 +19822,7 @@ body:not(.onix-body-home-lock) {
                   <div className="onix-upgrade-ref-main">
                     <div className="onix-upgrade-ref-title">{uiText(item.title)}</div>
                     {item.level !== null && item.level !== undefined && (
-                      <div className="onix-upgrade-ref-level">Level {item.level}</div>
+                      <div className="onix-upgrade-ref-level">{t('common.level', { level: item.level })}</div>
                     )}
                     <div className="onix-upgrade-ref-subtitle">{uiText(item.subtitle)}</div>
                   </div>
