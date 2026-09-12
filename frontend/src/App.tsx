@@ -2,7 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { Zap, Trophy, Home, Star, Wallet, UserCircle, Rocket, Menu, Bell } from 'lucide-react';
 import WebApp from '@twa-dev/sdk';
 import axios from 'axios';
-import { createTranslator, type AppLanguage } from './i18n';
+import { createTranslator, type AppLanguage, type MessageKey } from './i18n';
+import { germanMessages } from './i18n/messages';
 import onixLogoCrystal from './assets/onix-logo-crystal.webp';
 import onixBoostTapStrengthIcon from './assets/onix-boost-icons/boost-tap-strength.png';
 import onixBoostCoinMultiplierIcon from './assets/onix-boost-icons/boost-coin-multiplier.png';
@@ -11419,9 +11420,12 @@ type AchievementCategory =
   | 'daily'
   | 'ranks';
 
+type LocalizedNotice = (t: ReturnType<typeof createTranslator>, language: AppLanguage) => string;
+
 type RewardPopupItem = {
   icon: string;
   title: string;
+  localizedTitle?: LocalizedNotice;
   amount: number;
 };
 
@@ -11471,7 +11475,7 @@ type AdminPrizePreviewResponse = {
 
 type ToastMessage = {
   id: number;
-  message: string;
+  message: string | LocalizedNotice;
   type: 'success' | 'error' | 'info';
 };
 
@@ -12346,7 +12350,8 @@ function App() {
     pt: { label: 'Código promocional', helper: 'Digite o código promocional da campanha', placeholder: 'Por exemplo: GG5000', activate: 'Ativar', once: 'Cada código promocional só pode ser usado uma vez.', success: 'Código promocional ativado', error: 'Não foi possível ativar o código promocional' },
   }[appLanguage];
 
-  const uiText = (source: string) => {
+  const legacyLanguage = appLanguage;
+  const uiText = (source: string, appLanguage: AppLanguage = legacyLanguage) => {
     if (appLanguage === 'de') return source;
 
     // Брендовая кнопка тапа должна выглядеть одинаково на всех языках.
@@ -12670,6 +12675,7 @@ function App() {
       const nodes: Text[] = [];
       while (walker.nextNode()) nodes.push(walker.currentNode as Text);
       for (const node of nodes) {
+        if (node.parentElement?.closest('[data-onix-i18n="notice"]')) continue;
         const raw = node.nodeValue || '';
         const trimmed = raw.trim();
         if (!trimmed) continue;
@@ -12683,6 +12689,7 @@ function App() {
       const elements = root instanceof Element ? [root, ...Array.from(root.querySelectorAll('*'))] : Array.from(root.querySelectorAll('*'));
       for (const el of elements) {
         if (!(el instanceof HTMLElement)) continue;
+        if (el.closest('[data-onix-i18n="notice"]')) continue;
         for (const attr of ['placeholder', 'title', 'aria-label']) {
           const value = el.getAttribute(attr);
           if (!value) continue;
@@ -13520,7 +13527,7 @@ function App() {
     const telegramId = getTelegramId();
 
     if (!telegramId) {
-      showToast('Telegram-ID konnte nicht abgerufen werden');
+      showToast((t) => t('errors.telegramId'));
       return;
     }
 
@@ -13629,7 +13636,7 @@ function App() {
       showRewardPopupFromResponse(response.data);
       showToast(`🎁 Welcome bonus: +${formatOnix(response.data.reward)} ONIX`, 'success');
     } catch (error: any) {
-      showToast(error?.response?.data?.message || 'Willkommensbonus nicht verfügbar', 'error');
+      showToast(actionError(error?.response?.data?.message, 'errors.welcome'), 'error');
     }
   };
 
@@ -13665,7 +13672,7 @@ function App() {
     const telegramId = getTelegramId();
 
     if (!telegramId) {
-      showToast('Telegram-ID konnte nicht abgerufen werden');
+      showToast((t) => t('errors.telegramId'));
       return;
     }
 
@@ -13711,7 +13718,7 @@ function App() {
         WebApp.HapticFeedback?.notificationOccurred('success');
       } catch {}
     } catch (error: any) {
-      showToast(error?.response?.data?.message || 'Upgrade konnte nicht gekauft werden');
+      showToast(actionError(error?.response?.data?.message, 'errors.upgrade'));
     }
   };
 
@@ -13720,7 +13727,7 @@ function App() {
     const telegramId = getTelegramId();
 
     if (!telegramId) {
-      showToast('Telegram-ID konnte nicht abgerufen werden', 'error');
+      showToast((t) => t('errors.telegramId'), 'error');
       return;
     }
 
@@ -13752,7 +13759,7 @@ function App() {
       refreshAfterAction();
       refreshAfterAction();
     } catch (error: any) {
-      showToast(error?.response?.data?.message || 'Truhe konnte nicht geöffnet werden', 'error');
+      showToast(actionError(error?.response?.data?.message, 'errors.chest'), 'error');
     }
   };
 
@@ -13760,7 +13767,7 @@ function App() {
     const telegramId = getTelegramId();
 
     if (!telegramId) {
-      showToast('Telegram-ID konnte nicht abgerufen werden');
+      showToast((t) => t('errors.telegramId'));
       return;
     }
 
@@ -13803,7 +13810,7 @@ function App() {
         WebApp.HapticFeedback?.notificationOccurred('success');
       } catch {}
     } catch (error: any) {
-      showToast(error?.response?.data?.message || 'Perk konnte nicht gekauft werden');
+      showToast(actionError(error?.response?.data?.message, 'errors.perk'));
     }
   };
 
@@ -13815,7 +13822,7 @@ function App() {
     const telegramId = getTelegramId();
 
     if (!telegramId) {
-      showToast('Telegram-ID konnte nicht abgerufen werden');
+      showToast((t) => t('errors.telegramId'));
       return;
     }
 
@@ -13861,9 +13868,9 @@ function App() {
         WebApp.HapticFeedback?.notificationOccurred('success');
       } catch {}
 
-      showToast(`⚡ ${type === 'tap' ? 'Tap' : 'Mining'} ×2 aktiviert!`);
+      showToast((t) => t(type === 'tap' ? 'boost.tapActivated' : 'boost.miningActivated'));
     } catch (error: any) {
-      showToast(error?.response?.data?.message || 'Boost konnte nicht aktiviert werden');
+      showToast(actionError(error?.response?.data?.message, 'errors.boost'));
     }
   };
 
@@ -13871,12 +13878,12 @@ function App() {
     const telegramId = getTelegramId();
 
     if (!telegramId) {
-      showToast('Telegram-ID konnte nicht abgerufen werden', 'error');
+      showToast((t) => t('errors.telegramId'), 'error');
       return;
     }
 
     if (Number(energy || 0) >= Number(maxEnergy || 0)) {
-      showToast('Energie ist bereits voll', 'info');
+      showToast((t) => t('energy.full'), 'info');
       return;
     }
 
@@ -13916,9 +13923,9 @@ function App() {
         WebApp.HapticFeedback?.notificationOccurred('success');
       } catch {}
 
-      showToast('🔋 Energie vollständig wiederhergestellt!', 'success');
+      showToast((t) => t('energy.restored'), 'success');
     } catch (error: any) {
-      showToast(error?.response?.data?.message || 'Energie konnte nicht wiederhergestellt werden', 'error');
+      showToast(actionError(error?.response?.data?.message, 'errors.energy'), 'error');
     }
   };
 
@@ -14005,7 +14012,7 @@ function App() {
     const telegramId = getTelegramId();
 
     if (!telegramId) {
-      showToast('Telegram-ID konnte nicht abgerufen werden');
+      showToast((t) => t('errors.telegramId'));
       return;
     }
 
@@ -14055,7 +14062,7 @@ function App() {
         WebApp.HapticFeedback?.notificationOccurred('success');
       } catch {}
     } catch (error: any) {
-      showToast(error?.response?.data?.message || 'Miner-Ertrag konnte nicht abgeholt werden');
+      showToast(actionError(error?.response?.data?.message, 'errors.miner'));
     } finally {
       setIsClaimingOfflineReward(false);
     }
@@ -14076,8 +14083,24 @@ function App() {
     if (user.missions) setMissions(user.missions);
   };
 
+  // Match only the migrated errors; preserve all other server messages.
+  const actionErrorKeys = [
+    'errors.chest', 'errors.boost', 'errors.upgrade', 'errors.perk',
+    'energy.full', 'errors.energy', 'errors.miner', 'errors.telegramId',
+    'errors.welcome', 'errors.reward', 'errors.mission', 'errors.title',
+  ] as const satisfies readonly MessageKey[];
+  const actionError = (
+    serverMessage: string | undefined,
+    fallback: typeof actionErrorKeys[number]
+  ): string | LocalizedNotice => {
+    const key = serverMessage
+      ? actionErrorKeys.find((key) => germanMessages[key] === serverMessage)
+      : fallback;
+    return key ? (t) => t(key) : serverMessage || ((t) => t(fallback));
+  };
+
   const showToast = (
-    message: string,
+    message: string | LocalizedNotice,
     type: 'success' | 'error' | 'info' = 'info'
   ) => {
     const id = Date.now() + Math.random();
@@ -14110,11 +14133,14 @@ function App() {
       data?.achievementBonuses || data?.user?.achievementBonuses || [];
 
     if (Array.isArray(rankBonuses)) {
-      rankBonuses.forEach((bonus: { name?: string; bonus?: number }) => {
+      rankBonuses.forEach((bonus: { id?: string; name?: string; bonus?: number }) => {
         if (Number(bonus.bonus || 0) > 0) {
           items.push({
             icon: '🏆',
             title: `Neuer Rang: ${bonus.name || 'Rang'}`,
+            localizedTitle: (t, language) => t('rewards.newRank', {
+              name: uiText(RANKS.find((rank) => rank.id === bonus.id)?.name || bonus.name || 'Rang', language),
+            }),
             amount: Number(bonus.bonus || 0),
           });
         }
@@ -14123,11 +14149,14 @@ function App() {
 
     if (Array.isArray(achievementBonuses)) {
       achievementBonuses.forEach(
-        (achievement: { title?: string; reward?: number }) => {
+        (achievement: { id?: string; title?: string; reward?: number }) => {
           if (Number(achievement.reward || 0) > 0) {
             items.push({
               icon: '✅',
               title: `Erfolg: ${achievement.title || 'Abgeschlossen'}`,
+              localizedTitle: (t, language) => t('rewards.achievement', {
+                name: uiText(ACHIEVEMENTS.find((item) => item.id === achievement.id)?.title || achievement.title || 'Abgeschlossen', language),
+              }),
               amount: Number(achievement.reward || 0),
             });
           }
@@ -14482,9 +14511,10 @@ function App() {
       applyUserStats(user);
       setMissions(response.data.missions || user.missions || { daily: [], weekly: [], difficulty: 1, dailyKey: '', weeklyKey: '' });
 
-      showToast(`✅ Mission abgeschlossen: +${formatOnix(response.data.missionReward.reward)} ONIX`, 'success');
+      const missionRewardAmount = formatOnix(response.data.missionReward.reward);
+      showToast((t) => t('rewards.mission', { amount: missionRewardAmount }), 'success');
     } catch (error: any) {
-      showToast(error?.response?.data?.message || 'Mission konnte nicht abgeholt werden', 'error');
+      showToast(actionError(error?.response?.data?.message, 'errors.mission'), 'error');
     }
   };
 
@@ -18302,9 +18332,9 @@ body:not(.onix-body-home-lock) {
       const user = response.data.user;
 
       setSelectedTitle(user.selectedTitle || title);
-      showToast('✅ Titel aktualisiert', 'success');
+      showToast((t) => t('profile.titleUpdated'), 'success');
     } catch (error: any) {
-      showToast(error?.response?.data?.message || 'Titel konnte nicht gewählt werden', 'error');
+      showToast(actionError(error?.response?.data?.message, 'errors.title'), 'error');
     }
   };
 
@@ -18798,7 +18828,7 @@ body:not(.onix-body-home-lock) {
             <div className="onix-toast-icon">
               {toast.type === 'success' ? '✓' : toast.type === 'error' ? '!' : '◆'}
             </div>
-            <div className="onix-toast-message">{toast.message}</div>
+            <div className="onix-toast-message" data-onix-i18n={typeof toast.message === 'function' ? 'notice' : undefined}>{typeof toast.message === 'function' ? toast.message(t, appLanguage) : toast.message}</div>
           </div>
         ))}
       </div>
@@ -19907,7 +19937,7 @@ body:not(.onix-body-home-lock) {
       showReferralBonusPaidToast(response.data);
                 loadMissions();
 
-                showToast('🎉 Abo bestätigt! +25000 ONIX');
+                showToast((t) => t('rewards.subscription', { amount: '25000' }));
               } catch (error: any) {
                 showToast(error?.response?.data?.message || 'Abonniere zuerst den Kanal');
               }
@@ -19961,7 +19991,8 @@ body:not(.onix-body-home-lock) {
                 setOwnedPerks(user.ownedPerks || []);
       setPerkLevels(normalizePerkLevels(user.perkLevels));
 
-                showToast(`🎉 Du hast erhalten +${formatOnix(economyConfig.referralReward)} ONIX!`, 'success');
+                const rewardAmount = formatOnix(economyConfig.referralReward);
+                showToast((t) => t('rewards.bonus', { amount: rewardAmount }), 'success');
               } catch (error: any) {
                 showToast(error?.response?.data?.message || 'Lade zuerst einen Freund ein');
               }
@@ -20033,25 +20064,31 @@ body:not(.onix-body-home-lock) {
       showReferralBonusPaidToast(response.data);
                 loadMissions();
 
-                const rankBonusText =
+                const rankBonusAmount =
                   Array.isArray(response.data.rankBonuses) && response.data.rankBonuses.length
-                    ? `\n🏆 Rangbonus: +${formatOnix(
+                    ? formatOnix(
                         response.data.rankBonuses.reduce(
                           (sum: number, item: { bonus: number }) =>
                             sum + Number(item.bonus || 0),
                           0
                         )
-                      )} ONIX`
-                    : '';
-
-                showToast(
-                  `🎁 Du hast erhalten +${formatOnix(
-                    response.data.claimedDailyReward ||
-                      getDailyRewardWithStreak(user.level, user.dailyStreak || 1)
-                  )} ONIX\n🔥 Streak: ${user.dailyStreak || 1}/7${rankBonusText}`
+                      )
+                    : null;
+                const dailyRewardAmount = formatOnix(
+                  response.data.claimedDailyReward ||
+                    getDailyRewardWithStreak(user.level, user.dailyStreak || 1)
                 );
+                const streakDay = user.dailyStreak || 1;
+
+                showToast((t) => [
+                  t('rewards.daily', { amount: dailyRewardAmount }),
+                  t('rewards.streak', { day: streakDay }),
+                  ...(rankBonusAmount !== null
+                    ? [t('rewards.rankBonus', { amount: rankBonusAmount })]
+                    : []),
+                ].join('\n'));
               } catch (error: any) {
-                showToast(error?.response?.data?.message || 'Fehler beim Abrufen der Belohnung');
+                showToast(actionError(error?.response?.data?.message, 'errors.reward'));
               }
             }}
             className={`shop-item ${
@@ -23036,7 +23073,7 @@ body:not(.onix-body-home-lock) {
             </div>
 
             <h2 className="text-2xl font-bold text-white">
-              Saisonpreis erhalten
+              {t('rewards.season')}
             </h2>
 
             <p className="mt-2 text-sm text-gray-400">
@@ -23044,7 +23081,7 @@ body:not(.onix-body-home-lock) {
             </p>
 
             <p className="mt-4 text-lg font-bold text-yellow-400">
-              #{seasonPrizePopup.place}. Platz
+              #{t('rewards.place', { place: seasonPrizePopup.place })}
             </p>
 
             <p className="mt-2 text-3xl font-black text-yellow-400">
@@ -23438,7 +23475,7 @@ body:not(.onix-body-home-lock) {
             </div>
 
             <h2 className="text-2xl font-bold text-white">
-              Erhaltene Belohnungen
+              {t('rewards.received')}
             </h2>
 
             <div className="mt-5 space-y-3">
@@ -23450,8 +23487,8 @@ body:not(.onix-body-home-lock) {
                   <div className="flex items-center justify-between gap-3">
                     <div className="flex min-w-0 items-center gap-3">
                       <span className="text-2xl">{item.icon}</span>
-                      <p className="truncate text-sm font-bold text-white">
-                        {uiText(item.title)}
+                      <p data-onix-i18n={item.localizedTitle ? 'notice' : undefined} className="truncate text-sm font-bold text-white">
+                        {item.localizedTitle ? item.localizedTitle(t, appLanguage) : uiText(item.title)}
                       </p>
                     </div>
 
@@ -23506,7 +23543,7 @@ body:not(.onix-body-home-lock) {
                   : 'bg-yellow-400 active:scale-95'
               }`}
             >
-              {isClaimingOfflineReward ? uiText('Wird abgeholt...') : uiText('Abholen')}
+              {isClaimingOfflineReward ? t('rewards.claiming') : uiText('Abholen')}
             </button>
           </div>
         </div>
