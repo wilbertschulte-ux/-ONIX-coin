@@ -4,6 +4,7 @@ import WebApp from '@twa-dev/sdk';
 import axios from 'axios';
 import { createTranslator, type AppLanguage, type MessageKey } from './i18n';
 import { germanMessages } from './i18n/messages';
+import { getMissionText, getWeeklyAchievementDescription, getMissionClaimErrorKey } from './i18n/missions';
 import onixLogoCrystal from './assets/onix-logo-crystal.webp';
 import onixBoostTapStrengthIcon from './assets/onix-boost-icons/boost-tap-strength.png';
 import onixBoostCoinMultiplierIcon from './assets/onix-boost-icons/boost-coin-multiplier.png';
@@ -14514,7 +14515,8 @@ function App() {
       const missionRewardAmount = formatOnix(response.data.missionReward.reward);
       showToast((t) => t('rewards.mission', { amount: missionRewardAmount }), 'success');
     } catch (error: any) {
-      showToast(actionError(error?.response?.data?.message, 'errors.mission'), 'error');
+      const errorKey = getMissionClaimErrorKey(error?.response?.data?.message);
+      showToast(errorKey ? (t) => t(errorKey) : actionError(error?.response?.data?.message, 'errors.mission'), 'error');
     }
   };
 
@@ -19957,8 +19959,8 @@ body:not(.onix-body-home-lock) {
               {completedTasks.includes('channel')
                 ? 'Abgeschlossen'
                 : channelJoined
-                ? 'Prüfen'
-                : 'Abonnieren'}
+                ? t('tasks.check')
+                : t('tasks.subscribe')}
             </span>
           </div>
 )}
@@ -20013,7 +20015,7 @@ body:not(.onix-body-home-lock) {
                 ? 'Abgeschlossen'
                 : referralsCount >= 1
                 ? 'Abholen'
-                : 'Einladen'}
+                : t('tasks.invite')}
             </span>
           </div>
 )}
@@ -20098,7 +20100,7 @@ body:not(.onix-body-home-lock) {
             <div>
               <p className="font-bold">{uiText('🎁 Tägliche Belohnung')}</p>
               <p className="text-gray-400">
-                +{formatOnix(dailyRewardPreview)} ONIX · Tag {nextDailyStreakDay}/7
+                +{formatOnix(dailyRewardPreview)} {t('tasks.dailyDay', { day: nextDailyStreakDay })}
               </p>
               <p className="text-xs text-yellow-400">
                 {uiText('Streak-Multiplikator')} ×{dailyStreakMultiplier.toFixed(1)}
@@ -20138,6 +20140,7 @@ body:not(.onix-body-home-lock) {
                   </div>
                 ) : (
                   visibleDailyMissions.map((mission) => {
+                    const missionText = getMissionText(mission, appLanguage);
                     const progressPercent = Math.min(
                       (Number(mission.progress || 0) / Number(mission.goal || 1)) * 100,
                       100
@@ -20150,11 +20153,11 @@ body:not(.onix-body-home-lock) {
                       >
                         <div className="mb-3 flex items-start justify-between gap-3">
                           <div>
-                            <p className="font-bold text-white">
-                              {mission.secret ? '🔒 ' : ''}{uiText(mission.title)}
+                            <p data-onix-i18n={missionText ? 'notice' : undefined} className="font-bold text-white">
+                              {mission.secret ? '🔒 ' : ''}{missionText?.title ?? uiText(mission.title)}
                             </p>
-                            <p className="text-sm text-gray-400">
-                              {uiText(mission.description)}
+                            <p data-onix-i18n={missionText ? 'notice' : undefined} className="text-sm text-gray-400">
+                              {missionText?.description ?? uiText(mission.description)}
                             </p>
                           </div>
 
@@ -20192,10 +20195,10 @@ body:not(.onix-body-home-lock) {
                           }`}
                         >
                           {mission.isClaimed
-                            ? 'Erhalten'
+                            ? t('missions.claimed')
                             : mission.isCompleted
-                            ? 'Abholen'
-                            : 'In Bearbeitung'}
+                            ? t('missions.claim')
+                            : t('missions.pending')}
                         </button>
                       </div>
                     );
@@ -20203,7 +20206,7 @@ body:not(.onix-body-home-lock) {
                 )
               ) : (
                 <p className="rounded-2xl bg-[#0a0f1c] p-4 text-center text-gray-400">
-                  Missionen werden geladen...
+                  {t('missions.loading')}
                 </p>
               )}
             </div>
@@ -20237,6 +20240,7 @@ body:not(.onix-body-home-lock) {
                   </div>
                 ) : (
                   visibleWeeklyMissions.map((mission) => {
+                    const missionText = getMissionText(mission, appLanguage);
                     const progressPercent = Math.min(
                       (Number(mission.progress || 0) / Number(mission.goal || 1)) * 100,
                       100
@@ -20249,11 +20253,11 @@ body:not(.onix-body-home-lock) {
                       >
                         <div className="mb-3 flex items-start justify-between gap-3">
                           <div>
-                            <p className="font-bold text-white">
-                              {mission.secret ? '🔒 ' : ''}{uiText(mission.title)}
+                            <p data-onix-i18n={missionText ? 'notice' : undefined} className="font-bold text-white">
+                              {mission.secret ? '🔒 ' : ''}{missionText?.title ?? uiText(mission.title)}
                             </p>
-                            <p className="text-sm text-gray-400">
-                              {uiText(mission.description)}
+                            <p data-onix-i18n={missionText ? 'notice' : undefined} className="text-sm text-gray-400">
+                              {missionText?.description ?? uiText(mission.description)}
                             </p>
                           </div>
 
@@ -20291,10 +20295,10 @@ body:not(.onix-body-home-lock) {
                           }`}
                         >
                           {mission.isClaimed
-                            ? 'Erhalten'
+                            ? t('missions.claimed')
                             : mission.isCompleted
-                            ? 'Abholen'
-                            : 'In Bearbeitung'}
+                            ? t('missions.claim')
+                            : t('missions.pending')}
                         </button>
                       </div>
                     );
@@ -20302,7 +20306,7 @@ body:not(.onix-body-home-lock) {
                 )
               ) : (
                 <p className="rounded-2xl bg-[#0a0f1c] p-4 text-center text-gray-400">
-                  Missionen werden geladen...
+                  {t('missions.loading')}
                 </p>
               )}
             </div>
@@ -20356,8 +20360,8 @@ body:not(.onix-body-home-lock) {
                           <h3 className="text-lg font-bold text-white">
                             {uiText(achievement.title)}
                           </h3>
-                          <p className="text-sm text-gray-400">
-                            {uiText(achievement.description)}
+                          <p data-onix-i18n={achievement.id === 'weekly_100k' ? 'notice' : undefined} className="text-sm text-gray-400">
+                            {getWeeklyAchievementDescription(achievement, appLanguage) ?? uiText(achievement.description)}
                           </p>
                         </div>
 
@@ -20857,7 +20861,7 @@ body:not(.onix-body-home-lock) {
                     return (
                       <div key={achievement.id} className={`onix-profile-v75-achievement ${achievement.isCompleted ? 'is-done' : ''}`}>
                         <div className="onix-profile-v75-achievement-top">
-                          <div><strong>{uiText(achievement.title)}</strong><p>{uiText(achievement.description)}</p></div>
+                          <div><strong>{uiText(achievement.title)}</strong><p data-onix-i18n={achievement.id === 'weekly_100k' ? 'notice' : undefined}>{getWeeklyAchievementDescription(achievement, appLanguage) ?? uiText(achievement.description)}</p></div>
                           <span>{achievement.isCompleted ? '✓' : `+${formatOnix(achievement.reward)}`}</span>
                         </div>
                         <div className="onix-task-progress">
