@@ -1,3 +1,4 @@
+import { getBackendNotice } from './i18n/backend';
 import { getTransactionTitle, getWithdrawalError } from './i18n/transactions';
 import React, { useState, useEffect } from 'react';
 import { Zap, Trophy, Home, Star, Wallet, UserCircle, Rocket, Menu, Bell } from 'lucide-react';
@@ -14118,7 +14119,8 @@ function App() {
   ) => {
     const id = Date.now() + Math.random();
 
-    setToastMessages((prev) => [...prev, { id, message, type }]);
+    const localizedMessage = typeof message === 'string' ? getBackendNotice(message) ?? message : message;
+    setToastMessages((prev) => [...prev, { id, message: localizedMessage, type }]);
 
     setTimeout(() => {
       setToastMessages((prev) => prev.filter((toast) => toast.id !== id));

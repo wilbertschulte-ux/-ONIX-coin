@@ -2,6 +2,18 @@
 export const DEFAULT_LANGUAGE = 'de' as const;
 
 export const germanMessages = {
+  "backend.rateLimit": "Zu viele Anfragen. Versuch es später erneut.",
+  "backend.welcomeClaimed": "Willkommensbonus bereits erhalten",
+  "backend.promoEmpty": "Gib einen Promocode ein",
+  "backend.promoMissing": "Promocode nicht gefunden",
+  "backend.promoUsed": "Du hast diesen Promocode bereits verwendet",
+  "backend.insufficient": "Nicht genug ONIX",
+  "backend.frozen": "Konto eingefroren",
+  "backend.teamName": "Gib einen Teamnamen ein",
+  "backend.titleUnavailable": "Titel nicht verfügbar",
+  "backend.perkMax": "Perk ist bereits auf Maximallevel",
+  "backend.subscribeFirst": "Abonniere zuerst den Kanal",
+  "backend.inviteFirst": "Lade zuerst einen Freund ein",
   "drop.dropTagline": "Fange Kristalle, baue Combos auf und meide Gefahren.",
   "drop.live": "LIVE",
   "drop.realOnix": "echte ONIX",
@@ -334,6 +346,18 @@ export const messages: Record<AppLanguage, Partial<Record<MessageKey, string>>> 
     "common.level": "Level {level}"
   },
   ru: {
+    "backend.rateLimit": "Слишком много запросов. Попробуйте позже.",
+    "backend.welcomeClaimed": "Приветственный бонус уже получен",
+    "backend.promoEmpty": "Введите промокод",
+    "backend.promoMissing": "Промокод не найден",
+    "backend.promoUsed": "Вы уже использовали этот промокод",
+    "backend.insufficient": "Недостаточно ONIX",
+    "backend.frozen": "Аккаунт заморожен",
+    "backend.teamName": "Введите название команды",
+    "backend.titleUnavailable": "Титул недоступен",
+    "backend.perkMax": "Навык уже максимального уровня",
+    "backend.subscribeFirst": "Сначала подпишитесь на канал",
+    "backend.inviteFirst": "Сначала пригласите друга",
     "drop.dropTagline": "Лови кристаллы, собирай комбо и избегай опасностей.",
     "drop.live": "LIVE",
     "drop.realOnix": "реальные ONIX",

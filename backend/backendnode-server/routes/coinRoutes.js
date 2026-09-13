@@ -1,3 +1,4 @@
+const { translate, getUserLanguage } = require('../i18n');
 const axios = require('axios');
 const crypto = require('crypto');
 const express = require('express');
@@ -416,7 +417,7 @@ function getRouteRateLimit(pathname) {
   return { maxRequests: 180, windowMs: 60 * 1000 };
 }
 
-router.use((req, res, next) => {
+router.use(async (req, res, next) => {
   try {
     const isAdminOrCronPath =
       req.path.startsWith('/admin') || req.path.startsWith('/cron');
@@ -477,7 +478,7 @@ router.use((req, res, next) => {
 
       res.set('Retry-After', String(retryAfterSeconds));
       return res.status(429).json({
-        message: 'Zu viele Anfragen. Versuch es später erneut.',
+        message: translate('rateLimit', await getUserLanguage(User, identity.startsWith('tg:') ? identity.slice(3) : null)),
         retryAfterSeconds,
       });
     }
@@ -3385,7 +3386,7 @@ router.post('/claim-welcome-bonus', requireTelegramMiniAppUser, sensitiveRewardM
     if (frozenResponse) return frozenResponse;
 
     if (user.welcomeBonusClaimed) {
-      return res.status(400).json({ message: 'Willkommensbonus bereits erhalten' });
+      return res.status(400).json({ message: translate('welcomeClaimed', user.appLanguage) });
     }
 
     const reward = getWelcomeBonusAmount();
@@ -3438,14 +3439,14 @@ router.post('/apply-promo', requireTelegramMiniAppUser, sensitiveRewardMutationG
     const cleanCode = String(code || '').trim().toUpperCase();
 
     if (!cleanCode) {
-      return res.status(400).json({ message: 'Gib einen Promocode ein' });
+      return res.status(400).json({ message: translate('promoEmpty', await getUserLanguage(User, req.telegramUserId)) });
     }
 
     const promoCodes = getPromoCodesConfig();
     const reward = promoCodes[cleanCode];
 
     if (!reward) {
-      return res.status(400).json({ message: 'Promocode nicht gefunden' });
+      return res.status(400).json({ message: translate('promoMissing', await getUserLanguage(User, req.telegramUserId)) });
     }
 
     const user = await User.findOne({ telegramId });
@@ -3460,7 +3461,7 @@ router.post('/apply-promo', requireTelegramMiniAppUser, sensitiveRewardMutationG
     if (frozenResponse) return frozenResponse;
 
     if (user.usedPromoCodes.includes(cleanCode)) {
-      return res.status(400).json({ message: 'Du hast diesen Promocode bereits verwendet' });
+      return res.status(400).json({ message: translate('promoUsed', user.appLanguage) });
     }
 
     user.usedPromoCodes.push(cleanCode);
@@ -4362,7 +4363,7 @@ router.post('/buy-upgrade', requireTelegramMiniAppUser, async (req, res) => {
 
     if (Number(user.balance || 0) < cost) {
       return res.status(400).json({
-        message: 'Nicht genug ONIX',
+        message: translate('insufficient', user.appLanguage),
       });
     }
 
@@ -4490,7 +4491,7 @@ function addSuspiciousReason(user, reason) {
 function ensureUserNotFrozen(user, res) {
   if (user.isFrozen) {
     return res.status(403).json({
-      message: user.frozenReason || 'Konto eingefroren',
+      message: user.frozenReason || translate('frozen', user.appLanguage),
     });
   }
 
@@ -4762,7 +4763,7 @@ router.post('/set-team', requireTelegramMiniAppUser, async (req, res) => {
     const cleanTeamName = String(teamName || '').trim().slice(0, 24);
 
     if (!cleanTeamName) {
-      return res.status(400).json({ message: 'Gib einen Teamnamen ein' });
+      return res.status(400).json({ message: translate('teamName', await getUserLanguage(User, req.telegramUserId)) });
     }
 
     const user = await User.findOne({ telegramId });
@@ -4816,7 +4817,7 @@ router.post('/create-team', requireTelegramMiniAppUser, async (req, res) => {
     const cleanTeamName = normalizeTeamNameValue(teamName);
 
     if (cleanTeamName.length < 2) {
-      return res.status(400).json({ message: 'Gib einen Teamnamen mit mindestens 2 Zeichen ein' });
+      return res.status(400).json({ message: translate('teamNameShort', await getUserLanguage(User, req.telegramUserId)) });
     }
 
     const existingTeamMember = await User.findOne({
@@ -4826,7 +4827,7 @@ router.post('/create-team', requireTelegramMiniAppUser, async (req, res) => {
     const existingSavedTeam = await findSavedTeamByName(cleanTeamName);
 
     if (existingTeamMember || existingSavedTeam) {
-      return res.status(409).json({ message: 'Ein Team mit diesem Namen existiert bereits' });
+      return res.status(409).json({ message: translate('teamExists', await getUserLanguage(User, req.telegramUserId)) });
     }
 
     const user = await User.findOne({ telegramId });
@@ -4890,7 +4891,7 @@ router.post('/join-team', requireTelegramMiniAppUser, async (req, res) => {
       .slice(0, 24);
 
     if (!cleanTeamName) {
-      return res.status(400).json({ message: 'Team nicht gefunden' });
+      return res.status(400).json({ message: translate('teamMissing', await getUserLanguage(User, req.telegramUserId)) });
     }
 
     const user = await User.findOne({ telegramId });
@@ -5042,24 +5043,24 @@ router.post('/claim-team-mission', requireTelegramMiniAppUser, sensitiveRewardMu
     if (frozenResponse) return frozenResponse;
 
     if (!user.teamName) {
-      return res.status(400).json({ message: 'Tritt zuerst einem Team bei' });
+      return res.status(400).json({ message: translate('joinFirst', user.appLanguage) });
     }
 
     const missions = await getTeamMissionsPayload(user);
     const mission = missions.find((item) => item.id === missionId);
 
     if (!mission) {
-      return res.status(404).json({ message: 'Team-Aufgabe nicht gefunden' });
+      return res.status(404).json({ message: translate('teamMissionMissing', user.appLanguage) });
     }
 
     if (!mission.isCompleted) {
-      return res.status(400).json({ message: 'Team-Aufgabe ist noch nicht erledigt' });
+      return res.status(400).json({ message: translate('teamMissionIncomplete', user.appLanguage) });
     }
 
     const claimKey = `${getWeekKey()}_${mission.id}`;
 
     if (user.teamMissionClaims.includes(claimKey)) {
-      return res.status(400).json({ message: 'Belohnung bereits erhalten' });
+      return res.status(400).json({ message: translate('rewardClaimed', user.appLanguage) });
     }
 
     user.teamMissionClaims.push(claimKey);
@@ -5119,7 +5120,7 @@ router.post('/claim-team-prize', requireTelegramMiniAppUser, sensitiveRewardMuta
     if (frozenResponse) return frozenResponse;
 
     if (!user.teamName) {
-      return res.status(400).json({ message: 'Tritt zuerst einem Team bei' });
+      return res.status(400).json({ message: translate('joinFirst', user.appLanguage) });
     }
 
     const teamContest = await getTeamContestPayload(user);
@@ -5129,21 +5130,21 @@ router.post('/claim-team-prize', requireTelegramMiniAppUser, sensitiveRewardMuta
 
     if (teamContest.joinedAfterCompletedContest) {
       return res.status(400).json({
-        message: 'Du bist dem Team nach Ende des letzten Wettbewerbs beigetreten',
+        message: translate('joinedLate', user.appLanguage),
         teamContest,
       });
     }
 
     if (!prize || !teamContest.completedTeamPlace) {
       return res.status(400).json({
-        message: 'Das Team hat am letzten Wettbewerb nicht teilgenommen',
+        message: translate('noParticipation', user.appLanguage),
         teamContest,
       });
     }
 
     if (user.teamPrizeClaims.includes(claimKey)) {
       return res.status(400).json({
-        message: 'Team-Preis bereits erhalten',
+        message: translate('teamPrizeClaimed', user.appLanguage),
         teamContest,
       });
     }
@@ -5246,7 +5247,7 @@ router.post('/select-title', requireTelegramMiniAppUser, async (req, res) => {
     ];
 
     if (!allowedTitles.includes(title)) {
-      return res.status(400).json({ message: 'Titel nicht verfügbar' });
+      return res.status(400).json({ message: translate('titleUnavailable', await getUserLanguage(User, req.telegramUserId)) });
     }
 
     const user = await User.findOne({ telegramId });
@@ -5315,7 +5316,7 @@ router.post('/request-withdrawal', requireTelegramMiniAppUser, withdrawalMutatio
 
     if (hasPendingWithdrawal) {
       return res.status(400).json({
-        message: 'Du hast bereits einen Auszahlungsantrag in Bearbeitung',
+        message: translate('withdrawPending', user.appLanguage),
       });
     }
 
@@ -5327,7 +5328,7 @@ router.post('/request-withdrawal', requireTelegramMiniAppUser, withdrawalMutatio
       Date.now() - Number(lastWithdrawal.createdAt || 0) < withdrawalCooldownMs
     ) {
       return res.status(400).json({
-        message: 'Ein Auszahlungsantrag ist höchstens einmal alle 24 Stunden möglich',
+        message: translate('withdrawCooldown', user.appLanguage),
       });
     }
 
@@ -5413,7 +5414,7 @@ router.post('/buy-perk', requireTelegramMiniAppUser, async (req, res) => {
 
     if (currentLevel >= perk.maxLevel) {
       return res.status(400).json({
-        message: 'Perk ist bereits auf Maximallevel',
+        message: translate('perkMax', user.appLanguage),
       });
     }
 
@@ -5421,7 +5422,7 @@ router.post('/buy-perk', requireTelegramMiniAppUser, async (req, res) => {
 
     if (Number(user.balance || 0) < cost) {
       return res.status(400).json({
-        message: 'Nicht genug ONIX',
+        message: translate('insufficient', user.appLanguage),
       });
     }
 
@@ -5503,7 +5504,7 @@ router.post('/open-chest', requireTelegramMiniAppUser, sensitiveRewardMutationGu
 
     if (Number(user.balance || 0) < chestCost) {
       return res.status(400).json({
-        message: 'Nicht genug ONIX',
+        message: translate('insufficient', user.appLanguage),
       });
     }
 
@@ -5631,18 +5632,18 @@ router.post('/claim-mission', requireTelegramMiniAppUser, sensitiveRewardMutatio
     const mission = visibleMissions.find((item) => item.id === missionId);
 
     if (!mission) {
-      return res.status(404).json({ message: 'Mission nicht gefunden' });
+      return res.status(404).json({ message: translate('missionMissing', user.appLanguage) });
     }
 
     if (!mission.isCompleted) {
-      return res.status(400).json({ message: 'Mission noch nicht erledigt' });
+      return res.status(400).json({ message: translate('missionIncomplete', user.appLanguage) });
     }
 
     const claimedList =
       missionType === 'daily' ? user.claimedDailyMissions : user.claimedWeeklyMissions;
 
     if (claimedList.includes(mission.id)) {
-      return res.status(400).json({ message: 'Belohnung bereits erhalten' });
+      return res.status(400).json({ message: translate('rewardClaimed', user.appLanguage) });
     }
 
     claimedList.push(mission.id);
@@ -5809,7 +5810,7 @@ router.post('/claim-task', requireTelegramMiniAppUser, sensitiveRewardMutationGu
 
       if (!isSubscribed) {
         return res.status(400).json({
-          message: 'Abonniere zuerst den Kanal',
+          message: translate('subscribeFirst', user.appLanguage),
         });
       }
 
@@ -5846,7 +5847,7 @@ router.post('/claim-task', requireTelegramMiniAppUser, sensitiveRewardMutationGu
 
       if (user.referralsCount < 1) {
         return res.status(400).json({
-          message: 'Lade zuerst einen Freund ein',
+          message: translate('inviteFirst', user.appLanguage),
         });
       }
 
@@ -6107,7 +6108,7 @@ router.post('/refill-energy', requireTelegramMiniAppUser, async (req, res) => {
     const cost = getEnergyRefillCost();
 
     if (Number(user.balance || 0) < cost) {
-      return res.status(400).json({ message: 'Nicht genug ONIX' });
+      return res.status(400).json({ message: translate('insufficient', user.appLanguage) });
     }
 
     user.balance = roundOnix(Number(user.balance || 0) - cost);

@@ -1,3 +1,4 @@
+const { translate, getUserLanguage } = require('./i18n');
 const express = require("express");
 const mongoose = require("mongoose");
 const cors = require("cors");
@@ -10,6 +11,7 @@ app.use(cors());
 app.use(express.json());
 
 const coinRoutes = require("./routes/coinRoutes");
+const User = require("./models/User");
 
 app.use("/api/coins", coinRoutes);
 
@@ -30,12 +32,12 @@ async function sendTelegramMessage(chatId, text, replyMarkup) {
   });
 }
 
-function getStartKeyboard() {
+function getStartKeyboard(language = 'de') {
   return {
     inline_keyboard: [
       [
         {
-          text: "🚀 ONIX COIN öffnen",
+          text: translate('bot.open', language),
           web_app: {
             url: WEB_APP_URL,
           },
@@ -56,17 +58,19 @@ app.post("/api/telegram/webhook", async (req, res) => {
       return res.sendStatus(200);
     }
 
+    const language = await getUserLanguage(User, message?.from?.id);
+
     if (text.startsWith("/start") || text.startsWith("/help")) {
       await sendTelegramMessage(
         chatId,
         [
-          "⚡ <b>Willkommen bei ONIX COIN!</b>",
+          translate('bot.welcome', language),
           "",
-          "Tippe auf die Münze, verbessere deinen Miner, erledige Aufgaben, lade Freunde ein und steige im Ranking auf.",
+          translate('bot.description', language),
           "",
-          "Drücke unten auf den Button, um die App zu öffnen 👇",
+          translate('bot.prompt', language),
         ].join("\n"),
-        getStartKeyboard()
+        getStartKeyboard(language)
       );
 
       return res.sendStatus(200);
@@ -74,8 +78,8 @@ app.post("/api/telegram/webhook", async (req, res) => {
 
     await sendTelegramMessage(
       chatId,
-      "🚀 Drücke unten auf den Button, um ONIX COIN zu öffnen.",
-      getStartKeyboard()
+      translate('bot.other', language),
+      getStartKeyboard(language)
     );
 
     return res.sendStatus(200);
