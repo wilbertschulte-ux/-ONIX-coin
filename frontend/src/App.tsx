@@ -1,3 +1,4 @@
+import { getTransactionTitle, getWithdrawalError } from './i18n/transactions';
 import React, { useState, useEffect } from 'react';
 import { Zap, Trophy, Home, Star, Wallet, UserCircle, Rocket, Menu, Bell } from 'lucide-react';
 import WebApp from '@twa-dev/sdk';
@@ -18132,22 +18133,23 @@ body:not(.onix-body-home-lock) {
     if (isWithdrawalLoading) return;
 
     if (!Number.isFinite(withdrawAmount) || withdrawAmount < minWithdrawOnix) {
-      showToast(`Mindestauszahlung ${formatOnix(minWithdrawOnix)} ONIX`, 'error');
+      const amount = formatOnix(minWithdrawOnix);
+      showToast((t) => t('wallet.minimum', { amount }), 'error');
       return;
     }
 
     if (withdrawAmount > balance) {
-      showToast(uiText('Nicht genug ONIX für Auszahlung'), 'error');
+      showToast((t) => t('wallet.insufficient'), 'error');
       return;
     }
 
     if (withdrawalCheck.trim().toUpperCase() !== 'ONIX') {
-      showToast('Gib ONIX in die Anti-Bot-Prüfung ein', 'error');
+      showToast((t) => t('wallet.antibot'), 'error');
       return;
     }
 
     const confirmed = window.confirm(
-      `Auszahlungsantrag über ${formatOnix(withdrawAmount)} ONIX (≈ ${(withdrawAmount * onixEurRate).toFixed(2)} €) erstellen?`
+      t('wallet.confirm', { amount: formatOnix(withdrawAmount), sum: (withdrawAmount * onixEurRate).toFixed(2) })
     );
 
     if (!confirmed) return;
@@ -18168,10 +18170,10 @@ body:not(.onix-body-home-lock) {
       setWithdrawalRequests(user.withdrawalRequests || []);
       setWithdrawalCheck('');
       setWithdrawalAmountInput('');
-      showToast(uiText('✅ Auszahlungsantrag erstellt'), 'success');
+      showToast((t) => t('wallet.created'), 'success');
       refreshAfterAction();
     } catch (error: any) {
-      showToast(error?.response?.data?.message || 'Antrag konnte nicht erstellt werden', 'error');
+      showToast(getWithdrawalError(error?.response?.data?.message), 'error');
     } finally {
       setIsWithdrawalLoading(false);
     }
@@ -22023,10 +22025,10 @@ body:not(.onix-body-home-lock) {
                         />
                       </div>
 
-                      <p className="mt-3 text-sm text-gray-400">
+                      <p data-onix-i18n="notice" className="mt-3 text-sm text-gray-400">
                         {canWithdraw
-                          ? 'Mindestbetrag erreicht'
-                          : `Verbleibend ${formatOnix(leftToWithdraw)} ONIX`}
+                          ? t('wallet.minimumReached')
+                          : t('wallet.remaining', { amount: formatOnix(leftToWithdraw) })}
                       </p>
 
                       <p className="mt-1 text-xs text-gray-500">
@@ -22080,7 +22082,7 @@ body:not(.onix-body-home-lock) {
                       />
                     </div>
 
-                    <button
+                    <button data-onix-i18n="notice"
                       onClick={requestWithdrawal}
                       disabled={
                         !canWithdraw ||
@@ -22092,10 +22094,10 @@ body:not(.onix-body-home-lock) {
                       className="onix-wallet-primary-button mb-4 w-full py-3 text-base active:scale-95 disabled:cursor-not-allowed"
                     >
                       {isWithdrawalLoading
-                        ? 'Antrag wird erstellt...'
+                        ? t('wallet.creating')
                         : canWithdraw
-                        ? 'Auszahlungsantrag erstellen'
-                        : 'Nicht genug ONIX für Auszahlung'}
+                        ? t('wallet.create')
+                        : t('wallet.insufficient')}
                     </button>
 
                     {withdrawalRequests.length > 0 ? (
@@ -22120,7 +22122,7 @@ body:not(.onix-body-home-lock) {
                                 )}
                               </div>
 
-                              <span
+                              <span data-onix-i18n="notice"
                                 className={`rounded-full px-3 py-1 text-xs font-bold ${
                                   request.status === 'approved'
                                     ? 'bg-emerald-500/10 text-emerald-400'
@@ -22130,10 +22132,10 @@ body:not(.onix-body-home-lock) {
                                 }`}
                               >
                                 {request.status === 'approved'
-                                  ? 'Genehmigt'
+                                  ? t('wallet.approved')
                                   : request.status === 'rejected'
-                                  ? 'Abgelehnt'
-                                  : 'In Bearbeitung'}
+                                  ? t('wallet.rejected')
+                                  : t('wallet.pending')}
                               </span>
                             </div>
                           </div>
@@ -22191,8 +22193,13 @@ body:not(.onix-body-home-lock) {
                                 </div>
 
                                 <div className="min-w-0">
-                                  <p className="truncate text-sm font-bold text-white">
-                                    {uiText(transaction.title || 'Transaktion')}
+                                  <p data-onix-i18n="notice" className="truncate text-sm font-bold text-white">
+                                    {getTransactionTitle(transaction, appLanguage, (title) => {
+                                      const achievement = achievements.find((item) => item.title === title);
+                                      if (!achievement) return undefined;
+                                      const translated = uiText(achievement.title);
+                                      return appLanguage === 'ru' && translated === title ? undefined : translated;
+                                    })}
                                   </p>
                                   <p className="text-xs text-gray-500">
                                     {formatTransactionTime(transaction.createdAt)}
