@@ -1,6 +1,13 @@
 // User-facing messages only. Language is read from the existing User.appLanguage.
 const messages = {
   de: {
+    "dailyClaimed": "Tägliche Belohnung bereits erhalten",
+    "taskClaimed": "Aufgabenbelohnung bereits erhalten",
+    "offlineEmpty": "Kein Offline-Einkommen zum Abholen",
+    "boostActive": "Boost bereits aktiv",
+    "notEnoughOnix": "Nicht genug ONIX",
+    "withdrawalInProgress": "Auszahlungsantrag wird bereits verarbeitet",
+    "rewardInProgress": "Belohnungsanfrage wird bereits verarbeitet",
     "rateLimit": "Zu viele Anfragen. Versuch es später erneut.",
     "welcomeClaimed": "Willkommensbonus bereits erhalten",
     "promoEmpty": "Gib einen Promocode ein",
@@ -34,6 +41,13 @@ const messages = {
     "bot.other": "🚀 Drücke unten auf den Button, um ONIX COIN zu öffnen."
 },
   ru: {
+    "dailyClaimed": "Ежедневная награда уже получена",
+    "taskClaimed": "Награда за задание уже получена",
+    "offlineEmpty": "Нет офлайн-дохода для получения",
+    "boostActive": "Усиление уже активно",
+    "notEnoughOnix": "Недостаточно ONIX",
+    "withdrawalInProgress": "Заявка на вывод уже обрабатывается",
+    "rewardInProgress": "Запрос награды уже обрабатывается",
     "rateLimit": "Слишком много запросов. Попробуйте позже.",
     "welcomeClaimed": "Приветственный бонус уже получен",
     "promoEmpty": "Введите промокод",

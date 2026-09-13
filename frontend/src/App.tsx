@@ -12680,20 +12680,31 @@ function App() {
   // This keeps old screens working while making the selected language consistent everywhere.
   useEffect(() => {
     if (appLanguage === 'de') return;
+    // Keep only values actually changed by the legacy translator. Never undo React updates.
+    const textChanges = new Map<Text, { source: string; rendered: string }>();
+    const attributeChanges = new Map<HTMLElement, Map<string, { source: string; rendered: string }>>();
     const translateElement = (root: ParentNode) => {
+      for (const node of textChanges.keys()) if (!node.isConnected) textChanges.delete(node);
+      for (const el of attributeChanges.keys()) if (!el.isConnected) attributeChanges.delete(el);
       const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT);
       const nodes: Text[] = [];
       while (walker.nextNode()) nodes.push(walker.currentNode as Text);
       for (const node of nodes) {
         if (node.parentElement?.closest('[data-onix-i18n="notice"]')) continue;
-        const raw = node.nodeValue || '';
+        const current = node.nodeValue || '';
+        const previous = textChanges.get(node);
+        const raw = previous && current === previous.rendered ? previous.source : current;
         const trimmed = raw.trim();
         if (!trimmed) continue;
         const translated = uiText(trimmed);
         if (translated !== trimmed) {
           const lead = raw.match(/^\s*/)?.[0] || '';
           const tail = raw.match(/\s*$/)?.[0] || '';
-          node.nodeValue = `${lead}${translated}${tail}`;
+          const rendered = `${lead}${translated}${tail}`;
+          textChanges.set(node, { source: raw, rendered });
+          if (current !== rendered) node.nodeValue = rendered;
+        } else {
+          textChanges.delete(node);
         }
       }
       const elements = root instanceof Element ? [root, ...Array.from(root.querySelectorAll('*'))] : Array.from(root.querySelectorAll('*'));
@@ -12701,10 +12712,19 @@ function App() {
         if (!(el instanceof HTMLElement)) continue;
         if (el.closest('[data-onix-i18n="notice"]')) continue;
         for (const attr of ['placeholder', 'title', 'aria-label']) {
-          const value = el.getAttribute(attr);
+          const current = el.getAttribute(attr);
+          const previous = attributeChanges.get(el)?.get(attr);
+          const value = previous && current === previous.rendered ? previous.source : current;
           if (!value) continue;
           const translated = uiText(value);
-          if (translated !== value) el.setAttribute(attr, translated);
+          if (translated !== value) {
+            let changes = attributeChanges.get(el);
+            if (!changes) { changes = new Map(); attributeChanges.set(el, changes); }
+            changes.set(attr, { source: value, rendered: translated });
+            if (current !== translated) el.setAttribute(attr, translated);
+          } else {
+            attributeChanges.get(el)?.delete(attr);
+          }
         }
       }
     };
@@ -12719,7 +12739,22 @@ function App() {
       }
     });
     observer.observe(document.body, { subtree: true, childList: true, characterData: true });
-    return () => observer.disconnect();
+    return () => {
+      observer.disconnect();
+      for (const [node, change] of textChanges) {
+        if (node.isConnected && !node.parentElement?.closest('[data-onix-i18n="notice"]') && node.nodeValue === change.rendered) {
+          node.nodeValue = change.source;
+        }
+      }
+      for (const [el, changes] of attributeChanges) {
+        if (!el.isConnected || el.closest('[data-onix-i18n="notice"]')) continue;
+        for (const [attr, change] of changes) {
+          if (el.getAttribute(attr) === change.rendered) el.setAttribute(attr, change.source);
+        }
+      }
+      textChanges.clear();
+      attributeChanges.clear();
+    };
   }, [appLanguage]);
 
   const [selectedTitle, setSelectedTitle] = useState('ONIX Player');
@@ -19048,7 +19083,8 @@ body:not(.onix-body-home-lock) {
 
           <button
             type="button"
-            aria-label="Benachrichtigungen"
+            data-onix-i18n="notice"
+            aria-label={t('a11y.notifications')}
             onClick={() => setHeaderNotificationsVisible(true)}
             style={{
               width: 34,
@@ -19851,19 +19887,20 @@ body:not(.onix-body-home-lock) {
 
             <div className="onix-upgrades-ref-list">
               {currentCards.map((item) => {
+                const localizedTitle = uiText(item.title);
                 const isImageIcon = typeof item.icon === 'string' && (item.icon.startsWith('data:image/') || item.icon.startsWith('/') || item.icon.includes('/assets/') || item.icon.endsWith('.png') || item.icon.endsWith('.webp') || item.icon.endsWith('.jpg') || item.icon.endsWith('.jpeg'));
                 return (
                 <div key={item.id} className="onix-upgrade-ref-card">
                   <div className={`onix-upgrade-ref-icon onix-upgrade-ref-icon-${item.accent}${isImageIcon ? ' onix-upgrade-ref-icon--image' : ''}`}>
                     {isImageIcon ? (
-                      <img src={item.icon} alt={item.title} />
+                      <img src={item.icon} alt={localizedTitle} />
                     ) : (
                       <span>{item.icon}</span>
                     )}
                   </div>
 
                   <div className="onix-upgrade-ref-main">
-                    <div className="onix-upgrade-ref-title">{uiText(item.title)}</div>
+                    <div data-onix-i18n="notice" className="onix-upgrade-ref-title">{localizedTitle}</div>
                     {item.level !== null && item.level !== undefined && (
                       <div className="onix-upgrade-ref-level">{t('common.level', { level: item.level })}</div>
                     )}
@@ -21152,10 +21189,10 @@ body:not(.onix-body-home-lock) {
                   {invitedProfiles.length > 0 ? invitedProfiles.map((friend) => (
                     <div key={friend.telegramId} className="onix-profile-v75-friend-card">
                       <div className="onix-profile-v75-friend-avatar">{String(friend.username || 'O').slice(0, 1).toUpperCase()}</div>
-                      <div><strong>{friend.username || 'ONIX Player'}</strong><span>{friend.rankName || getRankInfo(friend.totalEarned).currentRank.name}</span><em>{formatOnix(friend.totalEarned)} earned</em></div>
+                      <div><strong>{friend.username || 'ONIX Player'}</strong><span>{friend.rankName || getRankInfo(friend.totalEarned).currentRank.name}</span><em data-onix-i18n="notice">{t('invited.earned', { amount: formatOnix(friend.totalEarned) })}</em></div>
                     </div>
                   )) : (
-                    <div className="onix-profile-v75-empty">Noch keine Daten zu eingeladenen Spielern.</div>
+                    <div data-onix-i18n="notice" className="onix-profile-v75-empty">{t('invited.empty')}</div>
                   )}
                 </div>
               </div>
@@ -21957,7 +21994,7 @@ body:not(.onix-body-home-lock) {
                   <span className="onix-wallet-section-icon-v3">🧾</span>
                   <div className="onix-wallet-section-text-v3">
                     <strong>{uiText('Transaktionsverlauf')}</strong>
-                    <p>{filteredTransactions.length} Transaktionen</p>
+                    <p data-onix-i18n="notice">{t('wallet.transactionCount', { count: filteredTransactions.length })}</p>
                   </div>
                   <b className="onix-wallet-section-arrow-v3">›</b>
                 </button>
@@ -22162,8 +22199,8 @@ body:not(.onix-body-home-lock) {
                     <div className="mb-4 flex items-center justify-between gap-3">
                       <div>
                         <h3 className="text-xl font-bold text-white">{uiText('🧾 Transaktionsverlauf')}</h3>
-                        <p className="text-sm text-gray-400">
-                          {filteredTransactions.length} Transaktionen
+                        <p data-onix-i18n="notice" className="text-sm text-gray-400">
+                          {t('wallet.transactionCount', { count: filteredTransactions.length })}
                         </p>
                       </div>
                     </div>

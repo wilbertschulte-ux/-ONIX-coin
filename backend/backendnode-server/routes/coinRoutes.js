@@ -126,6 +126,12 @@ const SENSITIVE_REWARD_LOCK_TTL_MS = 15 * 1000;
 const WITHDRAWAL_MUTATION_LOCKS = new Map();
 const WITHDRAWAL_MUTATION_LOCK_TTL_MS = 30 * 1000;
 
+// Called only after a guard has rejected the request; lock decisions stay synchronous.
+async function sendLocalizedGuardError(telegramId, res, key, code) {
+  const language = await getUserLanguage(User, telegramId);
+  return res.status(409).json({ message: translate(key, language), code });
+}
+
 function withdrawalMutationGuardByTelegramId(telegramId, res) {
   const key = String(telegramId || '');
   if (!key) return null;
@@ -134,10 +140,7 @@ function withdrawalMutationGuardByTelegramId(telegramId, res) {
   const existing = WITHDRAWAL_MUTATION_LOCKS.get(key);
 
   if (existing && now - existing.startedAt < WITHDRAWAL_MUTATION_LOCK_TTL_MS) {
-    return res.status(409).json({
-      message: 'Withdrawal request already in progress',
-      code: 'WITHDRAWAL_REQUEST_IN_PROGRESS',
-    });
+    return sendLocalizedGuardError(telegramId, res, 'withdrawalInProgress', 'WITHDRAWAL_REQUEST_IN_PROGRESS');
   }
 
   WITHDRAWAL_MUTATION_LOCKS.set(key, { startedAt: now });
@@ -176,10 +179,7 @@ function sensitiveRewardMutationGuard(req, res, next) {
   const existing = SENSITIVE_REWARD_LOCKS.get(telegramId);
 
   if (existing && now - existing.startedAt < SENSITIVE_REWARD_LOCK_TTL_MS) {
-    return res.status(409).json({
-      message: 'Reward request already in progress',
-      code: 'REWARD_REQUEST_IN_PROGRESS',
-    });
+    return sendLocalizedGuardError(telegramId, res, 'rewardInProgress', 'REWARD_REQUEST_IN_PROGRESS');
   }
 
   SENSITIVE_REWARD_LOCKS.set(telegramId, {
@@ -5728,7 +5728,7 @@ router.post('/claim-task', requireTelegramMiniAppUser, sensitiveRewardMutationGu
 
         if (lastClaimDay === todayKey || now - lastClaimTime < DAY_MS) {
           return res.status(400).json({
-            message: 'Daily reward already claimed',
+            message: translate('dailyClaimed', user.appLanguage),
           });
         }
       }
@@ -5782,7 +5782,7 @@ router.post('/claim-task', requireTelegramMiniAppUser, sensitiveRewardMutationGu
     if (task === 'channel') {
       if (user.completedTasks.includes('channel')) {
         return res.status(400).json({
-          message: 'Task already claimed',
+          message: translate('taskClaimed', user.appLanguage),
         });
       }
 
@@ -5841,7 +5841,7 @@ router.post('/claim-task', requireTelegramMiniAppUser, sensitiveRewardMutationGu
     if (task === 'inviteFriend') {
       if (user.completedTasks.includes('inviteFriend')) {
         return res.status(400).json({
-          message: 'Task already claimed',
+          message: translate('taskClaimed', user.appLanguage),
         });
       }
 
@@ -5918,7 +5918,7 @@ router.post('/claim-offline-income', requireTelegramMiniAppUser, async (req, res
 
     if (claimedAmount <= 0) {
       return res.status(400).json({
-        message: 'No offline income to claim',
+        message: translate('offlineEmpty', user.appLanguage),
       });
     }
 
@@ -6179,7 +6179,7 @@ router.post('/activate-boost', requireTelegramMiniAppUser, async (req, res) => {
       Number(user.boostEndTime || 0) > now
     ) {
       return res.status(400).json({
-        message: 'Boost already active',
+        message: translate('boostActive', user.appLanguage),
       });
     }
 
@@ -6190,7 +6190,7 @@ router.post('/activate-boost', requireTelegramMiniAppUser, async (req, res) => {
 
     if (Number(user.balance || 0) < cost) {
       return res.status(400).json({
-        message: 'Not enough ONIX',
+        message: translate('notEnoughOnix', user.appLanguage),
       });
     }
 

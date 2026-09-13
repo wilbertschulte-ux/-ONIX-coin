@@ -2,6 +2,16 @@
 export const DEFAULT_LANGUAGE = 'de' as const;
 
 export const germanMessages = {
+  "backend.dailyClaimed": "Tägliche Belohnung bereits erhalten",
+  "backend.taskClaimed": "Aufgabenbelohnung bereits erhalten",
+  "backend.offlineEmpty": "Kein Offline-Einkommen zum Abholen",
+  "backend.boostActive": "Boost bereits aktiv",
+  "backend.withdrawalInProgress": "Auszahlungsantrag wird bereits verarbeitet",
+  "backend.rewardInProgress": "Belohnungsanfrage wird bereits verarbeitet",
+  "invited.empty": "Noch keine Daten zu eingeladenen Spielern.",
+  "invited.earned": "{amount} verdient",
+  "a11y.notifications": "Benachrichtigungen",
+  "wallet.transactionCount": "{count} Transaktionen",
   "backend.rateLimit": "Zu viele Anfragen. Versuch es später erneut.",
   "backend.welcomeClaimed": "Willkommensbonus bereits erhalten",
   "backend.promoEmpty": "Gib einen Promocode ein",
@@ -346,6 +356,16 @@ export const messages: Record<AppLanguage, Partial<Record<MessageKey, string>>> 
     "common.level": "Level {level}"
   },
   ru: {
+    "backend.dailyClaimed": "Ежедневная награда уже получена",
+    "backend.taskClaimed": "Награда за задание уже получена",
+    "backend.offlineEmpty": "Нет офлайн-дохода для получения",
+    "backend.boostActive": "Усиление уже активно",
+    "backend.withdrawalInProgress": "Заявка на вывод уже обрабатывается",
+    "backend.rewardInProgress": "Запрос награды уже обрабатывается",
+    "invited.empty": "Пока нет данных о приглашённых игроках.",
+    "invited.earned": "Заработано: {amount}",
+    "a11y.notifications": "Уведомления",
+    "wallet.transactionCount": "Операций: {count}",
     "backend.rateLimit": "Слишком много запросов. Попробуйте позже.",
     "backend.welcomeClaimed": "Приветственный бонус уже получен",
     "backend.promoEmpty": "Введите промокод",
