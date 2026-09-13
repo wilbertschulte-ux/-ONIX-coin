@@ -12232,19 +12232,25 @@ class AppErrorBoundary extends React.Component<
 
   render() {
     if (this.state.hasError) {
+      let language: AppLanguage = 'de';
+      try {
+        const saved = localStorage.getItem('onix_app_language');
+        if (saved && Object.prototype.hasOwnProperty.call(ONIX_I18N, saved)) language = saved as AppLanguage;
+      } catch {}
+      const t = createTranslator(language);
       return (
-        <div className="flex min-h-screen items-center justify-center bg-[#020617] px-6 text-white">
+        <div data-onix-i18n="notice" className="flex min-h-screen items-center justify-center bg-[#020617] px-6 text-white">
           <div className="w-full max-w-sm rounded-3xl border border-red-400/30 bg-[#111827] p-6 text-center shadow-2xl">
             <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-red-500/20 text-3xl">
               ⚠️
             </div>
 
             <h1 className="text-2xl font-bold text-white">
-              Etwas ist schiefgelaufen
+              {t('error.heading')}
             </h1>
 
             <p className="mt-3 text-sm text-gray-400">
-              Der Fehler wurde protokolliert. Aktualisiere die App.
+              {t('error.description')}
             </p>
 
             <p className="mt-2 break-words text-xs text-gray-600">
@@ -12255,7 +12261,7 @@ class AppErrorBoundary extends React.Component<
               onClick={() => window.location.reload()}
               className="mt-5 w-full rounded-2xl bg-yellow-400 py-4 font-bold text-black"
             >
-              Aktualisieren
+              {t('error.reload')}
             </button>
           </div>
         </div>
@@ -18587,23 +18593,23 @@ body:not(.onix-body-home-lock) {
   const tutorialSteps = [
     {
       icon: onixBoostIcons.miner,
-      title: 'Tippe und verdiene',
-      text: 'Tippe auf die Münze, verdiene ONIX und behalte deine Energie im Blick.',
+      title: t('tutorial.tap.title'),
+      text: t('tutorial.tap.text'),
     },
     {
       icon: onixBoostIcons.recharge,
-      title: 'Verbessere dich',
-      text: 'Kaufe Upgrades, Perks und Boosts, um schneller zu verdienen.',
+      title: t('tutorial.upgrade.title'),
+      text: t('tutorial.upgrade.text'),
     },
     {
       icon: '📋',
-      title: 'Erledige Aufgaben',
-      text: 'Daily-, Weekly- und geheime Missionen bringen zusätzliche ONIX.',
+      title: t('tutorial.tasks.title'),
+      text: t('tutorial.tasks.text'),
     },
     {
       icon: '🏆',
-      title: 'Tritt an',
-      text: 'Komm in die Wochen-, Team- und Saison-Toplisten, um Preise zu erhalten.',
+      title: t('tutorial.compete.title'),
+      text: t('tutorial.compete.text'),
     },
   ];
 
@@ -18816,7 +18822,7 @@ body:not(.onix-body-home-lock) {
           </div>
 
           <h1 className="text-3xl font-black text-white">ONIX COIN</h1>
-          <p className="mt-3 text-sm text-gray-400">Miner wird geladen...</p>
+          <p data-onix-i18n="notice" className="mt-3 text-sm text-gray-400">{t('loading.miner')}</p>
 
           <div className="mt-6 h-3 overflow-hidden rounded-full bg-gray-800">
             <div className="h-full w-2/3 animate-pulse rounded-full bg-yellow-400" />
@@ -18999,7 +19005,8 @@ body:not(.onix-body-home-lock) {
         >
           <button
             type="button"
-            aria-label="Menü"
+            data-onix-i18n="notice"
+            aria-label={t('common.menu')}
             onClick={() => setHeaderMenuVisible(true)}
             style={{
               width: 34,
@@ -19231,7 +19238,7 @@ body:not(.onix-body-home-lock) {
       )}
 
       {activeTab === 'drop' && (
-        <div className="px-4 pt-4 pb-28 min-h-[calc(var(--oc-app-height)-150px)] overflow-y-auto">
+        <div data-onix-i18n="notice" className="px-4 pt-4 pb-28 min-h-[calc(var(--oc-app-height)-150px)] overflow-y-auto">
           <style>{`
             .onix-drop-shell{background:radial-gradient(circle at 50% 10%,rgba(54,207,255,.18),transparent 30%),linear-gradient(180deg,rgba(44,20,97,.92),rgba(5,9,28,.98));border:1px solid rgba(153,74,255,.45);box-shadow:0 0 36px rgba(124,58,237,.2);}
             .onix-drop-arena{position:relative;height:min(56vh,500px);min-height:390px;overflow:hidden;background:radial-gradient(circle at 50% 82%,rgba(134,43,255,.3),transparent 30%),linear-gradient(180deg,#080b25 0%,#150734 65%,#080b1d 100%);border:1px solid rgba(79,211,255,.28);box-shadow:inset 0 0 50px rgba(90,40,220,.22);}
@@ -19247,33 +19254,33 @@ body:not(.onix-body-home-lock) {
               <div>
                 <div className="text-[11px] uppercase tracking-[0.24em] text-cyan-300 font-black">ONIX ARCADE</div>
                 <h2 className="text-3xl font-black text-white leading-none mt-1">💎 ONIX Drop</h2>
-                <p className="text-sm text-gray-400 mt-2">{tr.dropTagline}</p>
+                <p className="text-sm text-gray-400 mt-2">{t('drop.dropTagline')}</p>
               </div>
               <div className="rounded-2xl px-3 py-2 text-center bg-purple-500/15 border border-purple-400/30 shrink-0">
-                <div className="text-[10px] text-purple-200 font-bold">{tr.live}</div>
-                <div className="text-xs text-gray-400">{tr.realOnix}</div>
+                <div className="text-[10px] text-purple-200 font-bold">{t('drop.live')}</div>
+                <div className="text-xs text-gray-400">{t('drop.realOnix')}</div>
               </div>
             </div>
 
             <div className="flex items-center justify-between gap-3 mb-3 rounded-2xl bg-black/20 border border-purple-400/20 px-4 py-3">
               <div>
-                <div className="text-[10px] uppercase tracking-[0.16em] text-gray-500">{tr.attemptsToday}</div>
+                <div className="text-[10px] uppercase tracking-[0.16em] text-gray-500">{t('drop.attemptsToday')}</div>
                 <div className="text-lg font-black text-white">{dropAttemptsLeft} / {dropAttemptsMax}</div>
               </div>
-              <div className="text-xs text-gray-400 text-right">{tr.dailyRounds} {dropAttemptsMax} {tr.rounds}<br/>{tr.serverLimit}</div>
+              <div className="text-xs text-gray-400 text-right">{t('drop.dailyRounds')} {dropAttemptsMax} {t('drop.rounds')}<br/>{t('drop.serverLimit')}</div>
             </div>
 
             <div className="grid grid-cols-3 gap-2 mb-3">
               <div className="onix-drop-pill rounded-2xl p-3 text-center">
-                <div className="text-[10px] text-gray-400 uppercase">{tr.time}</div>
+                <div className="text-[10px] text-gray-400 uppercase">{t('drop.time')}</div>
                 <div className="text-xl font-black text-cyan-300">{dropSeconds}s</div>
               </div>
               <div className="onix-drop-pill rounded-2xl p-3 text-center">
-                <div className="text-[10px] text-gray-400 uppercase">{tr.points}</div>
+                <div className="text-[10px] text-gray-400 uppercase">{t('drop.points')}</div>
                 <div className="text-xl font-black text-yellow-300">{dropScore}</div>
               </div>
               <div className="onix-drop-pill rounded-2xl p-3 text-center">
-                <div className="text-[10px] text-gray-400 uppercase">{tr.combo}</div>
+                <div className="text-[10px] text-gray-400 uppercase">{t('drop.combo')}</div>
                 <div className="text-xl font-black text-fuchsia-300">×{Math.max(1, dropCombo)}</div>
               </div>
             </div>
@@ -19292,7 +19299,7 @@ body:not(.onix-body-home-lock) {
                   }}
                   onContextMenu={(event) => event.preventDefault()}
                   onDragStart={(event) => event.preventDefault()}
-                  aria-label={object.kind === 'hazard' ? tr.danger : tr.crystal}
+                  aria-label={object.kind === 'hazard' ? t('drop.danger') : t('drop.crystal')}
                 >
                   {object.kind === 'hazard' ? '☄️' : object.kind === 'rare' ? '🌟' : '💎'}
                 </button>
@@ -19302,18 +19309,18 @@ body:not(.onix-body-home-lock) {
                 <div className="absolute inset-0 z-10 flex items-center justify-center p-6 bg-black/25 backdrop-blur-[2px]">
                   <div className="w-full max-w-[320px] text-center rounded-[28px] p-5 bg-[#0b1029]/90 border border-purple-400/40 shadow-2xl">
                     <div className="text-5xl mb-2">💎</div>
-                    <h3 className="text-2xl font-black text-white">{dropSeconds === 0 ? tr.roundEnded : tr.ready}</h3>
+                    <h3 className="text-2xl font-black text-white">{dropSeconds === 0 ? t('drop.roundEnded') : t('drop.ready')}</h3>
                     {dropSeconds === 0 ? (
                       <>
-                        <p className="text-yellow-300 text-3xl font-black mt-2">{dropScore} {tr.points}</p>
-                        <p className="text-sm text-gray-400 mt-1">{tr.best}: {Math.max(dropBest, dropScore)}</p>
-                        <p className="text-xs text-purple-200 mt-2">{tr.attemptsLeft}: {dropAttemptsLeft} / {dropAttemptsMax}</p>
+                        <p className="text-yellow-300 text-3xl font-black mt-2">{dropScore} {t('drop.points')}</p>
+                        <p className="text-sm text-gray-400 mt-1">{t('drop.best')}: {Math.max(dropBest, dropScore)}</p>
+                        <p className="text-xs text-purple-200 mt-2">{t('drop.attemptsLeft')}: {dropAttemptsLeft} / {dropAttemptsMax}</p>
                         {dropReward !== null && (
                           <p className="text-emerald-300 text-lg font-black mt-2">+{dropReward.toLocaleString('de-DE')} ONIX</p>
                         )}
                       </>
                     ) : (
-                      <p className="text-sm text-gray-400 mt-2">{tr.rules}</p>
+                      <p className="text-sm text-gray-400 mt-2">{t('drop.rules')}</p>
                     )}
                     <button
                       type="button"
@@ -19322,7 +19329,7 @@ body:not(.onix-body-home-lock) {
                       className="mt-5 w-full rounded-2xl py-4 font-black text-lg text-white active:scale-[.98] transition-transform disabled:opacity-45 disabled:active:scale-100"
                       style={{ background: 'linear-gradient(90deg,#31d7ff,#7c3aed,#df36ff)', boxShadow: '0 0 26px rgba(126,58,237,.45)' }}
                     >
-                      {dropBusy ? tr.loading : dropAttemptsLeft <= 0 ? tr.noAttempts : dropSeconds === 0 ? tr.again : tr.startGame}
+                      {dropBusy ? t('drop.loading') : dropAttemptsLeft <= 0 ? t('drop.noAttempts') : dropSeconds === 0 ? t('drop.again') : t('drop.startGame')}
                     </button>
                   </div>
                 </div>
@@ -19330,19 +19337,19 @@ body:not(.onix-body-home-lock) {
 
               {dropRunning && (
                 <div className="absolute left-1/2 -translate-x-1/2 bottom-3 z-[2] px-4 py-2 rounded-full text-xs font-bold text-cyan-100 bg-black/50 border border-cyan-300/20 pointer-events-none">
-                  Kristalle antippen!
+                  {t('drop.tapPrompt')}
                 </div>
               )}
             </div>
 
             <div className="grid grid-cols-3 gap-2 mt-3 text-center text-xs">
-              <div className="rounded-2xl bg-white/5 p-3"><div className="text-2xl">💎</div><b className="text-white">+10</b><p className="text-gray-500">{tr.crystalLabel}</p></div>
-              <div className="rounded-2xl bg-white/5 p-3"><div className="text-2xl">🌟</div><b className="text-yellow-300">+50</b><p className="text-gray-500">{tr.rare}</p></div>
-              <div className="rounded-2xl bg-white/5 p-3"><div className="text-2xl">☄️</div><b className="text-rose-300">−25</b><p className="text-gray-500">{tr.hazard}</p></div>
+              <div className="rounded-2xl bg-white/5 p-3"><div className="text-2xl">💎</div><b className="text-white">+10</b><p className="text-gray-500">{t('drop.crystalLabel')}</p></div>
+              <div className="rounded-2xl bg-white/5 p-3"><div className="text-2xl">🌟</div><b className="text-yellow-300">+50</b><p className="text-gray-500">{t('drop.rare')}</p></div>
+              <div className="rounded-2xl bg-white/5 p-3"><div className="text-2xl">☄️</div><b className="text-rose-300">−25</b><p className="text-gray-500">{t('drop.hazard')}</p></div>
             </div>
 
             <p className="text-center text-[11px] text-gray-500 mt-4">
-              {tr.rewardInfo} {dropDailyEarned.toLocaleString(({de:'de-DE',en:'en-US',ru:'ru-RU',uk:'uk-UA',tr:'tr-TR',es:'es-ES',fr:'fr-FR',it:'it-IT',pl:'pl-PL',pt:'pt-PT'} as Record<AppLanguage,string>)[appLanguage])} ONIX.
+              {t('drop.rewardInfo')} {dropDailyEarned.toLocaleString(({de:'de-DE',en:'en-US',ru:'ru-RU',uk:'uk-UA',tr:'tr-TR',es:'es-ES',fr:'fr-FR',it:'it-IT',pl:'pl-PL',pt:'pt-PT'} as Record<AppLanguage,string>)[appLanguage])} ONIX.
             </p>
           </div>
         </div>
@@ -19354,74 +19361,74 @@ body:not(.onix-body-home-lock) {
             id: 'about' as const,
             icon: '🚀',
             title: 'ONIX COIN',
-            subtitle: 'Was ist diese Mini-App?',
+            subtitle: t('info.aboutSubtitle'),
             badge: `v${appVersionInfo?.version || '1.0.0'}`,
           },
           {
             id: 'faq' as const,
             icon: '❓',
-            title: 'FAQ',
-            subtitle: 'Antworten auf häufige Fragen',
+            title: t('info.faq'),
+            subtitle: t('info.faqSubtitle'),
             badge: '5',
           },
           {
             id: 'roadmap' as const,
             icon: '🗺',
-            title: 'Roadmap',
-            subtitle: 'ONIX-Entwicklungsplan',
+            title: t('info.roadmap'),
+            subtitle: t('info.roadmapSubtitle'),
             badge: 'Beta',
           },
           {
             id: 'legal' as const,
             icon: '📄',
-            title: 'Privacy policy / Terms',
-            subtitle: 'Regeln und Daten',
+            title: t('info.legalCard'),
+            subtitle: t('info.legalSubtitle'),
             badge: 'ONIX',
           },
         ];
 
         const faqItems = [
           {
-            q: 'Wie verdient man ONIX?',
-            a: 'Tippe auf die Münze, hole Offline-Mining ab, erledige Aufgaben, lade Freunde ein und nimm an Saisons teil.',
+            q: t('info.earn.question'),
+            a: t('info.earn.answer'),
           },
           {
-            q: 'Wie funktioniert Energie?',
-            a: 'Jeder Tap kostet Energie. Energie regeneriert sich mit der Zeit und kann durch Upgrades verbessert werden.',
+            q: t('info.energy.question'),
+            a: t('info.energy.answer'),
           },
           {
-            q: 'Wie bekommt man den Empfehlungsbonus?',
-            a: 'Der neue Spieler erhält einen Startbonus. Der Einladende erhält den Bonus nach Aktivität des eingeladenen Spielers.',
+            q: t('info.referral.question'),
+            a: t('info.referral.answer'),
           },
           {
-            q: 'Wie funktionieren Saisons?',
-            a: 'Jede Woche zählt das Ranking nach verdienten ONIX. Die besten Spieler und Teams erhalten Preise.',
+            q: t('info.seasons.question'),
+            a: t('info.seasons.answer'),
           },
           {
-            q: 'Kann man ONIX auszahlen?',
-            a: 'Auszahlungsanträge sind nach Erreichen des Mindestbetrags verfügbar. Vor der Auszahlung gibt es eine Anti-Bot-Prüfung.',
+            q: t('info.withdraw.question'),
+            a: t('info.withdraw.answer'),
           },
         ];
 
         const roadmapItems = [
-          ['✅', 'Tap-to-earn core', 'Taps, Energie, Upgrades und Mining'],
-          ['✅', 'Seasons & teams', 'Saisonpreise, Teams und Rankings'],
-          ['✅', 'Growth tools', 'Promocodes, Willkommensbonus und Share Card'],
+          ['✅', t('info.coreTitle'), t('info.roadmap.core')],
+          ['✅', t('info.seasonsTitle'), t('info.roadmap.seasons')],
+          ['✅', t('info.growthTitle'), t('info.roadmap.growth')],
         ];
 
         const launchTitle =
           launchPanel === 'about'
             ? 'ONIX COIN'
             : launchPanel === 'faq'
-            ? 'FAQ'
+            ? t('info.faq')
             : launchPanel === 'roadmap'
-            ? 'Roadmap'
+            ? t('info.roadmap')
             : launchPanel === 'legal'
-            ? 'Privacy / Terms'
-            : 'Starten';
+            ? t('info.legalTitle')
+            : t('tutorial.start');
 
         return (
-          <div className={`onix-launch-screen onix-launch-v2 onix-launch-menu-v3 px-5 mt-0 ${launchPanel !== 'overview' ? 'is-launch-detail-mode' : ''}`}>
+          <div data-onix-i18n="notice" className={`onix-launch-screen onix-launch-v2 onix-launch-menu-v3 px-5 mt-0 ${launchPanel !== 'overview' ? 'is-launch-detail-mode' : ''}`}>
             {launchPanel === 'overview' ? (
               <div className="onix-launch-menu-list-v3">
                 {launchCards.map((card) => (
@@ -19455,22 +19462,21 @@ body:not(.onix-body-home-lock) {
                       <div className="onix-launch-detail-icon-v3">🚀</div>
                       <div>
                         <h2 className="text-2xl font-black text-white">ONIX COIN</h2>
-                        <p className="text-sm text-gray-400">Tap. Mine. Invite. Compete.</p>
+                        <p className="text-sm text-gray-400">{t('info.tagline')}</p>
                       </div>
                     </div>
 
                     <p className="text-sm leading-6 text-gray-300">
-                      ONIX COIN ist eine Telegram Mini App, in der Spieler ONIX verdienen durch
-                      Taps, Mining, Aufgaben, Teams, Saisons und Freundeinladungen.
+                      {t('info.about')}
                     </p>
 
                     <div className="mt-4 grid grid-cols-2 gap-3">
                       <div className="rounded-2xl p-4">
-                        <p className="text-xs text-gray-400">Spieler</p>
+                        <p className="text-xs text-gray-400">{t('info.players')}</p>
                         <p className="mt-1 font-bold text-yellow-400">{backendHealth?.users ?? '—'}</p>
                       </div>
                       <div className="rounded-2xl p-4">
-                        <p className="text-xs text-gray-400">Version</p>
+                        <p className="text-xs text-gray-400">{t('info.version')}</p>
                         <p className="mt-1 font-bold text-yellow-400">v{appVersionInfo?.version || '1.0.0'}</p>
                       </div>
                     </div>
@@ -19479,14 +19485,14 @@ body:not(.onix-body-home-lock) {
                       onClick={shareReferralLink}
                       className="mt-5 w-full rounded-2xl bg-yellow-400 py-4 text-lg font-bold text-black active:scale-95"
                     >
-                      📣 Zu ONIX COIN einladen
+                      {t('info.invite')}
                     </button>
                   </div>
                 )}
 
                 {launchPanel === 'faq' && (
                   <div className="onix-launch-panel rounded-3xl p-5 text-left shadow-xl">
-                    <h3 className="mb-4 text-xl font-bold text-white">❓ FAQ</h3>
+                    <h3 className="mb-4 text-xl font-bold text-white">{t('info.faqHeading')}</h3>
                     <div className="space-y-3">
                       {faqItems.map((item) => (
                         <div key={item.q} className="rounded-2xl p-4">
@@ -19500,7 +19506,7 @@ body:not(.onix-body-home-lock) {
 
                 {launchPanel === 'roadmap' && (
                   <div className="onix-launch-panel rounded-3xl p-5 text-left shadow-xl">
-                    <h3 className="mb-4 text-xl font-bold text-white">🗺 Roadmap</h3>
+                    <h3 className="mb-4 text-xl font-bold text-white">{t('info.roadmapHeading')}</h3>
                     <div className="space-y-3">
                       {roadmapItems.map(([icon, title, text]) => (
                         <div key={title} className="flex gap-3 rounded-2xl p-4">
@@ -19517,24 +19523,19 @@ body:not(.onix-body-home-lock) {
 
                 {launchPanel === 'legal' && (
                   <div className="onix-launch-panel rounded-3xl p-5 text-left shadow-xl">
-                    <h3 className="mb-4 text-xl font-bold text-white">📄 Privacy Policy / Terms</h3>
+                    <h3 className="mb-4 text-xl font-bold text-white">{t('info.legalHeading')}</h3>
                     <div className="space-y-3 text-sm leading-6 text-gray-400">
                       <p>
-                        ONIX COIN verwendet Telegram ID, Username und Spielaktionen
-                        nur für App-Funktionen, Rankings, Fortschritt, Aufgaben,
-                        Anti-Abuse und Auszahlungsanträge.
+                        {t('info.legal.data')}
                       </p>
                       <p>
-                        Bots, Multi-Accounts, Referral-Manipulation, Umgehung
-                        von Limits und Angriffe auf die Spielökonomie sind verboten.
+                        {t('info.legal.prohibited')}
                       </p>
                       <p>
-                        Der Administrator kann verdächtige Konten einfrieren,
-                        Auszahlungen ablehnen oder bei Verstößen das Guthaben korrigieren.
+                        {t('info.legal.enforcement')}
                       </p>
                       <p>
-                        ONIX ist innerhalb der App eine Spieleinheit. Auszahlungsbedingungen
-                        und künftige Integrationen können sich während des öffentlichen Tests ändern.
+                        {t('info.legal.units')}
                       </p>
                     </div>
                   </div>
@@ -22907,7 +22908,7 @@ body:not(.onix-body-home-lock) {
       )}
 
       {tutorialVisible && (
-        <div
+        <div data-onix-i18n="notice"
           className="onix-tutorial-overlay bg-black/75 px-4 backdrop-blur-sm"
           style={{
             position: 'fixed',
@@ -22949,7 +22950,7 @@ body:not(.onix-body-home-lock) {
                 onClick={closeTutorial}
                 className="rounded-2xl border border-white/10 bg-[#0a0f1c] py-4 font-bold text-gray-300 active:scale-95"
               >
-                Überspringen
+                {t('tutorial.skip')}
               </button>
 
               <button
@@ -22962,7 +22963,7 @@ body:not(.onix-body-home-lock) {
                 }}
                 className="rounded-2xl bg-gradient-to-r from-cyan-400 to-fuchsia-500 py-4 font-bold text-white shadow-[0_0_18px_rgba(168,85,247,0.45)] active:scale-95"
               >
-                {tutorialStep >= tutorialSteps.length - 1 ? 'Starten' : 'Weiter'}
+                {tutorialStep >= tutorialSteps.length - 1 ? t('tutorial.start') : t('tutorial.next')}
               </button>
             </div>
           </div>
