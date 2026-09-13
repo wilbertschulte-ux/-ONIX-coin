@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Zap, Trophy, Home, Star, Wallet, UserCircle, Rocket, Menu, Bell } from 'lucide-react';
 import WebApp from '@twa-dev/sdk';
 import axios from 'axios';
+import { getTeamMissionText, formatTeamResetTime, teamActionError } from './i18n/teams';
 import { createTranslator, type AppLanguage, type MessageKey } from './i18n';
 import { germanMessages } from './i18n/messages';
 import { getMissionText, getWeeklyAchievementDescription, getMissionClaimErrorKey } from './i18n/missions';
@@ -14254,9 +14255,9 @@ function App() {
       setTeamDetailPanel('overview');
       setTeamSearch('');
       await loadTeamDirectory('');
-      showToast('Du hast das Team verlassen. Wähle ein neues Team aus der Liste.', 'success');
+      showToast((t) => t('teams.left'), 'success');
     } catch (error: any) {
-      showToast(error?.response?.data?.message || 'Team konnte nicht verlassen werden', 'error');
+      showToast(teamActionError(error?.response?.data?.message, 'teams.errors.leave'), 'error');
     }
   };
 
@@ -14267,7 +14268,7 @@ function App() {
     if (!telegramId) return;
 
     if (nextTeamName.length < 2) {
-      showToast('Gib einen Teamnamen mit mindestens 2 Zeichen ein', 'error');
+      showToast((t) => t('teams.errors.nameShort'), 'error');
       return;
     }
 
@@ -14291,9 +14292,10 @@ function App() {
         week: response.data.week || '',
       });
       await loadTeamDirectory(teamSearch);
-      showToast(`👥 Team ${user.teamName} erstellt`, 'success');
+      const noticeParam = user.teamName;
+      showToast((t) => t('teams.created', { name: noticeParam }), 'success');
     } catch (error: any) {
-      showToast(error?.response?.data?.message || 'Team konnte nicht erstellt werden', 'error');
+      showToast(teamActionError(error?.response?.data?.message, 'teams.errors.create'), 'error');
     } finally {
       setIsCreatingTeam(false);
     }
@@ -14321,9 +14323,10 @@ function App() {
         week: response.data.week || '',
       });
       await loadTeamDirectory(teamSearch);
-      showToast(`👥 Du bist dem Team ${user.teamName} beigetreten`, 'success');
+      const noticeParam = user.teamName;
+      showToast((t) => t('teams.joined', { name: noticeParam }), 'success');
     } catch (error: any) {
-      showToast(error?.response?.data?.message || 'Teambeitritt fehlgeschlagen', 'error');
+      showToast(teamActionError(error?.response?.data?.message, 'teams.errors.join'), 'error');
     }
   };
 
@@ -14399,9 +14402,10 @@ function App() {
         week: response.data.week || '',
       });
 
-      showToast(`👥 Du bist dem Team ${user.teamName} beigetreten`, 'success');
+      const noticeParam = user.teamName;
+      showToast((t) => t('teams.joined', { name: noticeParam }), 'success');
     } catch (error: any) {
-      showToast(error?.response?.data?.message || 'Teambeitritt fehlgeschlagen', 'error');
+      showToast(teamActionError(error?.response?.data?.message, 'teams.errors.join'), 'error');
     }
   };
 
@@ -14420,10 +14424,11 @@ function App() {
 
       syncGrowthUser(user, response.data);
       showRewardPopupFromResponse(response.data);
-      showToast(`✅ Team-Mission: +${formatOnix(response.data.reward.amount)} ONIX`, 'success');
+      const noticeParam = formatOnix(response.data.reward.amount);
+      showToast((t) => t('teams.missionReward', { amount: noticeParam }), 'success');
       await loadTeamSocialDashboard();
     } catch (error: any) {
-      showToast(error?.response?.data?.message || 'Belohnung konnte nicht abgeholt werden', 'error');
+      showToast(teamActionError(error?.response?.data?.message, 'teams.errors.reward'), 'error');
     }
   };
 
@@ -14437,7 +14442,8 @@ function App() {
 
       syncGrowthUser(response.data.user, response.data);
       showRewardPopupFromResponse(response.data);
-      showToast(`🏆 Team-Preis: +${formatOnix(response.data.prize)} ONIX`, 'success');
+      const noticeParam = formatOnix(response.data.prize);
+      showToast((t) => t('teams.prizeReward', { amount: noticeParam }), 'success');
       await loadTeamSocialDashboard();
     } catch (error: any) {
       if (error?.response?.data?.teamContest) {
@@ -14448,30 +14454,30 @@ function App() {
         } : prev);
       }
 
-      showToast(error?.response?.data?.message || 'Team-Preis konnte nicht abgeholt werden', 'error');
+      showToast(teamActionError(error?.response?.data?.message, 'teams.errors.prize'), 'error');
     }
   };
 
   const getTeamPrizeButtonText = () => {
     const contest = teamSocialDashboard?.teamContest;
 
-    if (!contest) return 'Wettbewerb wird geladen...';
+    if (!contest) return t('teams.contestLoading');
 
     const msToNextPrize = Math.max(Number(contest.nextPrizeAvailableAt || 0) - missionClock, 0);
 
     if (contest.canClaim) {
-      return `Team-Preis abholen +${formatOnix(contest.prize)} ONIX`;
+      return t('teams.claimPrize', { amount: formatOnix(contest.prize) });
     }
 
     if (contest.hasClaimed) {
-      return `Nächster Preis in ${formatMissionResetTime(msToNextPrize)}`;
+      return t('teams.nextPrize', { time: formatTeamResetTime(msToNextPrize, appLanguage) });
     }
 
     if (contest.joinedAfterCompletedContest) {
-      return `Preis nach aktuellem Wettbewerb in ${formatMissionResetTime(msToNextPrize)}`;
+      return t('teams.prizeAfterContest', { time: formatTeamResetTime(msToNextPrize, appLanguage) });
     }
 
-    return `Wettbewerb endet in ${formatMissionResetTime(msToNextPrize)}`;
+    return t('teams.contestEnds', { time: formatTeamResetTime(msToNextPrize, appLanguage) });
   };
 
   const isTeamPrizeButtonActive = Boolean(teamSocialDashboard?.teamContest?.canClaim);
@@ -20458,8 +20464,8 @@ body:not(.onix-body-home-lock) {
                 <strong>{referralsCount}</strong>
               </button>
               <button type="button" className="onix-profile-v75-stat" onClick={openTeamPanel}>
-                <span>Team</span>
-                <strong>{teamName || '—'}</strong>
+                <span data-onix-i18n="notice">{t('teams.label')}</span>
+                <strong data-onix-i18n="notice">{teamName || '—'}</strong>
               </button>
             </div>
 
@@ -20917,7 +20923,7 @@ body:not(.onix-body-home-lock) {
             )}
 
             {profilePanel === 'team' && (
-              <div className={`onix-profile-v75-panel onix-profile-v75-team-panel ${teamDetailPanel !== 'overview' ? 'is-team-detail-open' : ''}`}>
+              <div data-onix-i18n="notice" className={`onix-profile-v75-panel onix-profile-v75-team-panel ${teamDetailPanel !== 'overview' ? 'is-team-detail-open' : ''}`}>
                 <div className="onix-profile-v75-panel-title onix-profile-v75-detail-title">
                   <button
                     type="button"
@@ -20932,14 +20938,14 @@ body:not(.onix-body-home-lock) {
                   >‹</button>
                   <strong>
                     {teamDetailPanel === 'missions'
-                      ? '📋 Team-Aufgaben'
+                      ? t('teams.missionsHeading')
                       : teamDetailPanel === 'top'
-                      ? '🏟 Team-Top'
+                      ? t('teams.topHeading')
                       : teamDetailPanel === 'members'
-                      ? '👥 Mitglieder'
+                      ? t('teams.membersHeading')
                       : teamDetailPanel === 'create'
-                      ? '✨ Team erstellen'
-                      : '👥 Team'}
+                      ? t('teams.createHeading')
+                      : t('teams.heading')}
                   </strong>
                   <span>{teamName || 'ONIX'}</span>
                 </div>
@@ -20952,16 +20958,16 @@ body:not(.onix-body-home-lock) {
                           <div>
                             <p>{uiText('Aktuelles Team')}</p>
                             <strong>{teamSocialDashboard.team.teamName}</strong>
-                            <span>{teamSocialDashboard.team.members} Mitglieder · {teamSocialDashboard.team.place ? `#${teamSocialDashboard.team.place}` : 'kein Platz'} pro Woche</span>
+                            <span>{t('teams.summary', { count: teamSocialDashboard.team.members, place: teamSocialDashboard.team.place ? `#${teamSocialDashboard.team.place}` : t('teams.noPlace') })}</span>
                           </div>
-                          <button type="button" onClick={shareTeamInviteLink}>Link</button>
+                          <button type="button" onClick={shareTeamInviteLink}>{t('teams.link')}</button>
                         </div>
 
                         <div className="onix-profile-team-stats-grid">
                           <div><span>{uiText('Aktuelle Woche')}</span><strong>{formatOnix(teamSocialDashboard.teamContest?.activeTeamWeeklyEarned ?? teamSocialDashboard.team.weeklyEarned)}</strong></div>
                           <div><span>{uiText('Aktueller Platz')}</span><strong>{teamSocialDashboard.teamContest?.activeTeamPlace ? `#${teamSocialDashboard.teamContest.activeTeamPlace}` : '—'}</strong></div>
-                          <div><span>Vorheriger Platz</span><strong>{teamSocialDashboard.teamContest?.completedTeamPlace ? `#${teamSocialDashboard.teamContest.completedTeamPlace}` : '—'}</strong></div>
-                          <div><span>Wochenpreis</span><strong>+{formatOnix(teamSocialDashboard.teamContest?.prize || 0)}</strong></div>
+                          <div><span>{t('teams.previousPlace')}</span><strong>{teamSocialDashboard.teamContest?.completedTeamPlace ? `#${teamSocialDashboard.teamContest.completedTeamPlace}` : '—'}</strong></div>
+                          <div><span>{t('teams.weeklyPrize')}</span><strong>+{formatOnix(teamSocialDashboard.teamContest?.prize || 0)}</strong></div>
                         </div>
 
                         <button
@@ -20976,25 +20982,25 @@ body:not(.onix-body-home-lock) {
                         <div className="onix-profile-team-action-grid">
                           <button type="button" className="onix-profile-team-action-card" onClick={() => setTeamDetailPanel('missions')}>
                             <span>📋</span>
-                            <div><strong>Aufgaben</strong><em>{teamSocialDashboard.teamMissions.length} aktiv</em></div>
+                            <div><strong>{t('nav.tasks')}</strong><em>{t('teams.active', { count: teamSocialDashboard.teamMissions.length })}</em></div>
                             <b>›</b>
                           </button>
 
                           <button type="button" className="onix-profile-team-action-card" onClick={() => setTeamDetailPanel('top')}>
                             <span>🏟</span>
-                            <div><strong>Team-Top</strong><em>{teamSocialDashboard.teamContest?.activeWeek || teamSocialDashboard.week}</em></div>
+                            <div><strong>{t('teams.top')}</strong><em>{teamSocialDashboard.teamContest?.activeWeek || teamSocialDashboard.week}</em></div>
                             <b>›</b>
                           </button>
 
                           <button type="button" className="onix-profile-team-action-card" onClick={() => setTeamDetailPanel('members')}>
                             <span>👥</span>
-                            <div><strong>{uiText('Mitglieder')}</strong><em>{teamSocialDashboard.team.members} im Team</em></div>
+                            <div><strong>{uiText('Mitglieder')}</strong><em>{t('teams.memberCount', { count: teamSocialDashboard.team.members })}</em></div>
                             <b>›</b>
                           </button>
                         </div>
 
                         <button type="button" className="onix-profile-team-leave-button" onClick={leaveCurrentTeam}>
-                          Team verlassen
+                          {t('teams.leave')}
                         </button>
                       </>
                     )}
@@ -21005,20 +21011,21 @@ body:not(.onix-body-home-lock) {
                           <div className="onix-profile-team-block-title"><strong>{uiText('Team-Aufgaben')}</strong><span>{teamSocialDashboard.week}</span></div>
                           <div className="onix-profile-team-missions">
                             {teamSocialDashboard.teamMissions.length > 0 ? teamSocialDashboard.teamMissions.map((mission) => {
+                              const missionText = getTeamMissionText(mission, appLanguage);
                               const progressPercent = Math.min((Number(mission.progress || 0) / Number(mission.goal || 1)) * 100, 100);
                               return (
                                 <div key={mission.id} className="onix-profile-team-mission">
-                                  <div className="onix-profile-team-mission-head"><strong>{uiText(mission.title)}</strong><span>+{formatOnix(mission.reward)}</span></div>
-                                  <p>{uiText(mission.description)}</p>
+                                  <div className="onix-profile-team-mission-head"><strong>{missionText?.title ?? uiText(mission.title)}</strong><span>+{formatOnix(mission.reward)}</span></div>
+                                  <p>{missionText?.description ?? uiText(mission.description)}</p>
                                   <div className="onix-task-progress">
                                     <div className="onix-task-progress-text"><span className="onix-task-progress-status">{uiText('Fortschritt')}</span><span><strong>{formatOnix(mission.progress)}</strong> / {formatOnix(mission.goal)}</span></div>
                                     <div className="onix-task-progress-track"><div className="onix-task-progress-fill" style={{ width: `${progressPercent}%` }} /></div>
                                   </div>
-                                  <button type="button" onClick={() => claimTeamMission(mission)} disabled={!mission.isCompleted || mission.isClaimed}>{mission.isClaimed ? 'Erhalten' : mission.isCompleted ? 'Abholen' : 'In Bearbeitung'}</button>
+                                  <button type="button" onClick={() => claimTeamMission(mission)} disabled={!mission.isCompleted || mission.isClaimed}>{mission.isClaimed ? t('missions.claimed') : mission.isCompleted ? t('missions.claim') : t('missions.pending')}</button>
                                 </div>
                               );
                             }) : (
-                              <div className="onix-profile-v75-empty">Team-Aufgaben erscheinen später.</div>
+                              <div className="onix-profile-v75-empty">{t('teams.missionsEmpty')}</div>
                             )}
                           </div>
                         </div>
@@ -21028,16 +21035,16 @@ body:not(.onix-body-home-lock) {
                     {teamDetailPanel === 'top' && (
                       <div className="onix-profile-team-detail-scroll">
                         <div className="onix-profile-team-block onix-profile-team-contest-block">
-                          <div className="onix-profile-team-block-title"><strong>🏟 Team-Top</strong><span>{teamSocialDashboard.teamContest?.activeWeek || teamSocialDashboard.week}</span></div>
+                          <div className="onix-profile-team-block-title"><strong>{t('teams.topHeading')}</strong><span>{teamSocialDashboard.teamContest?.activeWeek || teamSocialDashboard.week}</span></div>
                           <div className="onix-profile-team-podium">
                             {(teamSocialDashboard.teamContest?.leaderboardTop3 || []).length > 0 ? (teamSocialDashboard.teamContest?.leaderboardTop3 || []).map((team) => (
                               <div key={team.teamName} className={`onix-profile-team-podium-row place-${team.place}`}>
                                 <em>#{team.place}</em>
-                                <div><strong>{team.teamName}</strong><span>{formatOnix(team.weeklyEarned)} ONIX · {team.members} Mitglieder</span></div>
+                                <div><strong>{team.teamName}</strong><span>{t('teams.rankingSummary', { amount: formatOnix(team.weeklyEarned), count: team.members })}</span></div>
                                 <b>+{formatOnix(team.prize || 0)}</b>
                               </div>
                             )) : (
-                              <div className="onix-profile-v75-empty">Das Leaderboard erscheint, sobald Teams ONIX verdienen.</div>
+                              <div className="onix-profile-v75-empty">{t('teams.rankingEmpty')}</div>
                             )}
                           </div>
                         </div>
@@ -21052,10 +21059,10 @@ body:not(.onix-body-home-lock) {
                             {(teamSocialDashboard.team.membersList || []).length > 0 ? teamSocialDashboard.team.membersList.map((member, index) => (
                               <div key={member.telegramId} className="onix-profile-team-member">
                                 <em>{index + 1}</em>
-                                <div><strong>{member.username || 'ONIX Player'}</strong><span>{formatOnix(member.weeklyEarned)} pro Woche · {formatOnix(member.totalEarned)} gesamt</span></div>
+                                <div><strong>{member.username || 'ONIX Player'}</strong><span>{t('teams.memberEarnings', { weekly: formatOnix(member.weeklyEarned), total: formatOnix(member.totalEarned) })}</span></div>
                               </div>
                             )) : (
-                              <div className="onix-profile-v75-empty">Noch keine Teammitglieder gefunden.</div>
+                              <div className="onix-profile-v75-empty">{t('teams.membersEmpty')}</div>
                             )}
                           </div>
                         </div>
@@ -21068,13 +21075,13 @@ body:not(.onix-body-home-lock) {
                       <div className="onix-profile-team-create-page">
                         <div className="onix-profile-team-block onix-profile-team-create-card">
                           <div className="onix-profile-team-block-title"><strong>{uiText('✨ Neues Team')}</strong><span>ONIX</span></div>
-                          <p>Gib deinem Team einen Namen. Nach der Erstellung bist du automatisch das erste Mitglied, andere Spieler können das Team über die Suche finden und beitreten.</p>
+                          <p>{t('teams.createDescription')}</p>
                           <div className="onix-profile-team-create-input">
                             <input
                               value={createTeamName}
                               maxLength={24}
                               onChange={(event) => setCreateTeamName(event.target.value)}
-                              placeholder="Teamname"
+                              placeholder={t('teams.namePlaceholder')}
                             />
                           </div>
                           <button
@@ -21083,7 +21090,7 @@ body:not(.onix-body-home-lock) {
                             onClick={createTeam}
                             disabled={isCreatingTeam || createTeamName.trim().length < 2}
                           >
-                            {isCreatingTeam ? 'Wird erstellt...' : 'Team erstellen'}
+                            {isCreatingTeam ? t('teams.creating') : t('teams.create')}
                           </button>
                         </div>
                       </div>
@@ -21097,32 +21104,32 @@ body:not(.onix-body-home-lock) {
                               setTeamSearch(value);
                               loadTeamDirectory(value);
                             }}
-                            placeholder="Team nach Namen suchen"
+                            placeholder={t('teams.searchPlaceholder')}
                           />
                         </div>
 
                         <button type="button" className="onix-profile-team-create-button" onClick={() => setTeamDetailPanel('create')}>
                           <span>＋</span>
-                          <div><strong>Eigenes Team erstellen</strong><em>Werde das erste Mitglied</em></div>
+                          <div><strong>{t('teams.createOwn')}</strong><em>{t('teams.firstMember')}</em></div>
                           <b>›</b>
                         </button>
 
                         <div className="onix-profile-team-block">
-                          <div className="onix-profile-team-block-title"><strong>Alle ONIX-Teams</strong><span>{teamDirectory.length}</span></div>
+                          <div className="onix-profile-team-block-title"><strong>{t('teams.all')}</strong><span>{teamDirectory.length}</span></div>
                           <div className="onix-profile-team-directory">
                             {isTeamDirectoryLoading ? (
-                              <div className="onix-profile-v75-empty">Teams werden geladen...</div>
+                              <div className="onix-profile-v75-empty">{t('teams.loading')}</div>
                             ) : teamDirectory.length > 0 ? teamDirectory.map((team) => (
                               <div key={team.teamName} className="onix-profile-team-card">
                                 <div>
                                   <strong>{team.teamName}</strong>
-                                  <span>{team.members} Mitglieder · {formatOnix(team.totalEarned)} ONIX gesamt</span>
-                                  <em>{team.place ? `#${team.place} pro Woche` : 'kein Platz'} · {formatOnix(team.weeklyEarned)} pro Woche</em>
+                                  <span>{t('teams.directorySummary', { count: team.members, amount: formatOnix(team.totalEarned) })}</span>
+                                  <em>{t('teams.directoryWeekly', { place: team.place ? t('teams.weeklyPlace', { place: team.place }) : t('teams.noPlace'), amount: formatOnix(team.weeklyEarned) })}</em>
                                 </div>
                                 <button type="button" onClick={() => joinTeamByName(team.teamName)}>{uiText('Beitreten')}</button>
                               </div>
                             )) : (
-                              <div className="onix-profile-v75-empty">Keine Teams gefunden.</div>
+                              <div className="onix-profile-v75-empty">{t('teams.empty')}</div>
                             )}
                           </div>
                         </div>
