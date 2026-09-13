@@ -13245,12 +13245,14 @@ function App() {
         const newRefs = user.referralsCount || 0;
 
         if (newRefs > oldRefs) {
+          const name = user.lastReferralUsername;
+          const amount = formatOnix(economyConfig.referralReward);
           showToast(
-            `👥 Über deinen Link ist beigetreten ${
-              user.lastReferralUsername || 'neuer Spieler'
-            }. Bonus +${formatOnix(
-              economyConfig.referralReward
-            )} ONIX kommt, wenn dein Freund 100 Taps macht.`,
+            (t) => t('referrals.joined', {
+              name: name || t('referrals.newPlayer'),
+              amount,
+              taps: 100,
+            }),
             'info'
           );
         }
@@ -13265,10 +13267,10 @@ function App() {
           user.referredBy &&
           !localStorage.getItem(`referralWelcomeShown_${user.telegramId}`)
         ) {
+          const name = user.referredByUsername;
+          const amount = formatOnix(economyConfig.referredUserReward);
           showToast(
-            `🎁 Du hast erhalten +${formatOnix(economyConfig.referredUserReward)} ONIX für den Einstieg über den Link von ${
-              user.referredByUsername || 'Freund'
-            }!`
+            (t) => t('referrals.welcome', { amount, name: name || t('referrals.friend') })
           );
 
           localStorage.setItem(`referralWelcomeShown_${user.telegramId}`, 'true');
@@ -13940,7 +13942,7 @@ function App() {
   };
 
   const getReferralShareText = () =>
-    'Mach mit bei $ONIX coin ⚡ Hol dir 15.000 ONIX Startbonus!';
+    t('referrals.share', { amount: economyConfig.referredUserReward.toLocaleString(appLanguage === 'ru' ? 'ru-RU' : 'de-DE') });
 
   const showCopySuccess = () => {
     setCopySuccessVisible(true);
@@ -13983,11 +13985,13 @@ function App() {
     }
   };
 
-  const formatTime = (ms: number) => {
+  const formatTime = (ms: number, localized = false) => {
     const totalSeconds = Math.floor(ms / 1000);
     const hours = Math.floor(totalSeconds / 3600);
     const minutes = Math.floor((totalSeconds % 3600) / 60);
     const seconds = totalSeconds % 60;
+
+    if (localized) return t('referrals.time', { hours, minutes, seconds });
 
     return `${hours}Std. ${minutes}Min. ${seconds}Sek.`;
   };
@@ -14119,12 +14123,8 @@ function App() {
 
     if (!referralBonus || !Number(referralBonus.reward || 0)) return;
 
-    showToast(
-      `👥 Empfehlungsbonus wurde dem Einladenden gutgeschrieben: +${formatOnix(
-        referralBonus.reward
-      )} ONIX`,
-      'success'
-    );
+    const amount = formatOnix(referralBonus.reward);
+    showToast((t) => t('referrals.paid', { amount }), 'success');
   };
 
   const showRewardPopupFromResponse = (data: any) => {
@@ -14367,7 +14367,7 @@ function App() {
 
   const shareTeamInviteLink = () => {
     const link = getTeamInviteLink();
-    const text = `Tritt meinem Team bei ${teamName || 'ONIX'} bei ONIX COIN ⚡`;
+    const text = t('referrals.teamShare', { name: teamName || 'ONIX' });
 
     const shareUrl = `https://t.me/share/url?url=${encodeURIComponent(
       link
@@ -22253,7 +22253,7 @@ body:not(.onix-body-home-lock) {
             </div>
 
             <h2 className="mt-4 text-3xl font-black text-white">ONIX COIN</h2>
-            <p className="mt-2 text-sm text-gray-400">Mein Ergebnis</p>
+            <p className="mt-2 text-sm text-gray-400" data-onix-i18n="notice">{t('referrals.result')}</p>
 
             <div className="mt-3 grid grid-cols-2 gap-3">
               <div className="rounded-2xl bg-[#0a0f1c] p-4">
@@ -22267,8 +22267,8 @@ body:not(.onix-body-home-lock) {
               </div>
 
               <div className="rounded-2xl bg-[#0a0f1c] p-4">
-                <p className="text-xs text-gray-400">Rang</p>
-                <p className="font-bold text-yellow-400">{rankInfo.currentRank.name}</p>
+                <p className="text-xs text-gray-400" data-onix-i18n="notice">{t('referrals.rank')}</p>
+                <p data-onix-i18n="notice" className="font-bold text-yellow-400">{uiText(rankInfo.currentRank.name)}</p>
               </div>
 
               <div className="rounded-2xl bg-[#0a0f1c] p-4">
@@ -22280,10 +22280,11 @@ body:not(.onix-body-home-lock) {
             </div>
 
             <button
+              data-onix-i18n="notice"
               onClick={shareReferralLink}
               className="mt-5 w-full rounded-2xl bg-yellow-400 py-4 text-lg font-bold text-black active:scale-95"
             >
-              Auf Telegram teilen
+              {t('referrals.shareButton')}
             </button>
           </div>
         </div>
@@ -23403,7 +23404,7 @@ body:not(.onix-body-home-lock) {
       )}
 
       {referralModalVisible && (
-        <div className="fixed inset-0 z-[75] flex items-center justify-center bg-black/70 px-4">
+        <div data-onix-i18n="notice" className="fixed inset-0 z-[75] flex items-center justify-center bg-black/70 px-4">
           <div className="w-full max-w-sm rounded-3xl border border-yellow-400/30 bg-[#111827] p-6 text-center shadow-2xl">
             <button
               onClick={() => setReferralModalVisible(false)}
@@ -23418,7 +23419,7 @@ body:not(.onix-body-home-lock) {
 
             <h2 className="text-2xl font-bold text-white">{uiText('Lade einen Freund ein')}</h2>
             <p className="mt-2 text-sm text-gray-400">
-              Teile deinen Link und erhalte ONIX für neue Spieler
+              {t('referrals.description')}
             </p>
 
             <div className="mt-3 grid grid-cols-2 gap-3">
@@ -23450,8 +23451,8 @@ body:not(.onix-body-home-lock) {
 
               <p className="mt-3 text-xs text-gray-400">
                 {referralLimit.isLimitReached
-                  ? `Heutiges Bonuslimit erreicht. Nächste Boni in ${referralResetTime}`
-                  : `Du kannst heute noch ${referralLimit.remaining} bezahlte Boni erhalten`}
+                  ? t('referrals.limitReached', { time: formatTime(referralLimit.secondsUntilReset * 1000, true) })
+                  : t('referrals.remaining', { count: referralLimit.remaining })}
               </p>
             </div>
 
@@ -23459,19 +23460,19 @@ body:not(.onix-body-home-lock) {
               onClick={shareReferralLink}
               className="mt-5 w-full rounded-2xl bg-yellow-400 py-4 text-lg font-bold text-black active:scale-95"
             >
-              📤 Auf Telegram einladen
+              {t('referrals.invite')}
             </button>
 
             <button
               onClick={copyReferralLink}
               className="mt-3 w-full rounded-2xl bg-[#0a0f1c] py-4 text-lg font-bold text-white active:scale-95"
             >
-              🔗 Link kopieren
+              {t('referrals.copy')}
             </button>
 
             {copySuccessVisible && (
               <p className="mt-3 rounded-2xl bg-emerald-500/10 py-2 text-sm font-bold text-emerald-400">
-                ✅ Link kopiert
+                {t('referrals.copied')}
               </p>
             )}
           </div>
