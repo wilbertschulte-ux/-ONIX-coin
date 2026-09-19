@@ -36,7 +36,24 @@ const keys = [
   "missions.errors.notFound",
   "missions.errors.incomplete",
   "backend.subscribeFirst",
-  "backend.inviteFirst"
+  "backend.inviteFirst",
+  "backend.userNotFound",
+  "backend.telegramMismatch",
+  "backend.authRequired",
+  "backend.invalidAmount",
+  "backend.withdrawInsufficient",
+  "backend.unknownUpgrade",
+  "backend.upgradeCooldown",
+  "backend.unknownPerk",
+  "backend.missionData",
+  "backend.taskRequired",
+  "backend.botSettingsMissing",
+  "backend.unknownTask",
+  "backend.energyAlreadyFull",
+  "backend.unknownBoost",
+  "backend.unsupportedLanguage",
+  "backend.telegramRequired",
+  "backend.dataRequired"
 ] as const;
 
 const legacyEnglish = {
@@ -46,7 +63,24 @@ const legacyEnglish = {
   "Boost already active": "backend.boostActive",
   "Not enough ONIX": "backend.insufficient",
   "Withdrawal request already in progress": "backend.withdrawalInProgress",
-  "Reward request already in progress": "backend.rewardInProgress"
+  "Reward request already in progress": "backend.rewardInProgress",
+  "User not found": "backend.userNotFound",
+  "Telegram ID does not match authenticated user": "backend.telegramMismatch",
+  "Telegram authentication required": "backend.authRequired",
+  "Gib einen gültigen Betrag ein": "backend.invalidAmount",
+  "Nicht genug ONIX für Auszahlung": "backend.withdrawInsufficient",
+  "Unknown upgrade type": "backend.unknownUpgrade",
+  "Upgrade purchase cooldown": "backend.upgradeCooldown",
+  "Unknown perk": "backend.unknownPerk",
+  "Mission data is required": "backend.missionData",
+  "Task is required": "backend.taskRequired",
+  "Telegram bot settings are missing": "backend.botSettingsMissing",
+  "Unknown task": "backend.unknownTask",
+  "Energie ist bereits voll": "backend.energyAlreadyFull",
+  "Unknown boost type": "backend.unknownBoost",
+  "Unsupported language": "backend.unsupportedLanguage",
+  "Telegram ID is required": "backend.telegramRequired",
+  "Data is required": "backend.dataRequired"
 } as const;
 
 export function getBackendNotice(message: string) {

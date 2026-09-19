@@ -8,6 +8,7 @@ import { getTeamMissionText, formatTeamResetTime, teamActionError } from './i18n
 import { createTranslator, type AppLanguage, type MessageKey } from './i18n';
 import { germanMessages } from './i18n/messages';
 import { getMissionText, getWeeklyAchievementDescription, getMissionClaimErrorKey } from './i18n/missions';
+import { getAchievementText, getBadgeLabel, getProfileTitle, getRankName } from './i18n/entities';
 import onixLogoCrystal from './assets/onix-logo-crystal.webp';
 import onixBoostTapStrengthIcon from './assets/onix-boost-icons/boost-tap-strength.png';
 import onixBoostCoinMultiplierIcon from './assets/onix-boost-icons/boost-coin-multiplier.png';
@@ -2270,7 +2271,7 @@ body,
     linear-gradient(180deg, rgba(5, 7, 19, 0.00) 0%, rgba(5, 7, 19, 0.08) 55%, rgba(5, 7, 19, 0.35) 100%) !important;
 }
 
-.onix-home-reference-mode [aria-label="ONIX top navigation"] {
+.onix-home-reference-mode [data-onix-top-navigation] {
   height: 54px !important;
   min-height: 54px !important;
   padding: 0 16px !important;
@@ -11716,18 +11717,17 @@ function getNextUtcWeekStartTimestamp(timestamp = Date.now()) {
   );
 }
 
-function formatMissionResetTime(ms: number) {
+function formatMissionResetTime(ms: number, language: AppLanguage) {
   const totalSeconds = Math.max(Math.floor(ms / 1000), 0);
   const days = Math.floor(totalSeconds / 86400);
   const hours = Math.floor((totalSeconds % 86400) / 3600);
   const minutes = Math.floor((totalSeconds % 3600) / 60);
   const seconds = totalSeconds % 60;
 
-  if (days > 0) {
-    return `${days}T ${hours}Std. ${minutes}Min.`;
-  }
-
-  return `${hours}Std. ${minutes}Min. ${seconds}Sek.`;
+  const translate = createTranslator(language);
+  return days > 0
+    ? translate('common.daysHoursMinutes', { days, hours, minutes })
+    : translate('common.hoursMinutesSeconds', { hours, minutes, seconds });
 }
 
 const DEFAULT_ONIX_EUR_PER_1000 = 2 / 3;
@@ -12091,9 +12091,11 @@ function getRankIconTier(rankId: string, rankName = '') {
 function RankIcon({
   rank,
   size = 'md',
+  label,
 }: {
   rank: { id?: string; name?: string };
   size?: 'sm' | 'md' | 'lg';
+  label?: string;
 }) {
   const tier = getRankIconTier(rank?.id || '', rank?.name || '');
 
@@ -12102,7 +12104,7 @@ function RankIcon({
       <img
         className="onix-rank-icon-image"
         src={RANK_ICON_IMAGES[tier] || RANK_ICON_IMAGES.novice}
-        alt={rank?.name || 'Rank'}
+        alt={label || rank?.name || 'Rank'}
         draggable={false}
       />
     </div>
@@ -12345,20 +12347,7 @@ function App() {
       return 'de';
     }
   });
-  const tr = ONIX_I18N[appLanguage];
   const t = createTranslator(appLanguage);
-  const promoUi = {
-    de: { label: 'Promocode', helper: 'Gib deinen Kampagnen-Promocode ein', placeholder: 'Zum Beispiel: GG5000', activate: 'Aktivieren', once: 'Jeder Promocode kann nur einmal verwendet werden.', success: 'Promocode aktiviert', error: 'Promocode konnte nicht aktiviert werden' },
-    en: { label: 'Promo code', helper: 'Enter your campaign promo code', placeholder: 'For example: GG5000', activate: 'Activate', once: 'Each promo code can only be used once.', success: 'Promo code activated', error: 'Promo code could not be activated' },
-    ru: { label: 'Промокод', helper: 'Введите промокод из рекламной кампании', placeholder: 'Например: GG5000', activate: 'Активировать', once: 'Каждый промокод можно использовать только один раз.', success: 'Промокод активирован', error: 'Не удалось активировать промокод' },
-    uk: { label: 'Промокод', helper: 'Введіть промокод з рекламної кампанії', placeholder: 'Наприклад: GG5000', activate: 'Активувати', once: 'Кожен промокод можна використати лише один раз.', success: 'Промокод активовано', error: 'Не вдалося активувати промокод' },
-    tr: { label: 'Promosyon kodu', helper: 'Kampanya promosyon kodunu gir', placeholder: 'Örneğin: GG5000', activate: 'Etkinleştir', once: 'Her promosyon kodu yalnızca bir kez kullanılabilir.', success: 'Promosyon kodu etkinleştirildi', error: 'Promosyon kodu etkinleştirilemedi' },
-    es: { label: 'Código promocional', helper: 'Introduce el código promocional de la campaña', placeholder: 'Por ejemplo: GG5000', activate: 'Activar', once: 'Cada código promocional solo se puede usar una vez.', success: 'Código promocional activado', error: 'No se pudo activar el código promocional' },
-    fr: { label: 'Code promo', helper: 'Saisis le code promo de la campagne', placeholder: 'Par exemple : GG5000', activate: 'Activer', once: 'Chaque code promo ne peut être utilisé qu’une seule fois.', success: 'Code promo activé', error: 'Impossible d’activer le code promo' },
-    it: { label: 'Codice promo', helper: 'Inserisci il codice promo della campagna', placeholder: 'Ad esempio: GG5000', activate: 'Attiva', once: 'Ogni codice promo può essere utilizzato una sola volta.', success: 'Codice promo attivato', error: 'Impossibile attivare il codice promo' },
-    pl: { label: 'Kod promocyjny', helper: 'Wpisz kod promocyjny z kampanii', placeholder: 'Na przykład: GG5000', activate: 'Aktywuj', once: 'Każdy kod promocyjny można wykorzystać tylko raz.', success: 'Kod promocyjny aktywowany', error: 'Nie udało się aktywować kodu promocyjnego' },
-    pt: { label: 'Código promocional', helper: 'Digite o código promocional da campanha', placeholder: 'Por exemplo: GG5000', activate: 'Ativar', once: 'Cada código promocional só pode ser usado uma vez.', success: 'Código promocional ativado', error: 'Não foi possível ativar o código promocional' },
-  }[appLanguage];
 
   const legacyLanguage = appLanguage;
   const uiText = (source: string, appLanguage: AppLanguage = legacyLanguage) => {
@@ -13102,7 +13091,7 @@ function App() {
 
   const [offlineRewardVisible, setOfflineRewardVisible] = useState(false);
   const [offlineRewardAmount, setOfflineRewardAmount] = useState(0);
-  const [offlineRewardTime, setOfflineRewardTime] = useState('');
+  const [offlineRewardSeconds, setOfflineRewardSeconds] = useState(0);
   const [isClaimingOfflineReward, setIsClaimingOfflineReward] = useState(false);
   const [rewardPopupItems, setRewardPopupItems] = useState<RewardPopupItem[]>([]);
   const [rewardPopupVisible, setRewardPopupVisible] = useState(false);
@@ -13277,9 +13266,7 @@ function App() {
 
           if (offlineIncome > 0) {
             setOfflineRewardAmount(offlineIncome);
-            setOfflineRewardTime(
-              offlineSeconds > 0 ? formatOfflineTime(offlineSeconds) : ''
-            );
+            setOfflineRewardSeconds(Math.max(0, offlineSeconds));
             setOfflineRewardVisible(true);
           }
         }, 1000);
@@ -13681,7 +13668,8 @@ function App() {
 
       syncGrowthUser(response.data.user, response.data);
       showRewardPopupFromResponse(response.data);
-      showToast(`🎁 Welcome bonus: +${formatOnix(response.data.reward)} ONIX`, 'success');
+      const amount = formatOnix(response.data.reward);
+      showToast((t) => t('welcome.received', { amount }), 'success');
     } catch (error: any) {
       showToast(actionError(error?.response?.data?.message, 'errors.welcome'), 'error');
     }
@@ -13700,12 +13688,10 @@ function App() {
       showRewardPopupFromResponse(response.data);
       setPromoCodeInput('');
       setPromoModalVisible(false);
-      showToast(
-        `🎟 ${promoUi.success}: +${formatOnix(response.data.promo.reward)} ONIX`,
-        'success'
-      );
+      const amount = formatOnix(response.data.promo.reward);
+      showToast((t) => t('promo.applied', { amount }), 'success');
     } catch (error: any) {
-      showToast(error?.response?.data?.message || promoUi.error, 'error');
+      showToast(error?.response?.data?.message || t('promo.error'), 'error');
     }
   };
 
@@ -13795,12 +13781,9 @@ function App() {
       setPerkLevels(normalizePerkLevels(user.perkLevels));
       setLastChestReward(user.chestStats?.lastReward || '');
 
-      showToast(
-        `🎁 ${localizeChestRewardText(response.data.chest.rewardTitle)}: +${formatOnix(
-          response.data.chest.rewardAmount
-        )} ONIX`,
-        'success'
-      );
+      const rewardTitle = response.data.chest.rewardTitle;
+      const rewardAmount = formatOnix(response.data.chest.rewardAmount);
+      showToast((_t, language) => `🎁 ${localizeChestRewardText(rewardTitle, language)}: +${rewardAmount} ONIX`, 'success');
 
       showRewardPopupFromResponse(response.data);
       refreshAfterAction();
@@ -14034,9 +14017,9 @@ function App() {
     const minutes = Math.floor((totalSeconds % 3600) / 60);
     const seconds = totalSeconds % 60;
 
-    if (localized) return t('referrals.time', { hours, minutes, seconds });
-
-    return `${hours}Std. ${minutes}Min. ${seconds}Sek.`;
+    return localized
+      ? t('referrals.time', { hours, minutes, seconds })
+      : t('common.hoursMinutesSeconds', { hours, minutes, seconds });
   };
 
   const formatOfflineTime = (seconds: number) => {
@@ -14045,14 +14028,14 @@ function App() {
     const secs = seconds % 60;
 
     if (hours > 0) {
-      return `${hours}Std. ${minutes}Min.`;
+      return t('common.hoursMinutes', { hours, minutes });
     }
 
     if (minutes > 0) {
-      return `${minutes}Min. ${secs}Sek.`;
+      return t('common.minutesSeconds', { minutes, seconds: secs });
     }
 
-    return `${secs}Sek.`;
+    return t('common.seconds', { seconds: secs });
   };
 
   const claimOfflineReward = async () => {
@@ -14105,7 +14088,7 @@ function App() {
 
       setOfflineRewardVisible(false);
       setOfflineRewardAmount(0);
-      setOfflineRewardTime('');
+      setOfflineRewardSeconds(0);
 
       try {
         WebApp.HapticFeedback?.notificationOccurred('success');
@@ -14185,7 +14168,7 @@ function App() {
             icon: '🏆',
             title: `Neuer Rang: ${bonus.name || 'Rang'}`,
             localizedTitle: (t, language) => t('rewards.newRank', {
-              name: uiText(RANKS.find((rank) => rank.id === bonus.id)?.name || bonus.name || 'Rang', language),
+              name: getRankName(RANKS.find((rank) => rank.id === bonus.id) || { id: bonus.id, name: bonus.name }, language),
             }),
             amount: Number(bonus.bonus || 0),
           });
@@ -14201,7 +14184,10 @@ function App() {
               icon: '✅',
               title: `Erfolg: ${achievement.title || 'Abgeschlossen'}`,
               localizedTitle: (t, language) => t('rewards.achievement', {
-                name: uiText(ACHIEVEMENTS.find((item) => item.id === achievement.id)?.title || achievement.title || 'Abgeschlossen', language),
+                name: getAchievementText(
+                  ACHIEVEMENTS.find((item) => item.id === achievement.id) || { id: achievement.id || '', title: achievement.title },
+                  language
+                )?.title || t('common.completed'),
               }),
               amount: Number(achievement.reward || 0),
             });
@@ -16527,7 +16513,7 @@ body.onix-body-home-lock {
     linear-gradient(180deg, rgba(8,15,23,0.00) 0%, rgba(8,15,23,0.18) 100%) !important;
 }
 
-.onix-home-reference-mode [aria-label="ONIX top navigation"] {
+.onix-home-reference-mode [data-onix-top-navigation] {
   background: rgba(4, 8, 19, 0.74) !important;
   border-bottom: 1px solid rgba(136, 92, 246, 0.18) !important;
   box-shadow: 0 14px 42px rgba(0,0,0,0.22) !important;
@@ -16738,7 +16724,7 @@ body:has(.onix-home-reference-mode) {
     linear-gradient(180deg, rgba(2, 5, 13, 0.12) 0%, rgba(2, 5, 13, 0.0) 36%, rgba(2, 5, 13, 0.38) 100%) !important;
 }
 
-.onix-home-reference-mode [aria-label="ONIX top navigation"] {
+.onix-home-reference-mode [data-onix-top-navigation] {
   position: relative !important;
   z-index: 10 !important;
   background: rgba(2, 5, 13, 0.62) !important;
@@ -16844,7 +16830,7 @@ body:has(.onix-home-reference-mode),
     linear-gradient(180deg, rgba(2, 4, 11, 0.04) 0%, transparent 38%, rgba(2, 4, 11, 0.42) 100%) !important;
 }
 
-.onix-home-reference-mode [aria-label="ONIX top navigation"] {
+.onix-home-reference-mode [data-onix-top-navigation] {
   background: linear-gradient(90deg, rgba(9, 12, 24, 0.92), rgba(22, 16, 43, 0.80), rgba(9, 12, 24, 0.92)) !important;
   border-bottom: 1px solid rgba(136, 92, 246, 0.18) !important;
 }
@@ -18228,7 +18214,7 @@ body:not(.onix-body-home-lock) {
     if (!adminPrizePreview || adminPrizePreview.alreadyAwarded) return;
 
     const confirmed = window.confirm(
-      `Выдать призы топ-3 за неделю ${adminPrizePreview.week}?`
+      t('admin.awardConfirm', { week: adminPrizePreview.week })
     );
 
     if (!confirmed) return;
@@ -18242,7 +18228,7 @@ body:not(.onix-body-home-lock) {
         week: adminPrizePreview.week,
       });
 
-      showToast('✅ Призы сезона выданы');
+      showToast((t) => t('admin.awardSuccess'));
 
       setAdminPrizePreview({
         ...adminPrizePreview,
@@ -18250,7 +18236,7 @@ body:not(.onix-body-home-lock) {
         awardedWinners: response.data.winners || [],
       });
     } catch (error: any) {
-      showToast(error?.response?.data?.message || 'Не удалось выдать призы');
+      showToast(error?.response?.data?.message || ((t) => t('admin.awardError')));
     } finally {
       setIsAdminLoading(false);
     }
@@ -18347,21 +18333,6 @@ body:not(.onix-body-home-lock) {
     return '🥉';
   };
 
-  const getProfileTitleLabel = (title: string) => {
-    const titleLabels: Record<string, string> = {
-      'ONIX Player': 'ONIX-Spieler',
-      'Tap Master': 'Tap-Meister',
-      Miner: 'Miner',
-      'Referral Master': 'Empfehlungsmeister',
-      'Season Hunter': 'Saisonjäger',
-      Diamond: 'Diamant',
-      'Boost Master': 'Boost-Meister',
-      'Perk Collector': 'Perk-Sammler',
-    };
-
-    return titleLabels[title] || title;
-  };
-
   const isProfileImageIcon = (icon: string) => (
     icon.startsWith('data:image/') ||
     icon.startsWith('/') ||
@@ -18400,7 +18371,10 @@ body:not(.onix-body-home-lock) {
   const nextRankBonus = rankInfo.nextRank?.bonus || 0;
   const profileLevel = Math.max(1, Math.floor(totalEarned / 100000) + 1);
   const profileLevelProgress = Math.min(((totalEarned % 100000) / 100000) * 100, 100);
-  const profileBadges = getProfileBadges();
+  const profileBadges = getProfileBadges().map((badge) => ({
+    ...badge,
+    localizedLabel: getBadgeLabel(badge.label, appLanguage),
+  }));
   const availableTitles = getAvailableTitles();
   const profileRankProgressPercent = rankInfo.progressPercent;
   const profileRankText = rankInfo.nextRank
@@ -18409,18 +18383,18 @@ body:not(.onix-body-home-lock) {
   const completedAchievementsList = achievements.filter((item) => item.isCompleted);
   const pendingAchievementsList = achievements.filter((item) => !item.isCompleted);
   const profileStats = [
-    { label: 'ONIX-Guthaben', value: formatOnix(balance) },
-    { label: 'Insgesamt verdient', value: formatOnix(totalEarned) },
-    { label: 'Taps gesamt', value: formatOnix(totalTaps) },
-    { label: 'Miner-Ertrag / Min.', value: formatOnix(Math.max(20, 20 + (minerLevel - 1) * 3)) },
-    { label: 'Tap-Stärke', value: formatOnix(tapPower) },
-    { label: 'Max. Energie', value: formatOnix(maxEnergy) },
-    { label: 'Energie-Regeneration', value: `+${formatOnix(energyRecharge)}/Sek.` },
-    { label: 'Genutzte Boosts', value: formatOnix(totalBoostsUsed) },
-    { label: 'Gekaufte Upgrades', value: formatOnix(totalUpgradesBought) },
-    { label: 'Offline-Abholungen', value: formatOnix(offlineClaimsCount) },
-    { label: 'Eingeladen', value: formatOnix(referralsCount) },
-    { label: 'Team', value: teamName || '—' },
+    { label: t('profile.stat.balance'), value: formatOnix(balance) },
+    { label: t('profile.stat.earned'), value: formatOnix(totalEarned) },
+    { label: t('profile.stat.taps'), value: formatOnix(totalTaps) },
+    { label: t('profile.stat.miner'), value: formatOnix(Math.max(20, 20 + (minerLevel - 1) * 3)) },
+    { label: t('profile.stat.tapPower'), value: formatOnix(tapPower) },
+    { label: t('profile.stat.maxEnergy'), value: formatOnix(maxEnergy) },
+    { label: t('profile.stat.recharge'), value: `+${formatOnix(energyRecharge)}/${t('common.perSecond')}` },
+    { label: t('profile.stat.boosts'), value: formatOnix(totalBoostsUsed) },
+    { label: t('profile.stat.upgrades'), value: formatOnix(totalUpgradesBought) },
+    { label: t('profile.stat.offline'), value: formatOnix(offlineClaimsCount) },
+    { label: t('profile.stat.invited'), value: formatOnix(referralsCount) },
+    { label: t('profile.stat.team'), value: teamName || '—' },
   ];
   const activeBoostValue = normalizeBoost(activeBoost);
   const normalizedBoostEndTime = Number(boostEndTime || 0);
@@ -18576,13 +18550,13 @@ body:not(.onix-body-home-lock) {
     id: TransactionFilter;
     label: string;
   }> = [
-    { id: 'all', label: 'Alle' },
-    { id: 'income', label: 'Einnahmen' },
-    { id: 'expense', label: 'Ausgaben' },
-    { id: 'withdrawal', label: 'Auszahlungen' },
-    { id: 'referral', label: 'Empfehlungen' },
-    { id: 'season', label: 'Saisons' },
-    { id: 'missions', label: 'Missionen' },
+    { id: 'all', label: t('category.all') },
+    { id: 'income', label: t('category.income') },
+    { id: 'expense', label: t('category.expenses') },
+    { id: 'withdrawal', label: t('category.withdrawals') },
+    { id: 'referral', label: t('category.referrals') },
+    { id: 'season', label: t('category.seasons') },
+    { id: 'missions', label: t('category.missions') },
   ];
 
   const filteredTransactions = transactions.filter((transaction) => {
@@ -18619,7 +18593,7 @@ body:not(.onix-body-home-lock) {
 
     return {
       key,
-      label: date.toLocaleDateString('ru-RU', { day: '2-digit', month: '2-digit' }),
+      label: date.toLocaleDateString(appLanguage === 'ru' ? 'ru-RU' : 'de-DE', { day: '2-digit', month: '2-digit' }),
       amount,
     };
   });
@@ -18676,14 +18650,14 @@ body:not(.onix-body-home-lock) {
     id: AchievementCategory;
     label: string;
   }> = [
-    { id: 'all', label: 'Alle' },
-    { id: 'taps', label: 'Taps' },
-    { id: 'miner', label: 'Miner' },
-    { id: 'referrals', label: 'Empfehlungen' },
-    { id: 'seasons', label: 'Saisons' },
-    { id: 'perks', label: 'Perks' },
-    { id: 'daily', label: 'Daily' },
-    { id: 'ranks', label: uiText('Ränge') },
+    { id: 'all', label: t('category.all') },
+    { id: 'taps', label: t('category.taps') },
+    { id: 'miner', label: t('category.miner') },
+    { id: 'referrals', label: t('category.referrals') },
+    { id: 'seasons', label: t('category.seasons') },
+    { id: 'perks', label: t('category.perks') },
+    { id: 'daily', label: t('category.daily') },
+    { id: 'ranks', label: t('ui.range') },
   ];
 
   const referralProgress = Math.min(
@@ -18721,7 +18695,7 @@ body:not(.onix-body-home-lock) {
   const areWeeklyMissionsComplete =
     missions.weekly.length > 0 && visibleWeeklyMissions.length === 0;
 
-  const localizeChestRewardText = (rawValue: string) => {
+  const localizeChestRewardText = (rawValue: string, language: AppLanguage = appLanguage) => {
     const raw = String(rawValue || '').trim();
     if (!raw) return '';
 
@@ -18729,10 +18703,21 @@ body:not(.onix-body-home-lock) {
       /^(?:Truhe|Turhe)\s*:\s*(kleiner Bonus|guter Bonus|seltener Bonus|Jackpot)\s*(.*)$/i
     );
 
-    if (!match) return uiText(raw);
+    if (!match) return language === 'de' ? raw : createTranslator(language)('boost.chest.title');
 
     const rewardKey = match[1].toLowerCase();
     const suffix = match[2] || '';
+
+    if (language === 'de' || language === 'ru') {
+      const key = rewardKey === 'kleiner bonus'
+        ? 'boost.chest.small'
+        : rewardKey === 'guter bonus'
+        ? 'boost.chest.good'
+        : rewardKey === 'seltener bonus'
+        ? 'boost.chest.rare'
+        : 'boost.chest.jackpot';
+      return createTranslator(language)(key, { suffix });
+    }
 
     const titles: Record<AppLanguage, Record<string, string>> = {
       de: {
@@ -18797,24 +18782,7 @@ body:not(.onix-body-home-lock) {
       },
     };
 
-    return `${titles[appLanguage][rewardKey] || raw}${suffix}`;
-  };
-
-  const maxEnergySubtitle = (value: number) => {
-    const formatted = value.toLocaleString('ru-RU');
-    const labels: Record<AppLanguage, string> = {
-      de: 'max. Energie',
-      en: 'max. Energy',
-      ru: 'макс. Энергия',
-      uk: 'макс. Енергія',
-      tr: 'maks. Enerji',
-      es: 'Energía máx.',
-      fr: 'Énergie max.',
-      it: 'Energia max',
-      pl: 'maks. Energia',
-      pt: 'Energia máx.',
-    };
-    return `${formatted} ${labels[appLanguage]}`;
+    return `${titles[language][rewardKey] || raw}${suffix}`;
   };
 
 
@@ -18889,8 +18857,8 @@ body:not(.onix-body-home-lock) {
         <div role="dialog" aria-modal="true" onClick={() => setHeaderMenuVisible(false)} style={{ position: 'fixed', inset: 0, zIndex: 5000, background: 'rgba(0,0,0,.62)', display: 'flex' }}>
           <div onClick={(event) => event.stopPropagation()} style={{ width: 'min(84vw, 330px)', height: '100%', padding: '28px 20px', background: 'linear-gradient(180deg,#0b0b28,#080817 72%)', borderRight: '1px solid rgba(168,85,247,.45)', boxShadow: '20px 0 50px rgba(0,0,0,.45)' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 28 }}>
-              <div><div style={{ color: '#67e8f9', fontSize: 11, fontWeight: 900, letterSpacing: '.18em' }}>ONIX CONTROL</div><div style={{ fontSize: 24, fontWeight: 1000 }}>{t('common.menu')}</div></div>
-              <button type="button" onClick={() => setHeaderMenuVisible(false)} style={{ width: 38, height: 38, borderRadius: 12, border: '1px solid rgba(168,85,247,.35)', background: 'rgba(15,12,45,.9)', color: '#fff', fontSize: 24 }}>×</button>
+              <div><div style={{ color: '#67e8f9', fontSize: 11, fontWeight: 900, letterSpacing: '.18em' }}>{t('menu.control')}</div><div style={{ fontSize: 24, fontWeight: 1000 }}>{t('common.menu')}</div></div>
+              <button type="button" aria-label={t('a11y.close')} onClick={() => setHeaderMenuVisible(false)} style={{ width: 38, height: 38, borderRadius: 12, border: '1px solid rgba(168,85,247,.35)', background: 'rgba(15,12,45,.9)', color: '#fff', fontSize: 24 }}>×</button>
             </div>
             <div style={{ padding: 16, borderRadius: 18, border: '1px solid rgba(168,85,247,.25)', background: 'rgba(10,10,35,.8)', marginBottom: 14 }}>
               <div style={{ fontWeight: 900, marginBottom: 10 }}>🌐 {t('common.language')}</div>
@@ -18901,7 +18869,7 @@ body:not(.onix-body-home-lock) {
               </div>
             </div>
             <button type="button" onClick={toggleHeaderNotifications} style={{ width: '100%', padding: 16, borderRadius: 18, border: '1px solid rgba(168,85,247,.25)', background: 'rgba(10,10,35,.8)', color: '#fff', textAlign: 'left', marginBottom: 14 }}>
-              <div style={{ fontWeight: 900, marginBottom: 8 }}>🔔 {tr.notifications}</div><div style={{ color: headerNotificationsEnabled ? '#67e8f9' : '#a1a1aa', fontSize: 14 }}>{headerNotificationsEnabled ? tr.on : tr.off}</div>
+              <div style={{ fontWeight: 900, marginBottom: 8 }}>🔔 {t('menu.notifications')}</div><div style={{ color: headerNotificationsEnabled ? '#67e8f9' : '#a1a1aa', fontSize: 14 }}>{headerNotificationsEnabled ? t('menu.on') : t('menu.off')}</div>
             </button>
             <button
               type="button"
@@ -18912,10 +18880,10 @@ body:not(.onix-body-home-lock) {
               style={{ width: '100%', padding: 16, borderRadius: 18, border: '1px solid rgba(250,204,21,.45)', background: 'linear-gradient(135deg,rgba(250,204,21,.12),rgba(10,10,35,.88))', color: '#fff', textAlign: 'left', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12 }}
             >
               <div>
-                <div style={{ fontWeight: 1000, marginBottom: 6 }}>🎟 {promoUi.label}</div>
-                <div style={{ color: '#fde68a', fontSize: 13 }}>{promoUi.helper}</div>
+                <div style={{ fontWeight: 1000, marginBottom: 6 }}>🎟 {t('promo.label')}</div>
+                <div style={{ color: '#fde68a', fontSize: 13 }}>{t('promo.helper')}</div>
               </div>
-              <span style={{ flex: '0 0 auto', padding: '5px 8px', borderRadius: 999, background: '#facc15', color: '#111827', fontSize: 10, fontWeight: 1000, letterSpacing: '.08em' }}>NEW</span>
+              <span style={{ flex: '0 0 auto', padding: '5px 8px', borderRadius: 999, background: '#facc15', color: '#111827', fontSize: 10, fontWeight: 1000, letterSpacing: '.08em' }}>{t('common.new')}</span>
             </button>
           </div>
         </div>
@@ -18950,12 +18918,13 @@ body:not(.onix-body-home-lock) {
           >
             <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 12, marginBottom: 20 }}>
               <div>
-                <div style={{ color: '#fde68a', fontSize: 11, fontWeight: 900, letterSpacing: '.14em' }}>ONIX BONUS</div>
-                <div style={{ marginTop: 4, color: '#fff', fontSize: 24, fontWeight: 1000 }}>🎟 {promoUi.label}</div>
-                <div style={{ marginTop: 6, color: '#a1a1aa', fontSize: 14 }}>{promoUi.helper}</div>
+                <div style={{ color: '#fde68a', fontSize: 11, fontWeight: 900, letterSpacing: '.14em' }}>{t('promo.banner')}</div>
+                <div style={{ marginTop: 4, color: '#fff', fontSize: 24, fontWeight: 1000 }}>🎟 {t('promo.label')}</div>
+                <div style={{ marginTop: 6, color: '#a1a1aa', fontSize: 14 }}>{t('promo.helper')}</div>
               </div>
               <button
                 type="button"
+                aria-label={t('a11y.close')}
                 onClick={() => setPromoModalVisible(false)}
                 style={{ width: 38, height: 38, flex: '0 0 auto', borderRadius: 12, border: '1px solid rgba(168,85,247,.35)', background: 'rgba(15,12,45,.9)', color: '#fff', fontSize: 24 }}
               >
@@ -18966,7 +18935,7 @@ body:not(.onix-body-home-lock) {
             <input
               value={promoCodeInput}
               onChange={(event) => setPromoCodeInput(event.target.value.toUpperCase())}
-              placeholder={promoUi.placeholder}
+              placeholder={t('promo.placeholder')}
               autoCapitalize="characters"
               autoCorrect="off"
               spellCheck={false}
@@ -19001,10 +18970,10 @@ body:not(.onix-body-home-lock) {
                 fontWeight: 1000,
               }}
             >
-              {promoUi.activate}
+              {t('promo.activate')}
             </button>
 
-            <div style={{ marginTop: 12, color: '#71717a', textAlign: 'center', fontSize: 12 }}>{promoUi.once}</div>
+            <div style={{ marginTop: 12, color: '#71717a', textAlign: 'center', fontSize: 12 }}>{t('promo.once')}</div>
           </div>
         </div>
       )}
@@ -19013,17 +18982,18 @@ body:not(.onix-body-home-lock) {
         <div role="dialog" aria-modal="true" onClick={() => setHeaderNotificationsVisible(false)} style={{ position: 'fixed', inset: 0, zIndex: 5000, background: 'rgba(0,0,0,.68)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 20 }}>
           <div onClick={(event) => event.stopPropagation()} style={{ width: 'min(100%, 390px)', maxHeight: '72vh', overflowY: 'auto', padding: 22, borderRadius: 26, border: '1px solid rgba(168,85,247,.42)', background: 'linear-gradient(145deg,#121039,#080817)', boxShadow: '0 24px 70px rgba(0,0,0,.55)' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 18 }}>
-              <div><div style={{ color: '#67e8f9', fontSize: 11, fontWeight: 900, letterSpacing: '.15em' }}>ONIX CONTROL</div><div style={{ fontSize: 22, fontWeight: 1000 }}>{tr.notificationsTitle}</div></div>
-              <button type="button" onClick={() => setHeaderNotificationsVisible(false)} style={{ width: 38, height: 38, borderRadius: 12, border: '1px solid rgba(168,85,247,.35)', background: 'rgba(15,12,45,.9)', color: '#fff', fontSize: 24 }}>×</button>
+              <div><div style={{ color: '#67e8f9', fontSize: 11, fontWeight: 900, letterSpacing: '.15em' }}>{t('menu.control')}</div><div style={{ fontSize: 22, fontWeight: 1000 }}>{t('menu.notificationsTitle')}</div></div>
+              <button type="button" aria-label={t('a11y.close')} onClick={() => setHeaderNotificationsVisible(false)} style={{ width: 38, height: 38, borderRadius: 12, border: '1px solid rgba(168,85,247,.35)', background: 'rgba(15,12,45,.9)', color: '#fff', fontSize: 24 }}>×</button>
             </div>
-            {!headerNotificationsEnabled ? <div style={{ padding: 18, borderRadius: 18, background: 'rgba(8,8,28,.85)', color: '#c4b5fd' }}>{tr.notificationsOff}</div> : <div style={{ padding: 18, borderRadius: 18, background: 'rgba(8,8,28,.85)' }}><div style={{ fontWeight: 900, marginBottom: 6 }}>{tr.notificationsOnTitle}</div><div style={{ color: '#c4b5fd', fontSize: 14 }}>{tr.notificationsOnText}</div></div>}
+            {!headerNotificationsEnabled ? <div style={{ padding: 18, borderRadius: 18, background: 'rgba(8,8,28,.85)', color: '#c4b5fd' }}>{t('menu.notificationsOff')}</div> : <div style={{ padding: 18, borderRadius: 18, background: 'rgba(8,8,28,.85)' }}><div style={{ fontWeight: 900, marginBottom: 6 }}>{t('menu.notificationsOnTitle')}</div><div style={{ color: '#c4b5fd', fontSize: 14 }}>{t('menu.notificationsOnText')}</div></div>}
           </div>
         </div>
       )}
 
       {activeTab === 'home' && (
         <div
-          aria-label="ONIX top navigation"
+          data-onix-top-navigation="true"
+          aria-label={t('a11y.topNavigation')}
           style={{
             width: '100%',
             maxWidth: 430,
@@ -19114,13 +19084,13 @@ body:not(.onix-body-home-lock) {
         <div className="flex justify-between mb-2">
           <div className="flex items-center gap-2">
             <Star className="w-5 h-5 text-yellow-400" />
-            <span className="font-bold">Rang {rankInfo.currentRank.name}</span>
+            <span className="font-bold">{t('entity.rank')} {getRankName(rankInfo.currentRank, appLanguage)}</span>
           </div>
 
           <span className="text-sm text-gray-400">
             {rankInfo.nextRank
-              ? `${rankProgressText} bis ${rankInfo.nextRank.name}`
-              : 'Maximaler Rang'}
+              ? t('common.untilRank', { progress: rankProgressText, rank: getRankName(rankInfo.nextRank, appLanguage) })
+              : t('common.maximumRank')}
           </span>
         </div>
 
@@ -19133,14 +19103,14 @@ body:not(.onix-body-home-lock) {
       </div>
 
       <div className="onix-balance-panel text-center pt-6 pb-4">
-        <p className="text-gray-400 text-sm">{tr.balance}</p>
+        <p className="text-gray-400 text-sm">{t('menu.balance')}</p>
 
         <p className="onix-balance-number text-6xl font-black tracking-tighter">
           {formatOnix(balance)}
         </p>
 
         {isBoostActive && (
-          <p className="text-emerald-400 text-sm mt-1">{tr.boostActive}</p>
+          <p className="text-emerald-400 text-sm mt-1">{t('menu.boostActive')}</p>
         )}
       </div>
 
@@ -19180,33 +19150,33 @@ body:not(.onix-body-home-lock) {
                   <img
                     className="onix-ref-v5-avatar-photo"
                     src={telegramAvatarUrl}
-                    alt="Telegram avatar"
+                    alt={t('a11y.telegramAvatar')}
                     draggable={false}
                   />
                 ) : (
                   <img
                     className="onix-ref-v5-avatar-fallback"
                     src={onixLogoCrystal}
-                    alt="$ONIX user badge"
+                    alt={t('a11y.userBadge')}
                     draggable={false}
                   />
                 )}
               </div>
 
               <div className="onix-ref-v5-player-text">
-                <p className="onix-ref-v5-name">{username}</p>
-                <p className="onix-ref-v5-rank">{selectedTitle || rankInfo.currentRank.name}</p>
+                <p className="onix-ref-v5-name">{username === 'Spieler' ? t('common.player') : username}</p>
+                <p className="onix-ref-v5-rank">{selectedTitle ? getProfileTitle(selectedTitle, appLanguage) : getRankName(rankInfo.currentRank, appLanguage)}</p>
               </div>
             </div>
 
             <div className="onix-ref-v5-rank-badge">
-              <RankIcon rank={rankInfo.currentRank} size="md" />
+              <RankIcon rank={rankInfo.currentRank} size="md" label={getRankName(rankInfo.currentRank, appLanguage)} />
             </div>
           </div>
 
           <div className="onix-ref-v5-balance">
             <p className="onix-ref-v5-balance-value">{formatOnix(balance)}</p>
-            <p className="onix-ref-v5-balance-label">Guthaben $ONIX</p>
+            <p className="onix-ref-v5-balance-label">{t('menu.balance')}</p>
           </div>
 
           <button
@@ -19231,7 +19201,7 @@ body:not(.onix-body-home-lock) {
             <div className="onix-ref-v5-energy-text">
               <Zap className="onix-ref-v5-energy-icon" />
               <span><strong>{Math.floor(energy).toLocaleString('ru-RU')}</strong> / {maxEnergy.toLocaleString('ru-RU')}</span>
-              <span className="onix-ref-v5-energy-status">{uiText(energy >= maxEnergy ? 'Energie voll' : 'Regeneration')}</span>
+              <span className="onix-ref-v5-energy-status">{energy >= maxEnergy ? t('energy.fullStatus') : t('energy.regeneration')}</span>
             </div>
 
             <div className="onix-ref-v5-energy-track">
@@ -19269,7 +19239,7 @@ body:not(.onix-body-home-lock) {
               }}
             >
               <span aria-hidden="true">⚡</span>
-              <span>TAP!</span>
+              <span>{t('home.tap')}</span>
             </button>
           </div>
         </div>
@@ -19311,7 +19281,7 @@ body:not(.onix-body-home-lock) {
             <div className="grid grid-cols-3 gap-2 mb-3">
               <div className="onix-drop-pill rounded-2xl p-3 text-center">
                 <div className="text-[10px] text-gray-400 uppercase">{t('drop.time')}</div>
-                <div className="text-xl font-black text-cyan-300">{dropSeconds}s</div>
+                <div className="text-xl font-black text-cyan-300">{dropSeconds}{t('drop.secondsShort')}</div>
               </div>
               <div className="onix-drop-pill rounded-2xl p-3 text-center">
                 <div className="text-[10px] text-gray-400 uppercase">{t('drop.points')}</div>
@@ -19354,7 +19324,7 @@ body:not(.onix-body-home-lock) {
                         <p className="text-sm text-gray-400 mt-1">{t('drop.best')}: {Math.max(dropBest, dropScore)}</p>
                         <p className="text-xs text-purple-200 mt-2">{t('drop.attemptsLeft')}: {dropAttemptsLeft} / {dropAttemptsMax}</p>
                         {dropReward !== null && (
-                          <p className="text-emerald-300 text-lg font-black mt-2">+{dropReward.toLocaleString('de-DE')} ONIX</p>
+                          <p className="text-emerald-300 text-lg font-black mt-2">+{dropReward.toLocaleString(appLanguage === 'ru' ? 'ru-RU' : 'de-DE')} ONIX</p>
                         )}
                       </>
                     ) : (
@@ -19591,9 +19561,9 @@ body:not(.onix-body-home-lock) {
             id: 'tap',
             icon: onixBoostIcons.tap,
             accent: 'violet',
-            title: 'Tap-Stärke',
+            title: t('upgrade.tap.title'),
             level: tapLevel,
-            subtitle: `${formatOnix(tapPower)} ONIX pro Tap`,
+            subtitle: t('upgrade.tap.description', { amount: formatOnix(tapPower) }),
             price: nextTapCost,
             priceType: 'onix',
             disabled: balance < nextTapCost,
@@ -19603,9 +19573,9 @@ body:not(.onix-body-home-lock) {
             id: 'miner',
             icon: onixBoostIcons.miner,
             accent: 'gold',
-            title: 'Miner',
+            title: t('upgrade.miner.title'),
             level: minerLevel,
-            subtitle: `+${formatOnix(minerIncomePerMinute)} ONIX pro Min.`,
+            subtitle: t('upgrade.miner.description', { amount: formatOnix(minerIncomePerMinute) }),
             price: nextMinerCost,
             priceType: 'onix',
             disabled: balance < nextMinerCost,
@@ -19615,9 +19585,9 @@ body:not(.onix-body-home-lock) {
             id: 'recharge',
             icon: onixBoostIcons.recharge,
             accent: 'cyan',
-            title: 'Energie-Regeneration',
+            title: t('upgrade.recharge.title'),
             level: rechargeLevel,
-            subtitle: `+${formatOnix(energyRecharge)} Energie/Sek.`,
+            subtitle: t('upgrade.recharge.description', { amount: formatOnix(energyRecharge) }),
             price: nextRechargeCost,
             priceType: 'onix',
             disabled: balance < nextRechargeCost,
@@ -19627,9 +19597,9 @@ body:not(.onix-body-home-lock) {
             id: 'max-energy',
             icon: onixBoostIcons.maxEnergy,
             accent: 'blue',
-            title: 'Max. Energie',
+            title: t('upgrade.maxEnergy.title'),
             level: energyLevel,
-            subtitle: maxEnergySubtitle(maxEnergy),
+            subtitle: t('upgrade.maxEnergy.description', { amount: maxEnergy.toLocaleString(appLanguage === 'ru' ? 'ru-RU' : 'de-DE') }),
             price: nextEnergyCost,
             priceType: 'onix',
             disabled: balance < nextEnergyCost,
@@ -19657,35 +19627,37 @@ body:not(.onix-body-home-lock) {
             id: boost.type,
             icon: boost.type === 'tap' ? onixBoostIcons.boostTapX2 : onixBoostIcons.boostMiningX2,
             accent: boost.isActive ? 'emerald' : 'gold',
-            title: boost.title,
+            title: t(boost.type === 'tap' ? 'boost.tap.title' : 'boost.mining.title'),
             level: null,
-            subtitle: `${boost.multiplier} • ${Math.round(boost.durationMinutes * boostDurationMultiplier)} Min.${boost.isActive ? ` • ${boostTimeLeft}` : ''}`,
+            subtitle: boost.isActive
+              ? t('boost.durationActive', { multiplier: boost.multiplier, minutes: Math.round(boost.durationMinutes * boostDurationMultiplier), time: boostTimeLeft })
+              : t('boost.duration', { multiplier: boost.multiplier, minutes: Math.round(boost.durationMinutes * boostDurationMultiplier) }),
             price: boost.cost,
             priceType: 'onix',
             disabled: (isAnyBoostActive && !boost.isActive) || (!boost.isActive && balance < boost.cost),
-            priceLabel: boost.isActive ? 'ACTIVE' : undefined,
+            priceLabel: boost.isActive ? t('common.active') : undefined,
             action: () => activateBoost(boost.type, boost.durationMinutes, boost.cost),
           })),
           {
             id: 'energy-refill',
             icon: onixBoostIcons.energy100,
             accent: 'emerald',
-            title: 'Energie',
+            title: t('boost.energy.title'),
             level: null,
-            subtitle: `${Math.floor(energy).toLocaleString('ru-RU')} / ${maxEnergy.toLocaleString('ru-RU')} • auf 100 % auffüllen`,
+            subtitle: t('boost.energy.description', { energy: Math.floor(energy).toLocaleString(appLanguage === 'ru' ? 'ru-RU' : 'de-DE'), maximum: maxEnergy.toLocaleString(appLanguage === 'ru' ? 'ru-RU' : 'de-DE') }),
             price: energyRefillCost,
             priceType: 'onix',
             disabled: balance < energyRefillCost || Math.floor(energy) >= Math.floor(maxEnergy),
-            priceLabel: Math.floor(energy) >= Math.floor(maxEnergy) ? 'FULL' : undefined,
+            priceLabel: Math.floor(energy) >= Math.floor(maxEnergy) ? t('common.full') : undefined,
             action: () => refillEnergy(energyRefillCost),
           },
           {
             id: 'onix-chest',
             icon: onixChestIcon,
             accent: 'pink',
-            title: 'ONIX-Truhe',
+            title: t('boost.chest.title'),
             level: null,
-            subtitle: lastChestReward ? `${uiText('Letzter Preis: ')}${localizeChestRewardText(lastChestReward)}` : uiText('Zufälliger Preis und geheime Daily-Mission'),
+            subtitle: lastChestReward ? `${t('ui.letzter_preis')}${localizeChestRewardText(lastChestReward)}` : t('ui.zufalliger_preis_und_geheime_daily_mission'),
             price: Number(economyConfig.chestCost || 50000),
             priceType: 'onix',
             disabled: balance < Number(economyConfig.chestCost || 50000),
@@ -19698,130 +19670,130 @@ body:not(.onix-body-home-lock) {
             id: 'energy-saver',
             icon: onixBoostIcons.energySaver,
             accent: 'violet',
-            title: 'Energy Saver',
+            title: t('perk.energySaver.title'),
             level: energySaverLevel,
-            subtitle: `-${energySaverLevel * 10}% Energieverbrauch`,
+            subtitle: t('perk.energySaver.description', { percent: energySaverLevel * 10 }),
             price: energySaverCost,
             priceType: 'onix',
             disabled: energySaverLevel >= 3 || balance < energySaverCost,
-            priceLabel: energySaverLevel >= 3 ? 'MAX' : undefined,
+            priceLabel: energySaverLevel >= 3 ? t('common.maximum') : undefined,
             action: () => buyPerk('energy_saver'),
           },
           {
             id: 'energy-max-pro',
             icon: onixBoostIcons.energyMaxPro,
             accent: 'pink',
-            title: 'Energy Max Pro',
+            title: t('perk.energyMax.title'),
             level: energyMaxProLevel,
-            subtitle: `+${energyMaxProLevel * 300} Energiebonus`,
+            subtitle: t('perk.energyMax.description', { amount: energyMaxProLevel * 300 }),
             price: energyMaxProCost,
             priceType: 'onix',
             disabled: energyMaxProLevel >= 3 || balance < energyMaxProCost,
-            priceLabel: energyMaxProLevel >= 3 ? 'MAX' : undefined,
+            priceLabel: energyMaxProLevel >= 3 ? t('common.maximum') : undefined,
             action: () => buyPerk('energy_max_pro'),
           },
           {
             id: 'offline-pro',
             icon: onixBoostIcons.offlinePro,
             accent: 'violet',
-            title: 'Offline Pro',
+            title: t('perk.offline.title'),
             level: offlineProLevel,
-            subtitle: `${maxOfflineHours} Std. Offline-Einkommen`,
+            subtitle: t('perk.offline.description', { hours: maxOfflineHours }),
             price: offlineProCost,
             priceType: 'onix',
             disabled: offlineProLevel >= 3 || balance < offlineProCost,
-            priceLabel: offlineProLevel >= 3 ? 'MAX' : undefined,
+            priceLabel: offlineProLevel >= 3 ? t('common.maximum') : undefined,
             action: () => buyPerk('offline_pro'),
           },
           {
             id: 'daily-plus',
             icon: onixBoostIcons.dailyPlus,
             accent: 'gold',
-            title: 'Daily Plus',
+            title: t('perk.daily.title'),
             level: dailyPlusLevel,
-            subtitle: `+${dailyPlusLevel * 5}% auf Daily Reward`,
+            subtitle: t('perk.daily.description', { percent: dailyPlusLevel * 5 }),
             price: dailyPlusCost,
             priceType: 'onix',
             disabled: dailyPlusLevel >= 3 || balance < dailyPlusCost,
-            priceLabel: dailyPlusLevel >= 3 ? 'MAX' : undefined,
+            priceLabel: dailyPlusLevel >= 3 ? t('common.maximum') : undefined,
             action: () => buyPerk('daily_plus'),
           },
           {
             id: 'boost-master',
             icon: onixBoostIcons.boostMaster,
             accent: 'cyan',
-            title: 'Boost Master',
+            title: t('perk.boostMaster.title'),
             level: boostMasterLevel,
-            subtitle: `+${boostMasterLevel * 20}% Boost-Zeit`,
+            subtitle: t('perk.boostMaster.description', { percent: boostMasterLevel * 20 }),
             price: boostsMasterCost,
             priceType: 'onix',
             disabled: boostMasterLevel >= 3 || balance < boostsMasterCost,
-            priceLabel: boostMasterLevel >= 3 ? 'MAX' : undefined,
+            priceLabel: boostMasterLevel >= 3 ? t('common.maximum') : undefined,
             action: () => buyPerk('boost_master'),
           },
           {
             id: 'engineer',
             icon: onixBoostIcons.engineer,
             accent: 'pink',
-            title: 'Engineer',
+            title: t('perk.engineer.title'),
             level: engineerLevel,
-            subtitle: `-${engineerLevel * 5}% auf Upgrade-Kosten`,
+            subtitle: t('perk.engineer.description', { percent: engineerLevel * 5 }),
             price: engineerCost,
             priceType: 'onix',
             disabled: engineerLevel >= 3 || balance < engineerCost,
-            priceLabel: engineerLevel >= 3 ? 'MAX' : undefined,
+            priceLabel: engineerLevel >= 3 ? t('common.maximum') : undefined,
             action: () => buyPerk('engineer'),
           },
           {
             id: 'miner-plus',
             icon: onixBoostIcons.minerPlus,
             accent: 'gold',
-            title: 'Miner Plus',
+            title: t('perk.minerPlus.title'),
             level: minerPlusLevel,
-            subtitle: `+${minerPlusLevel * 5}% auf Miner-Ertrag`,
+            subtitle: t('perk.minerPlus.description', { percent: minerPlusLevel * 5 }),
             price: minerPlusCost,
             priceType: 'onix',
             disabled: minerPlusLevel >= 3 || balance < minerPlusCost,
-            priceLabel: minerPlusLevel >= 3 ? 'MAX' : undefined,
+            priceLabel: minerPlusLevel >= 3 ? t('common.maximum') : undefined,
             action: () => buyPerk('miner_plus'),
           },
           {
             id: 'lucky-miner',
             icon: onixBoostIcons.luckyMiner,
             accent: 'emerald',
-            title: 'Lucky Miner',
+            title: t('perk.luckyMiner.title'),
             level: luckyMinerLevel,
-            subtitle: `+${luckyMinerLevel * 3}% auf Miner-Ertrag`,
+            subtitle: t('perk.luckyMiner.description', { percent: luckyMinerLevel * 3 }),
             price: luckyMinerCost,
             priceType: 'onix',
             disabled: luckyMinerLevel >= 3 || balance < luckyMinerCost,
-            priceLabel: luckyMinerLevel >= 3 ? 'MAX' : undefined,
+            priceLabel: luckyMinerLevel >= 3 ? t('common.maximum') : undefined,
             action: () => buyPerk('lucky_miner'),
           },
           {
             id: 'referral-pro',
             icon: onixBoostIcons.referralPro,
             accent: 'cyan',
-            title: 'Referral Pro',
+            title: t('perk.referral.title'),
             level: referralProLevel,
-            subtitle: `+${referralProLevel * 5}% auf Empfehlungsbonus`,
+            subtitle: t('perk.referral.description', { percent: referralProLevel * 5 }),
             price: referralProCost,
             priceType: 'onix',
             disabled: referralProLevel >= 3 || balance < referralProCost,
-            priceLabel: referralProLevel >= 3 ? 'MAX' : undefined,
+            priceLabel: referralProLevel >= 3 ? t('common.maximum') : undefined,
             action: () => buyPerk('referral_pro'),
           },
           {
             id: 'streak-shield',
             icon: onixBoostIcons.streakShield,
             accent: 'violet',
-            title: 'Streak Shield',
+            title: t('perk.streak.title'),
             level: streakShieldLevel,
-            subtitle: streakShieldLevel >= 1 ? 'Daily-Streak geschützt' : 'Schützt den Daily-Streak',
+            subtitle: streakShieldLevel >= 1 ? t('perk.streak.protected') : t('perk.streak.description'),
             price: streakShieldCost,
             priceType: 'onix',
             disabled: streakShieldLevel >= 1 || balance < streakShieldCost,
-            priceLabel: streakShieldLevel >= 1 ? 'MAX' : undefined,
+            priceLabel: streakShieldLevel >= 1 ? t('common.maximum') : undefined,
             action: () => buyPerk('streak_shield'),
           },
         ];
@@ -19870,9 +19842,9 @@ body:not(.onix-body-home-lock) {
 
             <div className="onix-upgrades-ref-tabs">
               {[
-                { id: 'tapping', label: 'Boosts' },
-                { id: 'boosts', label: 'Temporäre Boosts' },
-                { id: 'other', label: 'Super-Boosts' },
+                { id: 'tapping', label: t('upgrades.tabs.tapping') },
+                { id: 'boosts', label: t('upgrades.tabs.temporary') },
+                { id: 'other', label: t('upgrades.tabs.super') },
               ].map((tab) => (
                 <button
                   key={tab.id}
@@ -19880,14 +19852,14 @@ body:not(.onix-body-home-lock) {
                   onClick={() => setBoostSubTab(tab.id as BoostSubTab)}
                   className={`onix-upgrades-ref-tab ${boostSubTab === tab.id ? 'onix-upgrades-ref-tab-active' : ''}`}
                 >
-                  {uiText(tab.label)}
+                  {tab.label}
                 </button>
               ))}
             </div>
 
             <div className="onix-upgrades-ref-list">
               {currentCards.map((item) => {
-                const localizedTitle = uiText(item.title);
+                const localizedTitle = item.title;
                 const isImageIcon = typeof item.icon === 'string' && (item.icon.startsWith('data:image/') || item.icon.startsWith('/') || item.icon.includes('/assets/') || item.icon.endsWith('.png') || item.icon.endsWith('.webp') || item.icon.endsWith('.jpg') || item.icon.endsWith('.jpeg'));
                 return (
                 <div key={item.id} className="onix-upgrade-ref-card">
@@ -19904,7 +19876,7 @@ body:not(.onix-body-home-lock) {
                     {item.level !== null && item.level !== undefined && (
                       <div className="onix-upgrade-ref-level">{t('common.level', { level: item.level })}</div>
                     )}
-                    <div className="onix-upgrade-ref-subtitle">{uiText(item.subtitle)}</div>
+                    <div className="onix-upgrade-ref-subtitle">{item.subtitle}</div>
                   </div>
 
                   <button
@@ -19928,14 +19900,14 @@ body:not(.onix-body-home-lock) {
 
       {activeTab === 'tasks' && (() => {
         const tasksTabs = [
-          { id: 'tasks' as const, label: 'Aufgaben' },
-          { id: 'temporary' as const, label: 'Temporäre Aufgaben' },
-          { id: 'achievements' as const, label: uiText('Erfolge') },
+          { id: 'tasks' as const, label: t('missions.tabs.tasks') },
+          { id: 'temporary' as const, label: t('missions.tabs.temporary') },
+          { id: 'achievements' as const, label: t('ui.erfolge') },
         ];
 
         return (
         <div className="onix-tasks-screen onix-tasks-ref-screen px-5 mt-3 space-y-4">
-          <h2 className="text-2xl font-bold mb-6">{uiText('📋 Aufgaben')}</h2>
+          <h2 className="text-2xl font-bold mb-6">{t('ui.aufgaben')}</h2>
 
           <div className="onix-tasks-ref-tabs">
             {tasksTabs.map((tab) => (
@@ -19999,7 +19971,7 @@ body:not(.onix-body-home-lock) {
             }`}
           >
             <div>
-              <p className="font-bold">{uiText('📢 Kanal abonnieren')}</p>
+              <p className="font-bold">{t('ui.kanal_abonnieren')}</p>
               <p className="text-gray-400">+25000 ONIX</p>
             </div>
 
@@ -20054,15 +20026,15 @@ body:not(.onix-body-home-lock) {
             }`}
           >
             <div>
-              <p className="font-bold">{uiText('👥 Freund einladen')}</p>
+              <p className="font-bold">{t('ui.freund_einladen')}</p>
               <p className="text-gray-400">+{formatOnix(economyConfig.referralReward)} ONIX</p>
             </div>
 
             <span className="text-emerald-400 font-bold">
               {completedTasks.includes('inviteFriend')
-                ? 'Abgeschlossen'
+                ? t('common.completed')
                 : referralsCount >= 1
-                ? 'Abholen'
+                ? t('common.claim')
                 : t('tasks.invite')}
             </span>
           </div>
@@ -20072,8 +20044,8 @@ body:not(.onix-body-home-lock) {
   <div className="onix-tasks-empty-card">
     <div className="onix-tasks-empty-icon">✓</div>
     <div>
-      <p className="font-bold">{uiText('Alle einmaligen Aufgaben sind erledigt')}</p>
-      <p className="text-gray-400">{uiText('Neue Aufgaben erscheinen später.')}</p>
+      <p className="font-bold">{t('ui.alle_einmaligen_aufgaben_sind_erledigt')}</p>
+      <p className="text-gray-400">{t('ui.neue_aufgaben_erscheinen_spater')}</p>
     </div>
   </div>
 )}
@@ -20146,31 +20118,31 @@ body:not(.onix-body-home-lock) {
             }`}
           >
             <div>
-              <p className="font-bold">{uiText('🎁 Tägliche Belohnung')}</p>
+              <p className="font-bold">{t('ui.tagliche_belohnung')}</p>
               <p className="text-gray-400">
                 +{formatOnix(dailyRewardPreview)} {t('tasks.dailyDay', { day: nextDailyStreakDay })}
               </p>
               <p className="text-xs text-yellow-400">
-                {uiText('Streak-Multiplikator')} ×{dailyStreakMultiplier.toFixed(1)}
+                {t('ui.streak_multiplikator')} ×{dailyStreakMultiplier.toFixed(1)}
               </p>
             </div>
 
             <span className="text-emerald-400 font-bold">
-              {dailyCooldown > 0 ? formatTime(dailyCooldown) : 'Abholen'}
+              {dailyCooldown > 0 ? formatTime(dailyCooldown) : t('common.claim')}
             </span>
           </div>
 
 <div className="rounded-3xl border border-yellow-400/20 bg-[#111827] p-5 shadow-xl onix-mission-cycle-card">
             <div className="mb-4 flex items-center justify-between gap-3">
               <div>
-                <h3 className="text-xl font-bold text-white">{uiText('☀️ Tägliche Missionen')}</h3>
+                <h3 className="text-xl font-bold text-white">{t('ui.tagliche_missionen')}</h3>
                 <p className="text-sm text-gray-400">
-                  Aktualisierung in {formatMissionResetTime(dailyMissionResetMs)}
+                  {t('common.refreshIn', { time: formatMissionResetTime(dailyMissionResetMs, appLanguage) })}
                 </p>
               </div>
 
               <span className="onix-mission-reset-pill">
-                {formatMissionResetTime(dailyMissionResetMs)}
+                {formatMissionResetTime(dailyMissionResetMs, appLanguage)}
               </span>
             </div>
 
@@ -20180,9 +20152,9 @@ body:not(.onix-body-home-lock) {
                   <div className="onix-mission-complete-card">
                     <div className="onix-mission-complete-icon">✓</div>
                     <div>
-                      <p className="font-bold text-white">{uiText('Tägliche Missionen erledigt')}</p>
+                      <p className="font-bold text-white">{t('ui.tagliche_missionen_erledigt')}</p>
                       <p className="text-sm text-gray-400">
-                        Neue Missionen erscheinen in {formatMissionResetTime(dailyMissionResetMs)}
+                        {t('common.newMissionsIn', { time: formatMissionResetTime(dailyMissionResetMs, appLanguage) })}
                       </p>
                     </div>
                   </div>
@@ -20202,15 +20174,15 @@ body:not(.onix-body-home-lock) {
                         <div className="mb-3 flex items-start justify-between gap-3">
                           <div>
                             <p data-onix-i18n={missionText ? 'notice' : undefined} className="font-bold text-white">
-                              {mission.secret ? '🔒 ' : ''}{missionText?.title ?? uiText(mission.title)}
+                              {mission.secret ? '🔒 ' : ''}{missionText?.title ?? t('missions.genericTitle')}
                             </p>
                             <p data-onix-i18n={missionText ? 'notice' : undefined} className="text-sm text-gray-400">
-                              {missionText?.description ?? uiText(mission.description)}
+                              {missionText?.description ?? t('missions.genericDescription')}
                             </p>
                           </div>
 
                           <div className="rounded-2xl bg-[#111827] px-3 py-2 text-right">
-                            <p className="text-xs text-gray-400">{uiText('Belohnung')}</p>
+                            <p className="text-xs text-gray-400">{t('ui.belohnung')}</p>
                             <p className="font-bold text-yellow-400">
                               +{formatOnix(mission.reward)}
                             </p>
@@ -20219,7 +20191,7 @@ body:not(.onix-body-home-lock) {
 
                           <div className="onix-task-progress">
                           <div className="onix-task-progress-text">
-                            <span className="onix-task-progress-status">{uiText('Fortschritt')}</span>
+                            <span className="onix-task-progress-status">{t('ui.fortschritt')}</span>
                             <span><strong>{formatOnix(mission.progress)}</strong> / {formatOnix(mission.goal)}</span>
                           </div>
 
@@ -20263,14 +20235,14 @@ body:not(.onix-body-home-lock) {
 <div className="rounded-3xl border border-yellow-400/20 bg-[#111827] p-5 shadow-xl onix-mission-cycle-card">
             <div className="mb-4 flex items-center justify-between gap-3">
               <div>
-                <h3 className="text-xl font-bold text-white">{uiText('📅 Wöchentliche Missionen')}</h3>
+                <h3 className="text-xl font-bold text-white">{t('ui.wochentliche_missionen')}</h3>
                 <p className="text-sm text-gray-400">
-                  Aktualisierung in {formatMissionResetTime(weeklyMissionResetMs)}
+                  {t('common.refreshIn', { time: formatMissionResetTime(weeklyMissionResetMs, appLanguage) })}
                 </p>
               </div>
 
               <span className="onix-mission-reset-pill">
-                {formatMissionResetTime(weeklyMissionResetMs)}
+                {formatMissionResetTime(weeklyMissionResetMs, appLanguage)}
               </span>
             </div>
 
@@ -20280,9 +20252,9 @@ body:not(.onix-body-home-lock) {
                   <div className="onix-mission-complete-card">
                     <div className="onix-mission-complete-icon">✓</div>
                     <div>
-                      <p className="font-bold text-white">{uiText('Wöchentliche Missionen erledigt')}</p>
+                      <p className="font-bold text-white">{t('ui.wochentliche_missionen_erledigt')}</p>
                       <p className="text-sm text-gray-400">
-                        Neue Missionen erscheinen in {formatMissionResetTime(weeklyMissionResetMs)}
+                        {t('common.newMissionsIn', { time: formatMissionResetTime(weeklyMissionResetMs, appLanguage) })}
                       </p>
                     </div>
                   </div>
@@ -20302,15 +20274,15 @@ body:not(.onix-body-home-lock) {
                         <div className="mb-3 flex items-start justify-between gap-3">
                           <div>
                             <p data-onix-i18n={missionText ? 'notice' : undefined} className="font-bold text-white">
-                              {mission.secret ? '🔒 ' : ''}{missionText?.title ?? uiText(mission.title)}
+                              {mission.secret ? '🔒 ' : ''}{missionText?.title ?? t('missions.genericTitle')}
                             </p>
                             <p data-onix-i18n={missionText ? 'notice' : undefined} className="text-sm text-gray-400">
-                              {missionText?.description ?? uiText(mission.description)}
+                              {missionText?.description ?? t('missions.genericDescription')}
                             </p>
                           </div>
 
                           <div className="rounded-2xl bg-[#111827] px-3 py-2 text-right">
-                            <p className="text-xs text-gray-400">{uiText('Belohnung')}</p>
+                            <p className="text-xs text-gray-400">{t('ui.belohnung')}</p>
                             <p className="font-bold text-yellow-400">
                               +{formatOnix(mission.reward)}
                             </p>
@@ -20319,7 +20291,7 @@ body:not(.onix-body-home-lock) {
 
                           <div className="onix-task-progress">
                           <div className="onix-task-progress-text">
-                            <span className="onix-task-progress-status">{uiText('Fortschritt')}</span>
+                            <span className="onix-task-progress-status">{t('ui.fortschritt')}</span>
                             <span><strong>{formatOnix(mission.progress)}</strong> / {formatOnix(mission.goal)}</span>
                           </div>
 
@@ -20366,7 +20338,7 @@ body:not(.onix-body-home-lock) {
             <div className="onix-tasks-ref-panel onix-tasks-ref-panel-achievements">
 <div className="mt-8">
             <div className="mb-4 flex items-center justify-between gap-3">
-              <h2 className="text-2xl font-bold">{uiText('🏆 Erfolge')}</h2>
+              <h2 className="text-2xl font-bold">{t('ui.erfolge')}</h2>
               <span className="rounded-full bg-[#111827] px-3 py-1 text-sm font-bold text-yellow-400">
                 {completedAchievementsCount} / {achievements.length}
               </span>
@@ -20383,7 +20355,7 @@ body:not(.onix-body-home-lock) {
                       : 'bg-[#111827] text-gray-400'
                   }`}
                 >
-                  {uiText(category.label)}
+                  {category.label}
                 </button>
               ))}
             </div>
@@ -20391,6 +20363,7 @@ body:not(.onix-body-home-lock) {
             {visibleAchievements.length > 0 ? (
               <div className="onix-achievements-scroll-list space-y-4">
                 {visibleAchievements.map((achievement) => {
+                  const achievementText = getAchievementText(achievement, appLanguage);
                   const progressPercent = Math.min(
                     (Number(achievement.progress || 0) /
                       Number(achievement.goal || 1)) *
@@ -20406,15 +20379,15 @@ body:not(.onix-body-home-lock) {
                       <div className="mb-3 flex items-start justify-between gap-3">
                         <div>
                           <h3 className="text-lg font-bold text-white">
-                            {uiText(achievement.title)}
+                            {achievementText?.title ?? t('ui.erfolge')}
                           </h3>
                           <p data-onix-i18n={achievement.id === 'weekly_100k' ? 'notice' : undefined} className="text-sm text-gray-400">
-                            {getWeeklyAchievementDescription(achievement, appLanguage) ?? uiText(achievement.description)}
+                            {getWeeklyAchievementDescription(achievement, appLanguage) ?? achievementText?.description ?? t('ui.erfolge')}
                           </p>
                         </div>
 
                         <div className="rounded-2xl bg-[#0a0f1c] px-3 py-2 text-right">
-                          <p className="text-xs text-gray-400">{uiText('Belohnung')}</p>
+                          <p className="text-xs text-gray-400">{t('ui.belohnung')}</p>
                           <p className="font-bold text-yellow-400">
                             +{formatOnix(achievement.reward)}
                           </p>
@@ -20423,7 +20396,7 @@ body:not(.onix-body-home-lock) {
 
                       <div className="onix-task-progress">
                         <div className="onix-task-progress-text">
-                          <span className="onix-task-progress-status">{uiText('Fortschritt')}</span>
+                          <span className="onix-task-progress-status">{t('ui.fortschritt')}</span>
                           <span><strong>{formatOnix(achievement.progress)}</strong> / {formatOnix(achievement.goal)}</span>
                         </div>
 
@@ -20441,10 +20414,10 @@ body:not(.onix-body-home-lock) {
             ) : (
               <div className="rounded-3xl border border-emerald-400/20 bg-emerald-500/10 p-5 text-center">
                 <p className="text-lg font-bold text-emerald-400">
-                  Alle Erfolge abgeschlossen 🎉
+                  {t('achievements.allCompleted')}
                 </p>
                 <p className="mt-1 text-sm text-gray-400">
-                  Neue Erfolge erscheinen in künftigen Updates.
+                  {t('achievements.moreLater')}
                 </p>
               </div>
             )}
@@ -20462,26 +20435,26 @@ body:not(.onix-body-home-lock) {
             <div className="onix-profile-v75-hero onix-profile-v82-player-card onix-profile-v83-player-row">
               <div className="onix-profile-v75-avatar">
                 {telegramAvatarUrl ? (
-                  <img src={telegramAvatarUrl} alt="Telegram avatar" draggable={false} />
+                  <img src={telegramAvatarUrl} alt={t('a11y.telegramAvatar')} draggable={false} />
                 ) : (
-                  <img src={onixLogoCrystal} alt="Telegram avatar fallback" draggable={false} />
+                  <img src={onixLogoCrystal} alt={t('a11y.userBadge')} draggable={false} />
                 )}
               </div>
 
               <div className="onix-profile-v75-user">
-                <div className="onix-profile-v75-name">{username}</div>
-                <div className="onix-profile-v75-title">{getProfileTitleLabel(selectedTitle || rankInfo.currentRank.name)}</div>
+                <div className="onix-profile-v75-name">{username === 'Spieler' ? t('common.player') : username}</div>
+                <div className="onix-profile-v75-title">{selectedTitle ? getProfileTitle(selectedTitle, appLanguage) : getRankName(rankInfo.currentRank, appLanguage)}</div>
               </div>
 
               <div className="onix-profile-v82-rank-badge">
-                <RankIcon rank={rankInfo.currentRank} size="lg" />
+                <RankIcon rank={rankInfo.currentRank} size="lg" label={getRankName(rankInfo.currentRank, appLanguage)} />
               </div>
             </div>
 
             <div className="onix-profile-v75-rank-progress">
               <div className="onix-task-progress-text">
-                <span className="onix-task-progress-status">{rankInfo.currentRank.name}</span>
-                <span><strong>{profileRankText}</strong>{rankInfo.nextRank ? ` bis ${rankInfo.nextRank.name}` : ''}</span>
+                <span className="onix-task-progress-status">{getRankName(rankInfo.currentRank, appLanguage)}</span>
+                <span><strong>{profileRankText}</strong>{rankInfo.nextRank ? ` ${t('common.untilRank', { progress: '', rank: getRankName(rankInfo.nextRank, appLanguage) }).trim()}` : ''}</span>
               </div>
 
               <div className="onix-task-progress-track">
@@ -20494,15 +20467,15 @@ body:not(.onix-body-home-lock) {
 
             <div className="onix-profile-v75-stats-grid">
               <div className="onix-profile-v75-stat">
-                <span>{uiText('ONIX-Guthaben')}</span>
+                <span>{t('ui.onix_guthaben')}</span>
                 <strong>{Math.floor(balance).toLocaleString('ru-RU')}</strong>
               </div>
               <div className="onix-profile-v75-stat">
-                <span>{uiText('Insgesamt verdient')}</span>
+                <span>{t('ui.insgesamt_verdient')}</span>
                 <strong>{Math.floor(totalEarned).toLocaleString('ru-RU')}</strong>
               </div>
               <button type="button" className="onix-profile-v75-stat" onClick={() => { setProfilePanel('invited'); loadInvitedProfiles(); loadFriendLeaderboard(); }}>
-                <span>{uiText('Eingeladen')}</span>
+                <span>{t('ui.eingeladen')}</span>
                 <strong>{referralsCount}</strong>
               </button>
               <button type="button" className="onix-profile-v75-stat" onClick={openTeamPanel}>
@@ -20513,16 +20486,16 @@ body:not(.onix-body-home-lock) {
 
             <div className="onix-profile-v75-menu">
               <button type="button" className={profilePanel === 'achievements' ? 'is-active' : ''} onClick={() => setProfilePanel(profilePanel === 'achievements' ? 'overview' : 'achievements')}>
-                <span>🏆</span><strong>{uiText('Erfolge')}</strong><em>{completedAchievementsCount}/{achievements.length}</em><b>›</b>
+                <span>🏆</span><strong>{t('ui.erfolge')}</strong><em>{completedAchievementsCount}/{achievements.length}</em><b>›</b>
               </button>
               <button type="button" className={profilePanel === 'ranks' ? 'is-active' : ''} onClick={() => setProfilePanel(profilePanel === 'ranks' ? 'overview' : 'ranks')}>
-                <span>🏅</span><strong>{uiText('Ränge')}</strong><em>{rankInfo.currentRank.name}</em><b>›</b>
+                <span>🏅</span><strong>{t('ui.range')}</strong><em>{getRankName(rankInfo.currentRank, appLanguage)}</em><b>›</b>
               </button>
               <button type="button" className={profilePanel === 'badges' ? 'is-active' : ''} onClick={() => setProfilePanel(profilePanel === 'badges' ? 'overview' : 'badges')}>
-                <span>🎖</span><strong>{uiText('Badges & Titel')}</strong><em>{getProfileTitleLabel(selectedTitle || 'ONIX Player')}</em><b>›</b>
+                <span>🎖</span><strong>{t('ui.badges_titel')}</strong><em>{getProfileTitle(selectedTitle || 'ONIX Player', appLanguage)}</em><b>›</b>
               </button>
               <button type="button" className={profilePanel === 'stats' ? 'is-active' : ''} onClick={() => setProfilePanel(profilePanel === 'stats' ? 'overview' : 'stats')}>
-                <span>📊</span><strong>{uiText('Statistik')}</strong><em>{formatOnix(totalTaps)} Taps</em><b>›</b>
+                <span>📊</span><strong>{t('ui.statistik')}</strong><em>{formatOnix(totalTaps)} {t('category.taps')}</em><b>›</b>
               </button>
               {isAdmin() && (
                 <button type="button" className={profilePanel === 'admin' ? 'is-active' : ''} onClick={() => setProfilePanel(profilePanel === 'admin' ? 'overview' : 'admin')}>
@@ -20535,15 +20508,15 @@ body:not(.onix-body-home-lock) {
               <div className="onix-profile-v75-panel">
                 <div className="onix-profile-v75-panel-title onix-profile-v75-detail-title">
                   <button type="button" className="onix-profile-v75-back" onClick={() => setProfilePanel('overview')}>‹</button>
-                  <strong>{uiText('🎖 Badges & Titel')}</strong>
-                  <span>{profileBadges.length} {uiText('Badges')}</span>
+                  <strong>{t('ui.badges_titel')}</strong>
+                  <span>{profileBadges.length} {t('ui.badges')}</span>
                 </div>
 
                 <div className="rounded-3xl border border-violet-400/20 bg-[#0a0f1c] p-4 text-left">
                   <div className="mb-3 flex items-center justify-between gap-3">
                     <div>
-                      <p className="text-sm font-bold text-white">{uiText('Deine Badges')}</p>
-                      <p className="mt-1 text-xs text-gray-500">{uiText('Verdiene Ränge, Serien, Top-Plätze und Perks, um neue Badges freizuschalten.')}</p>
+                      <p className="text-sm font-bold text-white">{t('ui.deine_badges')}</p>
+                      <p className="mt-1 text-xs text-gray-500">{t('ui.verdiene_range_serien_top_platze_und_perks_um_neue_badges_freizuschalten')}</p>
                     </div>
                     <span className="rounded-full bg-[#111827] px-3 py-1 text-xs font-bold text-yellow-400">{profileBadges.length}</span>
                   </div>
@@ -20554,19 +20527,19 @@ body:not(.onix-body-home-lock) {
                         <div key={badge.label} className="rounded-2xl border border-yellow-400/20 bg-[#111827] p-3 text-center shadow-lg">
                           <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-2xl bg-[#070b18] text-2xl">
                             {isProfileImageIcon(badge.icon) ? (
-                              <img src={badge.icon} alt={badge.label} className="h-10 w-10 object-contain" draggable={false} />
+                              <img src={badge.icon} alt={badge.localizedLabel} className="h-10 w-10 object-contain" draggable={false} />
                             ) : (
                               <span>{badge.icon}</span>
                             )}
                           </div>
-                          <p className="mt-2 text-sm font-bold text-yellow-400">{badge.label}</p>
+                          <p className="mt-2 text-sm font-bold text-yellow-400">{badge.localizedLabel}</p>
                         </div>
                       ))}
                     </div>
                   ) : (
                     <div className="rounded-2xl bg-[#111827] p-4 text-center">
-                      <p className="text-sm font-bold text-gray-300">{uiText('Noch keine Badges')}</p>
-                      <p className="mt-1 text-xs text-gray-500">{uiText('Schalte Badges durch Fortschritt, Top-Plätze und Aktivität frei.')}</p>
+                      <p className="text-sm font-bold text-gray-300">{t('ui.noch_keine_badges')}</p>
+                      <p className="mt-1 text-xs text-gray-500">{t('ui.schalte_badges_durch_fortschritt_top_platze_und_aktivitat_frei')}</p>
                     </div>
                   )}
                 </div>
@@ -20574,8 +20547,8 @@ body:not(.onix-body-home-lock) {
                 <div className="mt-4 rounded-3xl border border-yellow-400/20 bg-[#0a0f1c] p-4 text-left">
                   <div className="mb-3 flex items-center justify-between gap-3">
                     <div>
-                      <p className="text-sm font-bold text-white">{uiText('Spielertitel wählen')}</p>
-                      <p className="mt-1 text-xs text-gray-500">{uiText('Der ausgewählte Titel erscheint direkt unter deinem Namen.')}</p>
+                      <p className="text-sm font-bold text-white">{t('ui.spielertitel_wahlen')}</p>
+                      <p className="mt-1 text-xs text-gray-500">{t('ui.der_ausgewahlte_titel_erscheint_direkt_unter_deinem_namen')}</p>
                     </div>
                     <span className="rounded-full bg-[#111827] px-3 py-1 text-xs font-bold text-yellow-400">{availableTitles.length}</span>
                   </div>
@@ -20595,9 +20568,9 @@ body:not(.onix-body-home-lock) {
                               : 'border-violet-400/20 bg-[#111827] text-white'
                           }`}
                         >
-                          <span className="font-bold">{getProfileTitleLabel(title)}</span>
+                          <span className="font-bold">{getProfileTitle(title, appLanguage)}</span>
                           <em className={`not-italic text-xs font-black ${isSelectedTitle ? 'text-black' : 'text-yellow-400'}`}>
-                            {uiText(isSelectedTitle ? 'Aktiv' : 'Auswählen')}
+                            {isSelectedTitle ? t('common.active') : t('common.select')}
                           </em>
                         </button>
                       );
@@ -20902,18 +20875,19 @@ body:not(.onix-body-home-lock) {
 
             {profilePanel === 'achievements' && (
               <div className="onix-profile-v75-panel">
-                <div className="onix-profile-v75-panel-title onix-profile-v75-detail-title"><button type="button" className="onix-profile-v75-back" onClick={() => setProfilePanel('overview')}>‹</button><strong>{uiText('🏆 Alle Erfolge')}</strong><span>{completedAchievementsCount}/{achievements.length}</span></div>
+                <div className="onix-profile-v75-panel-title onix-profile-v75-detail-title"><button type="button" className="onix-profile-v75-back" onClick={() => setProfilePanel('overview')}>‹</button><strong>{t('ui.alle_erfolge')}</strong><span>{completedAchievementsCount}/{achievements.length}</span></div>
                 <div className="onix-profile-v75-list">
                   {[...pendingAchievementsList, ...completedAchievementsList].map((achievement) => {
+                    const achievementText = getAchievementText(achievement, appLanguage);
                     const progressPercent = Math.min((Number(achievement.progress || 0) / Number(achievement.goal || 1)) * 100, 100);
                     return (
                       <div key={achievement.id} className={`onix-profile-v75-achievement ${achievement.isCompleted ? 'is-done' : ''}`}>
                         <div className="onix-profile-v75-achievement-top">
-                          <div><strong>{uiText(achievement.title)}</strong><p data-onix-i18n={achievement.id === 'weekly_100k' ? 'notice' : undefined}>{getWeeklyAchievementDescription(achievement, appLanguage) ?? uiText(achievement.description)}</p></div>
+                          <div><strong>{achievementText?.title ?? t('ui.erfolge')}</strong><p data-onix-i18n="notice">{getWeeklyAchievementDescription(achievement, appLanguage) ?? achievementText?.description ?? t('ui.erfolge')}</p></div>
                           <span>{achievement.isCompleted ? '✓' : `+${formatOnix(achievement.reward)}`}</span>
                         </div>
                         <div className="onix-task-progress">
-                          <div className="onix-task-progress-text"><span className="onix-task-progress-status">{uiText('Fortschritt')}</span><span><strong>{formatOnix(achievement.progress)}</strong> / {formatOnix(achievement.goal)}</span></div>
+                          <div className="onix-task-progress-text"><span className="onix-task-progress-status">{t('ui.fortschritt')}</span><span><strong>{formatOnix(achievement.progress)}</strong> / {formatOnix(achievement.goal)}</span></div>
                           <div className="onix-task-progress-track"><div className="onix-task-progress-fill" style={{ width: `${progressPercent}%` }} /></div>
                         </div>
                       </div>
@@ -20925,7 +20899,7 @@ body:not(.onix-body-home-lock) {
 
             {profilePanel === 'ranks' && (
               <div className="onix-profile-v75-panel">
-                <div className="onix-profile-v75-panel-title onix-profile-v75-detail-title"><button type="button" className="onix-profile-v75-back" onClick={() => setProfilePanel('overview')}>‹</button><strong>{uiText('🏅 Alle Ränge')}</strong><span>{rankInfo.currentRank.name}</span></div>
+                <div className="onix-profile-v75-panel-title onix-profile-v75-detail-title"><button type="button" className="onix-profile-v75-back" onClick={() => setProfilePanel('overview')}>‹</button><strong>{t('ui.alle_range')}</strong><span>{getRankName(rankInfo.currentRank, appLanguage)}</span></div>
                 <div className="onix-profile-v75-list">
                   {RANKS.map((rank, rankIndex) => {
                     const passed = totalEarned >= rank.threshold;
@@ -20936,12 +20910,12 @@ body:not(.onix-body-home-lock) {
                     const rankStepPercent = Math.min((rankStepCurrent / rankStepTotal) * 100, 100);
                     return (
                       <div key={rank.id} className={`onix-profile-v75-rank-row ${passed ? 'is-passed' : ''} ${current ? 'is-current' : ''}`}>
-                        <div className="onix-profile-v75-rank-mini"><RankIcon rank={rank} size="sm" /></div>
+                        <div className="onix-profile-v75-rank-mini"><RankIcon rank={rank} size="sm" label={getRankName(rank, appLanguage)} /></div>
                         <div className="onix-profile-v75-rank-body">
-                          <div className="onix-profile-v75-rank-title"><strong>{uiText(rank.name)}</strong><span>{current ? uiText('Aktuell') : passed ? uiText('Erreicht') : uiText(`Benötigt ${formatOnix(rankStepTotal)}`)}</span></div>
+                          <div className="onix-profile-v75-rank-title"><strong>{getRankName(rank, appLanguage)}</strong><span>{current ? t('ui.aktuell') : passed ? t('ui.erreicht') : t('common.required', { amount: formatOnix(rankStepTotal) })}</span></div>
                           {!passed && (
                             <div className="onix-task-progress">
-                              <div className="onix-task-progress-text"><span className="onix-task-progress-status">{uiText('Fortschritt')}</span><span><strong>{formatOnix(rankStepCurrent)}</strong> / {formatOnix(rankStepTotal)}</span></div>
+                              <div className="onix-task-progress-text"><span className="onix-task-progress-status">{t('ui.fortschritt')}</span><span><strong>{formatOnix(rankStepCurrent)}</strong> / {formatOnix(rankStepTotal)}</span></div>
                               <div className="onix-task-progress-track"><div className="onix-task-progress-fill" style={{ width: `${rankStepPercent}%` }} /></div>
                             </div>
                           )}
@@ -20955,7 +20929,7 @@ body:not(.onix-body-home-lock) {
 
             {profilePanel === 'stats' && (
               <div className="onix-profile-v75-panel">
-                <div className="onix-profile-v75-panel-title onix-profile-v75-detail-title"><button type="button" className="onix-profile-v75-back" onClick={() => setProfilePanel('overview')}>‹</button><strong>{uiText('📊 Spielstatistik')}</strong><span>ONIX</span></div>
+                <div className="onix-profile-v75-panel-title onix-profile-v75-detail-title"><button type="button" className="onix-profile-v75-back" onClick={() => setProfilePanel('overview')}>‹</button><strong>{t('ui.spielstatistik')}</strong><span>ONIX</span></div>
                 <div className="onix-profile-v75-stats-list">
                   {profileStats.map((item) => (
                     <div key={item.label}><span>{item.label}</span><strong>{item.value}</strong></div>
@@ -20998,7 +20972,7 @@ body:not(.onix-body-home-lock) {
                       <>
                         <div className="onix-profile-team-hero">
                           <div>
-                            <p>{uiText('Aktuelles Team')}</p>
+                            <p>{t('ui.aktuelles_team')}</p>
                             <strong>{teamSocialDashboard.team.teamName}</strong>
                             <span>{t('teams.summary', { count: teamSocialDashboard.team.members, place: teamSocialDashboard.team.place ? `#${teamSocialDashboard.team.place}` : t('teams.noPlace') })}</span>
                           </div>
@@ -21006,8 +20980,8 @@ body:not(.onix-body-home-lock) {
                         </div>
 
                         <div className="onix-profile-team-stats-grid">
-                          <div><span>{uiText('Aktuelle Woche')}</span><strong>{formatOnix(teamSocialDashboard.teamContest?.activeTeamWeeklyEarned ?? teamSocialDashboard.team.weeklyEarned)}</strong></div>
-                          <div><span>{uiText('Aktueller Platz')}</span><strong>{teamSocialDashboard.teamContest?.activeTeamPlace ? `#${teamSocialDashboard.teamContest.activeTeamPlace}` : '—'}</strong></div>
+                          <div><span>{t('ui.aktuelle_woche')}</span><strong>{formatOnix(teamSocialDashboard.teamContest?.activeTeamWeeklyEarned ?? teamSocialDashboard.team.weeklyEarned)}</strong></div>
+                          <div><span>{t('ui.aktueller_platz')}</span><strong>{teamSocialDashboard.teamContest?.activeTeamPlace ? `#${teamSocialDashboard.teamContest.activeTeamPlace}` : '—'}</strong></div>
                           <div><span>{t('teams.previousPlace')}</span><strong>{teamSocialDashboard.teamContest?.completedTeamPlace ? `#${teamSocialDashboard.teamContest.completedTeamPlace}` : '—'}</strong></div>
                           <div><span>{t('teams.weeklyPrize')}</span><strong>+{formatOnix(teamSocialDashboard.teamContest?.prize || 0)}</strong></div>
                         </div>
@@ -21036,7 +21010,7 @@ body:not(.onix-body-home-lock) {
 
                           <button type="button" className="onix-profile-team-action-card" onClick={() => setTeamDetailPanel('members')}>
                             <span>👥</span>
-                            <div><strong>{uiText('Mitglieder')}</strong><em>{t('teams.memberCount', { count: teamSocialDashboard.team.members })}</em></div>
+                            <div><strong>{t('ui.mitglieder')}</strong><em>{t('teams.memberCount', { count: teamSocialDashboard.team.members })}</em></div>
                             <b>›</b>
                           </button>
                         </div>
@@ -21050,17 +21024,17 @@ body:not(.onix-body-home-lock) {
                     {teamDetailPanel === 'missions' && (
                       <div className="onix-profile-team-detail-scroll">
                         <div className="onix-profile-team-block">
-                          <div className="onix-profile-team-block-title"><strong>{uiText('Team-Aufgaben')}</strong><span>{teamSocialDashboard.week}</span></div>
+                          <div className="onix-profile-team-block-title"><strong>{t('ui.team_aufgaben')}</strong><span>{teamSocialDashboard.week}</span></div>
                           <div className="onix-profile-team-missions">
                             {teamSocialDashboard.teamMissions.length > 0 ? teamSocialDashboard.teamMissions.map((mission) => {
                               const missionText = getTeamMissionText(mission, appLanguage);
                               const progressPercent = Math.min((Number(mission.progress || 0) / Number(mission.goal || 1)) * 100, 100);
                               return (
                                 <div key={mission.id} className="onix-profile-team-mission">
-                                  <div className="onix-profile-team-mission-head"><strong>{missionText?.title ?? uiText(mission.title)}</strong><span>+{formatOnix(mission.reward)}</span></div>
-                                  <p>{missionText?.description ?? uiText(mission.description)}</p>
+                                  <div className="onix-profile-team-mission-head"><strong>{missionText?.title ?? t('missions.genericTitle')}</strong><span>+{formatOnix(mission.reward)}</span></div>
+                                  <p>{missionText?.description ?? t('missions.genericDescription')}</p>
                                   <div className="onix-task-progress">
-                                    <div className="onix-task-progress-text"><span className="onix-task-progress-status">{uiText('Fortschritt')}</span><span><strong>{formatOnix(mission.progress)}</strong> / {formatOnix(mission.goal)}</span></div>
+                                    <div className="onix-task-progress-text"><span className="onix-task-progress-status">{t('ui.fortschritt')}</span><span><strong>{formatOnix(mission.progress)}</strong> / {formatOnix(mission.goal)}</span></div>
                                     <div className="onix-task-progress-track"><div className="onix-task-progress-fill" style={{ width: `${progressPercent}%` }} /></div>
                                   </div>
                                   <button type="button" onClick={() => claimTeamMission(mission)} disabled={!mission.isCompleted || mission.isClaimed}>{mission.isClaimed ? t('missions.claimed') : mission.isCompleted ? t('missions.claim') : t('missions.pending')}</button>
@@ -21096,7 +21070,7 @@ body:not(.onix-body-home-lock) {
                     {teamDetailPanel === 'members' && (
                       <div className="onix-profile-team-detail-scroll">
                         <div className="onix-profile-team-block">
-                          <div className="onix-profile-team-block-title"><strong>{uiText('Mitglieder')}</strong><span>{teamSocialDashboard.team.members}</span></div>
+                          <div className="onix-profile-team-block-title"><strong>{t('ui.mitglieder')}</strong><span>{teamSocialDashboard.team.members}</span></div>
                           <div className="onix-profile-team-members">
                             {(teamSocialDashboard.team.membersList || []).length > 0 ? teamSocialDashboard.team.membersList.map((member, index) => (
                               <div key={member.telegramId} className="onix-profile-team-member">
@@ -21116,7 +21090,7 @@ body:not(.onix-body-home-lock) {
                     {teamDetailPanel === 'create' ? (
                       <div className="onix-profile-team-create-page">
                         <div className="onix-profile-team-block onix-profile-team-create-card">
-                          <div className="onix-profile-team-block-title"><strong>{uiText('✨ Neues Team')}</strong><span>ONIX</span></div>
+                          <div className="onix-profile-team-block-title"><strong>{t('ui.neues_team')}</strong><span>ONIX</span></div>
                           <p>{t('teams.createDescription')}</p>
                           <div className="onix-profile-team-create-input">
                             <input
@@ -21168,7 +21142,7 @@ body:not(.onix-body-home-lock) {
                                   <span>{t('teams.directorySummary', { count: team.members, amount: formatOnix(team.totalEarned) })}</span>
                                   <em>{t('teams.directoryWeekly', { place: team.place ? t('teams.weeklyPlace', { place: team.place }) : t('teams.noPlace'), amount: formatOnix(team.weeklyEarned) })}</em>
                                 </div>
-                                <button type="button" onClick={() => joinTeamByName(team.teamName)}>{uiText('Beitreten')}</button>
+                                <button type="button" onClick={() => joinTeamByName(team.teamName)}>{t('ui.beitreten')}</button>
                               </div>
                             )) : (
                               <div className="onix-profile-v75-empty">{t('teams.empty')}</div>
@@ -21184,12 +21158,12 @@ body:not(.onix-body-home-lock) {
 
             {profilePanel === 'invited' && (
               <div className="onix-profile-v75-panel">
-                <div className="onix-profile-v75-panel-title onix-profile-v75-detail-title"><button type="button" className="onix-profile-v75-back" onClick={() => setProfilePanel('overview')}>‹</button><strong>{uiText('👥 Eingeladene Spieler')}</strong><span>{invitedProfiles.length || referralsCount}</span></div>
+                <div className="onix-profile-v75-panel-title onix-profile-v75-detail-title"><button type="button" className="onix-profile-v75-back" onClick={() => setProfilePanel('overview')}>‹</button><strong>{t('ui.eingeladene_spieler')}</strong><span>{invitedProfiles.length || referralsCount}</span></div>
                 <div className="onix-profile-v75-invited-grid">
                   {invitedProfiles.length > 0 ? invitedProfiles.map((friend) => (
                     <div key={friend.telegramId} className="onix-profile-v75-friend-card">
                       <div className="onix-profile-v75-friend-avatar">{String(friend.username || 'O').slice(0, 1).toUpperCase()}</div>
-                      <div><strong>{friend.username || 'ONIX Player'}</strong><span>{friend.rankName || getRankInfo(friend.totalEarned).currentRank.name}</span><em data-onix-i18n="notice">{t('invited.earned', { amount: formatOnix(friend.totalEarned) })}</em></div>
+                      <div><strong>{friend.username || getProfileTitle('ONIX Player', appLanguage)}</strong><span>{getRankName(getRankInfo(friend.totalEarned).currentRank, appLanguage)}</span><em data-onix-i18n="notice">{t('invited.earned', { amount: formatOnix(friend.totalEarned) })}</em></div>
                     </div>
                   )) : (
                     <div data-onix-i18n="notice" className="onix-profile-v75-empty">{t('invited.empty')}</div>
@@ -21205,7 +21179,7 @@ body:not(.onix-body-home-lock) {
 
             <h2 className="text-2xl font-bold text-white">{username}</h2>
 
-            <p className="mt-1 text-sm text-gray-400">{getProfileTitleLabel(selectedTitle)}</p>
+            <p className="mt-1 text-sm text-gray-400">{getProfileTitle(selectedTitle, appLanguage)}</p>
 
             <div className="mt-5 rounded-2xl bg-[#0a0f1c] p-4 text-left">
               <div className="mb-3 flex items-center justify-between">
@@ -21296,7 +21270,7 @@ body:not(.onix-body-home-lock) {
                         : 'bg-[#111827] text-gray-300'
                     }`}
                   >
-                    {getProfileTitleLabel(title)}
+                    {getProfileTitle(title, appLanguage)}
                   </button>
                 ))}
               </div>
@@ -21305,14 +21279,14 @@ body:not(.onix-body-home-lock) {
             <div className="mt-5 rounded-2xl bg-[#0a0f1c] p-4 text-left">
               <div className="mb-3 flex items-center justify-between gap-3">
                 <div>
-                  <p className="text-xs text-gray-400">{uiText('Aktueller Rang')}</p>
+                  <p className="text-xs text-gray-400">{t('ui.aktueller_rang')}</p>
                   <p className="mt-1 text-xl font-bold text-yellow-400">
-                    {rankInfo.currentRank.name}
+                    {getRankName(rankInfo.currentRank, appLanguage)}
                   </p>
                 </div>
 
                 <div className="text-right">
-                  <p className="text-xs text-gray-400">{uiText('Rangbonus')}</p>
+                  <p className="text-xs text-gray-400">{t('history.type.income_rank')}</p>
                   <p className="mt-1 font-bold text-emerald-400">
                     +{formatOnix(currentRankBonus)} ONIX
                   </p>
@@ -21368,7 +21342,7 @@ body:not(.onix-body-home-lock) {
                   </div>
 
                   <div className="rounded-2xl bg-[#111827] p-3">
-                    <p className="text-xs text-gray-400">{uiText('Taps')}</p>
+                    <p className="text-xs text-gray-400">{t('ui.taps')}</p>
                     <p className="mt-1 text-sm font-bold text-yellow-400">
                       {teamSocialDashboard.team.totalTaps}
                     </p>
@@ -21473,7 +21447,7 @@ body:not(.onix-body-home-lock) {
               </div>
 
               <div className="rounded-2xl bg-[#0a0f1c] p-4">
-                <p className="text-xs text-gray-400">{uiText('Insgesamt verdient')}</p>
+                <p className="text-xs text-gray-400">{t('ui.insgesamt_verdient')}</p>
                 <p className="mt-1 text-lg font-bold text-white">
                   {formatOnix(totalEarned)}
                 </p>
@@ -21492,17 +21466,17 @@ body:not(.onix-body-home-lock) {
 
               <div className="grid grid-cols-2 gap-3">
                 <div className="rounded-2xl bg-[#111827] p-3">
-                  <p className="text-xs text-gray-400">{uiText('Taps')}</p>
+                  <p className="text-xs text-gray-400">{t('ui.taps')}</p>
                   <p className="font-bold text-yellow-400">{formatOnix(totalTaps)}</p>
                 </div>
 
                 <div className="rounded-2xl bg-[#111827] p-3">
-                  <p className="text-xs text-gray-400">{uiText('Upgrades')}</p>
+                  <p className="text-xs text-gray-400">{t('nav.upgrades')}</p>
                   <p className="font-bold text-yellow-400">{formatOnix(totalUpgradesBought)}</p>
                 </div>
 
                 <div className="rounded-2xl bg-[#111827] p-3">
-                  <p className="text-xs text-gray-400">{uiText('Boosts')}</p>
+                  <p className="text-xs text-gray-400">{t('ui.boosts')}</p>
                   <p className="font-bold text-yellow-400">{formatOnix(totalBoostsUsed)}</p>
                 </div>
 
@@ -21523,7 +21497,7 @@ body:not(.onix-body-home-lock) {
                 </div>
 
                 <div className="text-right">
-                  <p className="text-xs text-gray-400">{uiText('Pro Freund')}</p>
+                  <p className="text-xs text-gray-400">{t('ui.pro_freund')}</p>
                   <p className="mt-1 font-bold text-yellow-400">
                     +{formatOnix(economyConfig.referralReward)} ONIX
                   </p>
@@ -21560,7 +21534,7 @@ body:not(.onix-body-home-lock) {
                 </div>
 
                 <div className="rounded-2xl bg-[#0a0f1c] px-3 py-2 text-right">
-                  <p className="text-xs text-gray-400">{uiText('Pro Freund')}</p>
+                  <p className="text-xs text-gray-400">{t('ui.pro_freund')}</p>
                   <p className="font-bold text-yellow-400">
                     +{formatOnix(economyConfig.referralReward)}
                   </p>
@@ -21931,16 +21905,16 @@ body:not(.onix-body-home-lock) {
                     <div className="onix-wallet-icon text-2xl">💼</div>
 
                     <div>
-                      <h2 className="text-2xl font-bold text-white">{uiText('Wallet')}</h2>
+                      <h2 className="text-2xl font-bold text-white">{t('nav.wallet')}</h2>
                       <p className="text-sm text-gray-400">
-                        {uiText('Guthaben und Auszahlung von ONIX')}
+                        {t('ui.guthaben_und_auszahlung_von_onix')}
                       </p>
                     </div>
                   </div>
 
                   <div className="onix-wallet-balance-card">
                     <div className="w-full min-w-0">
-                      <p className="onix-wallet-balance-label">{uiText('ONIX-Guthaben')}</p>
+                      <p className="onix-wallet-balance-label">{t('ui.onix_guthaben')}</p>
                       <p className="onix-wallet-balance-value">
                         {formatOnix(balance)}
                       </p>
@@ -21955,14 +21929,14 @@ body:not(.onix-body-home-lock) {
 
                   <div className="mt-3 grid grid-cols-2 gap-3">
                     <div className="onix-wallet-mini-card p-4">
-                      <p className="text-xs text-gray-400">{uiText('Kurs')}</p>
+                      <p className="text-xs text-gray-400">{t('ui.kurs')}</p>
                       <p className="mt-1 text-sm font-bold text-white">
                         1000 ONIX = {economyConfig.onixEurPer1000.toLocaleString('ru-RU')}€
                       </p>
                     </div>
 
                     <div className="onix-wallet-mini-card p-4">
-                      <p className="text-xs text-gray-400">{uiText('Mindestauszahlung')}</p>
+                      <p className="text-xs text-gray-400">{t('ui.mindestauszahlung')}</p>
                       <p className="mt-1 text-sm font-bold text-yellow-400">
                         {minWithdrawOnix.toLocaleString('ru-RU')} ONIX
                       </p>
@@ -21975,8 +21949,8 @@ body:not(.onix-body-home-lock) {
                 <button type="button" className="onix-wallet-section-card-v3" onClick={() => setWalletPanel('chart')}>
                   <span className="onix-wallet-section-icon-v3">📈</span>
                   <div className="onix-wallet-section-text-v3">
-                    <strong>{uiText('Einkommensdiagramm')}</strong>
-                    <p>{uiText('Einnahmen der letzten 7 Tage')}</p>
+                    <strong>{t('ui.einkommensdiagramm')}</strong>
+                    <p>{t('ui.einnahmen_der_letzten_7_tage')}</p>
                   </div>
                   <b className="onix-wallet-section-arrow-v3">›</b>
                 </button>
@@ -21984,8 +21958,8 @@ body:not(.onix-body-home-lock) {
                 <button type="button" className="onix-wallet-section-card-v3" onClick={() => setWalletPanel('withdrawals')}>
                   <span className="onix-wallet-section-icon-v3">💸</span>
                   <div className="onix-wallet-section-text-v3">
-                    <strong>{uiText('Auszahlungsanträge')}</strong>
-                    <p>{withdrawalRequests.length} Anträge · Fortschritt {Math.floor(withdrawProgress).toString()}%</p>
+                    <strong>{t('ui.auszahlungsantrage')}</strong>
+                    <p>{t('wallet.withdrawalsSummary', { count: withdrawalRequests.length, percent: Math.floor(withdrawProgress).toString() })}</p>
                   </div>
                   <b className="onix-wallet-section-arrow-v3">›</b>
                 </button>
@@ -21993,7 +21967,7 @@ body:not(.onix-body-home-lock) {
                 <button type="button" className="onix-wallet-section-card-v3" onClick={() => setWalletPanel('history')}>
                   <span className="onix-wallet-section-icon-v3">🧾</span>
                   <div className="onix-wallet-section-text-v3">
-                    <strong>{uiText('Transaktionsverlauf')}</strong>
+                    <strong>{t('ui.transaktionsverlauf')}</strong>
                     <p data-onix-i18n="notice">{t('wallet.transactionCount', { count: filteredTransactions.length })}</p>
                   </div>
                   <b className="onix-wallet-section-arrow-v3">›</b>
@@ -22006,18 +21980,18 @@ body:not(.onix-body-home-lock) {
                 <button type="button" className="onix-profile-v75-back" onClick={() => setWalletPanel('overview')}>‹</button>
                 <strong>
                   {walletPanel === 'chart'
-                    ? '📈 Einkommensdiagramm'
+                    ? t('ui.einkommensdiagramm')
                     : walletPanel === 'withdrawals'
-                    ? '💸 Auszahlungsanträge'
-                    : '🧾 Transaktionsverlauf'}
+                    ? t('ui.auszahlungsantrage')
+                    : t('ui.transaktionsverlauf')}
                 </strong>
               </div>
 
               {walletPanel === 'chart' && (
                 <div className="onix-wallet-panel-card shadow-xl">
                   <div className="onix-wallet-card-content">
-                    <h3 className="text-xl font-bold text-white">{uiText('📈 Einkommensdiagramm')}</h3>
-                    <p className="mt-1 text-sm text-gray-400">{uiText('Einnahmen der letzten 7 Tage')}</p>
+                    <h3 className="text-xl font-bold text-white">{t('ui.einkommensdiagramm')}</h3>
+                    <p className="mt-1 text-sm text-gray-400">{t('ui.einnahmen_der_letzten_7_tage')}</p>
 
                     <div className="onix-wallet-chart-box mt-5 flex items-end gap-2 p-4">
                       {earningChartDays.map((item) => (
@@ -22030,7 +22004,7 @@ body:not(.onix-body-home-lock) {
                               }}
                             />
                           </div>
-                          <p className="text-[10px] font-bold text-gray-500">{uiText(item.label)}</p>
+                          <p className="text-[10px] font-bold text-gray-500">{item.label}</p>
                         </div>
                       ))}
                     </div>
@@ -22043,16 +22017,16 @@ body:not(.onix-body-home-lock) {
                   <div className="onix-wallet-card-content">
                     <div className="mb-4 flex items-center justify-between gap-3">
                       <div>
-                        <h3 className="text-xl font-bold text-white">{uiText('💸 Auszahlungsanträge')}</h3>
+                        <h3 className="text-xl font-bold text-white">{t('ui.auszahlungsantrage')}</h3>
                         <p className="text-sm text-gray-400">
-                          {withdrawalRequests.length} Anträge
+                          {t('common.requests', { count: withdrawalRequests.length })}
                         </p>
                       </div>
                     </div>
 
                     <div className="onix-wallet-mini-card mb-3 p-3">
                       <div className="mb-3 flex items-center justify-between gap-3 text-sm">
-                        <span className="text-gray-400">{uiText('Fortschritt bis zur Auszahlung')}</span>
+                        <span className="text-gray-400">{t('ui.fortschritt_bis_zur_auszahlung')}</span>
                         <span className="font-bold text-yellow-400">
                           {Math.floor(withdrawProgress).toString()}%
                         </span>
@@ -22072,14 +22046,14 @@ body:not(.onix-body-home-lock) {
                       </p>
 
                       <p className="mt-1 text-xs text-gray-500">
-                        {uiText(`Offene Anträge: ${formatOnix(walletPendingWithdrawal)} ONIX`)}
+                        {t('wallet.openRequests', { amount: formatOnix(walletPendingWithdrawal) })}
                       </p>
                     </div>
 
                     <div className="onix-wallet-mini-card mb-3 p-3">
-                      <p className="text-sm font-bold text-white">{uiText('💎 Auszahlungsbetrag')}</p>
+                      <p className="text-sm font-bold text-white">{t('ui.auszahlungsbetrag')}</p>
                       <p className="mt-1 text-xs text-gray-500">
-                        {uiText(`Mindestens ${formatOnix(minWithdrawOnix)} ONIX · Verfügbar ${formatOnix(balance)} ONIX`)}
+                        {t('wallet.amountAvailable', { minimum: formatOnix(minWithdrawOnix), available: formatOnix(balance) })}
                       </p>
                       <input
                         type="number"
@@ -22089,11 +22063,11 @@ body:not(.onix-body-home-lock) {
                         step="1"
                         value={withdrawalAmountInput}
                         onChange={(event) => setWithdrawalAmountInput(event.target.value)}
-                        placeholder={`${formatOnix(minWithdrawOnix)} ONIX oder mehr`}
+                        placeholder={t('wallet.amountPlaceholder', { minimum: formatOnix(minWithdrawOnix) })}
                         className="mt-3 w-full px-4 py-3 text-sm outline-none"
                       />
                       <div className="mt-3 flex items-center justify-between gap-3 text-sm">
-                        <span className="text-gray-400">{uiText('Auszahlung ungefähr')}</span>
+                        <span className="text-gray-400">{t('ui.auszahlung_ungefahr')}</span>
                         <strong className="text-yellow-400">
                           ≈ {(Math.max(0, Number(withdrawalAmountInput) || 0) * onixEurRate).toFixed(2)} €
                         </strong>
@@ -22104,20 +22078,20 @@ body:not(.onix-body-home-lock) {
                         disabled={balance < minWithdrawOnix}
                         className="mt-3 text-xs font-bold text-yellow-400 disabled:opacity-40"
                       >
-                        {uiText('Maximalbetrag verwenden')}
+                        {t('ui.maximalbetrag_verwenden')}
                       </button>
                     </div>
 
                     <div className="onix-wallet-mini-card mb-3 p-3">
-                      <p className="text-sm font-bold text-white">{uiText('🛡 Anti-Bot-Prüfung')}</p>
+                      <p className="text-sm font-bold text-white">{t('ui.anti_bot_prufung')}</p>
                       <p className="mt-1 text-xs text-gray-500">
-                        {uiText('Gib vor dem Antrag ONIX ein.')}
+                        {t('ui.gib_vor_dem_antrag_onix_ein')}
                       </p>
 
                       <input
                         value={withdrawalCheck}
                         onChange={(event) => setWithdrawalCheck(event.target.value)}
-                        placeholder={uiText('ONIX eingeben')}
+                        placeholder={t('ui.onix_eingeben')}
                         className="mt-3 w-full px-4 py-3 text-sm outline-none"
                       />
                     </div>
@@ -22183,9 +22157,9 @@ body:not(.onix-body-home-lock) {
                       </div>
                     ) : (
                       <div className="onix-wallet-mini-card p-5 text-center">
-                        <p className="font-bold text-gray-300">{uiText('Noch keine Anträge')}</p>
+                        <p className="font-bold text-gray-300">{t('ui.noch_keine_antrage')}</p>
                         <p className="mt-1 text-sm text-gray-500">
-                          {uiText('Wenn du einen Antrag erstellst, erscheint er hier.')}
+                          {t('ui.wenn_du_einen_antrag_erstellst_erscheint_er_hier')}
                         </p>
                       </div>
                     )}
@@ -22198,7 +22172,7 @@ body:not(.onix-body-home-lock) {
                   <div className="onix-wallet-card-content">
                     <div className="mb-4 flex items-center justify-between gap-3">
                       <div>
-                        <h3 className="text-xl font-bold text-white">{uiText('🧾 Transaktionsverlauf')}</h3>
+                        <h3 className="text-xl font-bold text-white">{t('ui.transaktionsverlauf')}</h3>
                         <p data-onix-i18n="notice" className="text-sm text-gray-400">
                           {t('wallet.transactionCount', { count: filteredTransactions.length })}
                         </p>
@@ -22212,7 +22186,7 @@ body:not(.onix-body-home-lock) {
                           onClick={() => setTransactionFilter(filter.id)}
                           className={`onix-wallet-filter-button ${transactionFilter === filter.id ? 'is-active' : ''}`}
                         >
-                          {uiText(filter.label)}
+                          {filter.label}
                         </button>
                       ))}
                     </div>
@@ -22237,8 +22211,7 @@ body:not(.onix-body-home-lock) {
                                     {getTransactionTitle(transaction, appLanguage, (title) => {
                                       const achievement = achievements.find((item) => item.title === title);
                                       if (!achievement) return undefined;
-                                      const translated = uiText(achievement.title);
-                                      return appLanguage === 'ru' && translated === title ? undefined : translated;
+                                      return getAchievementText(achievement, appLanguage)?.title;
                                     })}
                                   </p>
                                   <p className="text-xs text-gray-500">
@@ -22261,9 +22234,9 @@ body:not(.onix-body-home-lock) {
                       </div>
                     ) : (
                       <div className="onix-wallet-mini-card p-5 text-center">
-                        <p className="font-bold text-gray-300">{uiText('Keine Transaktionen')}</p>
+                        <p className="font-bold text-gray-300">{t('ui.keine_transaktionen')}</p>
                         <p className="mt-1 text-sm text-gray-500">
-                          Wähle einen anderen Filter.
+                          {t('wallet.chooseOtherFilter')}
                         </p>
                       </div>
                     )}
@@ -22289,6 +22262,7 @@ body:not(.onix-body-home-lock) {
         <div className="fixed inset-0 z-[90] flex items-center justify-center bg-black/70 px-4">
           <div className="w-full max-w-sm rounded-3xl border border-sky-400/30 bg-[#111827] p-6 text-center shadow-2xl">
             <button
+              aria-label={t('a11y.close')}
               onClick={() => setShareCardVisible(false)}
               className="ml-auto block text-2xl text-gray-400"
             >
@@ -22304,22 +22278,22 @@ body:not(.onix-body-home-lock) {
 
             <div className="mt-3 grid grid-cols-2 gap-3">
               <div className="rounded-2xl bg-[#0a0f1c] p-4">
-                <p className="text-xs text-gray-400">Guthaben</p>
+                <p className="text-xs text-gray-400">{t('share.balance')}</p>
                 <p className="font-bold text-yellow-400">{formatOnix(balance)}</p>
               </div>
 
               <div className="rounded-2xl bg-[#0a0f1c] p-4">
-                <p className="text-xs text-gray-400">Gesamt</p>
+                <p className="text-xs text-gray-400">{t('share.total')}</p>
                 <p className="font-bold text-yellow-400">{formatOnix(totalEarned)}</p>
               </div>
 
               <div className="rounded-2xl bg-[#0a0f1c] p-4">
                 <p className="text-xs text-gray-400" data-onix-i18n="notice">{t('referrals.rank')}</p>
-                <p data-onix-i18n="notice" className="font-bold text-yellow-400">{uiText(rankInfo.currentRank.name)}</p>
+                <p data-onix-i18n="notice" className="font-bold text-yellow-400">{getRankName(rankInfo.currentRank, appLanguage)}</p>
               </div>
 
               <div className="rounded-2xl bg-[#0a0f1c] p-4">
-                <p className="text-xs text-gray-400">Top</p>
+                <p className="text-xs text-gray-400">{t('share.top')}</p>
                 <p className="font-bold text-yellow-400">
                   {currentUserPlace ? `#${currentUserPlace}` : '—'}
                 </p>
@@ -22349,6 +22323,7 @@ body:not(.onix-body-home-lock) {
               </div>
 
               <button
+                aria-label={t('a11y.close')}
                 onClick={() => setLaunchChecklistVisible(false)}
                 className="text-2xl text-gray-400"
               >
@@ -22436,6 +22411,7 @@ body:not(.onix-body-home-lock) {
               </div>
 
               <button
+                aria-label={t('a11y.close')}
                 onClick={() => setAdmin2Visible(false)}
                 className="text-2xl text-gray-400"
               >
@@ -22665,6 +22641,7 @@ body:not(.onix-body-home-lock) {
               </div>
 
               <button
+                aria-label={t('a11y.close')}
                 onClick={() => setAdminSearchVisible(false)}
                 className="text-2xl text-gray-400"
               >
@@ -22904,6 +22881,7 @@ body:not(.onix-body-home-lock) {
               </div>
 
               <button
+                aria-label={t('a11y.close')}
                 onClick={() => setAdminSecurityLogsVisible(false)}
                 className="text-2xl text-gray-400"
               >
@@ -23021,6 +22999,7 @@ body:not(.onix-body-home-lock) {
               </div>
 
               <button
+                aria-label={t('a11y.close')}
                 onClick={() => setAdminEconomyVisible(false)}
                 className="text-2xl text-gray-400"
               >
@@ -23151,7 +23130,7 @@ body:not(.onix-body-home-lock) {
               onClick={() => setSeasonPrizePopup(null)}
               className="mt-6 w-full rounded-2xl bg-yellow-400 py-4 text-lg font-bold text-black active:scale-95"
             >
-              Abholen
+              {t('common.claim')}
             </button>
           </div>
         </div>
@@ -23169,6 +23148,7 @@ body:not(.onix-body-home-lock) {
               </div>
 
               <button
+                aria-label={t('a11y.close')}
                 onClick={() => setSuspiciousUsersVisible(false)}
                 className="text-2xl text-gray-400"
               >
@@ -23259,6 +23239,7 @@ body:not(.onix-body-home-lock) {
               </div>
 
               <button
+                aria-label={t('a11y.close')}
                 onClick={() => setAdminWithdrawalsVisible(false)}
                 className="text-2xl text-gray-400"
               >
@@ -23374,6 +23355,7 @@ body:not(.onix-body-home-lock) {
               </div>
 
               <button
+                aria-label={t('a11y.close')}
                 onClick={() => setAdminPanelVisible(false)}
                 className="text-2xl text-gray-400"
               >
@@ -23454,6 +23436,7 @@ body:not(.onix-body-home-lock) {
         <div data-onix-i18n="notice" className="fixed inset-0 z-[75] flex items-center justify-center bg-black/70 px-4">
           <div className="w-full max-w-sm rounded-3xl border border-yellow-400/30 bg-[#111827] p-6 text-center shadow-2xl">
             <button
+              aria-label={t('a11y.close')}
               onClick={() => setReferralModalVisible(false)}
               className="absolute right-5 top-5 text-2xl text-gray-400"
             >
@@ -23464,26 +23447,26 @@ body:not(.onix-body-home-lock) {
               👥
             </div>
 
-            <h2 className="text-2xl font-bold text-white">{uiText('Lade einen Freund ein')}</h2>
+            <h2 className="text-2xl font-bold text-white">{t('ui.lade_einen_freund_ein')}</h2>
             <p className="mt-2 text-sm text-gray-400">
               {t('referrals.description')}
             </p>
 
             <div className="mt-3 grid grid-cols-2 gap-3">
               <div className="rounded-2xl bg-[#0a0f1c] p-4">
-                <p className="text-xs text-gray-400">{uiText('Du erhältst')}</p>
+                <p className="text-xs text-gray-400">{t('ui.du_erhaltst')}</p>
                 <p className="mt-1 font-bold text-yellow-400">+{formatOnix(economyConfig.referralReward)}</p>
               </div>
 
               <div className="rounded-2xl bg-[#0a0f1c] p-4">
-                <p className="text-xs text-gray-400">{uiText('Freund erhält')}</p>
+                <p className="text-xs text-gray-400">{t('ui.freund_erhalt')}</p>
                 <p className="mt-1 font-bold text-emerald-400">+{formatOnix(economyConfig.referredUserReward)}</p>
               </div>
             </div>
 
             <div className="mt-5 rounded-2xl bg-[#0a0f1c] p-4 text-left">
               <div className="mb-2 flex items-center justify-between text-sm">
-                <span className="text-gray-400">{uiText('Boni heute')}</span>
+                <span className="text-gray-400">{t('ui.boni_heute')}</span>
                 <span className="font-bold text-yellow-400">
                   {referralLimit.used} / {referralLimit.max}
                 </span>
@@ -23547,7 +23530,7 @@ body:not(.onix-body-home-lock) {
                     <div className="flex min-w-0 items-center gap-3">
                       <span className="text-2xl">{item.icon}</span>
                       <p data-onix-i18n={item.localizedTitle ? 'notice' : undefined} className="truncate text-sm font-bold text-white">
-                        {item.localizedTitle ? item.localizedTitle(t, appLanguage) : uiText(item.title)}
+                        {item.localizedTitle ? item.localizedTitle(t, appLanguage) : item.title}
                       </p>
                     </div>
 
@@ -23566,7 +23549,7 @@ body:not(.onix-body-home-lock) {
               }}
               className="mt-6 w-full rounded-2xl bg-yellow-400 py-4 text-lg font-bold text-black active:scale-95"
             >
-              Abholen
+              {t('common.claim')}
             </button>
           </div>
         </div>
@@ -23580,13 +23563,13 @@ body:not(.onix-body-home-lock) {
             </div>
 
             <h3 className="text-2xl font-bold text-white mb-2">
-              {uiText('Miner hat verdient')}
+              {t('ui.miner_hat_verdient')}
             </h3>
 
             <p className="text-gray-400 mb-4">
-              {offlineRewardTime
-                ? `${uiText('Während du weg warst')} ${uiText(offlineRewardTime)}`
-                : uiText('Während du weg warst')}
+              {offlineRewardSeconds
+                ? `${t('ui.wahrend_du_weg_warst')} ${formatOfflineTime(offlineRewardSeconds)}`
+                : t('ui.wahrend_du_weg_warst')}
             </p>
 
             <p className="text-4xl font-bold text-yellow-400 mb-6">
@@ -23602,7 +23585,7 @@ body:not(.onix-body-home-lock) {
                   : 'bg-yellow-400 active:scale-95'
               }`}
             >
-              {isClaimingOfflineReward ? t('rewards.claiming') : uiText('Abholen')}
+              {isClaimingOfflineReward ? t('rewards.claiming') : t('missions.claim')}
             </button>
           </div>
         </div>

@@ -110,7 +110,7 @@ function requireTelegramMiniAppUser(req, res, next) {
 
   if (!result.ok || !result.user?.id) {
     return res.status(401).json({
-      message: 'Telegram authentication required',
+      message: translate('authRequired', 'de'),
       error: result.ok ? 'Telegram user is missing' : result.error,
     });
   }
@@ -171,7 +171,7 @@ function sensitiveRewardMutationGuard(req, res, next) {
 
   if (!telegramId) {
     return res.status(401).json({
-      message: 'Telegram authentication required',
+      message: translate('authRequired', 'de'),
     });
   }
 
@@ -2236,14 +2236,14 @@ router.post('/season-prize-popup', requireTelegramMiniAppUser, async (req, res) 
 
     if (requestedTelegramId && requestedTelegramId !== telegramId) {
       return res.status(403).json({
-        message: 'Telegram ID does not match authenticated user',
+        message: translate('telegramMismatch', await getUserLanguage(User, req.telegramUserId)),
       });
     }
 
     const user = await User.findOne({ telegramId });
 
     if (!user) {
-      return res.status(404).json({ message: 'User not found' });
+      return res.status(404).json({ message: translate('userNotFound', await getUserLanguage(User, req.telegramUserId)) });
     }
 
     normalizeUserFields(user);
@@ -2396,7 +2396,7 @@ router.get('/admin-user-profile/:targetTelegramId', async (req, res) => {
     const user = await User.findOne({ telegramId: targetTelegramId });
 
     if (!user) {
-      return res.status(404).json({ message: 'User not found' });
+      return res.status(404).json({ message: translate('userNotFound', await getUserLanguage(User, req.telegramUserId)) });
     }
 
     normalizeUserFields(user);
@@ -2467,13 +2467,13 @@ router.post('/admin-adjust-balance', async (req, res) => {
     const delta = Number(amount);
 
     if (!Number.isFinite(delta) || delta === 0) {
-      return res.status(400).json({ message: 'Gib einen gültigen Betrag ein' });
+      return res.status(400).json({ message: translate('invalidAmount', await getUserLanguage(User, req.telegramUserId)) });
     }
 
     const user = await User.findOne({ telegramId: targetTelegramId });
 
     if (!user) {
-      return res.status(404).json({ message: 'User not found' });
+      return res.status(404).json({ message: translate('userNotFound', await getUserLanguage(User, req.telegramUserId)) });
     }
 
     normalizeUserFields(user);
@@ -2534,7 +2534,7 @@ router.post('/admin-ban-user', async (req, res) => {
     const user = await User.findOne({ telegramId: targetTelegramId });
 
     if (!user) {
-      return res.status(404).json({ message: 'User not found' });
+      return res.status(404).json({ message: translate('userNotFound', await getUserLanguage(User, req.telegramUserId)) });
     }
 
     normalizeUserFields(user);
@@ -2665,7 +2665,7 @@ router.post('/admin-freeze-user', async (req, res) => {
     const user = await User.findOne({ telegramId: targetTelegramId });
 
     if (!user) {
-      return res.status(404).json({ message: 'User not found' });
+      return res.status(404).json({ message: translate('userNotFound', await getUserLanguage(User, req.telegramUserId)) });
     }
 
     user.isFrozen = Boolean(freeze);
@@ -2774,7 +2774,7 @@ router.post('/admin-review-withdrawal', async (req, res) => {
     const user = await User.findOne({ telegramId: userTelegramId });
 
     if (!user) {
-      return res.status(404).json({ message: 'User not found' });
+      return res.status(404).json({ message: translate('userNotFound', await getUserLanguage(User, req.telegramUserId)) });
     }
 
     normalizeUserFields(user);
@@ -2889,7 +2889,7 @@ router.post('/frontend-error', requireTelegramMiniAppUser, async (req, res) => {
 
     if (requestedTelegramId && requestedTelegramId !== telegramId) {
       return res.status(403).json({
-        message: 'Telegram ID does not match authenticated user',
+        message: translate('telegramMismatch', await getUserLanguage(User, req.telegramUserId)),
       });
     }
 
@@ -3232,7 +3232,7 @@ router.post('/admin-user-note', async (req, res) => {
     const user = await User.findOne({ telegramId: targetTelegramId });
 
     if (!user) {
-      return res.status(404).json({ message: 'User not found' });
+      return res.status(404).json({ message: translate('userNotFound', await getUserLanguage(User, req.telegramUserId)) });
     }
 
     normalizeUserFields(user);
@@ -3370,14 +3370,14 @@ router.post('/claim-welcome-bonus', requireTelegramMiniAppUser, sensitiveRewardM
 
     if (requestedTelegramId && requestedTelegramId !== telegramId) {
       return res.status(403).json({
-        message: 'Telegram ID does not match authenticated user',
+        message: translate('telegramMismatch', await getUserLanguage(User, req.telegramUserId)),
       });
     }
 
     const user = await User.findOne({ telegramId });
 
     if (!user) {
-      return res.status(404).json({ message: 'User not found' });
+      return res.status(404).json({ message: translate('userNotFound', await getUserLanguage(User, req.telegramUserId)) });
     }
 
     normalizeUserFields(user);
@@ -3432,7 +3432,7 @@ router.post('/apply-promo', requireTelegramMiniAppUser, sensitiveRewardMutationG
 
     if (requestedTelegramId && requestedTelegramId !== telegramId) {
       return res.status(403).json({
-        message: 'Telegram ID does not match authenticated user',
+        message: translate('telegramMismatch', await getUserLanguage(User, req.telegramUserId)),
       });
     }
 
@@ -3452,7 +3452,7 @@ router.post('/apply-promo', requireTelegramMiniAppUser, sensitiveRewardMutationG
     const user = await User.findOne({ telegramId });
 
     if (!user) {
-      return res.status(404).json({ message: 'User not found' });
+      return res.status(404).json({ message: translate('userNotFound', await getUserLanguage(User, req.telegramUserId)) });
     }
 
     normalizeUserFields(user);
@@ -3581,18 +3581,18 @@ router.get('/referrals/:telegramId', requireTelegramMiniAppUser, async (req, res
 
     if (requestedTelegramId && requestedTelegramId !== telegramId) {
       return res.status(403).json({
-        message: 'Telegram ID does not match authenticated user',
+        message: translate('telegramMismatch', await getUserLanguage(User, req.telegramUserId)),
       });
     }
 
     if (!telegramId) {
-      return res.status(400).json({ message: 'Telegram ID is required' });
+      return res.status(400).json({ message: translate('telegramRequired', 'de') });
     }
 
     const owner = await User.findOne({ telegramId });
 
     if (!owner) {
-      return res.status(404).json({ message: 'User not found' });
+      return res.status(404).json({ message: translate('userNotFound', await getUserLanguage(User, req.telegramUserId)) });
     }
 
     const referrals = await User.find({ referredBy: telegramId })
@@ -3637,7 +3637,7 @@ router.get('/leaderboard/weekly', async (req, res) => {
 
       if (!authResult.ok || !authResult.user?.id) {
         return res.status(401).json({
-          message: 'Telegram authentication required',
+          message: translate('authRequired', 'de'),
         });
       }
 
@@ -3645,7 +3645,7 @@ router.get('/leaderboard/weekly', async (req, res) => {
 
       if (requestedTelegramId !== telegramId) {
         return res.status(403).json({
-          message: 'Telegram ID does not match authenticated user',
+          message: translate('telegramMismatch', await getUserLanguage(User, req.telegramUserId)),
         });
       }
     }
@@ -3837,13 +3837,13 @@ router.get('/:telegramId', requireTelegramMiniAppUser, async (req, res) => {
 
     if (requestedTelegramId && requestedTelegramId !== telegramId) {
       return res.status(403).json({
-        message: 'Telegram ID does not match authenticated user',
+        message: translate('telegramMismatch', await getUserLanguage(User, req.telegramUserId)),
       });
     }
 
     if (!telegramId) {
       return res.status(400).json({
-        message: 'Telegram ID is required',
+        message: translate('telegramRequired', 'de'),
       });
     }
 
@@ -3851,7 +3851,7 @@ router.get('/:telegramId', requireTelegramMiniAppUser, async (req, res) => {
 
     if (!user) {
       return res.status(404).json({
-        message: 'User not found',
+        message: translate('userNotFound', await getUserLanguage(User, req.telegramUserId)),
       });
     }
 
@@ -3941,13 +3941,13 @@ router.post('/language', requireTelegramMiniAppUser, async (req, res) => {
 
     if (requestedTelegramId && requestedTelegramId !== telegramId) {
       return res.status(403).json({
-        message: 'Telegram ID does not match authenticated user',
+        message: translate('telegramMismatch', await getUserLanguage(User, req.telegramUserId)),
       });
     }
-    if (!['de', 'en', 'ru', 'uk', 'tr', 'es', 'fr', 'it', 'pl', 'pt'].includes(language)) return res.status(400).json({ message: 'Unsupported language' });
+    if (!['de', 'en', 'ru', 'uk', 'tr', 'es', 'fr', 'it', 'pl', 'pt'].includes(language)) return res.status(400).json({ message: translate('unsupportedLanguage', await getUserLanguage(User, req.telegramUserId)) });
 
     const user = await User.findOne({ telegramId });
-    if (!user) return res.status(404).json({ message: 'User not found' });
+    if (!user) return res.status(404).json({ message: translate('userNotFound', await getUserLanguage(User, req.telegramUserId)) });
 
     user.appLanguage = language;
     user.updatedAt = new Date();
@@ -3981,7 +3981,7 @@ router.post('/create', requireTelegramMiniAppUser, async (req, res) => {
     const telegramId = req.telegramUserId;
     if (bodyTelegramId && String(bodyTelegramId) !== telegramId) {
       return res.status(403).json({
-        message: 'Telegram ID does not match authenticated user',
+        message: translate('telegramMismatch', await getUserLanguage(User, req.telegramUserId)),
       });
     }
     const firstName = String(telegramUser?.first_name || '').trim();
@@ -3991,7 +3991,7 @@ router.post('/create', requireTelegramMiniAppUser, async (req, res) => {
 
     if (!telegramId) {
       return res.status(400).json({
-        message: 'Telegram ID is required',
+        message: translate('telegramRequired', 'de'),
       });
     }
 
@@ -4183,13 +4183,13 @@ router.post('/save', requireTelegramMiniAppUser, async (req, res) => {
 
     if (requestedTelegramId && requestedTelegramId !== telegramId) {
       return res.status(403).json({
-        message: 'Telegram ID does not match authenticated user',
+        message: translate('telegramMismatch', await getUserLanguage(User, req.telegramUserId)),
       });
     }
 
     if (!data) {
       return res.status(400).json({
-        message: 'Data is required',
+        message: translate('dataRequired', await getUserLanguage(User, req.telegramUserId)),
       });
     }
 
@@ -4316,7 +4316,7 @@ router.post('/buy-upgrade', requireTelegramMiniAppUser, async (req, res) => {
 
     if (requestedTelegramId && requestedTelegramId !== telegramId) {
       return res.status(403).json({
-        message: 'Telegram ID does not match authenticated user',
+        message: translate('telegramMismatch', await getUserLanguage(User, req.telegramUserId)),
       });
     }
 
@@ -4324,7 +4324,7 @@ router.post('/buy-upgrade', requireTelegramMiniAppUser, async (req, res) => {
 
     if (!allowedTypes.includes(type)) {
       return res.status(400).json({
-        message: 'Unknown upgrade type',
+        message: translate('unknownUpgrade', await getUserLanguage(User, req.telegramUserId)),
       });
     }
 
@@ -4332,7 +4332,7 @@ router.post('/buy-upgrade', requireTelegramMiniAppUser, async (req, res) => {
 
     if (!user) {
       return res.status(404).json({
-        message: 'User not found',
+        message: translate('userNotFound', await getUserLanguage(User, req.telegramUserId)),
       });
     }
 
@@ -4347,7 +4347,7 @@ router.post('/buy-upgrade', requireTelegramMiniAppUser, async (req, res) => {
 
     if (lastUpgradeBuyAt > 0 && elapsedMs < 500) {
       return res.status(429).json({
-        message: 'Upgrade purchase cooldown',
+        message: translate('upgradeCooldown', user.appLanguage),
         retryAfterMs: 500 - elapsedMs,
       });
     }
@@ -4756,7 +4756,7 @@ router.post('/set-team', requireTelegramMiniAppUser, async (req, res) => {
 
     if (requestedTelegramId && requestedTelegramId !== telegramId) {
       return res.status(403).json({
-        message: 'Telegram ID does not match authenticated user',
+        message: translate('telegramMismatch', await getUserLanguage(User, req.telegramUserId)),
       });
     }
 
@@ -4769,7 +4769,7 @@ router.post('/set-team', requireTelegramMiniAppUser, async (req, res) => {
     const user = await User.findOne({ telegramId });
 
     if (!user) {
-      return res.status(404).json({ message: 'User not found' });
+      return res.status(404).json({ message: translate('userNotFound', await getUserLanguage(User, req.telegramUserId)) });
     }
 
     normalizeUserFields(user);
@@ -4810,7 +4810,7 @@ router.post('/create-team', requireTelegramMiniAppUser, async (req, res) => {
 
     if (requestedTelegramId && requestedTelegramId !== telegramId) {
       return res.status(403).json({
-        message: 'Telegram ID does not match authenticated user',
+        message: translate('telegramMismatch', await getUserLanguage(User, req.telegramUserId)),
       });
     }
 
@@ -4833,7 +4833,7 @@ router.post('/create-team', requireTelegramMiniAppUser, async (req, res) => {
     const user = await User.findOne({ telegramId });
 
     if (!user) {
-      return res.status(404).json({ message: 'User not found' });
+      return res.status(404).json({ message: translate('userNotFound', await getUserLanguage(User, req.telegramUserId)) });
     }
 
     normalizeUserFields(user);
@@ -4882,7 +4882,7 @@ router.post('/join-team', requireTelegramMiniAppUser, async (req, res) => {
 
     if (requestedTelegramId && requestedTelegramId !== telegramId) {
       return res.status(403).json({
-        message: 'Telegram ID does not match authenticated user',
+        message: translate('telegramMismatch', await getUserLanguage(User, req.telegramUserId)),
       });
     }
 
@@ -4897,7 +4897,7 @@ router.post('/join-team', requireTelegramMiniAppUser, async (req, res) => {
     const user = await User.findOne({ telegramId });
 
     if (!user) {
-      return res.status(404).json({ message: 'User not found' });
+      return res.status(404).json({ message: translate('userNotFound', await getUserLanguage(User, req.telegramUserId)) });
     }
 
     normalizeUserFields(user);
@@ -4940,14 +4940,14 @@ router.post('/leave-team', requireTelegramMiniAppUser, async (req, res) => {
 
     if (requestedTelegramId && requestedTelegramId !== telegramId) {
       return res.status(403).json({
-        message: 'Telegram ID does not match authenticated user',
+        message: translate('telegramMismatch', await getUserLanguage(User, req.telegramUserId)),
       });
     }
 
     const user = await User.findOne({ telegramId });
 
     if (!user) {
-      return res.status(404).json({ message: 'User not found' });
+      return res.status(404).json({ message: translate('userNotFound', await getUserLanguage(User, req.telegramUserId)) });
     }
 
     normalizeUserFields(user);
@@ -4986,14 +4986,14 @@ router.get('/team-dashboard/:telegramId', requireTelegramMiniAppUser, async (req
 
     if (requestedTelegramId && requestedTelegramId !== telegramId) {
       return res.status(403).json({
-        message: 'Telegram ID does not match authenticated user',
+        message: translate('telegramMismatch', await getUserLanguage(User, req.telegramUserId)),
       });
     }
 
     const user = await User.findOne({ telegramId });
 
     if (!user) {
-      return res.status(404).json({ message: 'User not found' });
+      return res.status(404).json({ message: translate('userNotFound', await getUserLanguage(User, req.telegramUserId)) });
     }
 
     normalizeUserFields(user);
@@ -5027,14 +5027,14 @@ router.post('/claim-team-mission', requireTelegramMiniAppUser, sensitiveRewardMu
 
     if (requestedTelegramId && requestedTelegramId !== telegramId) {
       return res.status(403).json({
-        message: 'Telegram ID does not match authenticated user',
+        message: translate('telegramMismatch', await getUserLanguage(User, req.telegramUserId)),
       });
     }
 
     const user = await User.findOne({ telegramId });
 
     if (!user) {
-      return res.status(404).json({ message: 'User not found' });
+      return res.status(404).json({ message: translate('userNotFound', await getUserLanguage(User, req.telegramUserId)) });
     }
 
     normalizeUserFields(user);
@@ -5104,14 +5104,14 @@ router.post('/claim-team-prize', requireTelegramMiniAppUser, sensitiveRewardMuta
 
     if (requestedTelegramId && requestedTelegramId !== telegramId) {
       return res.status(403).json({
-        message: 'Telegram ID does not match authenticated user',
+        message: translate('telegramMismatch', await getUserLanguage(User, req.telegramUserId)),
       });
     }
 
     const user = await User.findOne({ telegramId });
 
     if (!user) {
-      return res.status(404).json({ message: 'User not found' });
+      return res.status(404).json({ message: translate('userNotFound', await getUserLanguage(User, req.telegramUserId)) });
     }
 
     normalizeUserFields(user);
@@ -5195,7 +5195,7 @@ router.get('/friends-leaderboard/:telegramId', requireTelegramMiniAppUser, async
 
     if (requestedTelegramId && requestedTelegramId !== telegramId) {
       return res.status(403).json({
-        message: 'Telegram ID does not match authenticated user',
+        message: translate('telegramMismatch', await getUserLanguage(User, req.telegramUserId)),
       });
     }
 
@@ -5231,7 +5231,7 @@ router.post('/select-title', requireTelegramMiniAppUser, async (req, res) => {
 
     if (requestedTelegramId && requestedTelegramId !== telegramId) {
       return res.status(403).json({
-        message: 'Telegram ID does not match authenticated user',
+        message: translate('telegramMismatch', await getUserLanguage(User, req.telegramUserId)),
       });
     }
 
@@ -5253,7 +5253,7 @@ router.post('/select-title', requireTelegramMiniAppUser, async (req, res) => {
     const user = await User.findOne({ telegramId });
 
     if (!user) {
-      return res.status(404).json({ message: 'User not found' });
+      return res.status(404).json({ message: translate('userNotFound', await getUserLanguage(User, req.telegramUserId)) });
     }
 
     normalizeUserFields(user);
@@ -5286,7 +5286,7 @@ router.post('/request-withdrawal', requireTelegramMiniAppUser, withdrawalMutatio
 
     if (requestedTelegramId && requestedTelegramId !== telegramId) {
       return res.status(403).json({
-        message: 'Telegram ID does not match authenticated user',
+        message: translate('telegramMismatch', await getUserLanguage(User, req.telegramUserId)),
       });
     }
 
@@ -5302,7 +5302,7 @@ router.post('/request-withdrawal', requireTelegramMiniAppUser, withdrawalMutatio
     const user = await User.findOne({ telegramId });
 
     if (!user) {
-      return res.status(404).json({ message: 'User not found' });
+      return res.status(404).json({ message: translate('userNotFound', await getUserLanguage(User, req.telegramUserId)) });
     }
 
     normalizeUserFields(user);
@@ -5333,7 +5333,7 @@ router.post('/request-withdrawal', requireTelegramMiniAppUser, withdrawalMutatio
     }
 
     if (Number(user.balance || 0) < withdrawAmount) {
-      return res.status(400).json({ message: 'Nicht genug ONIX für Auszahlung' });
+      return res.status(400).json({ message: translate('withdrawInsufficient', user.appLanguage) });
     }
 
     user.balance = roundOnix(Number(user.balance || 0) - withdrawAmount);
@@ -5384,7 +5384,7 @@ router.post('/buy-perk', requireTelegramMiniAppUser, async (req, res) => {
 
     if (requestedTelegramId && requestedTelegramId !== telegramId) {
       return res.status(403).json({
-        message: 'Telegram ID does not match authenticated user',
+        message: translate('telegramMismatch', await getUserLanguage(User, req.telegramUserId)),
       });
     }
 
@@ -5392,7 +5392,7 @@ router.post('/buy-perk', requireTelegramMiniAppUser, async (req, res) => {
 
     if (!perk) {
       return res.status(400).json({
-        message: 'Unknown perk',
+        message: translate('unknownPerk', await getUserLanguage(User, req.telegramUserId)),
       });
     }
 
@@ -5400,7 +5400,7 @@ router.post('/buy-perk', requireTelegramMiniAppUser, async (req, res) => {
 
     if (!user) {
       return res.status(404).json({
-        message: 'User not found',
+        message: translate('userNotFound', await getUserLanguage(User, req.telegramUserId)),
       });
     }
 
@@ -5483,7 +5483,7 @@ router.post('/open-chest', requireTelegramMiniAppUser, sensitiveRewardMutationGu
 
     if (requestedTelegramId && requestedTelegramId !== telegramId) {
       return res.status(403).json({
-        message: 'Telegram ID does not match authenticated user',
+        message: translate('telegramMismatch', await getUserLanguage(User, req.telegramUserId)),
       });
     }
 
@@ -5491,7 +5491,7 @@ router.post('/open-chest', requireTelegramMiniAppUser, sensitiveRewardMutationGu
 
     if (!user) {
       return res.status(404).json({
-        message: 'User not found',
+        message: translate('userNotFound', await getUserLanguage(User, req.telegramUserId)),
       });
     }
 
@@ -5580,14 +5580,14 @@ router.get('/missions/:telegramId', requireTelegramMiniAppUser, async (req, res)
 
     if (requestedTelegramId && requestedTelegramId !== telegramId) {
       return res.status(403).json({
-        message: 'Telegram ID does not match authenticated user',
+        message: translate('telegramMismatch', await getUserLanguage(User, req.telegramUserId)),
       });
     }
 
     const user = await User.findOne({ telegramId });
 
     if (!user) {
-      return res.status(404).json({ message: 'User not found' });
+      return res.status(404).json({ message: translate('userNotFound', await getUserLanguage(User, req.telegramUserId)) });
     }
 
     normalizeUserFields(user);
@@ -5608,18 +5608,18 @@ router.post('/claim-mission', requireTelegramMiniAppUser, sensitiveRewardMutatio
 
     if (requestedTelegramId && requestedTelegramId !== telegramId) {
       return res.status(403).json({
-        message: 'Telegram ID does not match authenticated user',
+        message: translate('telegramMismatch', await getUserLanguage(User, req.telegramUserId)),
       });
     }
 
     if (!missionId || !['daily', 'weekly'].includes(missionType)) {
-      return res.status(400).json({ message: 'Mission data is required' });
+      return res.status(400).json({ message: translate('missionData', await getUserLanguage(User, req.telegramUserId)) });
     }
 
     const user = await User.findOne({ telegramId });
 
     if (!user) {
-      return res.status(404).json({ message: 'User not found' });
+      return res.status(404).json({ message: translate('userNotFound', await getUserLanguage(User, req.telegramUserId)) });
     }
 
     normalizeUserFields(user);
@@ -5697,13 +5697,13 @@ router.post('/claim-task', requireTelegramMiniAppUser, sensitiveRewardMutationGu
 
     if (requestedTelegramId && requestedTelegramId !== telegramId) {
       return res.status(403).json({
-        message: 'Telegram ID does not match authenticated user',
+        message: translate('telegramMismatch', await getUserLanguage(User, req.telegramUserId)),
       });
     }
 
     if (!task) {
       return res.status(400).json({
-        message: 'Task is required',
+        message: translate('taskRequired', await getUserLanguage(User, req.telegramUserId)),
       });
     }
 
@@ -5711,7 +5711,7 @@ router.post('/claim-task', requireTelegramMiniAppUser, sensitiveRewardMutationGu
 
     if (!user) {
       return res.status(404).json({
-        message: 'User not found',
+        message: translate('userNotFound', await getUserLanguage(User, req.telegramUserId)),
       });
     }
 
@@ -5788,7 +5788,7 @@ router.post('/claim-task', requireTelegramMiniAppUser, sensitiveRewardMutationGu
 
       if (!process.env.BOT_TOKEN || !process.env.CHANNEL_ID) {
         return res.status(500).json({
-          message: 'Telegram bot settings are missing',
+          message: translate('botSettingsMissing', user.appLanguage),
         });
       }
 
@@ -5882,7 +5882,7 @@ router.post('/claim-task', requireTelegramMiniAppUser, sensitiveRewardMutationGu
     }
 
     return res.status(400).json({
-      message: 'Unknown task',
+      message: translate('unknownTask', user.appLanguage),
     });
   } catch (error) {
     return res.status(500).json({
@@ -5899,7 +5899,7 @@ router.post('/claim-offline-income', requireTelegramMiniAppUser, async (req, res
 
     if (requestedTelegramId && requestedTelegramId !== telegramId) {
       return res.status(403).json({
-        message: 'Telegram ID does not match authenticated user',
+        message: translate('telegramMismatch', await getUserLanguage(User, req.telegramUserId)),
       });
     }
 
@@ -5907,7 +5907,7 @@ router.post('/claim-offline-income', requireTelegramMiniAppUser, async (req, res
 
     if (!user) {
       return res.status(404).json({
-        message: 'User not found',
+        message: translate('userNotFound', await getUserLanguage(User, req.telegramUserId)),
       });
     }
 
@@ -5976,7 +5976,7 @@ router.post('/mine-tick', requireTelegramMiniAppUser, async (req, res) => {
 
     if (requestedTelegramId && requestedTelegramId !== telegramId) {
       return res.status(403).json({
-        message: 'Telegram ID does not match authenticated user',
+        message: translate('telegramMismatch', await getUserLanguage(User, req.telegramUserId)),
       });
     }
 
@@ -5984,7 +5984,7 @@ router.post('/mine-tick', requireTelegramMiniAppUser, async (req, res) => {
 
     if (!user) {
       return res.status(404).json({
-        message: 'User not found',
+        message: translate('userNotFound', await getUserLanguage(User, req.telegramUserId)),
       });
     }
 
@@ -6083,14 +6083,14 @@ router.post('/refill-energy', requireTelegramMiniAppUser, async (req, res) => {
 
     if (requestedTelegramId && requestedTelegramId !== telegramId) {
       return res.status(403).json({
-        message: 'Telegram ID does not match authenticated user',
+        message: translate('telegramMismatch', await getUserLanguage(User, req.telegramUserId)),
       });
     }
 
     const user = await User.findOne({ telegramId });
 
     if (!user) {
-      return res.status(404).json({ message: 'User not found' });
+      return res.status(404).json({ message: translate('userNotFound', await getUserLanguage(User, req.telegramUserId)) });
     }
 
     normalizeUserFields(user);
@@ -6102,7 +6102,7 @@ router.post('/refill-energy', requireTelegramMiniAppUser, async (req, res) => {
     const currentEnergy = Number(user.energy || 0);
 
     if (currentEnergy >= maxEnergy) {
-      return res.status(400).json({ message: 'Energie ist bereits voll' });
+      return res.status(400).json({ message: translate('energyAlreadyFull', user.appLanguage) });
     }
 
     const cost = getEnergyRefillCost();
@@ -6146,7 +6146,7 @@ router.post('/activate-boost', requireTelegramMiniAppUser, async (req, res) => {
 
     if (requestedTelegramId && requestedTelegramId !== telegramId) {
       return res.status(403).json({
-        message: 'Telegram ID does not match authenticated user',
+        message: translate('telegramMismatch', await getUserLanguage(User, req.telegramUserId)),
       });
     }
 
@@ -6157,7 +6157,7 @@ router.post('/activate-boost', requireTelegramMiniAppUser, async (req, res) => {
 
     if (!durationConfig[type]) {
       return res.status(400).json({
-        message: 'Unknown boost type',
+        message: translate('unknownBoost', await getUserLanguage(User, req.telegramUserId)),
       });
     }
 
@@ -6165,7 +6165,7 @@ router.post('/activate-boost', requireTelegramMiniAppUser, async (req, res) => {
 
     if (!user) {
       return res.status(404).json({
-        message: 'User not found',
+        message: translate('userNotFound', await getUserLanguage(User, req.telegramUserId)),
       });
     }
 
@@ -6248,7 +6248,7 @@ router.post('/tap', requireTelegramMiniAppUser, async (req, res) => {
 
     if (requestedTelegramId && requestedTelegramId !== telegramId) {
       return res.status(403).json({
-        message: 'Telegram ID does not match authenticated user',
+        message: translate('telegramMismatch', await getUserLanguage(User, req.telegramUserId)),
       });
     }
 
@@ -6256,7 +6256,7 @@ router.post('/tap', requireTelegramMiniAppUser, async (req, res) => {
 
     if (!user) {
       return res.status(404).json({
-        message: 'User not found',
+        message: translate('userNotFound', await getUserLanguage(User, req.telegramUserId)),
       });
     }
 
@@ -6382,7 +6382,7 @@ router.get('/onix-drop/status/:telegramId', requireTelegramMiniAppUser, async (r
 
     if (requestedTelegramId && requestedTelegramId !== telegramId) {
       return res.status(403).json({
-        message: 'Telegram ID does not match authenticated user',
+        message: translate('telegramMismatch', await getUserLanguage(User, req.telegramUserId)),
       });
     }
 
@@ -6403,7 +6403,7 @@ router.post('/onix-drop/start', requireTelegramMiniAppUser, async (req, res) => 
 
     if (requestedTelegramId && requestedTelegramId !== telegramId) {
       return res.status(403).json({
-        message: 'Telegram ID does not match authenticated user',
+        message: translate('telegramMismatch', await getUserLanguage(User, req.telegramUserId)),
       });
     }
 
@@ -6442,7 +6442,7 @@ router.post('/onix-drop/finish', requireTelegramMiniAppUser, async (req, res) =>
 
     if (requestedTelegramId && requestedTelegramId !== telegramId) {
       return res.status(403).json({
-        message: 'Telegram ID does not match authenticated user',
+        message: translate('telegramMismatch', await getUserLanguage(User, req.telegramUserId)),
       });
     }
 
