@@ -5,7 +5,7 @@ import { Zap, Trophy, Home, Star, Wallet, UserCircle, Rocket, Menu, Bell } from 
 import WebApp from '@twa-dev/sdk';
 import axios from 'axios';
 import { getTeamMissionText, formatTeamResetTime, teamActionError } from './i18n/teams';
-import { createTranslator, type AppLanguage, type MessageKey } from './i18n';
+import { createTranslator, getLanguageLocale, type AppLanguage, type MessageKey } from './i18n';
 import { germanMessages } from './i18n/messages';
 import { getMissionText, getWeeklyAchievementDescription, getMissionClaimErrorKey } from './i18n/missions';
 import { getAchievementText, getBadgeLabel, getProfileTitle, getRankName } from './i18n/entities';
@@ -11941,8 +11941,8 @@ function toWholeOnix(value: number) {
   return numericValue < 0 ? Math.ceil(numericValue) : Math.floor(numericValue);
 }
 
-function formatOnix(value: number) {
-  return toWholeOnix(value).toLocaleString('ru-RU', {
+function formatOnixValue(value: number, language: AppLanguage = 'de') {
+  return toWholeOnix(value).toLocaleString(getLanguageLocale(language), {
     maximumFractionDigits: 0,
   });
 }
@@ -12162,10 +12162,10 @@ function getTransactionIcon(type: string) {
   return '🧾';
 }
 
-function formatTransactionTime(createdAt?: number) {
+function formatTransactionTime(createdAt?: number, language?: AppLanguage) {
   if (!createdAt) return '';
 
-  return new Date(createdAt).toLocaleString('ru-RU', {
+  return new Date(createdAt).toLocaleString(language ? getLanguageLocale(language) : 'ru-RU', {
     day: '2-digit',
     month: '2-digit',
     hour: '2-digit',
@@ -12348,6 +12348,7 @@ function App() {
     }
   });
   const t = createTranslator(appLanguage);
+  const formatOnix = (value: number) => formatOnixValue(value, appLanguage);
 
   const legacyLanguage = appLanguage;
   const uiText = (source: string, appLanguage: AppLanguage = legacyLanguage) => {
@@ -13968,7 +13969,7 @@ function App() {
   };
 
   const getReferralShareText = () =>
-    t('referrals.share', { amount: economyConfig.referredUserReward.toLocaleString(appLanguage === 'ru' ? 'ru-RU' : 'de-DE') });
+    t('referrals.share', { amount: economyConfig.referredUserReward.toLocaleString(getLanguageLocale(appLanguage)) });
 
   const showCopySuccess = () => {
     setCopySuccessVisible(true);
@@ -18593,7 +18594,7 @@ body:not(.onix-body-home-lock) {
 
     return {
       key,
-      label: date.toLocaleDateString(appLanguage === 'ru' ? 'ru-RU' : 'de-DE', { day: '2-digit', month: '2-digit' }),
+      label: date.toLocaleDateString(getLanguageLocale(appLanguage), { day: '2-digit', month: '2-digit' }),
       amount,
     };
   });
@@ -19200,7 +19201,7 @@ body:not(.onix-body-home-lock) {
           <div className="onix-ref-v5-energy">
             <div className="onix-ref-v5-energy-text">
               <Zap className="onix-ref-v5-energy-icon" />
-              <span><strong>{Math.floor(energy).toLocaleString('ru-RU')}</strong> / {maxEnergy.toLocaleString('ru-RU')}</span>
+              <span><strong>{Math.floor(energy).toLocaleString(getLanguageLocale(appLanguage))}</strong> / {maxEnergy.toLocaleString(getLanguageLocale(appLanguage))}</span>
               <span className="onix-ref-v5-energy-status">{energy >= maxEnergy ? t('energy.fullStatus') : t('energy.regeneration')}</span>
             </div>
 
@@ -19324,7 +19325,7 @@ body:not(.onix-body-home-lock) {
                         <p className="text-sm text-gray-400 mt-1">{t('drop.best')}: {Math.max(dropBest, dropScore)}</p>
                         <p className="text-xs text-purple-200 mt-2">{t('drop.attemptsLeft')}: {dropAttemptsLeft} / {dropAttemptsMax}</p>
                         {dropReward !== null && (
-                          <p className="text-emerald-300 text-lg font-black mt-2">+{dropReward.toLocaleString(appLanguage === 'ru' ? 'ru-RU' : 'de-DE')} ONIX</p>
+                          <p className="text-emerald-300 text-lg font-black mt-2">+{dropReward.toLocaleString(getLanguageLocale(appLanguage))} ONIX</p>
                         )}
                       </>
                     ) : (
@@ -19357,7 +19358,7 @@ body:not(.onix-body-home-lock) {
             </div>
 
             <p className="text-center text-[11px] text-gray-500 mt-4">
-              {t('drop.rewardInfo')} {dropDailyEarned.toLocaleString(({de:'de-DE',en:'en-US',ru:'ru-RU',uk:'uk-UA',tr:'tr-TR',es:'es-ES',fr:'fr-FR',it:'it-IT',pl:'pl-PL',pt:'pt-PT'} as Record<AppLanguage,string>)[appLanguage])} ONIX.
+              {t('drop.rewardInfo')} {dropDailyEarned.toLocaleString(getLanguageLocale(appLanguage))} ONIX.
             </p>
           </div>
         </div>
@@ -19599,7 +19600,7 @@ body:not(.onix-body-home-lock) {
             accent: 'blue',
             title: t('upgrade.maxEnergy.title'),
             level: energyLevel,
-            subtitle: t('upgrade.maxEnergy.description', { amount: maxEnergy.toLocaleString(appLanguage === 'ru' ? 'ru-RU' : 'de-DE') }),
+            subtitle: t('upgrade.maxEnergy.description', { amount: maxEnergy.toLocaleString(getLanguageLocale(appLanguage)) }),
             price: nextEnergyCost,
             priceType: 'onix',
             disabled: balance < nextEnergyCost,
@@ -19644,7 +19645,7 @@ body:not(.onix-body-home-lock) {
             accent: 'emerald',
             title: t('boost.energy.title'),
             level: null,
-            subtitle: t('boost.energy.description', { energy: Math.floor(energy).toLocaleString(appLanguage === 'ru' ? 'ru-RU' : 'de-DE'), maximum: maxEnergy.toLocaleString(appLanguage === 'ru' ? 'ru-RU' : 'de-DE') }),
+            subtitle: t('boost.energy.description', { energy: Math.floor(energy).toLocaleString(getLanguageLocale(appLanguage)), maximum: maxEnergy.toLocaleString(getLanguageLocale(appLanguage)) }),
             price: energyRefillCost,
             priceType: 'onix',
             disabled: balance < energyRefillCost || Math.floor(energy) >= Math.floor(maxEnergy),
@@ -19805,7 +19806,7 @@ body:not(.onix-body-home-lock) {
             ? boostsCards
             : otherCards;
 
-        const upgradesBalanceText = Math.floor(balance).toLocaleString('ru-RU');
+        const upgradesBalanceText = Math.floor(balance).toLocaleString(getLanguageLocale(appLanguage));
         const upgradesBalanceLength = upgradesBalanceText.length;
         const upgradesBalanceSize =
           upgradesBalanceLength <= 6
@@ -19887,7 +19888,7 @@ body:not(.onix-body-home-lock) {
                   >
                     <span className="onix-upgrade-ref-buy-icon">🪙</span>
                     <span>
-                      {(item as any).priceLabel ? (item as any).priceLabel : item.price.toLocaleString('ru-RU')}
+                      {(item as any).priceLabel ? (item as any).priceLabel : item.price.toLocaleString(getLanguageLocale(appLanguage))}
                     </span>
                   </button>
                 </div>
@@ -20468,11 +20469,11 @@ body:not(.onix-body-home-lock) {
             <div className="onix-profile-v75-stats-grid">
               <div className="onix-profile-v75-stat">
                 <span>{t('ui.onix_guthaben')}</span>
-                <strong>{Math.floor(balance).toLocaleString('ru-RU')}</strong>
+                <strong>{Math.floor(balance).toLocaleString(getLanguageLocale(appLanguage))}</strong>
               </div>
               <div className="onix-profile-v75-stat">
                 <span>{t('ui.insgesamt_verdient')}</span>
-                <strong>{Math.floor(totalEarned).toLocaleString('ru-RU')}</strong>
+                <strong>{Math.floor(totalEarned).toLocaleString(getLanguageLocale(appLanguage))}</strong>
               </div>
               <button type="button" className="onix-profile-v75-stat" onClick={() => { setProfilePanel('invited'); loadInvitedProfiles(); loadFriendLeaderboard(); }}>
                 <span>{t('ui.eingeladen')}</span>
@@ -21919,10 +21920,10 @@ body:not(.onix-body-home-lock) {
                         {formatOnix(balance)}
                       </p>
                       <p className="onix-wallet-balance-eur">
-                        ≈ {balanceInEur.toLocaleString('ru-RU', {
+                        ≈ {balanceInEur.toLocaleString(getLanguageLocale(appLanguage), {
                           minimumFractionDigits: 2,
                           maximumFractionDigits: 2,
-                        })} € · gesamt {formatOnix(totalEarned)}
+                        })} € · {t('share.total')} {formatOnix(totalEarned)}
                       </p>
                     </div>
                   </div>
@@ -21931,14 +21932,14 @@ body:not(.onix-body-home-lock) {
                     <div className="onix-wallet-mini-card p-4">
                       <p className="text-xs text-gray-400">{t('ui.kurs')}</p>
                       <p className="mt-1 text-sm font-bold text-white">
-                        1000 ONIX = {economyConfig.onixEurPer1000.toLocaleString('ru-RU')}€
+                        1000 ONIX = {economyConfig.onixEurPer1000.toLocaleString(getLanguageLocale(appLanguage))}€
                       </p>
                     </div>
 
                     <div className="onix-wallet-mini-card p-4">
                       <p className="text-xs text-gray-400">{t('ui.mindestauszahlung')}</p>
                       <p className="mt-1 text-sm font-bold text-yellow-400">
-                        {minWithdrawOnix.toLocaleString('ru-RU')} ONIX
+                        {minWithdrawOnix.toLocaleString(getLanguageLocale(appLanguage))} ONIX
                       </p>
                     </div>
                   </div>
@@ -22215,7 +22216,7 @@ body:not(.onix-body-home-lock) {
                                     })}
                                   </p>
                                   <p className="text-xs text-gray-500">
-                                    {formatTransactionTime(transaction.createdAt)}
+                                    {formatTransactionTime(transaction.createdAt, appLanguage)}
                                   </p>
                                 </div>
                               </div>

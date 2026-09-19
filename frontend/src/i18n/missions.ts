@@ -1,5 +1,5 @@
-import { createTranslator } from './index';
-import { germanMessages } from './messages';
+import { createTranslator, getLanguageLocale } from './index';
+import { germanMessages, messages } from './messages';
 import type { AppLanguage, MessageKey } from './messages';
 
 type Translator = ReturnType<typeof createTranslator>;
@@ -63,7 +63,7 @@ export function getWeeklyAchievementDescription(
 ): string | undefined {
   if (achievement.id !== 'weekly_100k') return undefined;
   return createTranslator(language)('achievements.weeklyEarn.description', {
-    amount: achievement.goal.toLocaleString(language === 'ru' ? 'ru-RU' : 'de-DE'),
+    amount: achievement.goal.toLocaleString(getLanguageLocale(language)),
   });
 }
 
@@ -75,5 +75,8 @@ const claimErrorKeys = [
 
 // Full-message compatibility only, scoped by the caller to personal missions.
 export function getMissionClaimErrorKey(message: string | undefined) {
-  return claimErrorKeys.find((key) => germanMessages[key] === message);
+  return claimErrorKeys.find((key) =>
+    germanMessages[key] === message
+    || Object.values(messages).some((catalog) => catalog[key] === message)
+  );
 }

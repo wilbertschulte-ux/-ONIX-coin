@@ -1,5 +1,5 @@
 import { createTranslator, type AppLanguage } from './index';
-import { germanMessages, type MessageKey } from './messages';
+import { germanMessages, messages, type MessageKey } from './messages';
 
 type HistoricalTransaction = { type?: string; title?: string };
 type EntityResolver = (title: string) => string | undefined;
@@ -82,7 +82,10 @@ export function getTransactionTitle(transaction: HistoricalTransaction, language
 
 const withdrawalErrorKeys = ['wallet.error', 'wallet.antibot', 'wallet.insufficient', 'wallet.existing', 'wallet.cooldown'] as const;
 export function getWithdrawalError(message?: string) {
-  const key = withdrawalErrorKeys.find((key) => germanMessages[key] === message);
+  const key = withdrawalErrorKeys.find((key) =>
+    germanMessages[key] === message
+    || Object.values(messages).some((catalog) => catalog[key] === message)
+  );
   if (key) return (t: ReturnType<typeof createTranslator>) => t(key);
   const minimum = /^Mindestauszahlung ([\d.,\s]+) ONIX$/.exec(message || '');
   if (minimum) return (t: ReturnType<typeof createTranslator>) => t('wallet.minimum', { amount: minimum[1] });

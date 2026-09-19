@@ -88,6 +88,9 @@ export function getBackendNotice(message: string) {
     const key = legacyEnglish[message as keyof typeof legacyEnglish];
     return (t: ReturnType<typeof createTranslator>) => t(key);
   }
-  const key = keys.find((key) => germanMessages[key] === message || messages.ru[key] === message);
+  const key = keys.find((key) =>
+    germanMessages[key] === message
+    || Object.values(messages).some((catalog) => catalog[key] === message)
+  );
   return key ? (t: ReturnType<typeof createTranslator>) => t(key) : undefined;
 }

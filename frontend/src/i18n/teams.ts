@@ -1,5 +1,5 @@
-import { createTranslator } from './index';
-import { germanMessages, type AppLanguage } from './messages';
+import { createTranslator, getLanguageLocale } from './index';
+import { germanMessages, messages, type AppLanguage } from './messages';
 
 const missionKinds = {
   team_earn_250k: 'earn',
@@ -12,7 +12,7 @@ export function getTeamMissionText(mission: { id: string; goal: number }, langua
   if (!Object.prototype.hasOwnProperty.call(missionKinds, mission.id)) return undefined;
   const kind = missionKinds[mission.id as keyof typeof missionKinds];
   const t = createTranslator(language);
-  const count = mission.goal.toLocaleString(language === 'ru' ? 'ru-RU' : 'de-DE');
+  const count = mission.goal.toLocaleString(getLanguageLocale(language));
   return { title: t(`teams.mission.${kind}.title`), description: t(`teams.mission.${kind}.description`, { count }) };
 }
 
@@ -38,6 +38,9 @@ const errorKeys = [
 
 // Exact full-message compatibility, used only by team actions. Unknown errors survive.
 export function teamActionError(message: string | undefined, fallback: typeof errorKeys[number]) {
-  const key = message ? errorKeys.find((key) => germanMessages[key] === message) : fallback;
+  const key = message ? errorKeys.find((key) =>
+    germanMessages[key] === message
+    || Object.values(messages).some((catalog) => catalog[key] === message)
+  ) : fallback;
   return key ? (t: ReturnType<typeof createTranslator>) => t(key) : message || ((t: ReturnType<typeof createTranslator>) => t(fallback));
 }

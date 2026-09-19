@@ -4,6 +4,23 @@ import type { AppLanguage, MessageKey } from './messages';
 export { DEFAULT_LANGUAGE } from './messages';
 export type { AppLanguage, MessageKey } from './messages';
 
+const languageLocales: Record<AppLanguage, string> = {
+  de: 'de-DE',
+  en: 'en-US',
+  ru: 'ru-RU',
+  uk: 'uk-UA',
+  tr: 'tr-TR',
+  es: 'es-ES',
+  fr: 'fr-FR',
+  it: 'it-IT',
+  pl: 'pl-PL',
+  pt: 'pt-PT',
+};
+
+export function getLanguageLocale(language: AppLanguage = DEFAULT_LANGUAGE) {
+  return languageLocales[language] ?? languageLocales[DEFAULT_LANGUAGE];
+}
+
 type PlaceholderNames<Text extends string> =
   Text extends `${string}{${infer Name}}${infer Rest}`
     ? Name | PlaceholderNames<Rest>
