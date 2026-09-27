@@ -22,6 +22,7 @@ const typeKeys = {
   'income_season_prize': 'history.type.income_season_prize',
   'income_welcome_bonus': 'history.type.income_welcome_bonus',
   'income_promo': 'history.type.income_promo',
+  'admin_balance_adjustment': 'history.adminBalanceAdjustment',
   'withdrawal_pending': 'history.type.withdrawal_pending',
   'withdrawal_approved': 'history.type.withdrawal_approved',
   'withdrawal_rejected': 'history.type.withdrawal_rejected',
@@ -35,9 +36,25 @@ export function getTransactionTitle(transaction: HistoricalTransaction, language
   const t = createTranslator(language);
   const title = transaction.title || '';
   const type = transaction.type || '';
+  const matchesType = (expected: string) => !type || type === expected;
+  const adminAdjustment = /^Админ корректировка: (.+)$/s.exec(title);
+  if (type === 'admin_balance_adjustment' || title === 'Админ корректировка баланса' || adminAdjustment) {
+    if (adminAdjustment) return t('history.adminBalanceAdjustmentWithComment', { comment: adminAdjustment[1] });
+    if (!title || title === 'Админ корректировка баланса') return t('history.adminBalanceAdjustment');
+    return title;
+  }
+  const approvedWithComment = /^Вывод одобрен: (.+)$/s.exec(title);
+  if (matchesType('withdrawal_approved') && approvedWithComment) {
+    return t('history.withdrawalApprovedWithComment', { comment: approvedWithComment[1] });
+  }
+  const rejectedWithComment = /^Вывод отклонён: (.+)$/s.exec(title);
+  if (matchesType('withdrawal_rejected') && rejectedWithComment) {
+    return t('history.withdrawalRejectedWithComment', { comment: rejectedWithComment[1] });
+  }
+  if (matchesType('withdrawal_approved') && title === 'Вывод одобрен') return t('history.type.withdrawal_approved');
+  if (matchesType('withdrawal_rejected') && title === 'Вывод отклонён, ONIX возвращены') return t('history.type.withdrawal_rejected');
   // Preserve original historical wording in German, including unknown formats.
   if (language === 'de' && title) return title;
-  const matchesType = (expected: string) => !type || type === expected;
   const genericKey = Object.prototype.hasOwnProperty.call(typeKeys, type) ? typeKeys[type as keyof typeof typeKeys] : 'history.transaction';
   const generic = () => t(genericKey);
   const exact = [

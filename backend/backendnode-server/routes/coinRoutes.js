@@ -4491,7 +4491,7 @@ function addSuspiciousReason(user, reason) {
 function ensureUserNotFrozen(user, res) {
   if (user.isFrozen) {
     return res.status(403).json({
-      message: user.frozenReason || translate('frozen', user.appLanguage),
+      message: translate('frozen', user.appLanguage),
     });
   }
 

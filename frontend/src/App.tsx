@@ -23116,7 +23116,7 @@ body:not(.onix-body-home-lock) {
             </h2>
 
             <p className="mt-2 text-sm text-gray-400">
-              Woche {seasonPrizePopup.week}
+              {t('season.prizeWeek', { week: seasonPrizePopup.week })}
             </p>
 
             <p className="mt-4 text-lg font-bold text-yellow-400">
