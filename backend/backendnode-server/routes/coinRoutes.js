@@ -1079,10 +1079,6 @@ function getMaxOfflineSeconds(user) {
   return MAX_OFFLINE_SECONDS + level * 60 * 60;
 }
 
-function hasPerk(user, perkId) {
-  return getPerkLevel(user, perkId) > 0;
-}
-
 function getEnergyCost(user) {
   const level = getPerkLevel(user, 'energy_saver');
   const baseCost = Number(user.tapPower || DEFAULT_TAP_POWER);
@@ -1818,10 +1814,6 @@ function getDailyStreakMultiplier(streakDay) {
   if (day >= 7) return 2;
 
   return 1 + (day - 1) * 0.1;
-}
-
-function getDailyRewardWithStreak(level, streakDay) {
-  return Math.round(getDailyReward(level) * getDailyStreakMultiplier(streakDay));
 }
 
 function getTapBoostCost(_tapPower) {
@@ -4736,122 +4728,6 @@ function getSeasonBadgeByPlace(place) {
 
   return '';
 }
-
-
-// ALL EXISTING TEAMS FOR PROFILE TEAM PAGE
-router.get('/teams', async (req, res) => {
-  try {
-    const q = normalizeTeamNameValue(req.query.q || '');
-    const normalizedQuery = q.toLowerCase();
-    const compactQuery = normalizedQuery.replace(/\s+/g, '');
-    const currentWeek = getWeekKey();
-    const searchRegex = q ? new RegExp(escapeRegExpValue(q), 'i') : null;
-
-    const matchesTeamQuery = (teamName) => {
-      if (!normalizedQuery) return true;
-      const name = normalizeTeamNameValue(teamName).toLowerCase();
-      const compactName = name.replace(/\s+/g, '');
-
-      return name.includes(normalizedQuery) || compactName.includes(compactQuery);
-    };
-
-    const userMatch = {
-      teamName: { $nin: ['', null] },
-    };
-
-    // Important: saved teams can exist without members after the creator leaves.
-    // Fetch them without a strict Mongo regex filter and do the final search in JS,
-    // so teams created earlier still appear in search/list even when nobody is inside.
-    const [savedTeams, weeklyLeaderboard, userTeams] = await Promise.all([
-      listSavedTeams(500),
-      User.aggregate([
-        {
-          $match: {
-            weeklyEarnedWeek: currentWeek,
-            weeklyEarned: { $gt: 0 },
-            teamName: { $nin: ['', null] },
-          },
-        },
-        {
-          $group: {
-            _id: '$teamName',
-            weeklyEarned: { $sum: '$weeklyEarned' },
-          },
-        },
-        { $sort: { weeklyEarned: -1 } },
-      ]),
-      User.aggregate([
-        { $match: userMatch },
-        {
-          $group: {
-            _id: '$teamName',
-            members: { $sum: 1 },
-            weeklyEarned: { $sum: '$weeklyEarned' },
-            totalEarned: { $sum: '$totalEarned' },
-            totalTaps: { $sum: '$totalTaps' },
-          },
-        },
-      ]),
-    ]);
-
-    const placeByTeam = new Map(
-      weeklyLeaderboard.map((team, index) => [String(team._id || '').toLowerCase(), index + 1])
-    );
-
-    const teamsByKey = new Map();
-
-    for (const team of savedTeams) {
-      const name = getSavedTeamDisplayName(team);
-      if (!name || !matchesTeamQuery(name)) continue;
-      const key = name.toLowerCase();
-      teamsByKey.set(key, {
-        teamName: name,
-        members: 0,
-        weeklyEarned: 0,
-        totalEarned: 0,
-        totalTaps: 0,
-      });
-    }
-
-    for (const team of userTeams) {
-      const name = normalizeTeamNameValue(team._id);
-      if (!name || !matchesTeamQuery(name)) continue;
-      const key = name.toLowerCase();
-      const existing = teamsByKey.get(key) || { teamName: name };
-      teamsByKey.set(key, {
-        ...existing,
-        teamName: existing.teamName || name,
-        members: Number(team.members || 0),
-        weeklyEarned: roundOnix(team.weeklyEarned || 0),
-        totalEarned: roundOnix(team.totalEarned || 0),
-        totalTaps: Number(team.totalTaps || 0),
-      });
-    }
-
-    const teams = [...teamsByKey.values()]
-      .sort((a, b) =>
-        Number(b.totalEarned || 0) - Number(a.totalEarned || 0) ||
-        Number(b.members || 0) - Number(a.members || 0) ||
-        String(a.teamName).localeCompare(String(b.teamName))
-      )
-      .slice(0, 100);
-
-    return res.json({
-      week: currentWeek,
-      teams: teams.map((team) => ({
-        teamName: team.teamName,
-        members: Number(team.members || 0),
-        weeklyEarned: roundOnix(team.weeklyEarned || 0),
-        totalEarned: roundOnix(team.totalEarned || 0),
-        totalTaps: Number(team.totalTaps || 0),
-        teamCode: getTeamCode(team.teamName),
-        place: placeByTeam.get(String(team.teamName || '').toLowerCase()) || null,
-      })),
-    });
-  } catch (error) {
-    return res.status(500).json({ error: error.message });
-  }
-});
 
 
 // SET TEAM NAME
