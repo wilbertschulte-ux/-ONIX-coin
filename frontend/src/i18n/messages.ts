@@ -1,7 +1,10 @@
+import { adminGermanMessages, adminRussianMessages } from './admin';
+
 // Existing UI wording is preserved for all supported languages.
 export const DEFAULT_LANGUAGE = 'de' as const;
 
 export const germanMessages = {
+  ...adminGermanMessages,
   "ui.range": "Ränge",
   "ui.letzter_preis": "Letzter Preis: ",
   "ui.zufalliger_preis_und_geheime_daily_mission": "Zufälliger Preis und geheime Daily-Mission",
@@ -605,6 +608,7 @@ export type AppLanguage = 'de' | 'en' | 'ru' | 'uk' | 'tr' | 'es' | 'fr' | 'it' 
 export const messages: Record<AppLanguage, Record<MessageKey, string>> = {
   de: germanMessages,
   en: {
+    ...adminGermanMessages,
     "ui.range": "Ranks",
     "ui.letzter_preis": "Last prize: ",
     "ui.zufalliger_preis_und_geheime_daily_mission": "Random prize and secret daily mission",
@@ -1202,6 +1206,7 @@ export const messages: Record<AppLanguage, Record<MessageKey, string>> = {
     "common.level": "Level {level}"
   },
   ru: {
+    ...adminRussianMessages,
     "ui.range": "Ранги",
     "ui.letzter_preis": "Последний приз: ",
     "ui.zufalliger_preis_und_geheime_daily_mission": "Случайный приз и секретная ежедневная миссия",
@@ -1799,6 +1804,7 @@ export const messages: Record<AppLanguage, Record<MessageKey, string>> = {
     "common.level": "Уровень {level}"
   },
   uk: {
+    ...adminGermanMessages,
     "ui.range": "Ранги",
     "ui.letzter_preis": "Останній приз: ",
     "ui.zufalliger_preis_und_geheime_daily_mission": "Випадковий приз і секретна щоденна місія",
@@ -2396,6 +2402,7 @@ export const messages: Record<AppLanguage, Record<MessageKey, string>> = {
     "common.level": "Рівень {level}"
   },
   tr: {
+    ...adminGermanMessages,
     "ui.range": "Rütbeler",
     "ui.letzter_preis": "Son ödül: ",
     "ui.zufalliger_preis_und_geheime_daily_mission": "Rastgele ödül ve gizli günlük görev",
@@ -2993,6 +3000,7 @@ export const messages: Record<AppLanguage, Record<MessageKey, string>> = {
     "common.level": "Seviye {level}"
   },
   es: {
+    ...adminGermanMessages,
     "ui.range": "Rangos",
     "ui.letzter_preis": "Último premio: ",
     "ui.zufalliger_preis_und_geheime_daily_mission": "Premio aleatorio y misión diaria secreta.",
@@ -3590,6 +3598,7 @@ export const messages: Record<AppLanguage, Record<MessageKey, string>> = {
     "common.level": "Nivel {level}"
   },
   fr: {
+    ...adminGermanMessages,
     "ui.range": "Rangs",
     "ui.letzter_preis": "Dernier prix : ",
     "ui.zufalliger_preis_und_geheime_daily_mission": "Prix aléatoire et mission quotidienne secrète",
@@ -4187,6 +4196,7 @@ export const messages: Record<AppLanguage, Record<MessageKey, string>> = {
     "common.level": "Niveau {level}"
   },
   it: {
+    ...adminGermanMessages,
     "ui.range": "Ranghi",
     "ui.letzter_preis": "Ultimo premio: ",
     "ui.zufalliger_preis_und_geheime_daily_mission": "Premio casuale e missione quotidiana segreta",
@@ -4784,6 +4794,7 @@ export const messages: Record<AppLanguage, Record<MessageKey, string>> = {
     "common.level": "Livello {level}"
   },
   pl: {
+    ...adminGermanMessages,
     "ui.range": "Rangi",
     "ui.letzter_preis": "Ostatnia nagroda: ",
     "ui.zufalliger_preis_und_geheime_daily_mission": "Losowa nagroda i tajna codzienna misja",
@@ -5381,6 +5392,7 @@ export const messages: Record<AppLanguage, Record<MessageKey, string>> = {
     "common.level": "Poziom {level}"
   },
   pt: {
+    ...adminGermanMessages,
     "ui.range": "Ranks",
     "ui.letzter_preis": "Último prêmio: ",
     "ui.zufalliger_preis_und_geheime_daily_mission": "Prêmio aleatório e missão diária secreta",

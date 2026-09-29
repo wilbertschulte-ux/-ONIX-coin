@@ -53,7 +53,16 @@ const keys = [
   "backend.unknownBoost",
   "backend.unsupportedLanguage",
   "backend.telegramRequired",
-  "backend.dataRequired"
+  "backend.dataRequired",
+  "admin.error.forbidden",
+  "admin.error.confirmationRequired",
+  "admin.error.alreadyAwarded",
+  "admin.error.noEligibleUsers",
+  "admin.error.invalidWithdrawalAction",
+  "admin.error.withdrawalNotFound",
+  "admin.error.withdrawalReviewed",
+  "admin.error.broadcastEmpty",
+  "admin.error.botTokenMissing"
 ] as const;
 
 const legacyEnglish = {
@@ -80,7 +89,14 @@ const legacyEnglish = {
   "Unknown boost type": "backend.unknownBoost",
   "Unsupported language": "backend.unsupportedLanguage",
   "Telegram ID is required": "backend.telegramRequired",
-  "Data is required": "backend.dataRequired"
+  "Data is required": "backend.dataRequired",
+  "Forbidden": "admin.error.forbidden",
+  "Confirmation is required": "admin.error.confirmationRequired",
+  "Weekly prizes already awarded": "admin.error.alreadyAwarded",
+  "No eligible users for this week": "admin.error.noEligibleUsers",
+  "Action must be approved or rejected": "admin.error.invalidWithdrawalAction",
+  "Withdrawal request not found": "admin.error.withdrawalNotFound",
+  "Withdrawal request already reviewed": "admin.error.withdrawalReviewed"
 } as const;
 
 export function getBackendNotice(message: string) {

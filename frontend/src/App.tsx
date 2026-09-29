@@ -14230,7 +14230,7 @@ function App() {
       setAdminPanelVisible(false);
       setAdminHubPage('prizes');
     } catch (error: any) {
-      showToast(error?.response?.data?.message || 'Vorschau konnte nicht geladen werden');
+      showToast(error?.response?.data?.message || ((t) => t('admin.notice.previewLoadError')), 'error');
     } finally {
       setIsAdminLoading(false);
     }
@@ -14579,7 +14579,7 @@ function App() {
       setAdminUserListTotalPages(Number(response.data.pagination?.totalPages || 1));
       setAdminSelectedUser(null);
     } catch (error: any) {
-      showToast(error?.response?.data?.message || 'Не удалось загрузить пользователей', 'error');
+      showToast(error?.response?.data?.message || ((t) => t('admin.notice.usersLoadError')), 'error');
     } finally {
       setIsAdminLoading(false);
     }
@@ -14600,7 +14600,7 @@ function App() {
       const summary = adminSearchResults.find((user) => user.telegramId === targetTelegramId);
       setAdminSelectedUser({ ...(summary || {}), ...(response.data.user || {}) } as AdminUserProfile);
     } catch (error: any) {
-      showToast(error?.response?.data?.message || 'Не удалось загрузить профиль', 'error');
+      showToast(error?.response?.data?.message || ((t) => t('admin.notice.profileLoadError')), 'error');
     } finally {
       setIsAdminLoading(false);
     }
@@ -14621,13 +14621,13 @@ function App() {
         reason: adminActionReason,
       });
 
-      showToast('✅ Баланс обновлён', 'success');
+      showToast((t) => t('admin.notice.balanceUpdated'), 'success');
       setAdminAdjustAmount('');
       setAdminActionReason('');
       await loadAdminUserProfile(response.data.user.telegramId);
       await searchAdminUsers();
     } catch (error: any) {
-      showToast(error?.response?.data?.message || 'Не удалось изменить баланс', 'error');
+      showToast(error?.response?.data?.message || ((t) => t('admin.notice.balanceError')), 'error');
     } finally {
       setIsAdminLoading(false);
     }
@@ -14648,15 +14648,12 @@ function App() {
         reason: adminActionReason || 'Решение администратора',
       });
 
-      showToast(
-        response.data.user.isFrozen ? '🚫 Пользователь заблокирован' : '✅ Пользователь разблокирован',
-        'success'
-      );
+      showToast((t) => t(response.data.user.isFrozen ? 'admin.notice.userBanned' : 'admin.notice.userUnbanned'), 'success');
       setAdminActionReason('');
       await loadAdminUserProfile(response.data.user.telegramId);
       await searchAdminUsers();
     } catch (error: any) {
-      showToast(error?.response?.data?.message || 'Не удалось изменить статус', 'error');
+      showToast(error?.response?.data?.message || ((t) => t('admin.notice.statusError')), 'error');
     } finally {
       setIsAdminLoading(false);
     }
@@ -14678,7 +14675,7 @@ function App() {
       setAdminSecurityLogsVisible(false);
       setAdminHubPage('logs');
     } catch (error: any) {
-      showToast(error?.response?.data?.message || 'Не удалось загрузить логи', 'error');
+      showToast(error?.response?.data?.message || ((t) => t('admin.notice.logsLoadError')), 'error');
     } finally {
       setIsAdminLoading(false);
     }
@@ -14704,9 +14701,9 @@ function App() {
       });
 
       setAdminFrontendErrors(response.data.logs || []);
-      showToast('✅ Frontend errors обновлены', 'success');
+      showToast((t) => t('admin.notice.frontendErrorsUpdated'), 'success');
     } catch (error: any) {
-      showToast(error?.response?.data?.message || 'Frontend-Fehler konnten nicht geladen werden', 'error');
+      showToast(error?.response?.data?.message || ((t) => t('admin.notice.frontendErrorsLoadError')), 'error');
     } finally {
       setIsAdminLoading(false);
     }
@@ -14744,7 +14741,7 @@ function App() {
       setAdmin2Visible(false);
       setAdminHubPage('admin2');
     } catch (error: any) {
-      showToast(error?.response?.data?.message || 'Admin 2.0 konnte nicht geöffnet werden', 'error');
+      showToast(error?.response?.data?.message || ((t) => t('admin.notice.admin2OpenError')), 'error');
     } finally {
       setIsAdminLoading(false);
     }
@@ -14761,7 +14758,7 @@ function App() {
         updates: adminEconomyConfigDraft,
       });
 
-      showToast('✅ Economy config обновлён', 'success');
+      showToast((t) => t('admin.notice.configUpdated'), 'success');
       setAdminEconomyConfigDraft((current) => ({
         ...current,
         ONIX_EUR_PER_1000: String(response.data.config.onixEurPer1000 || current.ONIX_EUR_PER_1000),
@@ -14772,7 +14769,7 @@ function App() {
         CHEST_COST: String(response.data.config.chestCost || current.CHEST_COST),
       }));
     } catch (error: any) {
-      showToast(error?.response?.data?.message || 'Konfiguration konnte nicht gespeichert werden', 'error');
+      showToast(error?.response?.data?.message || ((t) => t('admin.notice.configSaveError')), 'error');
     } finally {
       setIsAdminLoading(false);
     }
@@ -14792,13 +14789,13 @@ function App() {
 
       setAdminBroadcastResult(response.data);
       showToast(
-        dryRun
-          ? `👀 Получателей: ${response.data.recipients}`
-          : `✅ Отправлено: ${response.data.sent}, ошибок: ${response.data.failed}`,
+        (t) => dryRun
+          ? t('admin.notice.broadcastPreview', { recipients: response.data.recipients })
+          : t('admin.notice.broadcastSent', { sent: response.data.sent, failed: response.data.failed }),
         'success'
       );
     } catch (error: any) {
-      showToast(error?.response?.data?.message || 'Broadcast konnte nicht gesendet werden', 'error');
+      showToast(error?.response?.data?.message || ((t) => t('admin.notice.broadcastError')), 'error');
     } finally {
       setIsAdminLoading(false);
     }
@@ -18052,7 +18049,7 @@ body:not(.onix-body-home-lock) {
       setAdminEconomyVisible(false);
       setAdminHubPage('economy');
     } catch (error: any) {
-      showToast(error?.response?.data?.message || 'Не удалось загрузить экономику', 'error');
+      showToast(error?.response?.data?.message || ((t) => t('admin.notice.economyLoadError')), 'error');
     } finally {
       setIsAdminLoading(false);
     }
@@ -18074,7 +18071,7 @@ body:not(.onix-body-home-lock) {
       setSuspiciousUsersVisible(false);
       setAdminHubPage('suspicious');
     } catch (error: any) {
-      showToast(error?.response?.data?.message || 'Не удалось загрузить список', 'error');
+      showToast(error?.response?.data?.message || ((t) => t('admin.notice.suspiciousLoadError')), 'error');
     } finally {
       setIsAdminLoading(false);
     }
@@ -18093,10 +18090,10 @@ body:not(.onix-body-home-lock) {
         reason: target.isFrozen ? '' : 'Заморожен из админ-панели',
       });
 
-      showToast(target.isFrozen ? '✅ Аккаунт разморожен' : '🧊 Аккаунт заморожен', 'success');
+      showToast((t) => t(target.isFrozen ? 'admin.notice.accountUnfrozen' : 'admin.notice.accountFrozen'), 'success');
       await loadSuspiciousUsers();
     } catch (error: any) {
-      showToast(error?.response?.data?.message || 'Не удалось изменить статус', 'error');
+      showToast(error?.response?.data?.message || ((t) => t('admin.notice.statusError')), 'error');
     } finally {
       setIsAdminLoading(false);
     }
@@ -18119,7 +18116,7 @@ body:not(.onix-body-home-lock) {
       setAdminWithdrawalsVisible(false);
       setAdminHubPage('withdrawals');
     } catch (error: any) {
-      showToast(error?.response?.data?.message || 'Не удалось загрузить заявки', 'error');
+      showToast(error?.response?.data?.message || ((t) => t('admin.notice.withdrawalsLoadError')), 'error');
     } finally {
       setIsAdminLoading(false);
     }
@@ -18142,15 +18139,12 @@ body:not(.onix-body-home-lock) {
         adminComment: adminWithdrawalComment,
       });
 
-      showToast(
-        action === 'approved' ? '✅ Вывод одобрен' : '↩️ Вывод отклонён',
-        'success'
-      );
+      showToast((t) => t(action === 'approved' ? 'admin.withdrawals.approved' : 'admin.withdrawals.rejected'), 'success');
 
       setAdminWithdrawalComment('');
       await loadAdminWithdrawals();
     } catch (error: any) {
-      showToast(error?.response?.data?.message || 'Не удалось обработать заявку', 'error');
+      showToast(error?.response?.data?.message || ((t) => t('admin.notice.withdrawalReviewError')), 'error');
     } finally {
       setIsAdminLoading(false);
     }
@@ -20499,8 +20493,8 @@ body:not(.onix-body-home-lock) {
                 <span>📊</span><strong>{t('ui.statistik')}</strong><em>{formatOnix(totalTaps)} {t('category.taps')}</em><b>›</b>
               </button>
               {isAdmin() && (
-                <button type="button" className={profilePanel === 'admin' ? 'is-active' : ''} onClick={() => setProfilePanel(profilePanel === 'admin' ? 'overview' : 'admin')}>
-                  <span>🛠️</span><strong>Админ-панель</strong><em>ONIX admin</em><b>›</b>
+                <button type="button" data-onix-i18n="notice" className={profilePanel === 'admin' ? 'is-active' : ''} onClick={() => setProfilePanel(profilePanel === 'admin' ? 'overview' : 'admin')}>
+                  <span>🛠️</span><strong>{t('admin.entry.title')}</strong><em>{t('admin.entry.subtitle')}</em><b>›</b>
                 </button>
               )}
             </div>
@@ -20582,12 +20576,13 @@ body:not(.onix-body-home-lock) {
             )}
 
             {profilePanel === 'admin' && isAdmin() && (
-              <div className={`onix-profile-v75-panel onix-admin-hub-panel onix-admin-hub-page${adminHubPage === 'search' && adminSelectedUser ? ' is-player-profile' : ''}`}>
+              <div data-onix-i18n="notice" className={`onix-profile-v75-panel onix-admin-hub-panel onix-admin-hub-page${adminHubPage === 'search' && adminSelectedUser ? ' is-player-profile' : ''}`}>
                 <div className="onix-admin-sticky-top">
                   <div className="onix-profile-v75-panel-title onix-profile-v75-detail-title">
                     <button
                       type="button"
                       className="onix-profile-v75-back"
+                      aria-label={t('admin.nav.backAria')}
                       onClick={() => {
                         if (adminHubPage !== 'overview') {
                           setAdminHubPage('overview');
@@ -20598,31 +20593,31 @@ body:not(.onix-body-home-lock) {
                     >‹</button>
                     <strong>
                       {adminHubPage === 'prizes'
-                        ? '🏆 Призы недели'
+                        ? t('admin.nav.prizes')
                         : adminHubPage === 'withdrawals'
-                        ? '💸 Заявки на вывод'
+                        ? t('admin.nav.withdrawals')
                         : adminHubPage === 'economy'
-                        ? '📊 Экономика'
+                        ? t('admin.nav.economy')
                         : adminHubPage === 'search'
-                        ? '🔎 Поиск игрока'
+                        ? t('admin.nav.search')
                         : adminHubPage === 'suspicious'
-                        ? '🚨 Suspicious'
+                        ? t('admin.nav.suspicious')
                         : adminHubPage === 'logs'
-                        ? '🧾 Security logs'
+                        ? t('admin.nav.logs')
                         : adminHubPage === 'launch'
-                        ? '🚀 Launch checklist'
+                        ? t('admin.nav.launch')
                         : adminHubPage === 'admin2'
-                        ? '🧰 Админка 2.0'
-                        : '🛠️ Админ-панель'}
+                        ? t('admin.nav.admin2')
+                        : t('admin.nav.overview')}
                     </strong>
-                    <span>{adminHubPage === 'overview' ? 'только ты' : 'назад'}</span>
+                    <span>{t(adminHubPage === 'overview' ? 'admin.nav.onlyYou' : 'admin.nav.back')}</span>
                   </div>
 
                   <div className="onix-admin-hub-hero">
                     <div>
                       <p>ONIX CONTROL</p>
-                      <h3>{adminHubPage === 'overview' ? 'Панель управления ботом' : 'Раздел управления'}</h3>
-                      <span>Доступ открыт только для Telegram ID администратора.</span>
+                      <h3>{t(adminHubPage === 'overview' ? 'admin.hero.overview' : 'admin.hero.section')}</h3>
+                      <span>{t('admin.hero.access')}</span>
                     </div>
                     <b>ADMIN</b>
                   </div>
@@ -20631,22 +20626,22 @@ body:not(.onix-body-home-lock) {
                 {adminHubPage === 'overview' && (
                   <div className="onix-admin-hub-grid onix-admin-hub-scroll">
                     <button type="button" onClick={loadAdminPrizePreview} disabled={isAdminLoading}>
-                      <span>🏆</span><strong>Призы недели</strong><em>preview / выдача топ-3</em>
+                      <span>🏆</span><strong>{t('admin.nav.prizes')}</strong><em>{t('admin.overview.prizesHint')}</em>
                     </button>
                     <button type="button" onClick={loadAdminWithdrawals} disabled={isAdminLoading}>
-                      <span>💸</span><strong>Заявки на вывод</strong><em>approve / reject</em>
+                      <span>💸</span><strong>{t('admin.nav.withdrawals')}</strong><em>{t('admin.overview.withdrawalsHint')}</em>
                     </button>
                     <button type="button" onClick={loadAdminEconomyDashboard} disabled={isAdminLoading}>
-                      <span>📊</span><strong>Экономика</strong><em>балансы, выводы, конфиг</em>
+                      <span>📊</span><strong>{t('admin.nav.economy')}</strong><em>{t('admin.overview.economyHint')}</em>
                     </button>
                     <button type="button" onClick={() => { setAdminSearchVisible(false); setAdminHubPage('search'); setAdminSearchQuery(''); void searchAdminUsers(1, ''); }} disabled={isAdminLoading}>
-                      <span>👥</span><strong>Все игроки</strong><em>список, поиск, профиль</em>
+                      <span>👥</span><strong>{t('admin.players.all')}</strong><em>{t('admin.overview.playersHint')}</em>
                     </button>
                     <button type="button" onClick={loadSuspiciousUsers} disabled={isAdminLoading}>
-                      <span>🚨</span><strong>Suspicious</strong><em>подозрительные аккаунты</em>
+                      <span>🚨</span><strong>{t('admin.nav.suspicious')}</strong><em>{t('admin.overview.suspiciousHint')}</em>
                     </button>
                     <button type="button" onClick={loadAdminSecurityLogs} disabled={isAdminLoading}>
-                      <span>🧾</span><strong>Security logs</strong><em>журнал событий</em>
+                      <span>🧾</span><strong>{t('admin.nav.logs')}</strong><em>{t('admin.overview.logsHint')}</em>
                     </button>
                     <button
                       type="button"
@@ -20662,10 +20657,10 @@ body:not(.onix-body-home-lock) {
                       }}
                       disabled={isAdminLoading}
                     >
-                      <span>🚀</span><strong>Launch checklist</strong><em>проверка backend</em>
+                      <span>🚀</span><strong>{t('admin.nav.launch')}</strong><em>{t('admin.overview.launchHint')}</em>
                     </button>
                     <button type="button" onClick={openAdmin2Panel} disabled={isAdminLoading}>
-                      <span>🧰</span><strong>Админка 2.0</strong><em>broadcast / config / export</em>
+                      <span>🧰</span><strong>{t('admin.nav.admin2')}</strong><em>{t('admin.overview.admin2Hint')}</em>
                     </button>
                   </div>
                 )}
@@ -20674,133 +20669,133 @@ body:not(.onix-body-home-lock) {
                   <div className={`onix-admin-detail-scroll${adminHubPage === 'search' && adminSelectedUser ? ' is-player-profile' : ''}`}>
                     {adminHubPage === 'prizes' && (
                       <div className="onix-admin-section-card">
-                        <div className="onix-admin-section-head"><strong>🏆 Призы недели</strong><span>{adminPrizePreview?.week || '—'}</span></div>
-                        <p className="onix-admin-muted">{adminPrizePreview?.alreadyAwarded ? 'Призы за эту неделю уже выданы' : 'Preview топ-3 перед выдачей.'}</p>
+                        <div className="onix-admin-section-head"><strong>{t('admin.nav.prizes')}</strong><span>{adminPrizePreview?.week || '—'}</span></div>
+                        <p className="onix-admin-muted">{t(adminPrizePreview?.alreadyAwarded ? 'admin.prizes.alreadyAwardedDescription' : 'admin.prizes.previewDescription')}</p>
                         <div className="onix-admin-list">
                           {(adminPrizePreview?.preview || []).map((item) => (
                             <div key={`${item.place}-${item.telegramId}`} className="onix-admin-row">
-                              <div><strong>#{item.place} {item.username}</strong><em>week: {formatOnix(item.weeklyEarned)} ONIX</em></div>
+                              <div><strong>#{item.place} {item.username}</strong><em>{t('admin.prizes.weeklyEarned', { amount: formatOnix(item.weeklyEarned) })}</em></div>
                               <b>+{formatOnix(item.prize)}</b>
                             </div>
                           ))}
-                          {adminPrizePreview && adminPrizePreview.preview.length === 0 && <p className="onix-admin-empty">Нет игроков для выдачи призов.</p>}
-                          {!adminPrizePreview && <p className="onix-admin-empty">Нажми обновить, чтобы загрузить preview.</p>}
+                          {adminPrizePreview && adminPrizePreview.preview.length === 0 && <p className="onix-admin-empty">{t('admin.prizes.noPlayers')}</p>}
+                          {!adminPrizePreview && <p className="onix-admin-empty">{t('admin.prizes.loadPrompt')}</p>}
                         </div>
-                        <button type="button" className="onix-admin-primary" onClick={awardWeeklyPrizes} disabled={isAdminLoading || !adminPrizePreview || adminPrizePreview.alreadyAwarded || adminPrizePreview.preview.length === 0}>{adminPrizePreview?.alreadyAwarded ? 'Уже выдано' : 'Выдать призы топ-3'}</button>
-                        <button type="button" className="onix-admin-secondary" onClick={loadAdminPrizePreview} disabled={isAdminLoading}>Обновить preview</button>
+                        <button type="button" className="onix-admin-primary" onClick={awardWeeklyPrizes} disabled={isAdminLoading || !adminPrizePreview || adminPrizePreview.alreadyAwarded || adminPrizePreview.preview.length === 0}>{t(adminPrizePreview?.alreadyAwarded ? 'admin.prizes.alreadyAwarded' : 'admin.prizes.awardTop')}</button>
+                        <button type="button" className="onix-admin-secondary" onClick={loadAdminPrizePreview} disabled={isAdminLoading}>{t('admin.prizes.refresh')}</button>
                       </div>
                     )}
 
                     {adminHubPage === 'withdrawals' && (
                       <div className="onix-admin-section-card">
-                        <div className="onix-admin-section-head"><strong>💸 Заявки на вывод</strong><span>{adminWithdrawals.length}</span></div>
-                        <textarea value={adminWithdrawalComment} onChange={(event) => setAdminWithdrawalComment(event.target.value)} placeholder="Комментарий админа" className="onix-admin-input onix-admin-textarea" />
+                        <div className="onix-admin-section-head"><strong>{t('admin.nav.withdrawals')}</strong><span>{adminWithdrawals.length}</span></div>
+                        <textarea value={adminWithdrawalComment} onChange={(event) => setAdminWithdrawalComment(event.target.value)} placeholder={t('admin.withdrawals.commentPlaceholder')} className="onix-admin-input onix-admin-textarea" />
                         <div className="onix-admin-list">
                           {adminWithdrawals.map((request) => (
                             <div key={`${request.userTelegramId}-${request.requestIndex}`} className="onix-admin-row is-column">
                               <div className="onix-admin-row-top"><strong>{request.username}</strong><b>{formatOnix(request.amount)} ONIX</b></div>
                               <em>ID: {request.userTelegramId} · ≈ {formatOnix(request.eurAmount)} €</em>
-                              <div className="onix-admin-actions"><button type="button" onClick={() => reviewWithdrawal(request, 'rejected')} disabled={isAdminLoading}>Отклонить</button><button type="button" onClick={() => reviewWithdrawal(request, 'approved')} disabled={isAdminLoading}>Одобрить</button></div>
+                              <div className="onix-admin-actions"><button type="button" onClick={() => reviewWithdrawal(request, 'rejected')} disabled={isAdminLoading}>{t('admin.withdrawals.reject')}</button><button type="button" onClick={() => reviewWithdrawal(request, 'approved')} disabled={isAdminLoading}>{t('admin.withdrawals.approve')}</button></div>
                             </div>
                           ))}
-                          {adminWithdrawals.length === 0 && <p className="onix-admin-empty">Pending-заявок нет.</p>}
+                          {adminWithdrawals.length === 0 && <p className="onix-admin-empty">{t('admin.withdrawals.empty')}</p>}
                         </div>
-                        <button type="button" className="onix-admin-secondary" onClick={loadAdminWithdrawals} disabled={isAdminLoading}>Обновить список</button>
+                        <button type="button" className="onix-admin-secondary" onClick={loadAdminWithdrawals} disabled={isAdminLoading}>{t('admin.withdrawals.refresh')}</button>
                       </div>
                     )}
 
                     {adminHubPage === 'economy' && (
                       <div className="onix-admin-section-card">
-                        <div className="onix-admin-section-head"><strong>📊 Экономика</strong><span>dashboard</span></div>
+                        <div className="onix-admin-section-head"><strong>{t('admin.nav.economy')}</strong><span>{t('admin.economy.dashboard')}</span></div>
                         {adminEconomyDashboard ? (
                           <div className="onix-admin-metrics-grid">
-                            <div><span>Игроков</span><strong>{formatOnix(adminEconomyDashboard.totals.users)}</strong></div>
-                            <div><span>Баланс</span><strong>{formatOnix(adminEconomyDashboard.totals.totalBalance)}</strong></div>
-                            <div><span>Выводы</span><strong>{formatOnix(adminEconomyDashboard.totals.pendingWithdrawals)}</strong></div>
-                            <div><span>Suspicious</span><strong>{formatOnix(adminEconomyDashboard.totals.suspiciousUsers)}</strong></div>
+                            <div><span>{t('admin.economy.players')}</span><strong>{formatOnix(adminEconomyDashboard.totals.users)}</strong></div>
+                            <div><span>{t('admin.economy.balance')}</span><strong>{formatOnix(adminEconomyDashboard.totals.totalBalance)}</strong></div>
+                            <div><span>{t('admin.economy.withdrawals')}</span><strong>{formatOnix(adminEconomyDashboard.totals.pendingWithdrawals)}</strong></div>
+                            <div><span>{t('admin.economy.suspicious')}</span><strong>{formatOnix(adminEconomyDashboard.totals.suspiciousUsers)}</strong></div>
                           </div>
-                        ) : <p className="onix-admin-empty">Нажми обновить, чтобы загрузить dashboard.</p>}
-                        <button type="button" className="onix-admin-secondary" onClick={loadAdminEconomyDashboard} disabled={isAdminLoading}>Обновить экономику</button>
+                        ) : <p className="onix-admin-empty">{t('admin.economy.loadPrompt')}</p>}
+                        <button type="button" className="onix-admin-secondary" onClick={loadAdminEconomyDashboard} disabled={isAdminLoading}>{t('admin.economy.refresh')}</button>
                       </div>
                     )}
 
                     {adminHubPage === 'search' && (
                       <div className="onix-admin-section-card">
-                        <div className="onix-admin-section-head"><strong>👥 Все игроки</strong><span>{adminUserListTotal}</span></div>
-                        <div className="onix-admin-search-line"><input value={adminSearchQuery} onChange={(event) => setAdminSearchQuery(event.target.value)} onKeyDown={(event) => { if (event.key === 'Enter') void searchAdminUsers(1); }} placeholder="ID, имя или @username" className="onix-admin-input" /><button type="button" onClick={() => searchAdminUsers(1)} disabled={isAdminLoading}>Найти</button></div>
-                        <button type="button" className="onix-admin-secondary" onClick={() => { setAdminSearchQuery(''); void searchAdminUsers(1, ''); }} disabled={isAdminLoading}>Показать всех</button>
+                        <div className="onix-admin-section-head"><strong>{t('admin.players.all')}</strong><span>{adminUserListTotal}</span></div>
+                        <div className="onix-admin-search-line"><input value={adminSearchQuery} onChange={(event) => setAdminSearchQuery(event.target.value)} onKeyDown={(event) => { if (event.key === 'Enter') void searchAdminUsers(1); }} placeholder={t('admin.players.searchPlaceholder')} className="onix-admin-input" /><button type="button" onClick={() => searchAdminUsers(1)} disabled={isAdminLoading}>{t('admin.players.find')}</button></div>
+                        <button type="button" className="onix-admin-secondary" onClick={() => { setAdminSearchQuery(''); void searchAdminUsers(1, ''); }} disabled={isAdminLoading}>{t('admin.players.showAll')}</button>
                         <div className="onix-admin-list">
                           {adminSearchResults.map((user) => (
                             <button key={user.telegramId} type="button" className="onix-admin-row as-button" onClick={() => loadAdminUserProfile(user.telegramId)}>
                               <div style={{ minWidth: 0 }}>
-                                <strong>{user.displayName || user.username || 'Spieler'}</strong>
+                                <strong>{user.displayName || user.username || t('admin.players.fallbackName')}</strong>
                                 <em>{user.telegramUsername ? `@${String(user.telegramUsername).replace(/^@+/, '')} · ` : ''}ID: {user.telegramId}</em>
-                                <em>Level {user.level || 1}{user.createdAt ? ` · ${new Date(user.createdAt).toLocaleDateString('de-DE')}` : ''}</em>
+                                <em>{t('admin.players.level', { level: user.level || 1 })}{user.createdAt ? ` · ${new Date(user.createdAt).toLocaleDateString(getLanguageLocale(appLanguage === 'ru' ? 'ru' : 'de'))}` : ''}</em>
                               </div>
                               <b>{formatOnix(user.balance)}</b>
                             </button>
                           ))}
-                          {adminSearchResults.length === 0 && <p className="onix-admin-empty">Игроки не найдены.</p>}
+                          {adminSearchResults.length === 0 && <p className="onix-admin-empty">{t('admin.players.empty')}</p>}
                         </div>
                         {adminUserListTotalPages > 1 && (
                           <div className="onix-admin-actions">
-                            <button type="button" onClick={() => searchAdminUsers(adminUserListPage - 1)} disabled={isAdminLoading || adminUserListPage <= 1}>← Назад</button>
-                            <button type="button" onClick={() => searchAdminUsers(adminUserListPage + 1)} disabled={isAdminLoading || adminUserListPage >= adminUserListTotalPages}>Далее →</button>
+                            <button type="button" onClick={() => searchAdminUsers(adminUserListPage - 1)} disabled={isAdminLoading || adminUserListPage <= 1}>{t('admin.players.previous')}</button>
+                            <button type="button" onClick={() => searchAdminUsers(adminUserListPage + 1)} disabled={isAdminLoading || adminUserListPage >= adminUserListTotalPages}>{t('admin.players.next')}</button>
                           </div>
                         )}
-                        {adminUserListTotalPages > 1 && <p className="onix-admin-muted" style={{ textAlign: 'center', marginTop: 8 }}>Страница {adminUserListPage} из {adminUserListTotalPages}</p>}
+                        {adminUserListTotalPages > 1 && <p className="onix-admin-muted" style={{ textAlign: 'center', marginTop: 8 }}>{t('admin.players.page', { page: adminUserListPage, total: adminUserListTotalPages })}</p>}
                         {adminSelectedUser && (
                           <div className="onix-admin-user-card onix-admin-player-profile">
-                            <button type="button" className="onix-admin-profile-back" onClick={() => setAdminSelectedUser(null)}>← К списку игроков</button>
+                            <button type="button" className="onix-admin-profile-back" onClick={() => setAdminSelectedUser(null)}>{t('admin.players.backToList')}</button>
 
                             <div className="onix-admin-profile-head">
                               {adminSelectedUser.photoUrl && <img src={adminSelectedUser.photoUrl} alt="" />}
                               <div>
-                                <strong>{adminSelectedUser.displayName || adminSelectedUser.username || 'Spieler'}</strong>
-                                <span>{adminSelectedUser.telegramUsername ? `@${String(adminSelectedUser.telegramUsername).replace(/^@+/, '')}` : 'Telegram username не указан'}</span>
+                                <strong>{adminSelectedUser.displayName || adminSelectedUser.username || t('admin.players.fallbackName')}</strong>
+                                <span>{adminSelectedUser.telegramUsername ? `@${String(adminSelectedUser.telegramUsername).replace(/^@+/, '')}` : t('admin.players.noUsername')}</span>
                                 <em>ID: {adminSelectedUser.telegramId}</em>
                               </div>
-                              <b className={adminSelectedUser.isFrozen ? 'is-banned' : 'is-active'}>{adminSelectedUser.isFrozen ? 'Заблокирован' : 'Активен'}</b>
+                              <b className={adminSelectedUser.isFrozen ? 'is-banned' : 'is-active'}>{t(adminSelectedUser.isFrozen ? 'admin.players.blocked' : 'admin.players.active')}</b>
                             </div>
 
-                            {adminSelectedUser.telegramProfileUrl && <a href={adminSelectedUser.telegramProfileUrl} target="_blank" rel="noreferrer" className="onix-admin-secondary onix-admin-profile-link">Открыть Telegram-профиль ↗</a>}
+                            {adminSelectedUser.telegramProfileUrl && <a href={adminSelectedUser.telegramProfileUrl} target="_blank" rel="noreferrer" className="onix-admin-secondary onix-admin-profile-link">{t('admin.players.openTelegram')}</a>}
 
                             <div className="onix-admin-profile-section">
-                              <div className="onix-admin-profile-section-title"><strong>💰 Финансы</strong><span>{adminSelectedUser.languageCode || '—'}</span></div>
+                              <div className="onix-admin-profile-section-title"><strong>{t('admin.players.finance')}</strong><span>{adminSelectedUser.languageCode || '—'}</span></div>
                               <div className="onix-admin-metrics-grid onix-admin-profile-metrics">
-                                <div><span>Баланс</span><strong>{formatOnix(adminSelectedUser.balance)}</strong></div>
-                                <div><span>Всего заработано</span><strong>{formatOnix(adminSelectedUser.totalEarned)}</strong></div>
-                                <div><span>Заявок на вывод</span><strong>{formatOnix(adminSelectedUser.withdrawalRequestsCount ?? 0)}</strong></div>
-                                <div><span>Промокодов</span><strong>{formatOnix(adminSelectedUser.usedPromoCodesCount ?? 0)}</strong></div>
+                                <div><span>{t('admin.economy.balance')}</span><strong>{formatOnix(adminSelectedUser.balance)}</strong></div>
+                                <div><span>{t('admin.players.totalEarned')}</span><strong>{formatOnix(adminSelectedUser.totalEarned)}</strong></div>
+                                <div><span>{t('admin.players.withdrawalRequests')}</span><strong>{formatOnix(adminSelectedUser.withdrawalRequestsCount ?? 0)}</strong></div>
+                                <div><span>{t('admin.players.promoCodes')}</span><strong>{formatOnix(adminSelectedUser.usedPromoCodesCount ?? 0)}</strong></div>
                               </div>
                             </div>
 
                             <div className="onix-admin-profile-section">
-                              <div className="onix-admin-profile-section-title"><strong>🎮 Игровая статистика</strong></div>
+                              <div className="onix-admin-profile-section-title"><strong>{t('admin.players.gameStats')}</strong></div>
                               <div className="onix-admin-metrics-grid onix-admin-profile-metrics">
-                                <div><span>Уровень</span><strong>{formatOnix(adminSelectedUser.level)}</strong></div>
-                                <div><span>Всего тапов</span><strong>{formatOnix(adminSelectedUser.totalTaps)}</strong></div>
-                                <div><span>Энергия</span><strong>{formatOnix(adminSelectedUser.energy ?? 0)} / {formatOnix(adminSelectedUser.maxEnergy ?? 0)}</strong></div>
-                                <div><span>Сила тапа</span><strong>{formatOnix(adminSelectedUser.tapPower ?? 0)}</strong></div>
-                                <div><span>Рефералов</span><strong>{formatOnix(adminSelectedUser.referralsCount)}</strong></div>
-                                <div><span>Заданий</span><strong>{formatOnix(adminSelectedUser.completedTasksCount ?? 0)}</strong></div>
+                                <div><span>{t('admin.players.levelLabel')}</span><strong>{formatOnix(adminSelectedUser.level)}</strong></div>
+                                <div><span>{t('admin.players.totalTaps')}</span><strong>{formatOnix(adminSelectedUser.totalTaps)}</strong></div>
+                                <div><span>{t('admin.players.energy')}</span><strong>{formatOnix(adminSelectedUser.energy ?? 0)} / {formatOnix(adminSelectedUser.maxEnergy ?? 0)}</strong></div>
+                                <div><span>{t('admin.players.tapPower')}</span><strong>{formatOnix(adminSelectedUser.tapPower ?? 0)}</strong></div>
+                                <div><span>{t('admin.players.referrals')}</span><strong>{formatOnix(adminSelectedUser.referralsCount)}</strong></div>
+                                <div><span>{t('admin.players.tasks')}</span><strong>{formatOnix(adminSelectedUser.completedTasksCount ?? 0)}</strong></div>
                               </div>
                             </div>
 
                             <div className="onix-admin-profile-section">
-                              <div className="onix-admin-profile-section-title"><strong>⚙️ Улучшения и активность</strong></div>
+                              <div className="onix-admin-profile-section-title"><strong>{t('admin.players.upgradesActivity')}</strong></div>
                               <div className="onix-admin-profile-info-list">
-                                <div><span>Улучшения</span><strong>Tap {adminSelectedUser.tapLevel || 1} · Miner {adminSelectedUser.minerLevel || 1} · Energy {adminSelectedUser.energyLevel || 1} · Recharge {adminSelectedUser.rechargeLevel || 1}</strong></div>
-                                <div><span>Регистрация</span><strong>{adminSelectedUser.createdAt ? new Date(adminSelectedUser.createdAt).toLocaleString('de-DE') : '—'}</strong></div>
-                                <div><span>Последняя активность</span><strong>{adminSelectedUser.lastTapAt ? new Date(adminSelectedUser.lastTapAt).toLocaleString('de-DE') : (adminSelectedUser.updatedAt ? new Date(adminSelectedUser.updatedAt).toLocaleString('de-DE') : '—')}</strong></div>
+                                <div><span>{t('admin.players.upgrades')}</span><strong>{t('admin.players.upgradeLevels', { tap: adminSelectedUser.tapLevel || 1, miner: adminSelectedUser.minerLevel || 1, energy: adminSelectedUser.energyLevel || 1, recharge: adminSelectedUser.rechargeLevel || 1 })}</strong></div>
+                                <div><span>{t('admin.players.registered')}</span><strong>{adminSelectedUser.createdAt ? new Date(adminSelectedUser.createdAt).toLocaleString(getLanguageLocale(appLanguage === 'ru' ? 'ru' : 'de')) : '—'}</strong></div>
+                                <div><span>{t('admin.players.lastActivity')}</span><strong>{adminSelectedUser.lastTapAt ? new Date(adminSelectedUser.lastTapAt).toLocaleString(getLanguageLocale(appLanguage === 'ru' ? 'ru' : 'de')) : (adminSelectedUser.updatedAt ? new Date(adminSelectedUser.updatedAt).toLocaleString(getLanguageLocale(appLanguage === 'ru' ? 'ru' : 'de')) : '—')}</strong></div>
                               </div>
                             </div>
 
                             <div className="onix-admin-profile-section onix-admin-profile-controls">
-                              <div className="onix-admin-profile-section-title"><strong>🛠 Управление игроком</strong></div>
-                              <input value={adminAdjustAmount} onChange={(event) => setAdminAdjustAmount(event.target.value)} placeholder="Сумма +/-" className="onix-admin-input" />
-                              <input value={adminActionReason} onChange={(event) => setAdminActionReason(event.target.value)} placeholder="Причина" className="onix-admin-input" />
-                              <div className="onix-admin-actions"><button type="button" onClick={adjustAdminUserBalance} disabled={isAdminLoading}>Изменить баланс</button><button type="button" onClick={toggleAdminUserBan} disabled={isAdminLoading}>{adminSelectedUser.isFrozen ? 'Разбанить' : 'Забанить'}</button></div>
+                              <div className="onix-admin-profile-section-title"><strong>{t('admin.players.manage')}</strong></div>
+                              <input value={adminAdjustAmount} onChange={(event) => setAdminAdjustAmount(event.target.value)} placeholder={t('admin.players.amountPlaceholder')} className="onix-admin-input" />
+                              <input value={adminActionReason} onChange={(event) => setAdminActionReason(event.target.value)} placeholder={t('admin.players.reasonPlaceholder')} className="onix-admin-input" />
+                              <div className="onix-admin-actions"><button type="button" onClick={adjustAdminUserBalance} disabled={isAdminLoading}>{t('admin.players.adjustBalance')}</button><button type="button" onClick={toggleAdminUserBan} disabled={isAdminLoading}>{t(adminSelectedUser.isFrozen ? 'admin.players.unban' : 'admin.players.ban')}</button></div>
                             </div>
                           </div>
                         )}
@@ -20809,64 +20804,64 @@ body:not(.onix-body-home-lock) {
 
                     {adminHubPage === 'suspicious' && (
                       <div className="onix-admin-section-card">
-                        <div className="onix-admin-section-head"><strong>🚨 Suspicious</strong><span>{suspiciousUsers.length}</span></div>
+                        <div className="onix-admin-section-head"><strong>{t('admin.nav.suspicious')}</strong><span>{suspiciousUsers.length}</span></div>
                         <div className="onix-admin-list">
                           {suspiciousUsers.map((user) => (
-                            <div key={user.telegramId} className="onix-admin-row is-column"><div className="onix-admin-row-top"><strong>{user.username}</strong><b>{user.isFrozen ? 'Frozen' : 'Active'}</b></div><em>ID: {user.telegramId} · {user.suspiciousReasons?.join(', ') || '—'}</em><button type="button" className="onix-admin-secondary" onClick={() => toggleFreezeUser(user)} disabled={isAdminLoading}>{user.isFrozen ? 'Разморозить' : 'Заморозить'}</button></div>
+                            <div key={user.telegramId} className="onix-admin-row is-column"><div className="onix-admin-row-top"><strong>{user.username}</strong><b>{t(user.isFrozen ? 'admin.suspicious.frozen' : 'admin.suspicious.active')}</b></div><em>ID: {user.telegramId} · {user.suspiciousReasons?.join(', ') || '—'}</em><button type="button" className="onix-admin-secondary" onClick={() => toggleFreezeUser(user)} disabled={isAdminLoading}>{t(user.isFrozen ? 'admin.suspicious.unfreeze' : 'admin.suspicious.freeze')}</button></div>
                           ))}
-                          {suspiciousUsers.length === 0 && <p className="onix-admin-empty">Подозрительных аккаунтов нет.</p>}
+                          {suspiciousUsers.length === 0 && <p className="onix-admin-empty">{t('admin.suspicious.empty')}</p>}
                         </div>
-                        <button type="button" className="onix-admin-secondary" onClick={loadSuspiciousUsers} disabled={isAdminLoading}>Обновить</button>
+                        <button type="button" className="onix-admin-secondary" onClick={loadSuspiciousUsers} disabled={isAdminLoading}>{t('admin.common.refresh')}</button>
                       </div>
                     )}
 
                     {adminHubPage === 'logs' && (
                       <div className="onix-admin-section-card">
-                        <div className="onix-admin-section-head"><strong>🧾 Security logs</strong><span>{adminSecurityLogs.length}</span></div>
+                        <div className="onix-admin-section-head"><strong>{t('admin.nav.logs')}</strong><span>{adminSecurityLogs.length}</span></div>
                         <div className="onix-admin-list">
-                          {adminSecurityLogs.map((log, index) => (<div key={`${log.createdAt}-${index}`} className="onix-admin-row is-column"><strong>{log.type}</strong><em>{log.telegramId || '—'} · {formatTransactionTime(log.createdAt)}</em><p>{log.details || log.title || '—'}</p></div>))}
-                          {adminSecurityLogs.length === 0 && <p className="onix-admin-empty">Журнал пуст или ещё не загружен.</p>}
+                          {adminSecurityLogs.map((log, index) => (<div key={`${log.createdAt}-${index}`} className="onix-admin-row is-column"><strong>{log.type}</strong><em>{log.telegramId || '—'} · {formatTransactionTime(log.createdAt, appLanguage === 'ru' ? 'ru' : 'de')}</em><p>{log.details || log.title || '—'}</p></div>))}
+                          {adminSecurityLogs.length === 0 && <p className="onix-admin-empty">{t('admin.logs.empty')}</p>}
                         </div>
-                        <button type="button" className="onix-admin-secondary" onClick={loadAdminSecurityLogs} disabled={isAdminLoading}>Обновить logs</button>
+                        <button type="button" className="onix-admin-secondary" onClick={loadAdminSecurityLogs} disabled={isAdminLoading}>{t('admin.logs.refresh')}</button>
                       </div>
                     )}
 
                     {adminHubPage === 'launch' && (
                       <div className="onix-admin-section-card">
-                        <div className="onix-admin-section-head"><strong>🚀 Launch checklist</strong><span>{backendHealth?.ok ? 'OK' : 'CHECK'}</span></div>
+                        <div className="onix-admin-section-head"><strong>{t('admin.nav.launch')}</strong><span>{t(backendHealth?.ok ? 'admin.launch.ok' : 'admin.launch.check')}</span></div>
                         <div className="onix-admin-list">
                           {[
-                            ['Backend health', backendHealth?.ok ? `OK · users: ${backendHealth.users || 0}` : 'Проверь Render logs'],
-                            ['Telegram Mini App', 'Проверить кнопку запуска и /start'],
-                            ['Кошелёк и вывод', 'Проверить создание заявки и админку вывода'],
-                            ['Рефералка', 'Проверить бонусы и лимиты'],
-                            ['Cron сезона', 'GitHub Actions / cron должен вызывать weekly prizes'],
-                            ['Антиабуз', 'Проверить suspicious, ban/unban и security logs'],
-                          ].map(([title, text]) => <div key={title} className="onix-admin-row is-column"><strong>{uiText(title)}</strong><em>{text}</em></div>)}
+                            [t('admin.launch.backendHealth'), backendHealth?.ok ? t('admin.launch.backendOk', { count: backendHealth.users || 0 }) : t('admin.launch.checkRender')],
+                            [t('admin.launch.telegram'), t('admin.launch.telegramText')],
+                            [t('admin.launch.wallet'), t('admin.launch.walletText')],
+                            [t('admin.launch.referrals'), t('admin.launch.referralsText')],
+                            [t('admin.launch.seasonCron'), t('admin.launch.seasonCronText')],
+                            [t('admin.launch.antiAbuse'), t('admin.launch.antiAbuseText')],
+                          ].map(([title, text]) => <div key={title} className="onix-admin-row is-column"><strong>{title}</strong><em>{text}</em></div>)}
                         </div>
                       </div>
                     )}
 
                     {adminHubPage === 'admin2' && (
                       <div className="onix-admin-section-card">
-                        <div className="onix-admin-section-head"><strong>🧰 Админка 2.0</strong><span>config</span></div>
-                        <div className="onix-admin-metrics-grid"><div><span>Frontend</span><strong>v1.0.0</strong></div><div><span>Backend</span><strong>v{appVersionInfo?.version || '—'}</strong></div></div>
-                        <button type="button" className="onix-admin-secondary" onClick={downloadMongoBackup}>Backup JSON</button>
-                        <button type="button" className="onix-admin-secondary" onClick={loadAdminFrontendErrors} disabled={isAdminLoading}>Error logs</button>
+                        <div className="onix-admin-section-head"><strong>{t('admin.nav.admin2')}</strong><span>{t('admin.admin2.config')}</span></div>
+                        <div className="onix-admin-metrics-grid"><div><span>{t('admin.admin2.frontend')}</span><strong>v1.0.0</strong></div><div><span>{t('admin.admin2.backend')}</span><strong>v{appVersionInfo?.version || '—'}</strong></div></div>
+                        <button type="button" className="onix-admin-secondary" onClick={downloadMongoBackup}>{t('admin.admin2.backup')}</button>
+                        <button type="button" className="onix-admin-secondary" onClick={loadAdminFrontendErrors} disabled={isAdminLoading}>{t('admin.admin2.errorLogs')}</button>
                         <div className="onix-admin-config-grid">
                           {[
-                            ['ONIX_EUR_PER_1000', 'Курс /1000'],
-                            ['MIN_WITHDRAW_ONIX', 'Мин. вывод'],
-                            ['REFERRAL_REWARD', 'Реферал'],
-                            ['REFERRED_USER_REWARD', 'Новый игрок'],
-                            ['WELCOME_BONUS', 'Welcome'],
-                            ['CHEST_COST', 'Сундук'],
+                            ['ONIX_EUR_PER_1000', t('admin.admin2.rate')],
+                            ['MIN_WITHDRAW_ONIX', t('admin.admin2.minimumWithdrawal')],
+                            ['REFERRAL_REWARD', t('admin.admin2.referral')],
+                            ['REFERRED_USER_REWARD', t('admin.admin2.newPlayer')],
+                            ['WELCOME_BONUS', t('admin.admin2.welcome')],
+                            ['CHEST_COST', t('admin.admin2.chest')],
                           ].map(([key, label]) => <label key={key}>{label}<input value={adminEconomyConfigDraft[key] || ''} onChange={(event) => setAdminEconomyConfigDraft((current) => ({ ...current, [key]: event.target.value }))} className="onix-admin-input" /></label>)}
                         </div>
-                        <button type="button" className="onix-admin-primary" onClick={saveAdminEconomyConfig} disabled={isAdminLoading}>Сохранить runtime config</button>
-                        <textarea value={adminBroadcastMessage} onChange={(event) => setAdminBroadcastMessage(event.target.value)} placeholder="Текст рассылки" className="onix-admin-input onix-admin-textarea" />
-                        <div className="onix-admin-actions"><button type="button" onClick={() => sendAdminBroadcast(true)} disabled={isAdminLoading}>Dry run</button><button type="button" onClick={() => sendAdminBroadcast(false)} disabled={isAdminLoading}>Отправить</button></div>
-                        {adminBroadcastResult && <p className="onix-admin-muted">Получателей: {adminBroadcastResult.recipients || 0} · отправлено: {adminBroadcastResult.sent || 0} · ошибок: {adminBroadcastResult.failed || 0}</p>}
+                        <button type="button" className="onix-admin-primary" onClick={saveAdminEconomyConfig} disabled={isAdminLoading}>{t('admin.admin2.saveConfig')}</button>
+                        <textarea value={adminBroadcastMessage} onChange={(event) => setAdminBroadcastMessage(event.target.value)} placeholder={t('admin.admin2.broadcastPlaceholder')} className="onix-admin-input onix-admin-textarea" />
+                        <div className="onix-admin-actions"><button type="button" onClick={() => sendAdminBroadcast(true)} disabled={isAdminLoading}>{t('admin.admin2.dryRun')}</button><button type="button" onClick={() => sendAdminBroadcast(false)} disabled={isAdminLoading}>{t('admin.admin2.send')}</button></div>
+                        {adminBroadcastResult && <p className="onix-admin-muted">{t('admin.admin2.broadcastSummary', { recipients: adminBroadcastResult.recipients || 0, sent: adminBroadcastResult.sent || 0, failed: adminBroadcastResult.failed || 0 })}</p>}
                       </div>
                     )}
                   </div>
