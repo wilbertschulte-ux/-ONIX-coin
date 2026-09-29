@@ -11414,6 +11414,36 @@ type AdminEconomyDashboard = {
   }>;
 };
 
+const ADMIN_ECONOMY_CONFIG_KEYS = [
+  'ONIX_EUR_PER_1000',
+  'MIN_WITHDRAW_ONIX',
+  'REFERRAL_REWARD',
+  'REFERRED_USER_REWARD',
+  'WELCOME_BONUS',
+  'CHEST_COST',
+  'MAX_PAID_REFERRALS_PER_DAY',
+  'MAX_PAID_REFERRALS_PER_HOUR',
+] as const;
+
+type AdminEconomyConfigKey = (typeof ADMIN_ECONOMY_CONFIG_KEYS)[number];
+type AdminEconomyConfigDraft = Record<AdminEconomyConfigKey, string>;
+
+function createAdminEconomyConfigDraft(
+  config: any,
+  fallback?: Partial<AdminEconomyConfigDraft>
+): AdminEconomyConfigDraft {
+  return {
+    ONIX_EUR_PER_1000: String(config?.onixEurPer1000 ?? fallback?.ONIX_EUR_PER_1000 ?? ''),
+    MIN_WITHDRAW_ONIX: String(config?.minWithdrawOnix ?? fallback?.MIN_WITHDRAW_ONIX ?? ''),
+    REFERRAL_REWARD: String(config?.referralReward ?? fallback?.REFERRAL_REWARD ?? ''),
+    REFERRED_USER_REWARD: String(config?.referredUserReward ?? fallback?.REFERRED_USER_REWARD ?? ''),
+    WELCOME_BONUS: String(config?.welcomeBonus ?? fallback?.WELCOME_BONUS ?? ''),
+    CHEST_COST: String(config?.chestCost ?? fallback?.CHEST_COST ?? ''),
+    MAX_PAID_REFERRALS_PER_DAY: String(config?.maxPaidReferralsPerDay ?? fallback?.MAX_PAID_REFERRALS_PER_DAY ?? ''),
+    MAX_PAID_REFERRALS_PER_HOUR: String(config?.maxPaidReferralsPerHour ?? fallback?.MAX_PAID_REFERRALS_PER_HOUR ?? ''),
+  };
+}
+
 type Achievement = {
   id: string;
   title: string;
@@ -12368,6 +12398,10 @@ function App() {
   });
   const t = createTranslator(appLanguage);
   const formatOnix = (value: number) => formatOnixValue(value, appLanguage);
+  const formatEur = (value: number) => Number(value || 0).toLocaleString(
+    getLanguageLocale(appLanguage),
+    { minimumFractionDigits: 2, maximumFractionDigits: 2 }
+  );
 
   const legacyLanguage = appLanguage;
   const uiText = (source: string, appLanguage: AppLanguage = legacyLanguage) => {
@@ -13153,7 +13187,8 @@ function App() {
   const [adminSecurityLogs, setAdminSecurityLogs] = useState<AdminSecurityLog[]>([]);
   const [adminSecurityLogsVisible, setAdminSecurityLogsVisible] = useState(false);
   const [admin2Visible, setAdmin2Visible] = useState(false);
-  const [adminEconomyConfigDraft, setAdminEconomyConfigDraft] = useState<Record<string, string>>({});
+  const [adminEconomyConfigDraft, setAdminEconomyConfigDraft] = useState<Record<string, string>>(() => createAdminEconomyConfigDraft({}));
+  const [adminEconomyConfigSaved, setAdminEconomyConfigSaved] = useState<Record<string, string>>(() => createAdminEconomyConfigDraft({}));
   const [adminBroadcastMessage, setAdminBroadcastMessage] = useState('');
   const [adminBroadcastResult, setAdminBroadcastResult] = useState<any>(null);
   const [adminOperations, setAdminOperations] = useState<AdminOperationsPayload | null>(null);
@@ -14866,16 +14901,9 @@ function App() {
 
       const config = configResponse.data.config || {};
 
-      setAdminEconomyConfigDraft({
-        ONIX_EUR_PER_1000: String(config.onixEurPer1000 || ''),
-        MIN_WITHDRAW_ONIX: String(config.minWithdrawOnix || ''),
-        REFERRAL_REWARD: String(config.referralReward || ''),
-        REFERRED_USER_REWARD: String(config.referredUserReward || ''),
-        WELCOME_BONUS: String(config.welcomeBonus || ''),
-        CHEST_COST: String(config.chestCost || ''),
-        MAX_PAID_REFERRALS_PER_DAY: String(config.maxPaidReferralsPerDay || ''),
-        MAX_PAID_REFERRALS_PER_HOUR: String(config.maxPaidReferralsPerHour || ''),
-      });
+      const configDraft = createAdminEconomyConfigDraft(config);
+      setAdminEconomyConfigDraft(configDraft);
+      setAdminEconomyConfigSaved(configDraft);
 
       setAdmin2Visible(false);
       setAdminHubPage('admin2');
@@ -14901,25 +14929,55 @@ function App() {
 
   const saveAdminEconomyConfig = async () => {
     const telegramId = getTelegramId();
+    const changedKeys = ADMIN_ECONOMY_CONFIG_KEYS.filter((key) => {
+      const currentValue = adminEconomyConfigDraft[key].trim();
+      const savedValue = adminEconomyConfigSaved[key].trim();
+
+      if (currentValue === '' || savedValue === '') return currentValue !== savedValue;
+
+      const currentNumber = Number(currentValue);
+      const savedNumber = Number(savedValue);
+
+      return Number.isFinite(currentNumber) && Number.isFinite(savedNumber)
+        ? currentNumber !== savedNumber
+        : currentValue !== savedValue;
+    });
+
+    if (changedKeys.length === 0) {
+      showToast((t) => t('admin.notice.configNoChanges'), 'success');
+      return;
+    }
+
+    if (changedKeys.some((key) => adminEconomyConfigDraft[key].trim() === '')) {
+      showToast((t) => t('admin.notice.configValueRequired'), 'error');
+      return;
+    }
+
+    const updates = Object.fromEntries(
+      changedKeys.map((key) => [key, adminEconomyConfigDraft[key].trim()])
+    );
+
+    if (Object.values(updates).some((value) => !Number.isFinite(Number(value)) || Number(value) < 0)) {
+      showToast((t) => t('admin.notice.configInvalidValue'), 'error');
+      return;
+    }
 
     try {
       setIsAdminLoading(true);
 
       const response = await axios.post(`${API_URL}/admin-economy-config`, {
         telegramId,
-        updates: adminEconomyConfigDraft,
+        updates,
       });
 
+      const synchronizedDraft = createAdminEconomyConfigDraft(
+        response.data.config || {},
+        adminEconomyConfigDraft
+      );
+
       showToast((t) => t('admin.notice.configUpdated'), 'success');
-      setAdminEconomyConfigDraft((current) => ({
-        ...current,
-        ONIX_EUR_PER_1000: String(response.data.config.onixEurPer1000 || current.ONIX_EUR_PER_1000),
-        MIN_WITHDRAW_ONIX: String(response.data.config.minWithdrawOnix || current.MIN_WITHDRAW_ONIX),
-        REFERRAL_REWARD: String(response.data.config.referralReward || current.REFERRAL_REWARD),
-        REFERRED_USER_REWARD: String(response.data.config.referredUserReward || current.REFERRED_USER_REWARD),
-        WELCOME_BONUS: String(response.data.config.welcomeBonus || current.WELCOME_BONUS),
-        CHEST_COST: String(response.data.config.chestCost || current.CHEST_COST),
-      }));
+      setAdminEconomyConfigDraft(synchronizedDraft);
+      setAdminEconomyConfigSaved(synchronizedDraft);
     } catch (error: any) {
       showToast(error?.response?.data?.message || ((t) => t('admin.notice.configSaveError')), 'error');
     } finally {
@@ -17781,13 +17839,37 @@ function App() {
                     {adminHubPage === 'economy' && (
                       <div className="onix-admin-section-card">
                         <div className="onix-admin-section-head"><strong>{t('admin.nav.economy')}</strong><span>{t('admin.economy.dashboard')}</span></div>
-                        {adminEconomyDashboard ? (
+                        {adminEconomyDashboard ? (<>
                           <div className="onix-admin-metrics-grid">
                             <div><span>{t('admin.economy.players')}</span><strong>{formatOnix(adminEconomyDashboard.totals.users)}</strong></div>
-                            <div><span>{t('admin.economy.balance')}</span><strong>{formatOnix(adminEconomyDashboard.totals.totalBalance)}</strong></div>
-                            <div><span>{t('admin.economy.withdrawals')}</span><strong>{formatOnix(adminEconomyDashboard.totals.pendingWithdrawals)}</strong></div>
+                            <div><span>{t('admin.economy.balance')}</span><strong>{formatOnix(adminEconomyDashboard.totals.totalBalance)} ONIX</strong></div>
+                            <div><span>{t('admin.economy.totalEarned')}</span><strong>{formatOnix(adminEconomyDashboard.totals.totalEarned)} ONIX</strong></div>
+                            <div><span>{t('admin.economy.weeklyEarned')}</span><strong>{formatOnix(adminEconomyDashboard.totals.weeklyEarned)} ONIX</strong></div>
+                            <div><span>{t('admin.economy.referrals')}</span><strong>{formatOnix(adminEconomyDashboard.totals.referrals)}</strong></div>
+                            <div><span>{t('admin.economy.taps')}</span><strong>{formatOnix(adminEconomyDashboard.totals.taps)}</strong></div>
+                            <div><span>{t('admin.economy.pendingWithdrawals')}</span><strong>{formatOnix(adminEconomyDashboard.totals.pendingWithdrawals)}</strong></div>
+                            <div><span>{t('admin.economy.pendingWithdrawalAmount')}</span><strong>{formatOnix(adminEconomyDashboard.totals.pendingWithdrawOnix)} ONIX</strong></div>
+                            <div><span>{t('admin.economy.approvedWithdrawals')}</span><strong>{formatOnix(adminEconomyDashboard.totals.approvedWithdrawals)}</strong></div>
+                            <div><span>{t('admin.economy.rejectedWithdrawals')}</span><strong>{formatOnix(adminEconomyDashboard.totals.rejectedWithdrawals)}</strong></div>
+                            <div><span>{t('admin.economy.positiveTransactionAmount')}</span><strong>{formatOnix(adminEconomyDashboard.totals.createdOnix)} ONIX</strong></div>
+                            <div><span>{t('admin.economy.negativeTransactionAmount')}</span><strong>{formatOnix(adminEconomyDashboard.totals.spentOnix)} ONIX</strong></div>
+                            <div><span>{t('admin.economy.totalBalanceEur')}</span><strong>{formatEur(adminEconomyDashboard.totals.totalBalanceEur)} €</strong></div>
+                            <div><span>{t('admin.economy.pendingWithdrawEur')}</span><strong>{formatEur(adminEconomyDashboard.totals.pendingWithdrawEur)} €</strong></div>
                             <div><span>{t('admin.economy.suspicious')}</span><strong>{formatOnix(adminEconomyDashboard.totals.suspiciousUsers)}</strong></div>
+                            <div><span>{t('admin.economy.frozen')}</span><strong>{formatOnix(adminEconomyDashboard.totals.frozenUsers)}</strong></div>
                           </div>
+                          <div className="onix-admin-section-head"><strong>{t('admin.economy.transactionTypes')}</strong><span>{adminEconomyDashboard.transactionTypes.length}</span></div>
+                          {adminEconomyDashboard.transactionTypes.length > 0 ? (
+                            <div className="onix-admin-list">
+                              {adminEconomyDashboard.transactionTypes.map((item) => (
+                                <div key={item.type} className="onix-admin-row">
+                                  <div><strong>{item.type}</strong><em>{t('admin.economy.transactionTypeCount', { count: item.count })}</em></div>
+                                  <b>{formatOnix(item.amount)} ONIX</b>
+                                </div>
+                              ))}
+                            </div>
+                          ) : <p className="onix-admin-empty">{t('admin.economy.transactionTypesEmpty')}</p>}
+                        </>
                         ) : <p className="onix-admin-empty">{t('admin.economy.loadPrompt')}</p>}
                         <button type="button" className="onix-admin-secondary" onClick={loadAdminEconomyDashboard} disabled={isAdminLoading}>{t('admin.economy.refresh')}</button>
                       </div>
@@ -17964,8 +18046,14 @@ function App() {
                             ['REFERRED_USER_REWARD', t('admin.admin2.newPlayer')],
                             ['WELCOME_BONUS', t('admin.admin2.welcome')],
                             ['CHEST_COST', t('admin.admin2.chest')],
-                          ].map(([key, label]) => <label key={key}>{label}<input value={adminEconomyConfigDraft[key] || ''} onChange={(event) => setAdminEconomyConfigDraft((current) => ({ ...current, [key]: event.target.value }))} className="onix-admin-input" /></label>)}
+                            ['MAX_PAID_REFERRALS_PER_DAY', t('admin.admin2.maxPaidReferralsPerDay')],
+                            ['MAX_PAID_REFERRALS_PER_HOUR', t('admin.admin2.maxPaidReferralsPerHour')],
+                          ].map(([key, label]) => {
+                            const configKey = key as AdminEconomyConfigKey;
+                            return <label key={configKey}>{label}<input type="number" min="0" step="any" value={adminEconomyConfigDraft[configKey] ?? ''} onChange={(event) => setAdminEconomyConfigDraft((current) => ({ ...current, [configKey]: event.target.value }))} className="onix-admin-input" /></label>;
+                          })}
                         </div>
+                        <p className="onix-admin-muted">{t('admin.admin2.runtimeNotice')}</p>
                         <button type="button" className="onix-admin-primary" onClick={saveAdminEconomyConfig} disabled={isAdminLoading}>{t('admin.admin2.saveConfig')}</button>
                         <textarea value={adminBroadcastMessage} onChange={(event) => setAdminBroadcastMessage(event.target.value)} placeholder={t('admin.admin2.broadcastPlaceholder')} className="onix-admin-input onix-admin-textarea" />
                         <div className="onix-admin-actions"><button type="button" onClick={() => sendAdminBroadcast(true)} disabled={isAdminLoading}>{t('admin.admin2.dryRun')}</button><button type="button" onClick={() => sendAdminBroadcast(false)} disabled={isAdminLoading}>{t('admin.admin2.send')}</button></div>

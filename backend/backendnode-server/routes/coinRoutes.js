@@ -1605,7 +1605,7 @@ function canReceivePaidReferralBonus(user, now = Date.now()) {
 
   return (
     Number(user.dailyReferralBonusCount || 0) < getEconomyConfig().maxPaidReferralsPerDay &&
-    Number(user.hourlyReferralBonusCount || 0) < MAX_PAID_REFERRALS_PER_HOUR
+    Number(user.hourlyReferralBonusCount || 0) < getEconomyConfig().maxPaidReferralsPerHour
   );
 }
 
