@@ -1561,6 +1561,24 @@ function addTransaction(user, type, amount, title, status = 'completed') {
   user.transactions = user.transactions.slice(0, 50);
 }
 
+function addUserNotification(user, type, message = '', actionTab = '') {
+  if (!user.notifications) user.notifications = [];
+
+  const now = Date.now();
+
+  user.notifications.unshift({
+    id: `${now}_${Math.random().toString(36).slice(2, 10)}`,
+    type: String(type || 'info'),
+    title: '',
+    message: String(message || ''),
+    actionTab: String(actionTab || ''),
+    createdAt: now,
+    readAt: 0,
+  });
+
+  user.notifications = user.notifications.slice(0, 50);
+}
+
 function prepareReferralBonusWindow(user, now = Date.now()) {
   const todayKey = getUtcDayKey(now);
   const hourKey = getUtcHourKey(now);
@@ -1827,6 +1845,7 @@ function normalizeUserFields(user) {
   if (!user.completedTasks) user.completedTasks = [];
   if (!user.claimedRankBonuses) user.claimedRankBonuses = [];
   if (!user.tapTimestamps) user.tapTimestamps = [];
+  if (!user.notifications) user.notifications = [];
 
   if (user.balance === undefined || user.balance === null) user.balance = 0;
   user.balance = roundOnix(user.balance);
@@ -2807,6 +2826,13 @@ router.post('/admin-review-withdrawal', async (req, res) => {
           : 'Вывод отклонён, ONIX возвращены',
         'rejected'
       );
+
+      addUserNotification(
+        user,
+        'withdrawal_rejected',
+        request.adminComment,
+        'wallet'
+      );
     } else {
       addTransaction(
         user,
@@ -2817,8 +2843,16 @@ router.post('/admin-review-withdrawal', async (req, res) => {
           : 'Вывод одобрен',
         'approved'
       );
+
+      addUserNotification(
+        user,
+        'withdrawal_approved',
+        request.adminComment,
+        'wallet'
+      );
     }
 
+    user.markModified('notifications');
     user.markModified('withdrawalRequests');
     user.updatedAt = new Date();
 
@@ -2834,6 +2868,79 @@ router.post('/admin-review-withdrawal', async (req, res) => {
         balance: roundOnix(user.balance || 0),
       },
       request,
+    });
+  } catch (error) {
+    return res.status(500).json({ error: error.message });
+  }
+});
+
+// USER NOTIFICATIONS
+router.get('/notifications/:telegramId', requireTelegramMiniAppUser, async (req, res) => {
+  try {
+    const requestedTelegramId = String(req.params.telegramId || '');
+    const telegramId = req.telegramUserId;
+
+    if (requestedTelegramId && requestedTelegramId !== telegramId) {
+      return res.status(403).json({
+        message: translate('telegramMismatch', await getUserLanguage(User, req.telegramUserId)),
+      });
+    }
+
+    const user = await User.findOne({ telegramId }).select('notifications');
+
+    if (!user) {
+      return res.status(404).json({
+        message: translate('userNotFound', await getUserLanguage(User, req.telegramUserId)),
+      });
+    }
+
+    const notifications = [...(user.notifications || [])]
+      .sort((a, b) => Number(b.createdAt || 0) - Number(a.createdAt || 0))
+      .slice(0, 50);
+
+    return res.json({
+      notifications,
+      unreadCount: notifications.filter((item) => !Number(item.readAt || 0)).length,
+    });
+  } catch (error) {
+    return res.status(500).json({ error: error.message });
+  }
+});
+
+router.post('/notifications/mark-read', requireTelegramMiniAppUser, async (req, res) => {
+  try {
+    const requestedTelegramId = String(req.body?.telegramId || '');
+    const telegramId = req.telegramUserId;
+
+    if (requestedTelegramId && requestedTelegramId !== telegramId) {
+      return res.status(403).json({
+        message: translate('telegramMismatch', await getUserLanguage(User, req.telegramUserId)),
+      });
+    }
+
+    const user = await User.findOne({ telegramId });
+
+    if (!user) {
+      return res.status(404).json({
+        message: translate('userNotFound', await getUserLanguage(User, req.telegramUserId)),
+      });
+    }
+
+    const now = Date.now();
+
+    user.notifications = (user.notifications || []).map((item) => {
+      if (!Number(item.readAt || 0)) item.readAt = now;
+      return item;
+    });
+
+    user.markModified('notifications');
+    user.updatedAt = new Date();
+    await user.save();
+
+    return res.json({
+      ok: true,
+      notifications: user.notifications || [],
+      unreadCount: 0,
     });
   } catch (error) {
     return res.status(500).json({ error: error.message });

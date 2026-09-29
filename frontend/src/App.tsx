@@ -11627,6 +11627,16 @@ type WithdrawalRequest = {
   reviewedAt?: number | null;
 };
 
+type AppNotification = {
+  id: string;
+  type: string;
+  title: string;
+  message: string;
+  actionTab?: Tab;
+  createdAt: number;
+  readAt?: number;
+};
+
 type AdminWithdrawalRequest = {
   userTelegramId: string;
   username: string;
@@ -12937,6 +12947,8 @@ function App() {
 
   const [headerMenuVisible, setHeaderMenuVisible] = useState(false);
   const [headerNotificationsVisible, setHeaderNotificationsVisible] = useState(false);
+  const [appNotifications, setAppNotifications] = useState<AppNotification[]>([]);
+  const unreadNotificationsCount = appNotifications.filter((item) => !Number(item.readAt || 0)).length;
   const [headerNotificationsEnabled, setHeaderNotificationsEnabled] = useState(() => {
     try { return localStorage.getItem('onix_notifications_enabled') !== '0'; } catch { return true; }
   });
@@ -12948,6 +12960,81 @@ function App() {
       return next;
     });
   };
+
+  const normalizeNotifications = (items: any[] = []): AppNotification[] =>
+    (Array.isArray(items) ? items : [])
+      .map((item) => ({
+        id: String(item.id || `${item.createdAt || Date.now()}_${item.type || 'notification'}`),
+        type: String(item.type || 'info'),
+        title: String(item.title || ''),
+        message: String(item.message || ''),
+        actionTab: item.actionTab as Tab | undefined,
+        createdAt: Number(item.createdAt || Date.now()),
+        readAt: Number(item.readAt || 0),
+      }))
+      .sort((a, b) => Number(b.createdAt || 0) - Number(a.createdAt || 0));
+
+  const loadNotifications = async () => {
+    const telegramId = getTelegramId();
+    if (!telegramId) return;
+
+    try {
+      const response = await axios.get(`${API_URL}/notifications/${telegramId}`);
+      setAppNotifications(normalizeNotifications(response.data.notifications || []));
+    } catch (error) {
+      console.log('Notifications could not be loaded:', error);
+    }
+  };
+
+  const openNotificationCenter = async () => {
+    setHeaderNotificationsVisible(true);
+    await loadNotifications();
+  };
+
+  const markNotificationsRead = async () => {
+    const telegramId = getTelegramId();
+
+    setAppNotifications((current) =>
+      current.map((item) => ({ ...item, readAt: item.readAt || Date.now() }))
+    );
+
+    if (!telegramId) return;
+
+    try {
+      const response = await axios.post(`${API_URL}/notifications/mark-read`, { telegramId });
+      setAppNotifications(normalizeNotifications(response.data.notifications || []));
+    } catch (error) {
+      console.log('Notifications could not be marked as read:', error);
+      await loadNotifications();
+    }
+  };
+
+  const getNotificationCopy = (item: AppNotification) => {
+    if (item.type === 'withdrawal_approved') {
+      const oldDefault = item.title === 'Auszahlung genehmigt' && item.message === 'Deine Auszahlungsanfrage wurde genehmigt.';
+      return {
+        title: t('notifications.withdrawalApprovedTitle'),
+        message: !item.message || oldDefault ? t('notifications.withdrawalApprovedDefault') : item.message,
+      };
+    }
+
+    if (item.type === 'withdrawal_rejected') {
+      const oldDefault = item.title === 'Auszahlung abgelehnt' && item.message === 'Deine Auszahlungsanfrage wurde abgelehnt. Die ONIX wurden deinem Guthaben zurückgegeben.';
+      return {
+        title: t('notifications.withdrawalRejectedTitle'),
+        message: !item.message || oldDefault ? t('notifications.withdrawalRejectedDefault') : item.message,
+      };
+    }
+
+    return {
+      title: item.title || 'ONIX',
+      message: item.message,
+    };
+  };
+
+  useEffect(() => {
+    void loadNotifications();
+  }, []);
 
   useEffect(() => {
     const html = document.documentElement;
@@ -18974,13 +19061,54 @@ body:not(.onix-body-home-lock) {
       )}
 
       {headerNotificationsVisible && (
-        <div role="dialog" aria-modal="true" onClick={() => setHeaderNotificationsVisible(false)} style={{ position: 'fixed', inset: 0, zIndex: 5000, background: 'rgba(0,0,0,.68)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 20 }}>
+        <div data-onix-i18n="notice" role="dialog" aria-modal="true" onClick={() => setHeaderNotificationsVisible(false)} style={{ position: 'fixed', inset: 0, zIndex: 5000, background: 'rgba(0,0,0,.68)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 20 }}>
           <div onClick={(event) => event.stopPropagation()} style={{ width: 'min(100%, 390px)', maxHeight: '72vh', overflowY: 'auto', padding: 22, borderRadius: 26, border: '1px solid rgba(168,85,247,.42)', background: 'linear-gradient(145deg,#121039,#080817)', boxShadow: '0 24px 70px rgba(0,0,0,.55)' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 18 }}>
               <div><div style={{ color: '#67e8f9', fontSize: 11, fontWeight: 900, letterSpacing: '.15em' }}>{t('menu.control')}</div><div style={{ fontSize: 22, fontWeight: 1000 }}>{t('menu.notificationsTitle')}</div></div>
               <button type="button" aria-label={t('a11y.close')} onClick={() => setHeaderNotificationsVisible(false)} style={{ width: 38, height: 38, borderRadius: 12, border: '1px solid rgba(168,85,247,.35)', background: 'rgba(15,12,45,.9)', color: '#fff', fontSize: 24 }}>×</button>
             </div>
-            {!headerNotificationsEnabled ? <div style={{ padding: 18, borderRadius: 18, background: 'rgba(8,8,28,.85)', color: '#c4b5fd' }}>{t('menu.notificationsOff')}</div> : <div style={{ padding: 18, borderRadius: 18, background: 'rgba(8,8,28,.85)' }}><div style={{ fontWeight: 900, marginBottom: 6 }}>{t('menu.notificationsOnTitle')}</div><div style={{ color: '#c4b5fd', fontSize: 14 }}>{t('menu.notificationsOnText')}</div></div>}
+            {!headerNotificationsEnabled ? (
+              <div style={{ padding: 18, borderRadius: 18, background: 'rgba(8,8,28,.85)', color: '#c4b5fd' }}>{t('menu.notificationsOff')}</div>
+            ) : (
+              <>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12, marginBottom: 12, color: '#c4b5fd', fontSize: 12, fontWeight: 800 }}>
+                  <span>{unreadNotificationsCount > 0 ? t('notifications.unreadCount', { count: unreadNotificationsCount }) : t('notifications.allRead')}</span>
+                  <button type="button" onClick={markNotificationsRead} disabled={unreadNotificationsCount === 0} style={{ border: '1px solid rgba(250,204,21,.24)', borderRadius: 999, background: 'rgba(250,204,21,.10)', color: '#fde68a', padding: '8px 12px', fontSize: 12, fontWeight: 900, opacity: unreadNotificationsCount === 0 ? .55 : 1 }}>
+                    {t('notifications.markAllRead')}
+                  </button>
+                </div>
+
+                {appNotifications.length === 0 && (
+                  <div style={{ padding: 24, borderRadius: 18, background: 'rgba(8,8,28,.85)', color: '#c4b5fd', textAlign: 'center' }}>{t('notifications.empty')}</div>
+                )}
+
+                {appNotifications.map((item) => {
+                  const copy = getNotificationCopy(item);
+                  const isUnread = !Number(item.readAt || 0);
+                  return (
+                    <button
+                      key={item.id}
+                      type="button"
+                      onClick={() => {
+                        if (item.actionTab) setActiveTab(item.actionTab);
+                        void markNotificationsRead();
+                        setHeaderNotificationsVisible(false);
+                      }}
+                      style={{ width: '100%', display: 'grid', gridTemplateColumns: '42px 1fr', gap: 12, textAlign: 'left', padding: 14, marginBottom: 10, borderRadius: 18, border: isUnread ? '1px solid rgba(255,77,109,.48)' : '1px solid rgba(255,255,255,.08)', background: isUnread ? 'rgba(255,77,109,.10)' : 'rgba(255,255,255,.045)', color: '#fff' }}
+                    >
+                      <span aria-hidden="true" style={{ width: 42, height: 42, borderRadius: 14, display: 'grid', placeItems: 'center', background: 'rgba(168,85,247,.14)', border: '1px solid rgba(168,85,247,.28)', fontSize: 18 }}>
+                        {item.type === 'withdrawal_approved' ? '✅' : item.type === 'withdrawal_rejected' ? '⚠️' : '◆'}
+                      </span>
+                      <span>
+                        <strong style={{ display: 'block', fontSize: 15, lineHeight: 1.15 }}>{copy.title}</strong>
+                        <span style={{ display: 'block', margin: '5px 0 6px', color: 'rgba(255,255,255,.76)', fontSize: 12, lineHeight: 1.35, whiteSpace: 'pre-wrap' }}>{copy.message}</span>
+                        <em style={{ display: 'block', color: 'rgba(255,255,255,.44)', fontSize: 11, fontStyle: 'normal', fontWeight: 800 }}>{formatTransactionTime(item.createdAt, appLanguage)}</em>
+                      </span>
+                    </button>
+                  );
+                })}
+              </>
+            )}
           </div>
         </div>
       )}
@@ -19050,7 +19178,7 @@ body:not(.onix-body-home-lock) {
             type="button"
             data-onix-i18n="notice"
             aria-label={t('a11y.notifications')}
-            onClick={() => setHeaderNotificationsVisible(true)}
+            onClick={() => void openNotificationCenter()}
             style={{
               width: 34,
               height: 34,
@@ -19062,13 +19190,19 @@ body:not(.onix-body-home-lock) {
               alignItems: 'center',
               justifyContent: 'center',
               background: 'transparent',
-              color: '#FFFFFF',
-              boxShadow: 'none',
+              color: unreadNotificationsCount > 0 ? '#ff4d6d' : '#FFFFFF',
+              boxShadow: unreadNotificationsCount > 0 ? '0 0 18px rgba(255,77,109,.48)' : 'none',
               outline: 'none',
               justifySelf: 'end',
+              position: 'relative',
             }}
           >
             <Bell size={19} strokeWidth={2.1} />
+            {unreadNotificationsCount > 0 && (
+              <span aria-hidden="true" style={{ position: 'absolute', top: 1, right: 0, minWidth: 15, height: 15, padding: '0 4px', borderRadius: 999, background: '#ff2d55', color: '#fff', fontSize: 9, fontWeight: 900, lineHeight: '15px', textAlign: 'center' }}>
+                {unreadNotificationsCount > 9 ? '9+' : unreadNotificationsCount}
+              </span>
+            )}
           </button>
         </div>
       )}
