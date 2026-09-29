@@ -62,7 +62,8 @@ const keys = [
   "admin.error.withdrawalNotFound",
   "admin.error.withdrawalReviewed",
   "admin.error.broadcastEmpty",
-  "admin.error.botTokenMissing"
+  "admin.error.botTokenMissing",
+  "admin.error.noteRequired"
 ] as const;
 
 const legacyEnglish = {
@@ -96,7 +97,8 @@ const legacyEnglish = {
   "No eligible users for this week": "admin.error.noEligibleUsers",
   "Action must be approved or rejected": "admin.error.invalidWithdrawalAction",
   "Withdrawal request not found": "admin.error.withdrawalNotFound",
-  "Withdrawal request already reviewed": "admin.error.withdrawalReviewed"
+  "Withdrawal request already reviewed": "admin.error.withdrawalReviewed",
+  "Введите заметку": "admin.error.noteRequired"
 } as const;
 
 export function getBackendNotice(message: string) {

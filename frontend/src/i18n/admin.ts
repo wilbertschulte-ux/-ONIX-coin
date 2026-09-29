@@ -111,6 +111,8 @@ export const adminGermanMessages = {
   "admin.admin2.backend": "Backend",
   "admin.admin2.backup": "JSON-Backup",
   "admin.admin2.errorLogs": "Fehlerprotokolle",
+  "admin.admin2.csvExport": "CSV exportieren",
+  "admin.admin2.csvExporting": "CSV wird erstellt...",
   "admin.admin2.rate": "Kurs /1000",
   "admin.admin2.minimumWithdrawal": "Mindestauszahlung",
   "admin.admin2.referral": "Empfehlung",
@@ -122,6 +124,11 @@ export const adminGermanMessages = {
   "admin.admin2.dryRun": "Testlauf",
   "admin.admin2.send": "Senden",
   "admin.admin2.broadcastSummary": "Empfänger: {recipients} · gesendet: {sent} · Fehler: {failed}",
+  "admin.notes.title": "📝 Admin-Notizen",
+  "admin.notes.placeholder": "Notiz zum Spieler",
+  "admin.notes.add": "Hinzufügen",
+  "admin.notes.saving": "Wird gespeichert...",
+  "admin.notes.empty": "Noch keine Notizen.",
   "admin.notice.previewLoadError": "Vorschau konnte nicht geladen werden",
   "admin.notice.usersLoadError": "Spieler konnten nicht geladen werden",
   "admin.notice.profileLoadError": "Profil konnte nicht geladen werden",
@@ -139,6 +146,11 @@ export const adminGermanMessages = {
   "admin.notice.broadcastPreview": "👀 Empfänger: {recipients}",
   "admin.notice.broadcastSent": "✅ Gesendet: {sent}, Fehler: {failed}",
   "admin.notice.broadcastError": "Broadcast konnte nicht gesendet werden",
+  "admin.notice.csvDownloaded": "✅ CSV exportiert",
+  "admin.notice.csvDownloadError": "CSV konnte nicht exportiert werden",
+  "admin.notice.noteAdded": "✅ Notiz hinzugefügt",
+  "admin.notice.noteAddError": "Notiz konnte nicht hinzugefügt werden",
+  "admin.notice.selectPlayer": "Zuerst einen Spieler auswählen",
   "admin.notice.economyLoadError": "Wirtschaftsdaten konnten nicht geladen werden",
   "admin.notice.suspiciousLoadError": "Liste konnte nicht geladen werden",
   "admin.notice.accountUnfrozen": "✅ Konto freigegeben",
@@ -153,7 +165,8 @@ export const adminGermanMessages = {
   "admin.error.withdrawalNotFound": "Auszahlungsantrag nicht gefunden",
   "admin.error.withdrawalReviewed": "Der Auszahlungsantrag wurde bereits bearbeitet",
   "admin.error.broadcastEmpty": "Broadcast-Text eingeben",
-  "admin.error.botTokenMissing": "BOT_TOKEN ist im Backend nicht konfiguriert"
+  "admin.error.botTokenMissing": "BOT_TOKEN ist im Backend nicht konfiguriert",
+  "admin.error.noteRequired": "Notiz eingeben"
 } as const;
 
 export type AdminMessageKey = keyof typeof adminGermanMessages;
@@ -271,6 +284,8 @@ export const adminRussianMessages = {
   "admin.admin2.backend": "Backend",
   "admin.admin2.backup": "Резервная копия JSON",
   "admin.admin2.errorLogs": "Журналы ошибок",
+  "admin.admin2.csvExport": "Экспорт CSV",
+  "admin.admin2.csvExporting": "CSV формируется...",
   "admin.admin2.rate": "Курс /1000",
   "admin.admin2.minimumWithdrawal": "Мин. вывод",
   "admin.admin2.referral": "Реферал",
@@ -282,6 +297,11 @@ export const adminRussianMessages = {
   "admin.admin2.dryRun": "Тестовый запуск",
   "admin.admin2.send": "Отправить",
   "admin.admin2.broadcastSummary": "Получателей: {recipients} · отправлено: {sent} · ошибок: {failed}",
+  "admin.notes.title": "📝 Заметки администратора",
+  "admin.notes.placeholder": "Заметка об игроке",
+  "admin.notes.add": "Добавить",
+  "admin.notes.saving": "Сохранение...",
+  "admin.notes.empty": "Заметок пока нет.",
   "admin.notice.previewLoadError": "Не удалось загрузить предпросмотр",
   "admin.notice.usersLoadError": "Не удалось загрузить игроков",
   "admin.notice.profileLoadError": "Не удалось загрузить профиль",
@@ -299,6 +319,11 @@ export const adminRussianMessages = {
   "admin.notice.broadcastPreview": "👀 Получателей: {recipients}",
   "admin.notice.broadcastSent": "✅ Отправлено: {sent}, ошибок: {failed}",
   "admin.notice.broadcastError": "Не удалось отправить рассылку",
+  "admin.notice.csvDownloaded": "✅ CSV экспортирован",
+  "admin.notice.csvDownloadError": "Не удалось экспортировать CSV",
+  "admin.notice.noteAdded": "✅ Заметка добавлена",
+  "admin.notice.noteAddError": "Не удалось добавить заметку",
+  "admin.notice.selectPlayer": "Сначала выберите игрока",
   "admin.notice.economyLoadError": "Не удалось загрузить данные экономики",
   "admin.notice.suspiciousLoadError": "Не удалось загрузить список",
   "admin.notice.accountUnfrozen": "✅ Аккаунт разморожен",
@@ -313,5 +338,6 @@ export const adminRussianMessages = {
   "admin.error.withdrawalNotFound": "Заявка на вывод не найдена",
   "admin.error.withdrawalReviewed": "Заявка на вывод уже обработана",
   "admin.error.broadcastEmpty": "Введите текст рассылки",
-  "admin.error.botTokenMissing": "BOT_TOKEN не настроен на backend"
+  "admin.error.botTokenMissing": "BOT_TOKEN не настроен на backend",
+  "admin.error.noteRequired": "Введите заметку"
 } as const satisfies Record<AdminMessageKey, string>;
