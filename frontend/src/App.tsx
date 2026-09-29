@@ -11331,6 +11331,15 @@ type AdminOperationsPayload = {
   }>;
 };
 
+type AdminFrontendError = {
+  telegramId: string;
+  username: string;
+  message: string;
+  stack: string;
+  appVersion: string;
+  createdAt: number;
+};
+
 type AdminUserProfile = AdminUserSearchResult & {
   totalBoostsUsed: number;
   totalUpgradesBought: number;
@@ -13151,8 +13160,14 @@ function App() {
   const [adminNoteText, setAdminNoteText] = useState('');
   const [isAdminNoteSaving, setIsAdminNoteSaving] = useState(false);
   const [isAdminCsvDownloading, setIsAdminCsvDownloading] = useState(false);
+  const [isAdminBackupDownloading, setIsAdminBackupDownloading] = useState(false);
+  const [isAdminFrontendErrorsLoading, setIsAdminFrontendErrorsLoading] = useState(false);
+  const [adminFrontendErrorsLoaded, setAdminFrontendErrorsLoaded] = useState(false);
+  const [adminFrontendErrorsError, setAdminFrontendErrorsError] = useState(false);
+  const [isAdminOperationsLoading, setIsAdminOperationsLoading] = useState(false);
+  const [adminOperationsError, setAdminOperationsError] = useState(false);
   const [appVersionInfo, setAppVersionInfo] = useState<any>(null);
-  const [adminFrontendErrors, setAdminFrontendErrors] = useState<any[]>([]);
+  const [adminFrontendErrors, setAdminFrontendErrors] = useState<AdminFrontendError[]>([]);
   const [launchChecklistVisible, setLaunchChecklistVisible] = useState(false);
   const [backendHealth, setBackendHealth] = useState<any>(null);
   const [promoModalVisible, setPromoModalVisible] = useState(false);
@@ -14773,29 +14788,69 @@ function App() {
 
 
 
-  const downloadMongoBackup = () => {
+  const downloadMongoBackup = async () => {
     const telegramId = getTelegramId();
-    const url = `${API_URL}/admin-backup?telegramId=${encodeURIComponent(telegramId)}`;
 
-    window.open(url, '_blank');
+    if (!telegramId) {
+      showToast((t) => t('admin.error.forbidden'), 'error');
+      return;
+    }
+
+    try {
+      setIsAdminBackupDownloading(true);
+
+      const response = await axios.get<Blob>(`${API_URL}/admin-backup`, {
+        params: { telegramId },
+        responseType: 'blob',
+      });
+      const objectUrl = URL.createObjectURL(response.data);
+      const downloadLink = document.createElement('a');
+
+      downloadLink.href = objectUrl;
+      downloadLink.download = 'onix-backup.json';
+      document.body.appendChild(downloadLink);
+      downloadLink.click();
+      downloadLink.remove();
+      window.setTimeout(() => URL.revokeObjectURL(objectUrl), 1000);
+
+      showToast((t) => t('admin.notice.backupDownloaded'), 'success');
+    } catch (error: any) {
+      showToast(
+        error?.response?.status === 403
+          ? ((t) => t('admin.error.forbidden'))
+          : ((t) => t('admin.notice.backupDownloadError')),
+        'error'
+      );
+    } finally {
+      setIsAdminBackupDownloading(false);
+    }
   };
 
   const loadAdminFrontendErrors = async () => {
     const telegramId = getTelegramId();
 
     try {
-      setIsAdminLoading(true);
+      setIsAdminFrontendErrorsLoading(true);
+      setAdminFrontendErrorsError(false);
 
       const response = await axios.get(`${API_URL}/admin-frontend-errors`, {
         params: { telegramId },
       });
 
       setAdminFrontendErrors(response.data.logs || []);
+      setAdminFrontendErrorsLoaded(true);
       showToast((t) => t('admin.notice.frontendErrorsUpdated'), 'success');
     } catch (error: any) {
-      showToast(error?.response?.data?.message || ((t) => t('admin.notice.frontendErrorsLoadError')), 'error');
+      setAdminFrontendErrorsError(true);
+      setAdminFrontendErrorsLoaded(true);
+      const serverMessage = error?.response?.data?.message;
+      showToast(
+        (serverMessage && getBackendNotice(serverMessage))
+          || ((t) => t('admin.notice.frontendErrorsLoadError')),
+        'error'
+      );
     } finally {
-      setIsAdminLoading(false);
+      setIsAdminFrontendErrorsLoading(false);
     }
   };
 
@@ -14805,14 +14860,9 @@ function App() {
     try {
       setIsAdminLoading(true);
 
-      const [configResponse, operationsResponse] = await Promise.all([
-        axios.get(`${API_URL}/admin-economy-config`, {
-          params: { telegramId },
-        }),
-        axios.get(`${API_URL}/admin-operations`, {
-          params: { telegramId },
-        }),
-      ]);
+      const configResponse = await axios.get(`${API_URL}/admin-economy-config`, {
+        params: { telegramId },
+      });
 
       const config = configResponse.data.config || {};
 
@@ -14827,9 +14877,21 @@ function App() {
         MAX_PAID_REFERRALS_PER_HOUR: String(config.maxPaidReferralsPerHour || ''),
       });
 
-      setAdminOperations(operationsResponse.data);
       setAdmin2Visible(false);
       setAdminHubPage('admin2');
+
+      try {
+        setIsAdminOperationsLoading(true);
+        setAdminOperationsError(false);
+        const operationsResponse = await axios.get(`${API_URL}/admin-operations`, {
+          params: { telegramId },
+        });
+        setAdminOperations(operationsResponse.data);
+      } catch {
+        setAdminOperationsError(true);
+      } finally {
+        setIsAdminOperationsLoading(false);
+      }
     } catch (error: any) {
       showToast(error?.response?.data?.message || ((t) => t('admin.notice.admin2OpenError')), 'error');
     } finally {
@@ -14935,18 +14997,25 @@ function App() {
     const telegramId = getTelegramId();
 
     try {
-      setIsAdminLoading(true);
+      setIsAdminOperationsLoading(true);
+      setAdminOperationsError(false);
 
       const response = await axios.get(`${API_URL}/admin-operations`, {
         params: { telegramId },
       });
 
       setAdminOperations(response.data);
-      showToast('✅ Операции обновлены', 'success');
+      showToast((t) => t('admin.notice.operationsUpdated'), 'success');
     } catch (error: any) {
-      showToast(error?.response?.data?.message || 'Не удалось загрузить операции', 'error');
+      setAdminOperationsError(true);
+      const serverMessage = error?.response?.data?.message;
+      showToast(
+        (serverMessage && getBackendNotice(serverMessage))
+          || ((t) => t('admin.notice.operationsLoadError')),
+        'error'
+      );
     } finally {
-      setIsAdminLoading(false);
+      setIsAdminOperationsLoading(false);
     }
   };
 
@@ -17867,9 +17936,26 @@ function App() {
                       <div className="onix-admin-section-card">
                         <div className="onix-admin-section-head"><strong>{t('admin.nav.admin2')}</strong><span>{t('admin.admin2.config')}</span></div>
                         <div className="onix-admin-metrics-grid"><div><span>{t('admin.admin2.frontend')}</span><strong>v1.0.0</strong></div><div><span>{t('admin.admin2.backend')}</span><strong>v{appVersionInfo?.version || '—'}</strong></div></div>
-                        <button type="button" className="onix-admin-secondary" onClick={downloadMongoBackup}>{t('admin.admin2.backup')}</button>
-                        <button type="button" className="onix-admin-secondary" onClick={loadAdminFrontendErrors} disabled={isAdminLoading}>{t('admin.admin2.errorLogs')}</button>
+                        <button type="button" className="onix-admin-secondary" onClick={() => void downloadMongoBackup()} disabled={isAdminBackupDownloading}>{t(isAdminBackupDownloading ? 'admin.admin2.backupDownloading' : 'admin.admin2.backup')}</button>
+                        <button type="button" className="onix-admin-secondary" onClick={() => void loadAdminFrontendErrors()} disabled={isAdminFrontendErrorsLoading}>{t(adminFrontendErrorsLoaded ? 'admin.admin2.errorLogsRefresh' : 'admin.admin2.errorLogs')}</button>
                         <button type="button" className="onix-admin-secondary" onClick={() => void downloadUsersCsv()} disabled={isAdminCsvDownloading}>{t(isAdminCsvDownloading ? 'admin.admin2.csvExporting' : 'admin.admin2.csvExport')}</button>
+                        <div className="onix-admin-list">
+                          {isAdminFrontendErrorsLoading && <p className="onix-admin-muted">{t('admin.admin2.errorLogsLoading')}</p>}
+                          {!isAdminFrontendErrorsLoading && adminFrontendErrorsError && <p className="onix-admin-empty">{t('admin.admin2.errorLogsError')}</p>}
+                          {!isAdminFrontendErrorsLoading && !adminFrontendErrorsError && adminFrontendErrorsLoaded && adminFrontendErrors.length === 0 && <p className="onix-admin-empty">{t('admin.admin2.errorLogsEmpty')}</p>}
+                          {!isAdminFrontendErrorsLoading && adminFrontendErrors.map((error, index) => (
+                            <div key={`${error.telegramId}-${error.createdAt}-${index}`} className="onix-admin-row is-column">
+                              <strong>{error.message}</strong>
+                              <em>{error.username} · v{error.appVersion || '—'} · {formatTransactionTime(error.createdAt, appLanguage)}</em>
+                              {error.stack && (
+                                <details>
+                                  <summary>{t('admin.admin2.stackTrace')}</summary>
+                                  <pre style={{ marginTop: 8, overflowX: 'auto', whiteSpace: 'pre-wrap', wordBreak: 'break-word' }}>{error.stack}</pre>
+                                </details>
+                              )}
+                            </div>
+                          ))}
+                        </div>
                         <div className="onix-admin-config-grid">
                           {[
                             ['ONIX_EUR_PER_1000', t('admin.admin2.rate')],
@@ -17884,6 +17970,31 @@ function App() {
                         <textarea value={adminBroadcastMessage} onChange={(event) => setAdminBroadcastMessage(event.target.value)} placeholder={t('admin.admin2.broadcastPlaceholder')} className="onix-admin-input onix-admin-textarea" />
                         <div className="onix-admin-actions"><button type="button" onClick={() => sendAdminBroadcast(true)} disabled={isAdminLoading}>{t('admin.admin2.dryRun')}</button><button type="button" onClick={() => sendAdminBroadcast(false)} disabled={isAdminLoading}>{t('admin.admin2.send')}</button></div>
                         {adminBroadcastResult && <p className="onix-admin-muted">{t('admin.admin2.broadcastSummary', { recipients: adminBroadcastResult.recipients || 0, sent: adminBroadcastResult.sent || 0, failed: adminBroadcastResult.failed || 0 })}</p>}
+                        <div className="onix-admin-section-head"><strong>{t('admin.admin2.operationsTitle')}</strong><button type="button" className="onix-admin-secondary" onClick={() => void loadAdminOperations()} disabled={isAdminOperationsLoading}>{t('admin.admin2.operationsRefresh')}</button></div>
+                        <div className="onix-admin-metrics-grid">
+                          <div><span>{t('admin.admin2.withdrawalOperations')}</span><strong>{adminOperations?.withdrawals?.length || 0}</strong></div>
+                          <div><span>{t('admin.admin2.transactionOperations')}</span><strong>{adminOperations?.transactions?.length || 0}</strong></div>
+                        </div>
+                        {isAdminOperationsLoading && <p className="onix-admin-muted">{t('admin.admin2.operationsLoading')}</p>}
+                        {!isAdminOperationsLoading && adminOperationsError && <p className="onix-admin-empty">{t('admin.admin2.operationsError')}</p>}
+                        {!isAdminOperationsLoading && !adminOperationsError && adminOperations && adminOperations.withdrawals.length === 0 && adminOperations.transactions.length === 0 && <p className="onix-admin-empty">{t('admin.admin2.operationsEmpty')}</p>}
+                        {!isAdminOperationsLoading && adminOperations && (
+                          <div className="onix-admin-list">
+                            {adminOperations.withdrawals.slice(0, 8).map((item, index) => (
+                              <div key={`withdrawal-${item.telegramId}-${item.createdAt}-${index}`} className="onix-admin-row is-column">
+                                <strong>{t('admin.admin2.withdrawalEntry')} · {item.username} · {formatOnix(item.amount)} ONIX</strong>
+                                <em>{item.status} · {formatTransactionTime(item.createdAt, appLanguage)}</em>
+                                {item.adminComment && <em>{t('admin.admin2.comment')}: {item.adminComment}</em>}
+                              </div>
+                            ))}
+                            {adminOperations.transactions.slice(0, 8).map((item, index) => (
+                              <div key={`transaction-${item.telegramId}-${item.createdAt}-${index}`} className="onix-admin-row is-column">
+                                <strong>{t('admin.admin2.transactionEntry')} · {item.username} · {Number(item.amount || 0) >= 0 ? '+' : ''}{formatOnix(item.amount)} ONIX</strong>
+                                <em>{item.title || item.type} · {formatTransactionTime(item.createdAt, appLanguage)}</em>
+                              </div>
+                            ))}
+                          </div>
+                        )}
                       </div>
                     )}
                   </div>
