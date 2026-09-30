@@ -13,3 +13,17 @@ backend/backendnode-server/.env.*
 
 .DS_Store
 Thumbs.db
+
+# Local SQLite data
+*.db
+*.db-wal
+*.db-shm
+*.db-journal
+*.sqlite
+*.sqlite3
+
+# Python local artifacts
+__pycache__/
+*.py[cod]
+.venv/
+venv/
