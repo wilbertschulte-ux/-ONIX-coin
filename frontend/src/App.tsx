@@ -13173,8 +13173,6 @@ function App() {
   const [launchPanel, setLaunchPanel] = useState<LaunchPanel>('overview');
   const [adminEconomyDashboard, setAdminEconomyDashboard] =
     useState<AdminEconomyDashboard | null>(null);
-  const [, setAdminEconomyVisible] = useState(false);
-  const [adminSearchVisible, setAdminSearchVisible] = useState(false);
   const [adminSearchQuery, setAdminSearchQuery] = useState('');
   const [adminSearchResults, setAdminSearchResults] = useState<AdminUserSearchResult[]>([]);
   const [adminUserListTotal, setAdminUserListTotal] = useState(0);
@@ -13185,8 +13183,6 @@ function App() {
   const [adminAdjustAmount, setAdminAdjustAmount] = useState('');
   const [adminActionReason, setAdminActionReason] = useState('');
   const [adminSecurityLogs, setAdminSecurityLogs] = useState<AdminSecurityLog[]>([]);
-  const [, setAdminSecurityLogsVisible] = useState(false);
-  const [, setAdmin2Visible] = useState(false);
   const [adminEconomyConfigDraft, setAdminEconomyConfigDraft] = useState<Record<string, string>>(() => createAdminEconomyConfigDraft({}));
   const [adminEconomyConfigSaved, setAdminEconomyConfigSaved] = useState<Record<string, string>>(() => createAdminEconomyConfigDraft({}));
   const [adminBroadcastMessage, setAdminBroadcastMessage] = useState('');
@@ -13203,7 +13199,6 @@ function App() {
   const [adminOperationsError, setAdminOperationsError] = useState(false);
   const [appVersionInfo, setAppVersionInfo] = useState<any>(null);
   const [adminFrontendErrors, setAdminFrontendErrors] = useState<AdminFrontendError[]>([]);
-  const [launchChecklistVisible, setLaunchChecklistVisible] = useState(false);
   const [backendHealth, setBackendHealth] = useState<any>(null);
   const [promoModalVisible, setPromoModalVisible] = useState(false);
   const [promoCodeInput, setPromoCodeInput] = useState('');
@@ -13258,16 +13253,13 @@ function App() {
   const [isWithdrawalLoading, setIsWithdrawalLoading] = useState(false);
   const [withdrawalRequests, setWithdrawalRequests] = useState<WithdrawalRequest[]>([]);
   const [adminWithdrawals, setAdminWithdrawals] = useState<AdminWithdrawalRequest[]>([]);
-  const [, setAdminWithdrawalsVisible] = useState(false);
   const [adminWithdrawalComment, setAdminWithdrawalComment] = useState('');
   const [suspiciousUsers, setSuspiciousUsers] = useState<SuspiciousUser[]>([]);
-  const [, setSuspiciousUsersVisible] = useState(false);
 
   const [totalTaps, setTotalTaps] = useState(0);
   const [totalBoostsUsed, setTotalBoostsUsed] = useState(0);
   const [totalUpgradesBought, setTotalUpgradesBought] = useState(0);
   const [offlineClaimsCount, setOfflineClaimsCount] = useState(0);
-  const [, setAdminPanelVisible] = useState(false);
   const [adminHubPage, setAdminHubPage] = useState<'overview' | 'prizes' | 'withdrawals' | 'economy' | 'search' | 'suspicious' | 'logs' | 'launch' | 'admin2'>('overview');
   const [adminPrizePreview, setAdminPrizePreview] =
     useState<AdminPrizePreviewResponse | null>(null);
@@ -14366,7 +14358,6 @@ function App() {
       });
 
       setAdminPrizePreview(response.data);
-      setAdminPanelVisible(false);
       setAdminHubPage('prizes');
     } catch (error: any) {
       showToast(error?.response?.data?.message || ((t) => t('admin.notice.previewLoadError')), 'error');
@@ -14812,7 +14803,6 @@ function App() {
       });
 
       setAdminSecurityLogs(response.data.logs || []);
-      setAdminSecurityLogsVisible(false);
       setAdminHubPage('logs');
     } catch (error: any) {
       showToast(error?.response?.data?.message || ((t) => t('admin.notice.logsLoadError')), 'error');
@@ -14905,7 +14895,6 @@ function App() {
       setAdminEconomyConfigDraft(configDraft);
       setAdminEconomyConfigSaved(configDraft);
 
-      setAdmin2Visible(false);
       setAdminHubPage('admin2');
 
       try {
@@ -15131,7 +15120,6 @@ function App() {
       });
 
       setAdminEconomyDashboard(response.data);
-      setAdminEconomyVisible(false);
       setAdminHubPage('economy');
     } catch (error: any) {
       showToast(error?.response?.data?.message || ((t) => t('admin.notice.economyLoadError')), 'error');
@@ -15153,7 +15141,6 @@ function App() {
       });
 
       setSuspiciousUsers(response.data.users || []);
-      setSuspiciousUsersVisible(false);
       setAdminHubPage('suspicious');
     } catch (error: any) {
       showToast(error?.response?.data?.message || ((t) => t('admin.notice.suspiciousLoadError')), 'error');
@@ -15198,7 +15185,6 @@ function App() {
       });
 
       setAdminWithdrawals(response.data.requests || []);
-      setAdminWithdrawalsVisible(false);
       setAdminHubPage('withdrawals');
     } catch (error: any) {
       showToast(error?.response?.data?.message || ((t) => t('admin.notice.withdrawalsLoadError')), 'error');
@@ -17766,7 +17752,7 @@ function App() {
                     <button type="button" onClick={loadAdminEconomyDashboard} disabled={isAdminLoading}>
                       <span>📊</span><strong>{t('admin.nav.economy')}</strong><em>{t('admin.overview.economyHint')}</em>
                     </button>
-                    <button type="button" onClick={() => { setAdminSearchVisible(false); setAdminHubPage('search'); setAdminSearchQuery(''); void searchAdminUsers(1, ''); }} disabled={isAdminLoading}>
+                    <button type="button" onClick={() => { setAdminHubPage('search'); setAdminSearchQuery(''); void searchAdminUsers(1, ''); }} disabled={isAdminLoading}>
                       <span>👥</span><strong>{t('admin.players.all')}</strong><em>{t('admin.overview.playersHint')}</em>
                     </button>
                     <button type="button" onClick={loadSuspiciousUsers} disabled={isAdminLoading}>
@@ -17784,7 +17770,6 @@ function App() {
                         } catch {
                           setBackendHealth({ ok: false });
                         }
-                        setLaunchChecklistVisible(false);
                         setAdminHubPage('launch');
                       }}
                       disabled={isAdminLoading}
@@ -18810,98 +18795,6 @@ function App() {
             </div>
 
 
-            {isAdmin() && (
-              <button
-                onClick={loadAdminPrizePreview}
-                disabled={isAdminLoading}
-                className="mt-3 w-full rounded-2xl bg-[#0a0f1c] py-4 text-lg font-bold text-yellow-400 active:scale-95 disabled:opacity-50"
-              >
-                🛠 Админ: призы сезона
-              </button>
-            )}
-
-            {isAdmin() && (
-              <button
-                onClick={loadAdminWithdrawals}
-                disabled={isAdminLoading}
-                className="mt-3 w-full rounded-2xl bg-[#0a0f1c] py-4 text-lg font-bold text-emerald-400 active:scale-95 disabled:opacity-50"
-              >
-                💸 Админ: заявки на вывод
-              </button>
-            )}
-
-            {isAdmin() && (
-              <button
-                onClick={loadSuspiciousUsers}
-                disabled={isAdminLoading}
-                className="mt-3 w-full rounded-2xl bg-[#0a0f1c] py-4 text-lg font-bold text-red-400 active:scale-95 disabled:opacity-50"
-              >
-                🚨 Админ: suspicious
-              </button>
-            )}
-
-            {isAdmin() && (
-              <button
-                onClick={loadAdminEconomyDashboard}
-                disabled={isAdminLoading}
-                className="mt-3 w-full rounded-2xl bg-[#0a0f1c] py-4 text-lg font-bold text-sky-400 active:scale-95 disabled:opacity-50"
-              >
-                📊 Админ: экономика
-              </button>
-            )}
-{/* SECURITY_ADMIN_VISIBLE_BUTTONS_FIX */}
-
-            {isAdmin() && (
-              <button
-                onClick={() => setAdminSearchVisible(true)}
-                disabled={isAdminLoading}
-                className="mt-3 w-full rounded-2xl bg-[#0a0f1c] py-4 text-lg font-bold text-purple-400 active:scale-95 disabled:opacity-50"
-              >
-                🔎 Админ: поиск игрока
-              </button>
-            )}
-
-            {isAdmin() && (
-              <button
-                onClick={loadAdminSecurityLogs}
-                disabled={isAdminLoading}
-                className="mt-3 w-full rounded-2xl bg-[#0a0f1c] py-4 text-lg font-bold text-orange-400 active:scale-95 disabled:opacity-50"
-              >
-                🧾 Админ: security logs
-              </button>
-            )}
-
-            {isAdmin() && (
-              <button
-                onClick={async () => {
-                  try {
-                    const response = await axios.get(`${API_URL}/health`);
-                    setBackendHealth(response.data);
-                  } catch {
-                    setBackendHealth({ ok: false });
-                  }
-
-                  setLaunchChecklistVisible(true);
-                }}
-                disabled={isAdminLoading}
-                className="mt-3 w-full rounded-2xl bg-[#0a0f1c] py-4 text-lg font-bold text-emerald-400 active:scale-95 disabled:opacity-50"
-              >
-                🚀 Админ: launch checklist
-              </button>
-            )}
-
-            {isAdmin() && (
-              <button
-                onClick={openAdmin2Panel}
-                disabled={isAdminLoading}
-                className="mt-3 w-full rounded-2xl bg-[#0a0f1c] py-4 text-lg font-bold text-fuchsia-400 active:scale-95 disabled:opacity-50"
-              >
-                🧰 Админ: 2.0
-              </button>
-            )}
-
-
-
           </div>
 
 
@@ -19551,334 +19444,6 @@ function App() {
             >
               {t('referrals.shareButton')}
             </button>
-          </div>
-        </div>
-      )}
-
-      {launchChecklistVisible && (
-        <div className="fixed inset-0 z-[89] flex items-center justify-center bg-black/70 px-4">
-          <div className="max-h-[90vh] w-full max-w-md overflow-y-auto rounded-3xl border border-emerald-400/30 bg-[#111827] p-6 shadow-2xl">
-            <div className="mb-5 flex items-start justify-between gap-3">
-              <div>
-                <h2 className="text-2xl font-bold text-white">🚀 Öffentlicher Launch</h2>
-                <p className="mt-1 text-sm text-gray-400">
-                  Schnellcheck vor dem Release
-                </p>
-              </div>
-
-              <button
-                aria-label={t('a11y.close')}
-                onClick={() => setLaunchChecklistVisible(false)}
-                className="text-2xl text-gray-400"
-              >
-                ×
-              </button>
-            </div>
-
-            <div className="space-y-3">
-              {[
-                {
-                  title: 'Backend health',
-                  ok: Boolean(backendHealth?.ok),
-                  text: backendHealth?.ok
-                    ? `OK · users: ${backendHealth.users || 0}`
-                    : 'Render-Logs prüfen',
-                },
-                {
-                  title: 'Telegram Mini App',
-                  ok: true,
-                  text: 'Startbutton und /start prüfen',
-                },
-                {
-                  title: 'Wallet und Auszahlung',
-                  ok: true,
-                  text: 'Antragserstellung und Admin-Auszahlungen prüfen',
-                },
-                {
-                  title: 'Referral-System',
-                  ok: true,
-                  text: 'Prüfen: +15.000 für Neue, +75.000 nach 100 Taps',
-                },
-                {
-                  title: 'Saison-Cron',
-                  ok: true,
-                  text: 'GitHub Actions / Cron soll weekly prizes auslösen',
-                },
-                {
-                  title: 'Anti-Abuse',
-                  ok: true,
-                  text: 'Suspicious, Ban/Unban und Security Logs prüfen',
-                },
-              ].map((item) => (
-                <div
-                  key={item.title}
-                  className="rounded-2xl bg-[#0a0f1c] p-4"
-                >
-                  <div className="flex items-center justify-between gap-3">
-                    <p className="font-bold text-white">{item.title}</p>
-                    <span
-                      className={`rounded-full px-3 py-1 text-xs font-bold ${
-                        item.ok
-                          ? 'bg-emerald-500/10 text-emerald-400'
-                          : 'bg-red-500/10 text-red-400'
-                      }`}
-                    >
-                      {item.ok ? 'OK' : 'CHECK'}
-                    </span>
-                  </div>
-
-                  <p className="mt-1 text-sm text-gray-400">{item.text}</p>
-                </div>
-              ))}
-            </div>
-
-            <button
-              onClick={() => setLaunchChecklistVisible(false)}
-              className="mt-5 w-full rounded-2xl bg-yellow-400 py-4 text-lg font-bold text-black active:scale-95"
-            >
-              Fertig
-            </button>
-          </div>
-        </div>
-      )}
-
-
-      {adminSearchVisible && (
-        <div className="fixed inset-0 z-[88] flex items-center justify-center bg-black/70 px-4">
-          <div className="max-h-[90vh] w-full max-w-md overflow-y-auto rounded-3xl border border-purple-400/30 bg-[#111827] p-6 shadow-2xl">
-            <div className="mb-5 flex items-start justify-between gap-3">
-              <div>
-                <h2 className="text-2xl font-bold text-white">🔎 Админ: поиск игрока</h2>
-                <p className="mt-1 text-sm text-gray-400">
-                  Поиск по username или Telegram ID
-                </p>
-              </div>
-
-              <button
-                aria-label={t('a11y.close')}
-                onClick={() => setAdminSearchVisible(false)}
-                className="text-2xl text-gray-400"
-              >
-                ×
-              </button>
-            </div>
-
-            <div className="flex gap-2">
-              <input
-                value={adminSearchQuery}
-                onChange={(event) => setAdminSearchQuery(event.target.value)}
-                placeholder="username или telegramId"
-                className="min-w-0 flex-1 rounded-2xl bg-[#0a0f1c] px-4 py-3 text-sm text-white outline-none"
-              />
-
-              <button
-                onClick={() => searchAdminUsers(1)}
-                disabled={isAdminLoading}
-                className="rounded-2xl bg-yellow-400 px-4 py-3 font-bold text-black active:scale-95 disabled:opacity-50"
-              >
-                Найти
-              </button>
-            </div>
-
-            <div className="mt-5 space-y-3">
-              {adminSearchResults.length > 0 ? (
-                adminSearchResults.map((user) => (
-                  <button
-                    key={user.telegramId}
-                    onClick={() => loadAdminUserProfile(user.telegramId)}
-                    className="w-full rounded-2xl bg-[#0a0f1c] p-4 text-left active:scale-[0.99]"
-                  >
-                    <div className="flex items-start justify-between gap-3">
-                      <div>
-                        <p className="font-bold text-white">{user.username}</p>
-                        <p className="text-xs text-gray-500">ID: {user.telegramId}</p>
-                      </div>
-
-                      <span
-                        className={`rounded-full px-3 py-1 text-xs font-bold ${
-                          user.isFrozen
-                            ? 'bg-red-500/10 text-red-400'
-                            : user.isSuspicious
-                            ? 'bg-yellow-400/10 text-yellow-400'
-                            : 'bg-emerald-500/10 text-emerald-400'
-                        }`}
-                      >
-                        {user.isFrozen ? 'Banned' : user.isSuspicious ? 'Suspicious' : 'OK'}
-                      </span>
-                    </div>
-
-                    <div className="mt-3 grid grid-cols-2 gap-2 text-xs">
-                      <p className="rounded-xl bg-[#111827] p-2">
-                        Balance: {formatOnix(user.balance)}
-                      </p>
-                      <p className="rounded-xl bg-[#111827] p-2">
-                        Earned: {formatOnix(user.totalEarned)}
-                      </p>
-                    </div>
-                  </button>
-                ))
-              ) : (
-                <p className="rounded-2xl bg-[#0a0f1c] p-4 text-center text-gray-400">
-                  Введите запрос и нажмите “Найти”
-                </p>
-              )}
-            </div>
-
-            {adminSelectedUser && (
-              <div className="mt-5 rounded-3xl border border-yellow-400/20 bg-[#0a0f1c] p-5">
-                <div className="mb-4 flex items-start justify-between gap-3">
-                  <div>
-                    <h3 className="text-xl font-bold text-white">
-                      {adminSelectedUser.username}
-                    </h3>
-                    <p className="text-xs text-gray-500">
-                      ID: {adminSelectedUser.telegramId}
-                    </p>
-                  </div>
-
-                  <span
-                    className={`rounded-full px-3 py-1 text-xs font-bold ${
-                      adminSelectedUser.isFrozen
-                        ? 'bg-red-500/10 text-red-400'
-                        : 'bg-emerald-500/10 text-emerald-400'
-                    }`}
-                  >
-                    {adminSelectedUser.isFrozen ? 'Banned' : 'Active'}
-                  </span>
-                </div>
-
-                <div className="grid grid-cols-2 gap-2 text-xs">
-                  <p className="rounded-xl bg-[#111827] p-2">
-                    Balance: {formatOnix(adminSelectedUser.balance)}
-                  </p>
-                  <p className="rounded-xl bg-[#111827] p-2">
-                    Earned: {formatOnix(adminSelectedUser.totalEarned)}
-                  </p>
-                  <p className="rounded-xl bg-[#111827] p-2">
-                    Week: {formatOnix(adminSelectedUser.weeklyEarned)}
-                  </p>
-                  <p className="rounded-xl bg-[#111827] p-2">
-                    Taps: {adminSelectedUser.totalTaps}
-                  </p>
-                  <p className="rounded-xl bg-[#111827] p-2">
-                    Refs: {adminSelectedUser.referralsCount}
-                  </p>
-                  <p className="rounded-xl bg-[#111827] p-2">
-                    Upgrades: {adminSelectedUser.totalUpgradesBought}
-                  </p>
-                </div>
-
-                {adminSelectedUser.suspiciousReasons.length > 0 && (
-                  <p className="mt-3 rounded-xl bg-red-500/10 p-3 text-xs text-red-400">
-                    {adminSelectedUser.suspiciousReasons.join(', ')}
-                  </p>
-                )}
-
-                <div className="mt-4 space-y-2">
-                  <input
-                    value={adminAdjustAmount}
-                    onChange={(event) => setAdminAdjustAmount(event.target.value)}
-                    placeholder="+10000 или -10000"
-                    className="w-full rounded-2xl bg-[#111827] px-4 py-3 text-sm text-white outline-none"
-                  />
-
-                  <input
-                    value={adminActionReason}
-                    onChange={(event) => setAdminActionReason(event.target.value)}
-                    placeholder="Причина действия"
-                    className="w-full rounded-2xl bg-[#111827] px-4 py-3 text-sm text-white outline-none"
-                  />
-                </div>
-
-                <div className="mt-4 grid grid-cols-2 gap-3">
-                  <button
-                    onClick={adjustAdminUserBalance}
-                    disabled={isAdminLoading}
-                    className="rounded-2xl bg-yellow-400 py-3 font-bold text-black active:scale-95 disabled:opacity-50"
-                  >
-                    Баланс
-                  </button>
-
-                  <button
-                    onClick={toggleAdminUserBan}
-                    disabled={isAdminLoading}
-                    className={`rounded-2xl py-3 font-bold active:scale-95 disabled:opacity-50 ${
-                      adminSelectedUser.isFrozen
-                        ? 'bg-emerald-500/20 text-emerald-400'
-                        : 'bg-red-500/20 text-red-400'
-                    }`}
-                  >
-                    {adminSelectedUser.isFrozen ? 'Разбан' : 'Бан'}
-                  </button>
-                </div>
-
-                <div className="mt-5">
-                  <h4 className="mb-3 font-bold text-white">📝 Админские заметки</h4>
-
-                  <div className="flex gap-2">
-                    <input
-                      value={adminNoteText}
-                      onChange={(event) => setAdminNoteText(event.target.value)}
-                      placeholder="Заметка по игроку"
-                      className="min-w-0 flex-1 rounded-2xl bg-[#111827] px-4 py-3 text-sm text-white outline-none"
-                    />
-
-                    <button
-                      onClick={addAdminNote}
-                      disabled={isAdminLoading}
-                      className="rounded-2xl bg-yellow-400 px-4 py-3 text-sm font-bold text-black active:scale-95 disabled:opacity-50"
-                    >
-                      OK
-                    </button>
-                  </div>
-
-                  <div className="mt-3 max-h-40 space-y-2 overflow-y-auto">
-                    {adminSelectedUser.adminNotes?.length > 0 ? (
-                      adminSelectedUser.adminNotes.slice(0, 5).map((note, index) => (
-                        <div
-                          key={`${note.createdAt}-${index}`}
-                          className="rounded-xl bg-[#111827] p-3 text-xs"
-                        >
-                          <p className="text-gray-300">{note.text}</p>
-                          <p className="mt-1 text-gray-600">
-                            {formatTransactionTime(note.createdAt)}
-                          </p>
-                        </div>
-                      ))
-                    ) : (
-                      <p className="rounded-xl bg-[#111827] p-3 text-center text-xs text-gray-500">
-                        Заметок пока нет
-                      </p>
-                    )}
-                  </div>
-                </div>
-
-                <div className="mt-5">
-                  <h4 className="mb-3 font-bold text-white">🧾 Security logs</h4>
-
-                  <div className="max-h-56 space-y-2 overflow-y-auto">
-                    {adminSelectedUser.securityLogs.length > 0 ? (
-                      adminSelectedUser.securityLogs.slice(0, 10).map((log, index) => (
-                        <div
-                          key={`${log.createdAt}-${index}`}
-                          className="rounded-xl bg-[#111827] p-3 text-xs"
-                        >
-                          <p className="font-bold text-yellow-400">{log.title}</p>
-                          <p className="mt-1 text-gray-400">{log.details}</p>
-                          <p className="mt-1 text-gray-600">
-                            {formatTransactionTime(log.createdAt)}
-                          </p>
-                        </div>
-                      ))
-                    ) : (
-                      <p className="rounded-xl bg-[#111827] p-3 text-center text-xs text-gray-500">
-                        Логов пока нет
-                      </p>
-                    )}
-                  </div>
-                </div>
-              </div>
-            )}
           </div>
         </div>
       )}
