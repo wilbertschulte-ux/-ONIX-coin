@@ -13,4 +13,6 @@ jobs:
     steps:
       - name: Call ONIX weekly prizes endpoint
         run: |
-          curl -fsS "https://onix-coin.onrender.com/api/coins/cron-award-weekly-prizes?secret=${{ secrets.CRON_SECRET }}"
+          curl -fsS \
+            -H "X-Cron-Secret: ${{ secrets.CRON_SECRET }}" \
+            "https://onix-coin.onrender.com/api/coins/cron-award-weekly-prizes"
