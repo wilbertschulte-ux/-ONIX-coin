@@ -490,6 +490,7 @@ router.use(async (req, res, next) => {
 });
 
 const User = require('../models/User');
+const WeeklyScore = require('../models/WeeklyScore');
 
 const WeeklyPrizeSchema = new mongoose.Schema({
   week: {
@@ -656,10 +657,17 @@ function getTeamPrizeByPlace(place) {
 }
 
 async function getTeamLeaderboardForWeek(week, limit = 0) {
+  const isCurrentWeek = week === getWeekKey();
+
+  if (!isCurrentWeek) {
+    await materializeWeeklyScores(week);
+  }
+
+  const WeeklySource = isCurrentWeek ? User : WeeklyScore;
   const pipeline = [
     {
       $match: {
-        weeklyEarnedWeek: week,
+        ...(isCurrentWeek ? { weeklyEarnedWeek: week } : { week }),
         weeklyEarned: { $gt: 0 },
         teamName: { $nin: ['', null] },
       },
@@ -677,7 +685,7 @@ async function getTeamLeaderboardForWeek(week, limit = 0) {
 
   if (limit > 0) pipeline.push({ $limit: limit });
 
-  const teams = await User.aggregate(pipeline);
+  const teams = await WeeklySource.aggregate(pipeline);
 
   return teams.map((team, index) => ({
     place: index + 1,
@@ -714,16 +722,25 @@ async function getTeamContestPayload(user) {
     getTeamLeaderboardForWeek(currentWeek, 0),
     getTeamLeaderboardForWeek(previousWeek, 0),
   ]);
+  const completedUserScore = await WeeklyScore.findOne({
+    week: previousWeek,
+    telegramId: String(user.telegramId),
+  })
+    .select('teamName')
+    .lean();
+  const completedTeamName = String(completedUserScore?.teamName || '').trim();
 
   const activeTeam = activeLeaderboard.find((team) => team.teamName === cleanTeamName) || null;
-  const completedTeam = completedLeaderboard.find((team) => team.teamName === cleanTeamName) || null;
-  const claimKey = `${previousWeek}_${cleanTeamName}`;
+  const completedTeam = completedLeaderboard.find((team) => team.teamName === completedTeamName) || null;
+  const claimKey = `${previousWeek}_${completedTeamName}`;
   const joinedAfterCompletedContest =
-    Boolean(user.teamJoinedAt) && Number(user.teamJoinedAt || 0) > previousWeekEndedAt;
+    completedTeamName === cleanTeamName &&
+    Boolean(user.teamJoinedAt) &&
+    Number(user.teamJoinedAt || 0) > previousWeekEndedAt;
   const completedPlace = completedTeam?.place || null;
   const completedPrize =
     completedPlace && !joinedAfterCompletedContest ? getTeamPrizeByPlace(completedPlace) : 0;
-  const hasClaimed = cleanTeamName ? user.teamPrizeClaims.includes(claimKey) : false;
+  const hasClaimed = completedTeamName ? user.teamPrizeClaims.includes(claimKey) : false;
 
   return {
     activeWeek: currentWeek,
@@ -739,7 +756,7 @@ async function getTeamContestPayload(user) {
     prize: completedPrize,
     claimKey,
     hasClaimed,
-    canClaim: Boolean(cleanTeamName && completedPrize > 0 && !hasClaimed),
+    canClaim: Boolean(completedTeamName && completedPrize > 0 && !hasClaimed),
     joinedAfterCompletedContest,
     nextPrizeAvailableAt: currentWeekEndsAt,
     secondsUntilNextPrize: Math.max(0, Math.ceil((currentWeekEndsAt - now) / 1000)),
@@ -761,13 +778,14 @@ async function getTeamStats(teamName) {
     };
   }
 
+  const currentWeek = getWeekKey();
   const members = await User.find({ teamName: cleanTeamName }).select(
-    'telegramId username weeklyEarned totalEarned totalTaps referralsCount'
+    'telegramId username weeklyEarned weeklyEarnedWeek totalEarned totalTaps referralsCount'
   );
 
   const stats = members.reduce(
     (acc, member) => {
-      acc.weeklyEarned += Number(member.weeklyEarned || 0);
+      acc.weeklyEarned += getCurrentWeeklyEarned(member, currentWeek);
       acc.totalEarned += Number(member.totalEarned || 0);
       acc.totalTaps += Number(member.totalTaps || 0);
       return acc;
@@ -782,6 +800,7 @@ async function getTeamStats(teamName) {
   const leaderboard = await User.aggregate([
     {
       $match: {
+        weeklyEarnedWeek: currentWeek,
         weeklyEarned: { $gt: 0 },
         teamName: { $nin: ['', null] },
       },
@@ -809,7 +828,7 @@ async function getTeamStats(teamName) {
       .map((member) => ({
         telegramId: member.telegramId,
         username: member.username || 'Spieler',
-        weeklyEarned: roundOnix(member.weeklyEarned || 0),
+        weeklyEarned: getCurrentWeeklyEarned(member, currentWeek),
         totalEarned: roundOnix(member.totalEarned || 0),
         totalTaps: Number(member.totalTaps || 0),
         referralsCount: Number(member.referralsCount || 0),
@@ -971,7 +990,7 @@ function getWeeklyMissions(user) {
       title: 'Wochenverdienst',
       description: `Verdiene ${100000 * difficulty} ONIX pro Woche`,
       goal: 100000 * difficulty,
-      progress: Number(user.weeklyEarned || 0),
+      progress: getCurrentWeeklyEarned(user),
       reward: 10000,
       category: 'weekly',
       secret: false,
@@ -1384,7 +1403,7 @@ function getAchievementProgressValue(user, achievementId) {
   if (achievementId === 'upgrade_master') return Number(user.totalUpgradesBought || 0);
   if (achievementId === 'boost_master') return Number(user.totalBoostsUsed || 0);
   if (achievementId === 'offline_master') return Number(user.offlineClaimsCount || 0);
-  if (achievementId === 'weekly_100k') return Number(user.weeklyEarned || 0);
+  if (achievementId === 'weekly_100k') return getCurrentWeeklyEarned(user);
   if (achievementId === 'all_perks') return Array.isArray(user.ownedPerks) ? user.ownedPerks.length : 0;
   if (achievementId === 'rank_gold') return Number(user.totalEarned || 0);
   if (achievementId === 'rank_diamond') return Number(user.totalEarned || 0);
@@ -1414,7 +1433,7 @@ function getAchievementsPayload(user) {
   });
 }
 
-function applyAchievements(user) {
+async function applyAchievements(user) {
   if (!user.completedAchievements) user.completedAchievements = [];
 
   const awarded = [];
@@ -1427,7 +1446,7 @@ function applyAchievements(user) {
     if (progress >= achievement.goal) {
       user.completedAchievements.push(achievement.id);
       user.balance = roundOnix(Number(user.balance || 0) + achievement.reward);
-      addEarnings(user, achievement.reward);
+      await addEarnings(user, achievement.reward);
 
       addTransaction(
         user,
@@ -1492,7 +1511,7 @@ function getRankInfo(totalEarned) {
   };
 }
 
-function applyRankBonuses(user) {
+async function applyRankBonuses(user) {
   if (!user.claimedRankBonuses) user.claimedRankBonuses = [];
 
   const awarded = [];
@@ -1509,7 +1528,7 @@ function applyRankBonuses(user) {
 
       if (Number(user.totalEarned || 0) >= rank.threshold) {
         user.balance = roundOnix(Number(user.balance || 0) + rank.bonus);
-        addEarnings(user, rank.bonus);
+        await addEarnings(user, rank.bonus);
         user.claimedRankBonuses.push(rank.id);
         addTransaction(
           user,
@@ -1747,6 +1766,11 @@ function getPreviousWeekKey(timestamp = Date.now()) {
   return getWeekKey(Number(timestamp) - 7 * 24 * 60 * 60 * 1000);
 }
 
+function getCurrentWeeklyEarned(user, currentWeek = getWeekKey()) {
+  if (String(user?.weeklyEarnedWeek || '') !== currentWeek) return 0;
+  return roundOnix(user?.weeklyEarned || 0);
+}
+
 const ECONOMY_ANOMALY_WINDOW_MS = 60 * 60 * 1000;
 const ECONOMY_ANOMALY_SINGLE_EARNING = 250000;
 const ECONOMY_ANOMALY_HOURLY_EARNING = 300000;
@@ -1792,14 +1816,114 @@ function recordEconomyEarningForAnomalyDetection(user, value) {
   }
 }
 
-function addEarnings(user, amount) {
+async function snapshotCompletedUserWeek(user) {
+  const week = String(user.weeklyEarnedWeek || '').trim();
+  const weeklyEarned = roundOnix(user.weeklyEarned || 0);
+
+  if (!week || weeklyEarned <= 0) return null;
+
+  return WeeklyScore.updateOne(
+    {
+      week,
+      telegramId: String(user.telegramId),
+    },
+    {
+      $setOnInsert: {
+        week,
+        telegramId: String(user.telegramId),
+        username: user.username || 'Spieler',
+        teamName: user.teamName || '',
+        weeklyEarned,
+        totalTaps: Number(user.totalTaps || 0),
+        capturedAt: Date.now(),
+      },
+    },
+    { upsert: true }
+  );
+}
+
+async function materializeWeeklyScores(targetWeek) {
+  const week = String(targetWeek || '').trim();
+  if (!week) return null;
+
+  const users = await User.find({
+    weeklyEarnedWeek: week,
+    weeklyEarned: { $gt: 0 },
+  })
+    .select('telegramId username teamName weeklyEarned totalTaps')
+    .lean();
+
+  if (!users.length) return null;
+
+  return WeeklyScore.bulkWrite(
+    users.map((user) => ({
+      updateOne: {
+        filter: {
+          week,
+          telegramId: String(user.telegramId),
+        },
+        update: {
+          $setOnInsert: {
+            week,
+            telegramId: String(user.telegramId),
+            username: user.username || 'Spieler',
+            teamName: user.teamName || '',
+            weeklyEarned: roundOnix(user.weeklyEarned || 0),
+            totalTaps: Number(user.totalTaps || 0),
+            capturedAt: Date.now(),
+          },
+        },
+        upsert: true,
+      },
+    })),
+    { ordered: false }
+  );
+}
+
+async function getCompletedWeeklyScores(targetWeek, limit = 50) {
+  await materializeWeeklyScores(targetWeek);
+
+  return WeeklyScore.find({
+    week: targetWeek,
+    weeklyEarned: { $gt: 0 },
+  })
+    .sort({ weeklyEarned: -1 })
+    .limit(limit);
+}
+
+async function getUsersForWeeklyScores(weeklyScores) {
+  const telegramIds = weeklyScores.map((score) => String(score.telegramId));
+  const users = await User.find({ telegramId: { $in: telegramIds } });
+  const usersByTelegramId = new Map(
+    users.map((user) => [String(user.telegramId), user])
+  );
+
+  if (usersByTelegramId.size !== new Set(telegramIds).size) {
+    throw new Error('Weekly prize user is missing');
+  }
+
+  return usersByTelegramId;
+}
+
+async function rolloverUserForEarning(user, currentWeek) {
+  if (!user.weeklyEarnedWeek) {
+    user.weeklyEarnedWeek = currentWeek;
+    user.weeklyEarned = roundOnix(user.weeklyEarned || 0);
+    return;
+  }
+
+  if (user.weeklyEarnedWeek === currentWeek) return;
+
+  await snapshotCompletedUserWeek(user);
+  user.weeklyEarnedWeek = currentWeek;
+  user.weeklyEarned = 0;
+}
+
+async function addEarnings(user, amount) {
   const value = roundOnix(amount);
   const currentWeek = getWeekKey();
 
-  if (!user.weeklyEarnedWeek || user.weeklyEarnedWeek !== currentWeek) {
-    user.weeklyEarnedWeek = currentWeek;
-    user.weeklyEarned = 0;
-  }
+  await rolloverUserForEarning(user, currentWeek);
 
   user.totalEarned = roundOnix(Number(user.totalEarned || 0) + value);
   user.weeklyEarned = roundOnix(Number(user.weeklyEarned || 0) + value);
@@ -1856,13 +1980,6 @@ function normalizeUserFields(user) {
   user.totalEarned = roundOnix(user.totalEarned);
   if (user.weeklyEarned === undefined || user.weeklyEarned === null) user.weeklyEarned = 0;
   user.weeklyEarned = roundOnix(user.weeklyEarned);
-  if (user.weeklyEarnedWeek === undefined || user.weeklyEarnedWeek === null) {
-    user.weeklyEarnedWeek = getWeekKey();
-  }
-  if (user.weeklyEarnedWeek !== getWeekKey()) {
-    user.weeklyEarnedWeek = getWeekKey();
-    user.weeklyEarned = 0;
-  }
   if (user.level === undefined || user.level === null) user.level = calculateLevel(user.totalEarned);
 
   if (user.referralsCount === undefined || user.referralsCount === null) user.referralsCount = 0;
@@ -2011,28 +2128,37 @@ router.get('/cron-award-weekly-prizes', async (req, res) => {
     }
 
     const prizes = Array.from({ length: 50 }, (_, index) => getSeasonPrizeByPlace(index + 1));
+    const topScores = await getCompletedWeeklyScores(targetWeek, 50);
 
-    const topUsers = await User.find({
-      weeklyEarnedWeek: targetWeek,
-      weeklyEarned: { $gt: 0 },
-    })
-      .sort({ weeklyEarned: -1 })
-      .limit(50);
+    if (!topScores.length) {
+      console.warn('[weekly-prizes] No eligible winners for completed week', {
+        week: targetWeek,
+      });
+      return res.json({
+        message: 'No eligible users for this week',
+        week: targetWeek,
+        winners: [],
+      });
+    }
+
+    const usersByTelegramId = await getUsersForWeeklyScores(topScores);
 
     const winners = [];
 
-    for (let i = 0; i < topUsers.length; i += 1) {
-      const user = topUsers[i];
+    for (let i = 0; i < topScores.length; i += 1) {
+      const weeklyScore = topScores[i];
+      const user = usersByTelegramId.get(String(weeklyScore.telegramId));
       const prize = prizes[i];
       const place = i + 1;
       const seasonBadge = getSeasonBadgeByPlace(place);
+      const winnerSelectionScore = roundOnix(weeklyScore.weeklyEarned || 0);
 
       if (!prize) continue;
 
       normalizeUserFields(user);
 
       user.balance = roundOnix(Number(user.balance || 0) + prize);
-      addEarnings(user, prize);
+      await addEarnings(user, prize);
 
       if (seasonBadge && !user.seasonBadges.includes(seasonBadge)) {
         user.seasonBadges.push(seasonBadge);
@@ -2040,7 +2166,7 @@ router.get('/cron-award-weekly-prizes', async (req, res) => {
 
       addTransaction(user, 'income_season_prize', prize, `Saisonpreis: Platz ${place}`);
 
-      applyRankBonuses(user);
+      await applyRankBonuses(user);
       user.level = calculateLevel(user.totalEarned);
       user.updatedAt = new Date();
 
@@ -2052,7 +2178,7 @@ router.get('/cron-award-weekly-prizes', async (req, res) => {
         place,
         telegramId: user.telegramId,
         username: user.username || 'Spieler',
-        weeklyEarned: roundOnix(user.weeklyEarned || 0),
+        weeklyEarned: winnerSelectionScore,
         prize,
       });
     }
@@ -2089,33 +2215,33 @@ router.get('/admin-weekly-prize-preview', async (req, res) => {
       });
     }
 
-    const targetWeek = req.query.week ? String(req.query.week) : getWeekKey();
+    const targetWeek = req.query.week ? String(req.query.week) : getPreviousWeekKey();
     const prizes = Array.from({ length: 50 }, (_, index) => getSeasonPrizeByPlace(index + 1));
 
+    const topScores = await getCompletedWeeklyScores(targetWeek, 50);
     const alreadyAwarded = await WeeklyPrize.findOne({ week: targetWeek });
-
-    const topUsers = await User.find({
-      weeklyEarnedWeek: targetWeek,
-      weeklyEarned: { $gt: 0 },
-    })
-      .sort({ weeklyEarned: -1 })
-      .limit(50)
-      .select('telegramId username weeklyEarned totalEarned balance');
+    const usersByTelegramId = topScores.length
+      ? await getUsersForWeeklyScores(topScores)
+      : new Map();
 
     return res.json({
       week: targetWeek,
       alreadyAwarded: Boolean(alreadyAwarded),
       awardedAt: alreadyAwarded?.awardedAt || null,
       awardedWinners: alreadyAwarded?.winners || [],
-      preview: topUsers.map((user, index) => ({
-        place: index + 1,
-        telegramId: user.telegramId,
-        username: user.username || 'Spieler',
-        weeklyEarned: roundOnix(user.weeklyEarned || 0),
-        totalEarned: roundOnix(user.totalEarned || 0),
-        balance: roundOnix(user.balance || 0),
-        prize: prizes[index],
-      })),
+      preview: topScores.map((weeklyScore, index) => {
+        const user = usersByTelegramId.get(String(weeklyScore.telegramId));
+
+        return {
+          place: index + 1,
+          telegramId: user.telegramId,
+          username: user.username || weeklyScore.username || 'Spieler',
+          weeklyEarned: roundOnix(weeklyScore.weeklyEarned || 0),
+          totalEarned: roundOnix(user.totalEarned || 0),
+          balance: roundOnix(user.balance || 0),
+          prize: prizes[index],
+        };
+      }),
     });
   } catch (error) {
     return res.status(500).json({
@@ -2141,7 +2267,14 @@ router.post('/admin-award-weekly-prizes', async (req, res) => {
       });
     }
 
-    const targetWeek = week || getWeekKey();
+    const targetWeek = week || getPreviousWeekKey();
+
+    if (targetWeek === getWeekKey()) {
+      return res.status(400).json({
+        message: 'The current incomplete week cannot be awarded',
+        week: targetWeek,
+      });
+    }
 
     const alreadyAwarded = await WeeklyPrize.findOne({ week: targetWeek });
 
@@ -2154,35 +2287,33 @@ router.post('/admin-award-weekly-prizes', async (req, res) => {
     }
 
     const prizes = Array.from({ length: 50 }, (_, index) => getSeasonPrizeByPlace(index + 1));
+    const topScores = await getCompletedWeeklyScores(targetWeek, 50);
 
-    const topUsers = await User.find({
-      weeklyEarnedWeek: targetWeek,
-      weeklyEarned: { $gt: 0 },
-    })
-      .sort({ weeklyEarned: -1 })
-      .limit(50);
-
-    if (!topUsers.length) {
+    if (!topScores.length) {
       return res.status(400).json({
         message: 'No eligible users for this week',
         week: targetWeek,
       });
     }
 
+    const usersByTelegramId = await getUsersForWeeklyScores(topScores);
+
     const winners = [];
 
-    for (let i = 0; i < topUsers.length; i += 1) {
-      const user = topUsers[i];
+    for (let i = 0; i < topScores.length; i += 1) {
+      const weeklyScore = topScores[i];
+      const user = usersByTelegramId.get(String(weeklyScore.telegramId));
       const prize = prizes[i];
       const place = i + 1;
       const seasonBadge = getSeasonBadgeByPlace(place);
+      const winnerSelectionScore = roundOnix(weeklyScore.weeklyEarned || 0);
 
       if (!prize) continue;
 
       normalizeUserFields(user);
 
       user.balance = roundOnix(Number(user.balance || 0) + prize);
-      addEarnings(user, prize);
+      await addEarnings(user, prize);
 
       if (seasonBadge && !user.seasonBadges.includes(seasonBadge)) {
         user.seasonBadges.push(seasonBadge);
@@ -2195,7 +2326,7 @@ router.post('/admin-award-weekly-prizes', async (req, res) => {
         `Saisonpreis: Platz ${place}`
       );
 
-      const rankBonuses = applyRankBonuses(user);
+      const rankBonuses = await applyRankBonuses(user);
       user.level = calculateLevel(user.totalEarned);
       user.updatedAt = new Date();
 
@@ -2207,7 +2338,7 @@ router.post('/admin-award-weekly-prizes', async (req, res) => {
         place,
         telegramId: user.telegramId,
         username: user.username || 'Spieler',
-        weeklyEarned: roundOnix(user.weeklyEarned || 0),
+        weeklyEarned: winnerSelectionScore,
         prize,
         rankBonuses,
       });
@@ -2344,7 +2475,7 @@ router.get('/admin-search-users', async (req, res) => {
         .skip((page - 1) * limit)
         .limit(limit)
         .select(
-          'telegramId username telegramUsername firstName lastName displayName languageCode photoUrl balance totalEarned weeklyEarned referralsCount totalTaps level selectedTitle league isSuspicious isFrozen frozenReason createdAt updatedAt'
+          'telegramId username telegramUsername firstName lastName displayName languageCode photoUrl balance totalEarned weeklyEarned weeklyEarnedWeek referralsCount totalTaps level selectedTitle league isSuspicious isFrozen frozenReason createdAt updatedAt'
         ),
       User.countDocuments(filter),
     ]);
@@ -2366,7 +2497,7 @@ router.get('/admin-search-users', async (req, res) => {
           : '',
         balance: roundOnix(user.balance || 0),
         totalEarned: roundOnix(user.totalEarned || 0),
-        weeklyEarned: roundOnix(user.weeklyEarned || 0),
+        weeklyEarned: getCurrentWeeklyEarned(user),
         referralsCount: Number(user.referralsCount || 0),
         totalTaps: Number(user.totalTaps || 0),
         level: Number(user.level || 1),
@@ -2430,7 +2561,7 @@ router.get('/admin-user-profile/:targetTelegramId', async (req, res) => {
         lastTapAt: user.lastTapAt || null,
         balance: roundOnix(user.balance || 0),
         totalEarned: roundOnix(user.totalEarned || 0),
-        weeklyEarned: roundOnix(user.weeklyEarned || 0),
+        weeklyEarned: getCurrentWeeklyEarned(user),
         referralsCount: Number(user.referralsCount || 0),
         totalTaps: Number(user.totalTaps || 0),
         totalBoostsUsed: Number(user.totalBoostsUsed || 0),
@@ -2492,7 +2623,7 @@ router.post('/admin-adjust-balance', async (req, res) => {
     user.balance = roundOnix(Number(user.balance || 0) + delta);
 
     if (delta > 0) {
-      addEarnings(user, delta);
+      await addEarnings(user, delta);
     }
 
     addTransaction(
@@ -2510,8 +2641,8 @@ router.post('/admin-adjust-balance', async (req, res) => {
       `${delta > 0 ? '+' : ''}${delta} ONIX. ${reason || ''}`.trim()
     );
 
-    const achievementBonuses = applyAchievements(user);
-    const rankBonuses = applyRankBonuses(user);
+    const achievementBonuses = await applyAchievements(user);
+    const rankBonuses = await applyRankBonuses(user);
     user.level = calculateLevel(user.totalEarned);
     user.updatedAt = new Date();
 
@@ -2642,7 +2773,7 @@ router.get('/admin-suspicious-users', async (req, res) => {
     })
       .sort({ updatedAt: -1 })
       .limit(100)
-      .select('telegramId username balance totalEarned weeklyEarned referralsCount totalTaps isSuspicious suspiciousReasons isFrozen frozenReason');
+      .select('telegramId username balance totalEarned weeklyEarned weeklyEarnedWeek referralsCount totalTaps isSuspicious suspiciousReasons isFrozen frozenReason');
 
     return res.json({
       users: users.map((user) => ({
@@ -2650,7 +2781,7 @@ router.get('/admin-suspicious-users', async (req, res) => {
         username: user.username || 'Spieler',
         balance: roundOnix(user.balance || 0),
         totalEarned: roundOnix(user.totalEarned || 0),
-        weeklyEarned: roundOnix(user.weeklyEarned || 0),
+        weeklyEarned: getCurrentWeeklyEarned(user),
         referralsCount: Number(user.referralsCount || 0),
         totalTaps: Number(user.totalTaps || 0),
         isSuspicious: Boolean(user.isSuspicious),
@@ -2718,7 +2849,7 @@ router.get('/admin-withdrawals', async (req, res) => {
     const users = await User.find({
       'withdrawalRequests.0': { $exists: true },
     }).select(
-      'telegramId username balance totalEarned weeklyEarned referralsCount totalTaps totalBoostsUsed totalUpgradesBought ownedPerks completedAchievements withdrawalRequests isSuspicious suspiciousReasons'
+      'telegramId username balance totalEarned weeklyEarned weeklyEarnedWeek referralsCount totalTaps totalBoostsUsed totalUpgradesBought ownedPerks completedAchievements withdrawalRequests isSuspicious suspiciousReasons'
     );
 
     const requests = [];
@@ -2741,7 +2872,7 @@ router.get('/admin-withdrawals', async (req, res) => {
           userStats: {
             balance: roundOnix(user.balance || 0),
             totalEarned: roundOnix(user.totalEarned || 0),
-            weeklyEarned: roundOnix(user.weeklyEarned || 0),
+            weeklyEarned: getCurrentWeeklyEarned(user),
             referralsCount: Number(user.referralsCount || 0),
             totalTaps: Number(user.totalTaps || 0),
             totalBoostsUsed: Number(user.totalBoostsUsed || 0),
@@ -3221,7 +3352,7 @@ router.get('/admin-export-users.csv', async (req, res) => {
     }
 
     const users = await User.find({}).select(
-      'telegramId username balance totalEarned weeklyEarned referralsCount totalTaps teamName isFrozen isSuspicious createdAt'
+      'telegramId username balance totalEarned weeklyEarned weeklyEarnedWeek referralsCount totalTaps teamName isFrozen isSuspicious createdAt'
     );
 
     const escapeCsv = (value) => `"${String(value ?? '').replace(/"/g, '""')}"`;
@@ -3245,7 +3376,7 @@ router.get('/admin-export-users.csv', async (req, res) => {
         user.username || '',
         roundOnix(user.balance || 0),
         roundOnix(user.totalEarned || 0),
-        roundOnix(user.weeklyEarned || 0),
+        getCurrentWeeklyEarned(user),
         Number(user.referralsCount || 0),
         Number(user.totalTaps || 0),
         user.teamName || '',
@@ -3369,7 +3500,7 @@ router.get('/admin-economy-dashboard', async (req, res) => {
     }
 
     const users = await User.find({}).select(
-      'balance totalEarned weeklyEarned referralsCount totalTaps transactions withdrawalRequests isSuspicious isFrozen'
+      'balance totalEarned weeklyEarned weeklyEarnedWeek referralsCount totalTaps transactions withdrawalRequests isSuspicious isFrozen'
     );
 
     const totals = {
@@ -3394,7 +3525,7 @@ router.get('/admin-economy-dashboard', async (req, res) => {
     users.forEach((user) => {
       totals.totalBalance += Number(user.balance || 0);
       totals.totalEarned += Number(user.totalEarned || 0);
-      totals.weeklyEarned += Number(user.weeklyEarned || 0);
+      totals.weeklyEarned += getCurrentWeeklyEarned(user);
       totals.referrals += Number(user.referralsCount || 0);
       totals.taps += Number(user.totalTaps || 0);
 
@@ -3492,14 +3623,14 @@ router.post('/claim-welcome-bonus', requireTelegramMiniAppUser, sensitiveRewardM
 
     user.welcomeBonusClaimed = true;
     user.balance = roundOnix(Number(user.balance || 0) + reward);
-    addEarnings(user, reward);
+    await addEarnings(user, reward);
 
     addTransaction(user, 'income_welcome_bonus', reward, 'Welcome bonus');
 
     addSecurityLog(user, 'welcome_bonus', 'Welcome bonus claimed', `+${reward} ONIX`);
 
-    const achievementBonuses = applyAchievements(user);
-    const rankBonuses = applyRankBonuses(user);
+    const achievementBonuses = await applyAchievements(user);
+    const rankBonuses = await applyRankBonuses(user);
     user.level = calculateLevel(user.totalEarned);
     user.updatedAt = new Date();
 
@@ -3565,14 +3696,14 @@ router.post('/apply-promo', requireTelegramMiniAppUser, sensitiveRewardMutationG
 
     user.usedPromoCodes.push(cleanCode);
     user.balance = roundOnix(Number(user.balance || 0) + reward);
-    addEarnings(user, reward);
+    await addEarnings(user, reward);
 
     addTransaction(user, 'income_promo', reward, `Promocode ${cleanCode}`);
 
     addSecurityLog(user, 'promo', 'Promo code used', `${cleanCode}: +${reward} ONIX`);
 
-    const achievementBonuses = applyAchievements(user);
-    const rankBonuses = applyRankBonuses(user);
+    const achievementBonuses = await applyAchievements(user);
+    const rankBonuses = await applyRankBonuses(user);
     user.level = calculateLevel(user.totalEarned);
     user.updatedAt = new Date();
 
@@ -3697,7 +3828,7 @@ router.get('/referrals/:telegramId', requireTelegramMiniAppUser, async (req, res
     const referrals = await User.find({ referredBy: telegramId })
       .sort({ createdAt: -1, _id: -1 })
       .limit(100)
-      .select('telegramId username selectedTitle totalEarned weeklyEarned totalTaps referralsCount createdAt')
+      .select('telegramId username selectedTitle totalEarned weeklyEarned weeklyEarnedWeek totalTaps referralsCount createdAt')
       .lean();
 
     return res.json({
@@ -3707,7 +3838,7 @@ router.get('/referrals/:telegramId', requireTelegramMiniAppUser, async (req, res
         selectedTitle: user.selectedTitle || 'ONIX Player',
         rankName: getRankInfo(Number(user.totalEarned || 0)).currentRank.name,
         totalEarned: Number(user.totalEarned || 0),
-        weeklyEarned: Number(user.weeklyEarned || 0),
+        weeklyEarned: getCurrentWeeklyEarned(user),
         totalTaps: Number(user.totalTaps || 0),
         referralsCount: Number(user.referralsCount || 0),
         createdAt: user.createdAt ? new Date(user.createdAt).getTime() : 0,
@@ -3749,19 +3880,10 @@ router.get('/leaderboard/weekly', async (req, res) => {
       }
     }
 
-    await User.updateMany(
-      {
-        weeklyEarnedWeek: { $ne: currentWeek },
-      },
-      {
-        $set: {
-          weeklyEarnedWeek: currentWeek,
-          weeklyEarned: 0,
-        },
-      }
-    );
-
-    const users = await User.find({})
+    const users = await User.find({
+      weeklyEarnedWeek: currentWeek,
+      weeklyEarned: { $gt: 0 },
+    })
       .sort({ weeklyEarned: -1 })
       .limit(20)
       .select('telegramId username weeklyEarned totalEarned');
@@ -3774,7 +3896,11 @@ router.get('/leaderboard/weekly', async (req, res) => {
         'weeklyEarned weeklyEarnedWeek'
       );
 
-      if (currentUser) {
+      if (
+        currentUser &&
+        currentUser.weeklyEarnedWeek === currentWeek &&
+        Number(currentUser.weeklyEarned || 0) > 0
+      ) {
         const weeklyEarned = Number(currentUser.weeklyEarned || 0);
         currentUserWeeklyEarned = roundOnix(weeklyEarned);
 
@@ -3860,7 +3986,15 @@ router.get('/teams', async (req, res) => {
           $group: {
             _id: '$teamName',
             members: { $sum: 1 },
-            weeklyEarned: { $sum: '$weeklyEarned' },
+            weeklyEarned: {
+              $sum: {
+                $cond: [
+                  { $eq: ['$weeklyEarnedWeek', currentWeek] },
+                  '$weeklyEarned',
+                  0,
+                ],
+              },
+            },
             totalEarned: { $sum: '$totalEarned' },
             totalTaps: { $sum: '$totalTaps' },
           },
@@ -4204,7 +4338,7 @@ router.post('/create', requireTelegramMiniAppUser, async (req, res) => {
           user.referredByBonusPaid = false;
 
           user.balance = roundOnix(Number(user.balance || 0) + economyConfig.referredUserReward);
-          addEarnings(user, economyConfig.referredUserReward);
+          await addEarnings(user, economyConfig.referredUserReward);
 
           addTransaction(
             user,
@@ -4213,8 +4347,8 @@ router.post('/create', requireTelegramMiniAppUser, async (req, res) => {
             'Bonus für Einstieg über Link'
           );
 
-          applyAchievements(user);
-          applyRankBonuses(user);
+          await applyAchievements(user);
+          await applyRankBonuses(user);
           user.level = calculateLevel(user.totalEarned);
 
           await refUser.save();
@@ -4507,8 +4641,8 @@ router.post('/buy-upgrade', requireTelegramMiniAppUser, async (req, res) => {
     user.totalUpgradesBought = Number(user.totalUpgradesBought || 0) + 1;
     incrementMissionStat(user, 'dailyUpgrades');
     incrementMissionStat(user, 'weeklyUpgrades');
-    const achievementBonuses = applyAchievements(user);
-    const rankBonuses = applyRankBonuses(user);
+    const achievementBonuses = await applyAchievements(user);
+    const rankBonuses = await applyRankBonuses(user);
     user.level = calculateLevel(user.totalEarned);
 
     user.lastUpgradeBuyAt = now;
@@ -4670,7 +4804,7 @@ async function tryPayQualifiedReferralBonus(user) {
   refUser.balance = roundOnix(
     Number(refUser.balance || 0) + referralReward
   );
-  addEarnings(refUser, referralReward);
+  await addEarnings(refUser, referralReward);
   refUser.lastReferralUsername = user.username || 'neuer Spieler';
 
   addTransaction(
@@ -4680,8 +4814,8 @@ async function tryPayQualifiedReferralBonus(user) {
     `Empfehlungsbonus für aktiven Freund: ${user.username || 'neuer Spieler'}`
   );
 
-  applyAchievements(refUser);
-  applyRankBonuses(refUser);
+  await applyAchievements(refUser);
+  await applyRankBonuses(refUser);
   refUser.level = calculateLevel(refUser.totalEarned);
   refUser.updatedAt = new Date();
 
@@ -5048,11 +5182,11 @@ router.post('/claim-team-mission', requireTelegramMiniAppUser, sensitiveRewardMu
 
     user.teamMissionClaims.push(claimKey);
     user.balance = roundOnix(Number(user.balance || 0) + mission.reward);
-    addEarnings(user, mission.reward);
+    await addEarnings(user, mission.reward);
     addTransaction(user, 'income_team_mission', mission.reward, `Team-Aufgabe: ${mission.title}`);
 
-    const achievementBonuses = applyAchievements(user);
-    const rankBonuses = applyRankBonuses(user);
+    const achievementBonuses = await applyAchievements(user);
+    const rankBonuses = await applyRankBonuses(user);
     user.level = calculateLevel(user.totalEarned);
     user.updatedAt = new Date();
 
@@ -5102,11 +5236,14 @@ router.post('/claim-team-prize', requireTelegramMiniAppUser, sensitiveRewardMuta
     const frozenResponse = ensureUserNotFrozen(user, res);
     if (frozenResponse) return frozenResponse;
 
-    if (!user.teamName) {
-      return res.status(400).json({ message: translate('joinFirst', user.appLanguage) });
-    }
-
     const teamContest = await getTeamContestPayload(user);
+    const completedUserScore = await WeeklyScore.findOne({
+      week: teamContest.completedWeek,
+      telegramId: String(user.telegramId),
+    })
+      .select('teamName')
+      .lean();
+    const completedTeamName = String(completedUserScore?.teamName || '').trim();
     const team = await getTeamStats(user.teamName);
     const prize = Number(teamContest.prize || 0);
     const claimKey = teamContest.claimKey;
@@ -5134,16 +5271,16 @@ router.post('/claim-team-prize', requireTelegramMiniAppUser, sensitiveRewardMuta
 
     user.teamPrizeClaims.push(claimKey);
     user.balance = roundOnix(Number(user.balance || 0) + prize);
-    addEarnings(user, prize);
+    await addEarnings(user, prize);
     addTransaction(
       user,
       'income_team_prize',
       prize,
-      `Team-Wettbewerb ${teamContest.completedWeek}: ${teamContest.rewardTitle} (${user.teamName})`
+      `Team-Wettbewerb ${teamContest.completedWeek}: ${teamContest.rewardTitle} (${completedTeamName})`
     );
 
-    const achievementBonuses = applyAchievements(user);
-    const rankBonuses = applyRankBonuses(user);
+    const achievementBonuses = await applyAchievements(user);
+    const rankBonuses = await applyRankBonuses(user);
     user.level = calculateLevel(user.totalEarned);
     user.updatedAt = new Date();
 
@@ -5187,7 +5324,7 @@ router.get('/friends-leaderboard/:telegramId', requireTelegramMiniAppUser, async
     })
       .sort({ totalEarned: -1 })
       .limit(30)
-      .select('telegramId username totalEarned weeklyEarned referralsCount');
+      .select('telegramId username totalEarned weeklyEarned weeklyEarnedWeek referralsCount');
 
     return res.json({
       friends: users.map((user, index) => ({
@@ -5195,7 +5332,7 @@ router.get('/friends-leaderboard/:telegramId', requireTelegramMiniAppUser, async
         telegramId: user.telegramId,
         username: user.username || 'Spieler',
         totalEarned: roundOnix(user.totalEarned || 0),
-        weeklyEarned: roundOnix(user.weeklyEarned || 0),
+        weeklyEarned: getCurrentWeeklyEarned(user),
         referralsCount: Number(user.referralsCount || 0),
         isMe: String(user.telegramId) === String(telegramId),
       })),
@@ -5428,7 +5565,7 @@ router.post('/buy-perk', requireTelegramMiniAppUser, async (req, res) => {
       `Perk: ${perk.title} Lvl. ${nextLevel}`
     );
 
-    const achievementBonuses = applyAchievements(user);
+    const achievementBonuses = await applyAchievements(user);
     user.updatedAt = new Date();
     user.lastSeenAt = Date.now();
 
@@ -5513,7 +5650,7 @@ router.post('/open-chest', requireTelegramMiniAppUser, sensitiveRewardMutationGu
     addTransaction(user, 'expense_chest', -chestCost, 'Truhe geöffnet');
 
     user.balance = roundOnix(Number(user.balance || 0) + rewardAmount);
-    addEarnings(user, rewardAmount);
+    await addEarnings(user, rewardAmount);
     addTransaction(user, 'income_chest', rewardAmount, rewardTitle);
 
     user.chestStats = {
@@ -5523,8 +5660,8 @@ router.post('/open-chest', requireTelegramMiniAppUser, sensitiveRewardMutationGu
     incrementMissionStat(user, 'dailyChests');
     incrementMissionStat(user, 'weeklyChests');
 
-    const achievementBonuses = applyAchievements(user);
-    const rankBonuses = applyRankBonuses(user);
+    const achievementBonuses = await applyAchievements(user);
+    const rankBonuses = await applyRankBonuses(user);
     user.level = calculateLevel(user.totalEarned);
     user.updatedAt = new Date();
     user.lastSeenAt = Date.now();
@@ -5632,7 +5769,7 @@ router.post('/claim-mission', requireTelegramMiniAppUser, sensitiveRewardMutatio
     claimedList.push(mission.id);
 
     user.balance = roundOnix(Number(user.balance || 0) + mission.reward);
-    addEarnings(user, mission.reward);
+    await addEarnings(user, mission.reward);
 
     addTransaction(
       user,
@@ -5641,8 +5778,8 @@ router.post('/claim-mission', requireTelegramMiniAppUser, sensitiveRewardMutatio
       `${missionType === 'daily' ? 'Daily' : 'Weekly'} Mission: ${mission.title}`
     );
 
-    const achievementBonuses = applyAchievements(user);
-    const rankBonuses = applyRankBonuses(user);
+    const achievementBonuses = await applyAchievements(user);
+    const rankBonuses = await applyRankBonuses(user);
     user.level = calculateLevel(user.totalEarned);
     user.updatedAt = new Date();
     user.lastSeenAt = Date.now();
@@ -5736,14 +5873,14 @@ router.post('/claim-task', requireTelegramMiniAppUser, sensitiveRewardMutationGu
       const reward = getDailyRewardWithStreakForUser(user, nextStreak);
 
       user.balance = roundOnix(Number(user.balance || 0) + reward);
-      addEarnings(user, reward);
+      await addEarnings(user, reward);
       user.dailyRewardLastClaim = now;
       user.lastDailyClaimDay = todayKey;
       user.dailyStreak = nextStreak;
 
       addTransaction(user, 'income_daily', reward, `Tägliche Belohnung · Tag ${nextStreak}/7`);
 
-      const rankBonuses = applyRankBonuses(user);
+      const rankBonuses = await applyRankBonuses(user);
       user.level = calculateLevel(user.totalEarned);
       user.updatedAt = new Date();
       user.lastSeenAt = now;
@@ -5798,11 +5935,11 @@ router.post('/claim-task', requireTelegramMiniAppUser, sensitiveRewardMutationGu
       }
 
       user.balance = roundOnix(Number(user.balance || 0) + 25000);
-      addEarnings(user, 25000);
+      await addEarnings(user, 25000);
       user.completedTasks.push('channel');
       addTransaction(user, 'income_task', 25000, 'Aufgabe: Kanal abonnieren');
 
-      const rankBonuses = applyRankBonuses(user);
+      const rankBonuses = await applyRankBonuses(user);
       user.level = calculateLevel(user.totalEarned);
       user.updatedAt = new Date();
       user.lastSeenAt = Date.now();
@@ -5837,7 +5974,7 @@ router.post('/claim-task', requireTelegramMiniAppUser, sensitiveRewardMutationGu
       const economyConfig = getEconomyConfig();
 
       user.balance = roundOnix(Number(user.balance || 0) + economyConfig.referralReward);
-      addEarnings(user, economyConfig.referralReward);
+      await addEarnings(user, economyConfig.referralReward);
       user.completedTasks.push('inviteFriend');
       addTransaction(
         user,
@@ -5846,7 +5983,7 @@ router.post('/claim-task', requireTelegramMiniAppUser, sensitiveRewardMutationGu
         'Aufgabe: Freund einladen'
       );
 
-      const rankBonuses = applyRankBonuses(user);
+      const rankBonuses = await applyRankBonuses(user);
       user.level = calculateLevel(user.totalEarned);
       user.updatedAt = new Date();
       user.lastSeenAt = Date.now();
@@ -5906,13 +6043,13 @@ router.post('/claim-offline-income', requireTelegramMiniAppUser, async (req, res
     }
 
     user.balance = roundOnix(Number(user.balance || 0) + claimedAmount);
-    addEarnings(user, claimedAmount);
+    await addEarnings(user, claimedAmount);
     addTransaction(user, 'income_offline', claimedAmount, 'Offline-Mining');
     user.offlineClaimsCount = Number(user.offlineClaimsCount || 0) + 1;
     incrementMissionStat(user, 'dailyOfflineClaims');
     incrementMissionStat(user, 'weeklyOfflineClaims');
-    const achievementBonuses = applyAchievements(user);
-    const rankBonuses = applyRankBonuses(user);
+    const achievementBonuses = await applyAchievements(user);
+    const rankBonuses = await applyRankBonuses(user);
     user.level = calculateLevel(user.totalEarned);
 
     user.lastOfflineIncome = claimedAmount;
@@ -6021,8 +6158,8 @@ router.post('/mine-tick', requireTelegramMiniAppUser, async (req, res) => {
 
     if (income > 0) {
       user.balance = roundOnix(Number(user.balance || 0) + income);
-      addEarnings(user, income);
-      applyRankBonuses(user);
+      await addEarnings(user, income);
+      await applyRankBonuses(user);
       user.level = calculateLevel(user.totalEarned);
     }
 
@@ -6188,8 +6325,8 @@ router.post('/activate-boost', requireTelegramMiniAppUser, async (req, res) => {
     const effectiveDurationMs = Math.round(durationConfig[type] * getBoostDurationMultiplier(user));
     user.boostEndTime = now + effectiveDurationMs;
     user.totalBoostsUsed = Number(user.totalBoostsUsed || 0) + 1;
-    const achievementBonuses = applyAchievements(user);
-    const rankBonuses = applyRankBonuses(user);
+    const achievementBonuses = await applyAchievements(user);
+    const rankBonuses = await applyRankBonuses(user);
     user.level = calculateLevel(user.totalEarned);
     user.updatedAt = new Date();
     user.lastSeenAt = now;
@@ -6321,14 +6458,14 @@ router.post('/tap', requireTelegramMiniAppUser, async (req, res) => {
     const points = roundOnix(Number(user.tapPower || DEFAULT_TAP_POWER) * (isTapBoostActive ? 2 : 1));
 
     user.balance = roundOnix(Number(user.balance || 0) + points);
-    addEarnings(user, points);
+    await addEarnings(user, points);
     user.energy = Math.max(0, roundOnix(Number(user.energy || 0) - energyCost));
     user.totalTaps = Number(user.totalTaps || 0) + 1;
     incrementMissionStat(user, 'dailyTaps');
     incrementMissionStat(user, 'weeklyTaps');
 
-    const achievementBonuses = applyAchievements(user);
-    const rankBonuses = applyRankBonuses(user);
+    const achievementBonuses = await applyAchievements(user);
+    const rankBonuses = await applyRankBonuses(user);
     user.level = calculateLevel(user.totalEarned);
     user.updatedAt = new Date();
     user.lastSeenAt = now;
@@ -6497,7 +6634,7 @@ router.post('/onix-drop/finish', requireTelegramMiniAppUser, async (req, res) =>
       submittedScore
     );
     user.balance = roundOnix(Number(user.balance || 0) + reward);
-    addEarnings(user, reward);
+    await addEarnings(user, reward);
     addTransaction(user, 'income_onix_drop', reward, 'ONIX Drop');
     user.level = calculateLevel(user.totalEarned);
     user.lastSeenAt = now;
@@ -6508,5 +6645,23 @@ router.post('/onix-drop/finish', requireTelegramMiniAppUser, async (req, res) =>
     return res.status(500).json({ error: error.message });
   }
 });
+
+if (process.env.NODE_ENV === 'test') {
+  router.__weeklyScoreTestUtils = {
+    WeeklyPrize,
+    addEarnings,
+    getCompletedWeeklyScores,
+    getCurrentWeeklyEarned,
+    getPreviousWeekKey,
+    getTeamContestPayload,
+    getTeamLeaderboardForWeek,
+    getWeekKey,
+    getWeeklyMissions,
+    materializeWeeklyScores,
+    normalizeUserFields,
+    rolloverUserForEarning,
+    snapshotCompletedUserWeek,
+  };
+}
 
 module.exports = router;
