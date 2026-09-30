@@ -17887,6 +17887,7 @@ function App() {
                                 <strong>{user.displayName || user.username || t('admin.players.fallbackName')}</strong>
                                 <em>{user.telegramUsername ? `@${String(user.telegramUsername).replace(/^@+/, '')} · ` : ''}ID: {user.telegramId}</em>
                                 <em>{t('admin.players.level', { level: user.level || 1 })}{user.createdAt ? ` · ${new Date(user.createdAt).toLocaleDateString(getLanguageLocale(appLanguage === 'ru' ? 'ru' : 'de'))}` : ''}</em>
+                                <em>{t(user.isFrozen ? 'admin.players.blocked' : user.isSuspicious ? 'admin.players.suspicious' : 'admin.players.active')}</em>
                               </div>
                               <b>{formatOnix(user.balance)}</b>
                             </button>
