@@ -17921,6 +17921,7 @@ function App() {
                               <div className="onix-admin-metrics-grid onix-admin-profile-metrics">
                                 <div><span>{t('admin.economy.balance')}</span><strong>{formatOnix(adminSelectedUser.balance)}</strong></div>
                                 <div><span>{t('admin.players.totalEarned')}</span><strong>{formatOnix(adminSelectedUser.totalEarned)}</strong></div>
+                                <div><span>{t('admin.players.weeklyEarned')}</span><strong>{formatOnix(adminSelectedUser.weeklyEarned)}</strong></div>
                                 <div><span>{t('admin.players.withdrawalRequests')}</span><strong>{formatOnix(adminSelectedUser.withdrawalRequestsCount ?? 0)}</strong></div>
                                 <div><span>{t('admin.players.promoCodes')}</span><strong>{formatOnix(adminSelectedUser.usedPromoCodesCount ?? 0)}</strong></div>
                               </div>
@@ -17942,8 +17943,33 @@ function App() {
                               <div className="onix-admin-profile-section-title"><strong>{t('admin.players.upgradesActivity')}</strong></div>
                               <div className="onix-admin-profile-info-list">
                                 <div><span>{t('admin.players.upgrades')}</span><strong>{t('admin.players.upgradeLevels', { tap: adminSelectedUser.tapLevel || 1, miner: adminSelectedUser.minerLevel || 1, energy: adminSelectedUser.energyLevel || 1, recharge: adminSelectedUser.rechargeLevel || 1 })}</strong></div>
+                                <div><span>{t('admin.players.upgradesBought')}</span><strong>{Math.trunc(Number(adminSelectedUser.totalUpgradesBought ?? 0)).toLocaleString(getLanguageLocale(appLanguage === 'ru' ? 'ru' : 'de'))}</strong></div>
                                 <div><span>{t('admin.players.registered')}</span><strong>{adminSelectedUser.createdAt ? new Date(adminSelectedUser.createdAt).toLocaleString(getLanguageLocale(appLanguage === 'ru' ? 'ru' : 'de')) : '—'}</strong></div>
                                 <div><span>{t('admin.players.lastActivity')}</span><strong>{adminSelectedUser.lastTapAt ? new Date(adminSelectedUser.lastTapAt).toLocaleString(getLanguageLocale(appLanguage === 'ru' ? 'ru' : 'de')) : (adminSelectedUser.updatedAt ? new Date(adminSelectedUser.updatedAt).toLocaleString(getLanguageLocale(appLanguage === 'ru' ? 'ru' : 'de')) : '—')}</strong></div>
+                              </div>
+                            </div>
+
+                            <div className="onix-admin-profile-section">
+                              <div className="onix-admin-profile-section-title"><strong>{t('admin.players.suspiciousReasons')}</strong></div>
+                              <div className="onix-admin-list">
+                                {(adminSelectedUser.suspiciousReasons || []).length > 0 ? adminSelectedUser.suspiciousReasons.map((reason, index) => (
+                                  <div key={`${reason}-${index}`} className="onix-admin-row is-column">
+                                    <strong>{reason}</strong>
+                                  </div>
+                                )) : <p className="onix-admin-empty">{t('admin.players.suspiciousReasonsEmpty')}</p>}
+                              </div>
+                            </div>
+
+                            <div className="onix-admin-profile-section">
+                              <div className="onix-admin-profile-section-title"><strong>{t('admin.players.securityLogs')}</strong></div>
+                              <div className="onix-admin-list">
+                                {(adminSelectedUser.securityLogs || []).length > 0 ? adminSelectedUser.securityLogs.slice(0, 10).map((log, index) => (
+                                  <div key={`${log.createdAt}-${index}`} className="onix-admin-row is-column">
+                                    <div className="onix-admin-row-top"><strong>{log.title || '—'}</strong><b>{log.type || '—'}</b></div>
+                                    <p>{log.details || '—'}</p>
+                                    <em>{log.createdAt ? formatTransactionTime(log.createdAt, appLanguage === 'ru' ? 'ru' : 'de') || '—' : '—'}</em>
+                                  </div>
+                                )) : <p className="onix-admin-empty">{t('admin.players.securityLogsEmpty')}</p>}
                               </div>
                             </div>
 
