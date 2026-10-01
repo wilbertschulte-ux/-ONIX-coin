@@ -3,6 +3,10 @@ const express = require("express");
 const mongoose = require("mongoose");
 const cors = require("cors");
 const axios = require("axios");
+const {
+  createTelegramWebhookRateLimiter,
+  verifyTelegramWebhookSecret,
+} = require('./telegramWebhookSecurity');
 require("dotenv").config();
 
 const app = express();
@@ -17,6 +21,7 @@ app.use("/api/coins", coinRoutes);
 
 const BOT_TOKEN = process.env.BOT_TOKEN;
 const WEB_APP_URL = process.env.WEB_APP_URL || "https://onix-coin.vercel.app";
+const telegramWebhookRateLimiter = createTelegramWebhookRateLimiter();
 
 async function sendTelegramMessage(chatId, text, replyMarkup) {
   if (!BOT_TOKEN) {
@@ -48,7 +53,11 @@ function getStartKeyboard(language = 'de') {
 }
 
 // Telegram webhook for /start and simple bot entry.
-app.post("/api/telegram/webhook", async (req, res) => {
+app.post(
+  "/api/telegram/webhook",
+  telegramWebhookRateLimiter,
+  verifyTelegramWebhookSecret,
+  async (req, res) => {
   try {
     const message = req.body?.message;
     const chatId = message?.chat?.id;
@@ -87,7 +96,8 @@ app.post("/api/telegram/webhook", async (req, res) => {
     console.log("Telegram webhook error:", error?.response?.data || error.message);
     return res.sendStatus(200);
   }
-});
+  }
+);
 
 mongoose.connect(process.env.MONGO_URI)
 .then(() => {
