@@ -1433,7 +1433,7 @@ function getAchievementsPayload(user) {
   });
 }
 
-async function applyAchievements(user) {
+async function applyAchievements(user, session = null) {
   if (!user.completedAchievements) user.completedAchievements = [];
 
   const awarded = [];
@@ -1446,7 +1446,7 @@ async function applyAchievements(user) {
     if (progress >= achievement.goal) {
       user.completedAchievements.push(achievement.id);
       user.balance = roundOnix(Number(user.balance || 0) + achievement.reward);
-      await addEarnings(user, achievement.reward);
+      await addEarnings(user, achievement.reward, session);
 
       addTransaction(
         user,
@@ -1511,7 +1511,7 @@ function getRankInfo(totalEarned) {
   };
 }
 
-async function applyRankBonuses(user) {
+async function applyRankBonuses(user, session = null) {
   if (!user.claimedRankBonuses) user.claimedRankBonuses = [];
 
   const awarded = [];
@@ -1528,7 +1528,7 @@ async function applyRankBonuses(user) {
 
       if (Number(user.totalEarned || 0) >= rank.threshold) {
         user.balance = roundOnix(Number(user.balance || 0) + rank.bonus);
-        await addEarnings(user, rank.bonus);
+        await addEarnings(user, rank.bonus, session);
         user.claimedRankBonuses.push(rank.id);
         addTransaction(
           user,
@@ -1816,7 +1816,7 @@ function recordEconomyEarningForAnomalyDetection(user, value) {
   }
 }
 
-async function snapshotCompletedUserWeek(user) {
+async function snapshotCompletedUserWeek(user, session = null) {
   const week = String(user.weeklyEarnedWeek || '').trim();
   const weeklyEarned = roundOnix(user.weeklyEarned || 0);
 
@@ -1838,13 +1838,15 @@ async function snapshotCompletedUserWeek(user) {
         capturedAt: Date.now(),
       },
     },
-    { upsert: true }
+    session ? { upsert: true, session } : { upsert: true }
   );
 }
 
 async function materializeWeeklyScores(targetWeek) {
   const week = String(targetWeek || '').trim();
-  if (!week) return null;
+  if (!week) {
+    return { sourceUsersCount: 0, newlyMaterializedCount: 0 };
+  }
 
   const users = await User.find({
     weeklyEarnedWeek: week,
@@ -1853,31 +1855,59 @@ async function materializeWeeklyScores(targetWeek) {
     .select('telegramId username teamName weeklyEarned totalTaps')
     .lean();
 
-  if (!users.length) return null;
+  if (!users.length) {
+    return { sourceUsersCount: 0, newlyMaterializedCount: 0 };
+  }
 
-  return WeeklyScore.bulkWrite(
-    users.map((user) => ({
-      updateOne: {
-        filter: {
-          week,
-          telegramId: String(user.telegramId),
-        },
-        update: {
-          $setOnInsert: {
+  let result;
+
+  try {
+    result = await WeeklyScore.bulkWrite(
+      users.map((user) => ({
+        updateOne: {
+          filter: {
             week,
             telegramId: String(user.telegramId),
-            username: user.username || 'Spieler',
-            teamName: user.teamName || '',
-            weeklyEarned: roundOnix(user.weeklyEarned || 0),
-            totalTaps: Number(user.totalTaps || 0),
-            capturedAt: Date.now(),
           },
+          update: {
+            $setOnInsert: {
+              week,
+              telegramId: String(user.telegramId),
+              username: user.username || 'Spieler',
+              teamName: user.teamName || '',
+              weeklyEarned: roundOnix(user.weeklyEarned || 0),
+              totalTaps: Number(user.totalTaps || 0),
+              capturedAt: Date.now(),
+            },
+          },
+          upsert: true,
         },
-        upsert: true,
-      },
-    })),
-    { ordered: false }
-  );
+      })),
+      { ordered: false }
+    );
+  } catch (error) {
+    const writeErrors = Array.isArray(error?.writeErrors)
+      ? error.writeErrors
+      : [];
+    const writeConcernErrors = Array.isArray(error?.writeConcernErrors)
+      ? error.writeConcernErrors
+      : [];
+
+    if (
+      !writeErrors.length ||
+      writeErrors.some((item) => item?.code !== 11000) ||
+      writeConcernErrors.length
+    ) {
+      throw error;
+    }
+
+    result = error.result || null;
+  }
+
+  return {
+    sourceUsersCount: users.length,
+    newlyMaterializedCount: Number(result?.upsertedCount || 0),
+  };
 }
 
 async function getCompletedWeeklyScores(targetWeek, limit = 50) {
@@ -1891,9 +1921,13 @@ async function getCompletedWeeklyScores(targetWeek, limit = 50) {
     .limit(limit);
 }
 
-async function getUsersForWeeklyScores(weeklyScores) {
+async function getUsersForWeeklyScores(weeklyScores, session = null) {
   const telegramIds = weeklyScores.map((score) => String(score.telegramId));
-  const users = await User.find({ telegramId: { $in: telegramIds } });
+  let usersQuery = User.find({ telegramId: { $in: telegramIds } });
+  if (session && typeof usersQuery.session === 'function') {
+    usersQuery = usersQuery.session(session);
+  }
+  const users = await usersQuery;
   const usersByTelegramId = new Map(
     users.map((user) => [String(user.telegramId), user])
   );
@@ -1905,7 +1939,7 @@ async function getUsersForWeeklyScores(weeklyScores) {
   return usersByTelegramId;
 }
 
-async function rolloverUserForEarning(user, currentWeek) {
+async function rolloverUserForEarning(user, currentWeek, session = null) {
   if (!user.weeklyEarnedWeek) {
     user.weeklyEarnedWeek = currentWeek;
     user.weeklyEarned = roundOnix(user.weeklyEarned || 0);
@@ -1914,16 +1948,16 @@ async function rolloverUserForEarning(user, currentWeek) {
 
   if (user.weeklyEarnedWeek === currentWeek) return;
 
-  await snapshotCompletedUserWeek(user);
+  await snapshotCompletedUserWeek(user, session);
   user.weeklyEarnedWeek = currentWeek;
   user.weeklyEarned = 0;
 }
 
-async function addEarnings(user, amount) {
+async function addEarnings(user, amount, session = null) {
   const value = roundOnix(amount);
   const currentWeek = getWeekKey();
 
-  await rolloverUserForEarning(user, currentWeek);
+  await rolloverUserForEarning(user, currentWeek, session);
 
   user.totalEarned = roundOnix(Number(user.totalEarned || 0) + value);
   user.weeklyEarned = roundOnix(Number(user.weeklyEarned || 0) + value);
@@ -2110,6 +2144,194 @@ function isCronRequest(req) {
 // CRON: AUTO AWARD WEEKLY PRIZES
 // By default awards the previous completed UTC week.
 
+function getWeeklyPrizeDiagnostics(targetWeek, values = {}) {
+  const countOrNull = (value) => (
+    value === undefined || value === null ? null : Number(value)
+  );
+
+  return {
+    targetWeek,
+    sourceUsersCount: countOrNull(values.sourceUsersCount),
+    materializedWeeklyScoreCount: countOrNull(values.materializedWeeklyScoreCount),
+    eligibleCount: countOrNull(values.eligibleCount),
+    alreadyAwarded: Boolean(values.alreadyAwarded),
+    winnersCount: countOrNull(values.winnersCount),
+  };
+}
+
+function isCompletedWeek(targetWeek) {
+  return /^\d{4}-W(?:0[1-9]|[1-4]\d|5[0-3])$/.test(targetWeek) &&
+    targetWeek < getWeekKey();
+}
+
+async function prepareWeeklyPrizeSelection(targetWeek) {
+  const materialization = await materializeWeeklyScores(targetWeek);
+  const scoreFilter = {
+    week: targetWeek,
+    weeklyEarned: { $gt: 0 },
+  };
+  const [topScores, eligibleCount] = await Promise.all([
+    WeeklyScore.find(scoreFilter)
+      .sort({ weeklyEarned: -1 })
+      .limit(50),
+    WeeklyScore.countDocuments(scoreFilter),
+  ]);
+
+  return {
+    topScores,
+    diagnostics: getWeeklyPrizeDiagnostics(targetWeek, {
+      sourceUsersCount: materialization.sourceUsersCount,
+      materializedWeeklyScoreCount: eligibleCount,
+      eligibleCount,
+    }),
+  };
+}
+
+async function findWeeklyPrize(targetWeek, session = null) {
+  let query = WeeklyPrize.findOne({ week: targetWeek });
+  if (session && query && typeof query.session === 'function') {
+    query = query.session(session);
+  }
+  return query;
+}
+
+async function awardCompletedWeek(targetWeek) {
+  const existingPrize = await findWeeklyPrize(targetWeek);
+  if (existingPrize) {
+    return {
+      status: 'already_awarded',
+      winners: existingPrize.winners || [],
+      diagnostics: getWeeklyPrizeDiagnostics(targetWeek, {
+        alreadyAwarded: true,
+        winnersCount: existingPrize.winners?.length || 0,
+      }),
+    };
+  }
+
+  const prepared = await prepareWeeklyPrizeSelection(targetWeek);
+  if (!prepared.topScores.length) {
+    return {
+      status: 'no_eligible_users',
+      winners: [],
+      diagnostics: prepared.diagnostics,
+    };
+  }
+
+  const session = await mongoose.startSession();
+  let result;
+
+  try {
+    await session.withTransaction(async () => {
+      const awardedPrize = await findWeeklyPrize(targetWeek, session);
+      if (awardedPrize) {
+        result = {
+          status: 'already_awarded',
+          winners: awardedPrize.winners || [],
+          diagnostics: getWeeklyPrizeDiagnostics(targetWeek, {
+            ...prepared.diagnostics,
+            alreadyAwarded: true,
+            winnersCount: awardedPrize.winners?.length || 0,
+          }),
+        };
+        return;
+      }
+
+      const prizes = Array.from(
+        { length: 50 },
+        (_, index) => getSeasonPrizeByPlace(index + 1)
+      );
+      const winners = [];
+
+      for (let i = 0; i < prepared.topScores.length; i += 1) {
+        const weeklyScore = prepared.topScores[i];
+        const user = await User.findOne({
+          telegramId: String(weeklyScore.telegramId),
+        }).session(session);
+        const prize = prizes[i];
+        const place = i + 1;
+        const seasonBadge = getSeasonBadgeByPlace(place);
+        const winnerSelectionScore = roundOnix(weeklyScore.weeklyEarned || 0);
+
+        if (!prize) continue;
+        if (!user) throw new Error('Weekly prize user is missing');
+
+        normalizeUserFields(user);
+        user.balance = roundOnix(Number(user.balance || 0) + prize);
+        await addEarnings(user, prize, session);
+
+        if (seasonBadge && !user.seasonBadges.includes(seasonBadge)) {
+          user.seasonBadges.push(seasonBadge);
+        }
+
+        addTransaction(
+          user,
+          'income_season_prize',
+          prize,
+          `Saisonpreis: Platz ${place}`
+        );
+
+        const rankBonuses = await applyRankBonuses(user, session);
+        user.level = calculateLevel(user.totalEarned);
+        user.updatedAt = new Date();
+        await user.save({ session });
+        const referralStateBefore = {
+          paid: user.referredByBonusPaid,
+          qualifiedAt: user.referredByQualifiedAt,
+        };
+        await tryPayQualifiedReferralBonus(user, session);
+        if (
+          user.referredByBonusPaid !== referralStateBefore.paid ||
+          user.referredByQualifiedAt !== referralStateBefore.qualifiedAt
+        ) {
+          await user.save({ session });
+        }
+
+        winners.push({
+          place,
+          telegramId: user.telegramId,
+          username: user.username || 'Spieler',
+          weeklyEarned: winnerSelectionScore,
+          prize,
+          rankBonuses,
+        });
+      }
+
+      await WeeklyPrize.create(
+        [{ week: targetWeek, awardedAt: Date.now(), winners }],
+        { session }
+      );
+
+      result = {
+        status: 'awarded',
+        winners,
+        diagnostics: getWeeklyPrizeDiagnostics(targetWeek, {
+          ...prepared.diagnostics,
+          winnersCount: winners.length,
+        }),
+      };
+    });
+  } catch (error) {
+    if (error?.code !== 11000) throw error;
+
+    const awardedPrize = await findWeeklyPrize(targetWeek);
+    if (!awardedPrize) throw error;
+
+    result = {
+      status: 'already_awarded',
+      winners: awardedPrize.winners || [],
+      diagnostics: getWeeklyPrizeDiagnostics(targetWeek, {
+        ...prepared.diagnostics,
+        alreadyAwarded: true,
+        winnersCount: awardedPrize.winners?.length || 0,
+      }),
+    };
+  } finally {
+    await session.endSession();
+  }
+
+  return result;
+}
+
 router.get('/cron-award-weekly-prizes', async (req, res) => {
   try {
     if (!isCronRequest(req)) {
@@ -2117,82 +2339,36 @@ router.get('/cron-award-weekly-prizes', async (req, res) => {
     }
 
     const targetWeek = req.query.week ? String(req.query.week) : getPreviousWeekKey();
-    const alreadyAwarded = await WeeklyPrize.findOne({ week: targetWeek });
-
-    if (alreadyAwarded) {
-      return res.json({
-        message: 'Already awarded',
+    if (!isCompletedWeek(targetWeek)) {
+      return res.status(400).json({
+        message: 'Only a completed week can be awarded',
         week: targetWeek,
-        winners: alreadyAwarded.winners,
+        diagnostics: getWeeklyPrizeDiagnostics(targetWeek),
       });
     }
 
-    const prizes = Array.from({ length: 50 }, (_, index) => getSeasonPrizeByPlace(index + 1));
-    const topScores = await getCompletedWeeklyScores(targetWeek, 50);
-
-    if (!topScores.length) {
+    const result = await awardCompletedWeek(targetWeek);
+    if (result.status === 'no_eligible_users') {
       console.warn('[weekly-prizes] No eligible winners for completed week', {
         week: targetWeek,
       });
       return res.json({
         message: 'No eligible users for this week',
+        status: result.status,
         week: targetWeek,
         winners: [],
+        diagnostics: result.diagnostics,
       });
     }
-
-    const usersByTelegramId = await getUsersForWeeklyScores(topScores);
-
-    const winners = [];
-
-    for (let i = 0; i < topScores.length; i += 1) {
-      const weeklyScore = topScores[i];
-      const user = usersByTelegramId.get(String(weeklyScore.telegramId));
-      const prize = prizes[i];
-      const place = i + 1;
-      const seasonBadge = getSeasonBadgeByPlace(place);
-      const winnerSelectionScore = roundOnix(weeklyScore.weeklyEarned || 0);
-
-      if (!prize) continue;
-
-      normalizeUserFields(user);
-
-      user.balance = roundOnix(Number(user.balance || 0) + prize);
-      await addEarnings(user, prize);
-
-      if (seasonBadge && !user.seasonBadges.includes(seasonBadge)) {
-        user.seasonBadges.push(seasonBadge);
-      }
-
-      addTransaction(user, 'income_season_prize', prize, `Saisonpreis: Platz ${place}`);
-
-      await applyRankBonuses(user);
-      user.level = calculateLevel(user.totalEarned);
-      user.updatedAt = new Date();
-
-      const referralBonus = await tryPayQualifiedReferralBonus(user);
-
-    await user.save();
-
-      winners.push({
-        place,
-        telegramId: user.telegramId,
-        username: user.username || 'Spieler',
-        weeklyEarned: winnerSelectionScore,
-        prize,
-      });
-    }
-
-    await WeeklyPrize.create({
-      week: targetWeek,
-      awardedAt: Date.now(),
-      winners,
-    });
 
     return res.json({
-      message: 'Weekly prizes awarded by cron',
+      message: result.status === 'already_awarded'
+        ? 'Already awarded'
+        : 'Weekly prizes awarded by cron',
+      status: result.status,
       week: targetWeek,
-      winners,
+      winners: result.winners,
+      diagnostics: result.diagnostics,
     });
   } catch (error) {
     if (error && error.code === 11000) {
@@ -2216,20 +2392,33 @@ router.get('/admin-weekly-prize-preview', async (req, res) => {
     }
 
     const targetWeek = req.query.week ? String(req.query.week) : getPreviousWeekKey();
+    if (!isCompletedWeek(targetWeek)) {
+      return res.status(400).json({
+        message: 'Only a completed week can be previewed',
+        week: targetWeek,
+        diagnostics: getWeeklyPrizeDiagnostics(targetWeek),
+      });
+    }
     const prizes = Array.from({ length: 50 }, (_, index) => getSeasonPrizeByPlace(index + 1));
 
-    const topScores = await getCompletedWeeklyScores(targetWeek, 50);
-    const alreadyAwarded = await WeeklyPrize.findOne({ week: targetWeek });
-    const usersByTelegramId = topScores.length
-      ? await getUsersForWeeklyScores(topScores)
+    const prepared = await prepareWeeklyPrizeSelection(targetWeek);
+    const alreadyAwarded = await findWeeklyPrize(targetWeek);
+    const usersByTelegramId = prepared.topScores.length
+      ? await getUsersForWeeklyScores(prepared.topScores)
       : new Map();
+    const diagnostics = getWeeklyPrizeDiagnostics(targetWeek, {
+      ...prepared.diagnostics,
+      alreadyAwarded: Boolean(alreadyAwarded),
+      winnersCount: alreadyAwarded?.winners?.length || 0,
+    });
 
     return res.json({
       week: targetWeek,
       alreadyAwarded: Boolean(alreadyAwarded),
       awardedAt: alreadyAwarded?.awardedAt || null,
       awardedWinners: alreadyAwarded?.winners || [],
-      preview: topScores.map((weeklyScore, index) => {
+      diagnostics,
+      preview: prepared.topScores.map((weeklyScore, index) => {
         const user = usersByTelegramId.get(String(weeklyScore.telegramId));
 
         return {
@@ -2267,93 +2456,43 @@ router.post('/admin-award-weekly-prizes', async (req, res) => {
       });
     }
 
-    const targetWeek = week || getPreviousWeekKey();
+    const targetWeek = String(week || getPreviousWeekKey());
 
-    if (targetWeek === getWeekKey()) {
+    if (!isCompletedWeek(targetWeek)) {
       return res.status(400).json({
-        message: 'The current incomplete week cannot be awarded',
+        message: 'Only a completed week can be awarded',
         week: targetWeek,
+        diagnostics: getWeeklyPrizeDiagnostics(targetWeek),
       });
     }
 
-    const alreadyAwarded = await WeeklyPrize.findOne({ week: targetWeek });
-
-    if (alreadyAwarded) {
-      return res.status(400).json({
-        message: 'Weekly prizes already awarded',
-        week: targetWeek,
-        winners: alreadyAwarded.winners,
-      });
-    }
-
-    const prizes = Array.from({ length: 50 }, (_, index) => getSeasonPrizeByPlace(index + 1));
-    const topScores = await getCompletedWeeklyScores(targetWeek, 50);
-
-    if (!topScores.length) {
+    const result = await awardCompletedWeek(targetWeek);
+    if (result.status === 'no_eligible_users') {
       return res.status(400).json({
         message: 'No eligible users for this week',
+        status: result.status,
         week: targetWeek,
+        winners: [],
+        diagnostics: result.diagnostics,
       });
     }
 
-    const usersByTelegramId = await getUsersForWeeklyScores(topScores);
-
-    const winners = [];
-
-    for (let i = 0; i < topScores.length; i += 1) {
-      const weeklyScore = topScores[i];
-      const user = usersByTelegramId.get(String(weeklyScore.telegramId));
-      const prize = prizes[i];
-      const place = i + 1;
-      const seasonBadge = getSeasonBadgeByPlace(place);
-      const winnerSelectionScore = roundOnix(weeklyScore.weeklyEarned || 0);
-
-      if (!prize) continue;
-
-      normalizeUserFields(user);
-
-      user.balance = roundOnix(Number(user.balance || 0) + prize);
-      await addEarnings(user, prize);
-
-      if (seasonBadge && !user.seasonBadges.includes(seasonBadge)) {
-        user.seasonBadges.push(seasonBadge);
-      }
-
-      addTransaction(
-        user,
-        'income_season_prize',
-        prize,
-        `Saisonpreis: Platz ${place}`
-      );
-
-      const rankBonuses = await applyRankBonuses(user);
-      user.level = calculateLevel(user.totalEarned);
-      user.updatedAt = new Date();
-
-      const referralBonus = await tryPayQualifiedReferralBonus(user);
-
-    await user.save();
-
-      winners.push({
-        place,
-        telegramId: user.telegramId,
-        username: user.username || 'Spieler',
-        weeklyEarned: winnerSelectionScore,
-        prize,
-        rankBonuses,
+    if (result.status === 'already_awarded') {
+      return res.status(400).json({
+        message: 'Weekly prizes already awarded',
+        status: result.status,
+        week: targetWeek,
+        winners: result.winners,
+        diagnostics: result.diagnostics,
       });
     }
-
-    await WeeklyPrize.create({
-      week: targetWeek,
-      awardedAt: Date.now(),
-      winners,
-    });
 
     return res.json({
       message: 'Weekly prizes awarded',
+      status: result.status,
       week: targetWeek,
-      winners,
+      winners: result.winners,
+      diagnostics: result.diagnostics,
     });
   } catch (error) {
     if (error && error.code === 11000) {
@@ -4772,13 +4911,17 @@ function isReferralQualified(user) {
   return Number(user.totalTaps || 0) >= 100;
 }
 
-async function tryPayQualifiedReferralBonus(user) {
+async function tryPayQualifiedReferralBonus(user, session = null) {
   if (!user.referredBy || user.referredByBonusPaid) return null;
   if (!isReferralQualified(user)) return null;
 
-  const refUser = await User.findOne({
+  let refUserQuery = User.findOne({
     telegramId: user.referredBy,
   });
+  if (session && typeof refUserQuery.session === 'function') {
+    refUserQuery = refUserQuery.session(session);
+  }
+  const refUser = await refUserQuery;
 
   if (!refUser) {
     user.referredByBonusPaid = true;
@@ -4793,7 +4936,7 @@ async function tryPayQualifiedReferralBonus(user) {
   if (!canReceivePaidReferralBonus(refUser, now)) {
     addSuspiciousReason(refUser, 'referral_bonus_limit_reached');
     refUser.updatedAt = new Date();
-    await refUser.save();
+    await (session ? refUser.save({ session }) : refUser.save());
     return null;
   }
 
@@ -4804,7 +4947,7 @@ async function tryPayQualifiedReferralBonus(user) {
   refUser.balance = roundOnix(
     Number(refUser.balance || 0) + referralReward
   );
-  await addEarnings(refUser, referralReward);
+  await addEarnings(refUser, referralReward, session);
   refUser.lastReferralUsername = user.username || 'neuer Spieler';
 
   addTransaction(
@@ -4814,15 +4957,15 @@ async function tryPayQualifiedReferralBonus(user) {
     `Empfehlungsbonus für aktiven Freund: ${user.username || 'neuer Spieler'}`
   );
 
-  await applyAchievements(refUser);
-  await applyRankBonuses(refUser);
+  await applyAchievements(refUser, session);
+  await applyRankBonuses(refUser, session);
   refUser.level = calculateLevel(refUser.totalEarned);
   refUser.updatedAt = new Date();
 
   user.referredByBonusPaid = true;
   user.referredByQualifiedAt = now;
 
-  await refUser.save();
+  await (session ? refUser.save({ session }) : refUser.save());
 
   return {
     referrerTelegramId: refUser.telegramId,

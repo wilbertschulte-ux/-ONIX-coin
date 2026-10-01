@@ -1,5 +1,8 @@
 const assert = require('node:assert/strict');
+const fs = require('node:fs');
+const path = require('node:path');
 const test = require('node:test');
+const mongoose = require('mongoose');
 
 process.env.NODE_ENV = 'test';
 process.env.CRON_SECRET = 'isolated-cron-secret';
@@ -74,12 +77,24 @@ function createQuery(value) {
     select() {
       return this;
     },
+    session() {
+      return this;
+    },
     lean() {
       return Promise.resolve(value);
     },
     then(resolve, reject) {
       return Promise.resolve(value).then(resolve, reject);
     },
+  };
+}
+
+function createTestSession() {
+  return {
+    async withTransaction(callback) {
+      return callback();
+    },
+    async endSession() {},
   };
 }
 
@@ -265,6 +280,42 @@ test('materialization uses unordered idempotent setOnInsert upserts', async () =
   }
 });
 
+test('concurrent duplicate materialization is treated as an idempotent success', async () => {
+  const originalFind = User.find;
+  const originalBulkWrite = WeeklyScore.bulkWrite;
+
+  User.find = () => createQuery([createUser()]);
+  WeeklyScore.bulkWrite = async () => {
+    const error = new Error('duplicate key from concurrent upsert');
+    error.writeErrors = [{ code: 11000 }];
+    error.result = { upsertedCount: 0 };
+    throw error;
+  };
+
+  try {
+    const result = await materializeWeeklyScores('2026-W39');
+    assert.deepEqual(result, {
+      sourceUsersCount: 1,
+      newlyMaterializedCount: 0,
+    });
+  } finally {
+    User.find = originalFind;
+    WeeklyScore.bulkWrite = originalBulkWrite;
+  }
+});
+
+test('weekly prize workflow has finite connection and request timeouts', () => {
+  const workflowPath = path.resolve(
+    __dirname,
+    '../../../.github/workflows/weekly-prizes.yml'
+  );
+  const workflow = fs.readFileSync(workflowPath, 'utf8');
+
+  assert.match(workflow, /--connect-timeout\s+10/);
+  assert.match(workflow, /--max-time\s+120/);
+  assert.doesNotMatch(workflow, /--retry\s+(?:0|[1-9]\d{2,})/);
+});
+
 test('read normalization preserves stale weekly fields and current progress is zero', () => {
   const user = createUser();
   const original = {
@@ -379,15 +430,20 @@ test('weekly leaderboard is read-only and excludes stale users', async () => {
 
 test('automatic award materializes first, selects WeeklyScore and stores selection score', async () => {
   const originalUserFind = User.find;
+  const originalUserFindOne = User.findOne;
   const originalScoreFind = WeeklyScore.find;
+  const originalScoreCountDocuments = WeeklyScore.countDocuments;
   const originalBulkWrite = WeeklyScore.bulkWrite;
   const originalUpdateOne = WeeklyScore.updateOne;
   const originalPrizeFindOne = WeeklyPrize.findOne;
   const originalPrizeCreate = WeeklyPrize.create;
+  const originalStartSession = mongoose.startSession;
   const targetWeek = '2026-W39';
   const order = [];
   const snapshots = [];
   let marker = null;
+  let markerSession = null;
+  let userSaveSession = null;
 
   const payoutUser = createUser({
     weeklyEarnedWeek: targetWeek,
@@ -397,7 +453,9 @@ test('automatic award materializes first, selects WeeklyScore and stores selecti
     seasonBadges: [],
     claimedRankBonuses: [],
     transactions: [],
-    save: async () => undefined,
+    save: async (options) => {
+      userSaveSession = options?.session || null;
+    },
   });
 
   User.find = (filter) => {
@@ -409,6 +467,7 @@ test('automatic award materializes first, selects WeeklyScore and stores selecti
     }
     throw new Error(`Unexpected User winner query: ${JSON.stringify(filter)}`);
   };
+  User.findOne = () => createQuery(payoutUser);
   WeeklyScore.bulkWrite = async (operations) => {
     order.push('materialize');
     for (const operation of operations) {
@@ -417,7 +476,7 @@ test('automatic award materializes first, selects WeeklyScore and stores selecti
         snapshots.push({ ...value });
       }
     }
-    return { acknowledged: true };
+    return { acknowledged: true, upsertedCount: snapshots.length };
   };
   WeeklyScore.find = (filter) => {
     order.push('select');
@@ -427,12 +486,15 @@ test('automatic award materializes first, selects WeeklyScore and stores selecti
     });
     return createQuery(snapshots);
   };
+  WeeklyScore.countDocuments = async () => snapshots.length;
   WeeklyScore.updateOne = async () => ({ acknowledged: true });
   WeeklyPrize.findOne = async () => null;
-  WeeklyPrize.create = async (value) => {
-    marker = value;
+  WeeklyPrize.create = async (value, options) => {
+    marker = value[0];
+    markerSession = options?.session || null;
     return value;
   };
+  mongoose.startSession = async () => createTestSession();
 
   try {
     const handler = getRouteHandler('/cron-award-weekly-prizes', 'get');
@@ -453,20 +515,30 @@ test('automatic award materializes first, selects WeeklyScore and stores selecti
     assert.equal(marker.week, targetWeek);
     assert.equal(marker.winners[0].weeklyEarned, 4321);
     assert.equal(response.body.winners[0].weeklyEarned, 4321);
+    assert.equal(response.body.diagnostics.sourceUsersCount, 1);
+    assert.equal(response.body.diagnostics.materializedWeeklyScoreCount, 1);
+    assert.equal(response.body.diagnostics.eligibleCount, 1);
+    assert.equal(response.body.diagnostics.winnersCount, 1);
+    assert.ok(markerSession);
+    assert.equal(userSaveSession, markerSession);
     assert.notEqual(payoutUser.weeklyEarned, 4321);
   } finally {
     User.find = originalUserFind;
+    User.findOne = originalUserFindOne;
     WeeklyScore.find = originalScoreFind;
+    WeeklyScore.countDocuments = originalScoreCountDocuments;
     WeeklyScore.bulkWrite = originalBulkWrite;
     WeeklyScore.updateOne = originalUpdateOne;
     WeeklyPrize.findOne = originalPrizeFindOne;
     WeeklyPrize.create = originalPrizeCreate;
+    mongoose.startSession = originalStartSession;
   }
 });
 
 test('automatic award empty winners is a no-op without WeeklyPrize marker', async () => {
   const originalUserFind = User.find;
   const originalScoreFind = WeeklyScore.find;
+  const originalScoreCountDocuments = WeeklyScore.countDocuments;
   const originalPrizeFindOne = WeeklyPrize.findOne;
   const originalPrizeCreate = WeeklyPrize.create;
   const originalWarn = console.warn;
@@ -475,6 +547,7 @@ test('automatic award empty winners is a no-op without WeeklyPrize marker', asyn
 
   User.find = () => createQuery([]);
   WeeklyScore.find = () => createQuery([]);
+  WeeklyScore.countDocuments = async () => 0;
   WeeklyPrize.findOne = async () => null;
   WeeklyPrize.create = async () => {
     markerCreated = true;
@@ -497,21 +570,62 @@ test('automatic award empty winners is a no-op without WeeklyPrize marker', asyn
     assert.equal(response.statusCode, 200);
     assert.deepEqual(response.body.winners, []);
     assert.equal(markerCreated, false);
+    assert.equal(response.body.status, 'no_eligible_users');
+    assert.equal(response.body.diagnostics.eligibleCount, 0);
     assert.match(warning, /No eligible winners/);
     assert.equal(warning.includes('1001'), false);
   } finally {
     User.find = originalUserFind;
     WeeklyScore.find = originalScoreFind;
+    WeeklyScore.countDocuments = originalScoreCountDocuments;
     WeeklyPrize.findOne = originalPrizeFindOne;
     WeeklyPrize.create = originalPrizeCreate;
     console.warn = originalWarn;
   }
 });
 
+test('automatic award rejects the current incomplete week before materialization', async () => {
+  const originalUserFind = User.find;
+  const originalPrizeFindOne = WeeklyPrize.findOne;
+  let userQueried = false;
+  let markerChecked = false;
+
+  User.find = () => {
+    userQueried = true;
+    return createQuery([]);
+  };
+  WeeklyPrize.findOne = async () => {
+    markerChecked = true;
+    return null;
+  };
+
+  try {
+    const handler = getRouteHandler('/cron-award-weekly-prizes', 'get');
+    const response = createResponse();
+    await handler(
+      {
+        query: { week: getWeekKey() },
+        get: () => process.env.CRON_SECRET,
+      },
+      response
+    );
+
+    assert.equal(response.statusCode, 400);
+    assert.equal(response.body.week, getWeekKey());
+    assert.equal(userQueried, false);
+    assert.equal(markerChecked, false);
+  } finally {
+    User.find = originalUserFind;
+    WeeklyPrize.findOne = originalPrizeFindOne;
+  }
+});
+
 test('admin preview defaults to previous week and ranks WeeklyScore snapshots', async () => {
   const originalUserFind = User.find;
   const originalScoreFind = WeeklyScore.find;
+  const originalScoreCountDocuments = WeeklyScore.countDocuments;
   const originalPrizeFindOne = WeeklyPrize.findOne;
+  const originalPrizeCreate = WeeklyPrize.create;
   const targetWeek = getPreviousWeekKey();
   const snapshot = {
     week: targetWeek,
@@ -523,6 +637,8 @@ test('admin preview defaults to previous week and ranks WeeklyScore snapshots', 
     weeklyEarnedWeek: getWeekKey(),
     weeklyEarned: 999999,
   });
+  const originalBalance = user.balance;
+  let markerCreated = false;
 
   User.find = (filter) => {
     if (filter.weeklyEarnedWeek === targetWeek) return createQuery([]);
@@ -533,7 +649,11 @@ test('admin preview defaults to previous week and ranks WeeklyScore snapshots', 
     assert.equal(filter.week, targetWeek);
     return createQuery([snapshot]);
   };
+  WeeklyScore.countDocuments = async () => 1;
   WeeklyPrize.findOne = async () => null;
+  WeeklyPrize.create = async () => {
+    markerCreated = true;
+  };
 
   try {
     const handler = getRouteHandler('/admin-weekly-prize-preview', 'get');
@@ -550,10 +670,283 @@ test('admin preview defaults to previous week and ranks WeeklyScore snapshots', 
     assert.equal(response.body.week, targetWeek);
     assert.equal(response.body.preview[0].weeklyEarned, 7654);
     assert.equal(response.body.preview[0].telegramId, '1001');
+    assert.equal(response.body.diagnostics.targetWeek, targetWeek);
+    assert.equal(response.body.diagnostics.eligibleCount, 1);
+    assert.equal(user.balance, originalBalance);
+    assert.equal(markerCreated, false);
   } finally {
     User.find = originalUserFind;
     WeeklyScore.find = originalScoreFind;
+    WeeklyScore.countDocuments = originalScoreCountDocuments;
     WeeklyPrize.findOne = originalPrizeFindOne;
+    WeeklyPrize.create = originalPrizeCreate;
+  }
+});
+
+test('admin preview rejects the current week without creating a snapshot', async () => {
+  const originalUserFind = User.find;
+  let userQueried = false;
+
+  User.find = () => {
+    userQueried = true;
+    return createQuery([]);
+  };
+
+  try {
+    const handler = getRouteHandler('/admin-weekly-prize-preview', 'get');
+    const response = createResponse();
+    await handler(
+      {
+        query: {
+          secret: process.env.ADMIN_SECRET,
+          week: getWeekKey(),
+        },
+        get: () => '',
+      },
+      response
+    );
+
+    assert.equal(response.statusCode, 400);
+    assert.equal(response.body.week, getWeekKey());
+    assert.equal(userQueried, false);
+  } finally {
+    User.find = originalUserFind;
+  }
+});
+
+test('winner reload preserves a referral bonus when the referrer is also a later winner', async () => {
+  const originalUserFind = User.find;
+  const originalUserFindOne = User.findOne;
+  const originalScoreFind = WeeklyScore.find;
+  const originalScoreCountDocuments = WeeklyScore.countDocuments;
+  const originalBulkWrite = WeeklyScore.bulkWrite;
+  const originalUpdateOne = WeeklyScore.updateOne;
+  const originalPrizeFindOne = WeeklyPrize.findOne;
+  const originalPrizeCreate = WeeklyPrize.create;
+  const originalStartSession = mongoose.startSession;
+  const targetWeek = getPreviousWeekKey();
+  const currentWeek = getWeekKey();
+  const session = createTestSession();
+  const snapshots = [];
+  const initialBalance = 100;
+  const initialTotalEarned = 100;
+  const users = new Map([
+    ['2001', createUser({
+      telegramId: '2001',
+      username: 'referrer-winner',
+      weeklyEarnedWeek: targetWeek,
+      weeklyEarned: 500,
+      totalEarned: initialTotalEarned,
+      balance: initialBalance,
+      totalTaps: 500,
+      seasonBadges: [],
+      claimedRankBonuses: [],
+      completedAchievements: [],
+      transactions: [],
+    })],
+    ['2002', createUser({
+      telegramId: '2002',
+      username: 'referred-winner',
+      weeklyEarnedWeek: targetWeek,
+      weeklyEarned: 1000,
+      totalEarned: 100,
+      balance: 100,
+      totalTaps: 500,
+      referredBy: '2001',
+      referredByBonusPaid: false,
+      seasonBadges: [],
+      claimedRankBonuses: [],
+      completedAchievements: [],
+      transactions: [],
+    })],
+  ]);
+  let transactionCallbackCount = 0;
+  let markerCreateCount = 0;
+
+  const clone = (value) => structuredClone(value);
+  const loadUserDocument = (telegramId) => {
+    const stored = users.get(String(telegramId));
+    if (!stored) return null;
+
+    const document = clone(stored);
+    document.save = async (options) => {
+      assert.equal(options?.session, session);
+      const persisted = { ...document };
+      delete persisted.save;
+      users.set(String(document.telegramId), clone(persisted));
+    };
+    return document;
+  };
+
+  User.find = (filter) => {
+    if (filter.weeklyEarnedWeek === targetWeek) {
+      return createQuery([
+        clone(users.get('2002')),
+        clone(users.get('2001')),
+      ]);
+    }
+    throw new Error(`Unexpected overlap User query: ${JSON.stringify(filter)}`);
+  };
+  User.findOne = (filter) => createQuery(loadUserDocument(filter.telegramId));
+  WeeklyScore.bulkWrite = async (operations) => {
+    for (const operation of operations) {
+      const value = operation.updateOne.update.$setOnInsert;
+      if (!snapshots.some((item) => item.telegramId === value.telegramId)) {
+        snapshots.push({ ...value });
+      }
+    }
+    snapshots.sort((left, right) => right.weeklyEarned - left.weeklyEarned);
+    return { acknowledged: true, upsertedCount: snapshots.length };
+  };
+  WeeklyScore.find = () => createQuery(snapshots);
+  WeeklyScore.countDocuments = async () => snapshots.length;
+  WeeklyScore.updateOne = async () => ({ acknowledged: true });
+  WeeklyPrize.findOne = async () => null;
+  WeeklyPrize.create = async (_values, options) => {
+    assert.equal(options?.session, session);
+    markerCreateCount += 1;
+  };
+  session.withTransaction = async (callback) => {
+    transactionCallbackCount += 1;
+    return callback();
+  };
+  mongoose.startSession = async () => session;
+
+  try {
+    const handler = getRouteHandler('/cron-award-weekly-prizes', 'get');
+    const response = createResponse();
+    await handler(
+      {
+        query: { week: targetWeek },
+        get: () => process.env.CRON_SECRET,
+      },
+      response
+    );
+
+    const referrer = users.get('2001');
+    const transactionIncome = referrer.transactions.reduce(
+      (sum, entry) => sum + Number(entry.amount || 0),
+      0
+    );
+
+    assert.equal(response.statusCode, 200);
+    assert.equal(response.body.status, 'awarded');
+    assert.equal(transactionCallbackCount, 1);
+    assert.equal(markerCreateCount, 1);
+    assert.equal(referrer.weeklyEarnedWeek, currentWeek);
+    assert.ok(
+      referrer.transactions.some((entry) => entry.type === 'income_referral')
+    );
+    assert.ok(
+      referrer.transactions.some((entry) => entry.type === 'income_season_prize')
+    );
+    assert.equal(referrer.balance, initialBalance + transactionIncome);
+    assert.equal(referrer.totalEarned, initialTotalEarned + transactionIncome);
+    assert.equal(
+      referrer.claimedRankBonuses.length,
+      new Set(referrer.claimedRankBonuses).size
+    );
+    assert.equal(users.get('2002').referredByBonusPaid, true);
+  } finally {
+    User.find = originalUserFind;
+    User.findOne = originalUserFindOne;
+    WeeklyScore.find = originalScoreFind;
+    WeeklyScore.countDocuments = originalScoreCountDocuments;
+    WeeklyScore.bulkWrite = originalBulkWrite;
+    WeeklyScore.updateOne = originalUpdateOne;
+    WeeklyPrize.findOne = originalPrizeFindOne;
+    WeeklyPrize.create = originalPrizeCreate;
+    mongoose.startSession = originalStartSession;
+  }
+});
+
+test('repeated automatic award creates one marker and never pays twice', async () => {
+  const originalUserFind = User.find;
+  const originalUserFindOne = User.findOne;
+  const originalScoreFind = WeeklyScore.find;
+  const originalScoreCountDocuments = WeeklyScore.countDocuments;
+  const originalBulkWrite = WeeklyScore.bulkWrite;
+  const originalUpdateOne = WeeklyScore.updateOne;
+  const originalPrizeFindOne = WeeklyPrize.findOne;
+  const originalPrizeCreate = WeeklyPrize.create;
+  const originalStartSession = mongoose.startSession;
+  const targetWeek = getPreviousWeekKey();
+  const snapshots = [];
+  let marker = null;
+  let markerCreateCount = 0;
+
+  const payoutUser = createUser({
+    weeklyEarnedWeek: targetWeek,
+    weeklyEarned: 250,
+    totalEarned: 250,
+    balance: 250,
+    seasonBadges: [],
+    claimedRankBonuses: [],
+    transactions: [],
+    save: async () => undefined,
+  });
+
+  User.find = (filter) => {
+    if (filter.weeklyEarnedWeek === targetWeek) {
+      return createQuery(
+        payoutUser.weeklyEarnedWeek === targetWeek ? [payoutUser] : []
+      );
+    }
+    if (filter.telegramId?.$in) return createQuery([payoutUser]);
+    throw new Error(`Unexpected repeated award query: ${JSON.stringify(filter)}`);
+  };
+  User.findOne = () => createQuery(payoutUser);
+  WeeklyScore.bulkWrite = async (operations) => {
+    let upsertedCount = 0;
+    for (const operation of operations) {
+      const value = operation.updateOne.update.$setOnInsert;
+      if (!snapshots.some((item) => item.telegramId === value.telegramId)) {
+        snapshots.push({ ...value });
+        upsertedCount += 1;
+      }
+    }
+    return { acknowledged: true, upsertedCount };
+  };
+  WeeklyScore.find = () => createQuery(snapshots);
+  WeeklyScore.countDocuments = async () => snapshots.length;
+  WeeklyScore.updateOne = async () => ({ acknowledged: true });
+  WeeklyPrize.findOne = async () => marker;
+  WeeklyPrize.create = async (values) => {
+    markerCreateCount += 1;
+    marker = values[0];
+    return values;
+  };
+  mongoose.startSession = async () => createTestSession();
+
+  try {
+    const handler = getRouteHandler('/cron-award-weekly-prizes', 'get');
+    const request = {
+      query: { week: targetWeek },
+      get: () => process.env.CRON_SECRET,
+    };
+    const firstResponse = createResponse();
+    await handler(request, firstResponse);
+
+    const balanceAfterFirstAward = payoutUser.balance;
+    const secondResponse = createResponse();
+    await handler(request, secondResponse);
+
+    assert.equal(firstResponse.body.status, 'awarded');
+    assert.equal(secondResponse.body.status, 'already_awarded');
+    assert.equal(secondResponse.body.diagnostics.alreadyAwarded, true);
+    assert.equal(markerCreateCount, 1);
+    assert.equal(payoutUser.balance, balanceAfterFirstAward);
+    assert.equal(marker.winners.length, 1);
+  } finally {
+    User.find = originalUserFind;
+    User.findOne = originalUserFindOne;
+    WeeklyScore.find = originalScoreFind;
+    WeeklyScore.countDocuments = originalScoreCountDocuments;
+    WeeklyScore.bulkWrite = originalBulkWrite;
+    WeeklyScore.updateOne = originalUpdateOne;
+    WeeklyPrize.findOne = originalPrizeFindOne;
+    WeeklyPrize.create = originalPrizeCreate;
+    mongoose.startSession = originalStartSession;
   }
 });
 
@@ -590,9 +983,12 @@ test('manual award rejects the current incomplete week before payout', async () 
 
 test('manual award uses its explicit WeeklyScore week and immutable selection score', async () => {
   const originalUserFind = User.find;
+  const originalUserFindOne = User.findOne;
   const originalScoreFind = WeeklyScore.find;
+  const originalScoreCountDocuments = WeeklyScore.countDocuments;
   const originalPrizeFindOne = WeeklyPrize.findOne;
   const originalPrizeCreate = WeeklyPrize.create;
+  const originalStartSession = mongoose.startSession;
   const targetWeek = getPreviousWeekKey();
   const snapshot = {
     week: targetWeek,
@@ -617,15 +1013,18 @@ test('manual award uses its explicit WeeklyScore week and immutable selection sc
     if (filter.telegramId?.$in) return createQuery([payoutUser]);
     throw new Error(`Unexpected manual User query: ${JSON.stringify(filter)}`);
   };
+  User.findOne = () => createQuery(payoutUser);
   WeeklyScore.find = (filter) => {
     assert.equal(filter.week, targetWeek);
     return createQuery([snapshot]);
   };
+  WeeklyScore.countDocuments = async () => 1;
   WeeklyPrize.findOne = async () => null;
   WeeklyPrize.create = async (value) => {
-    marker = value;
+    marker = value[0];
     return value;
   };
+  mongoose.startSession = async () => createTestSession();
 
   try {
     const handler = getRouteHandler('/admin-award-weekly-prizes', 'post');
@@ -650,9 +1049,12 @@ test('manual award uses its explicit WeeklyScore week and immutable selection sc
     assert.notEqual(payoutUser.weeklyEarned, 8000);
   } finally {
     User.find = originalUserFind;
+    User.findOne = originalUserFindOne;
     WeeklyScore.find = originalScoreFind;
+    WeeklyScore.countDocuments = originalScoreCountDocuments;
     WeeklyPrize.findOne = originalPrizeFindOne;
     WeeklyPrize.create = originalPrizeCreate;
+    mongoose.startSession = originalStartSession;
   }
 });
 

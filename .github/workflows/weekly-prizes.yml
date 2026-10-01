@@ -13,6 +13,34 @@ jobs:
     steps:
       - name: Call ONIX weekly prizes endpoint
         run: |
-          curl -fsS \
+          response_file="$(mktemp)"
+          trap 'rm -f "$response_file"' EXIT
+          http_code="$(curl --silent --show-error \
+            --connect-timeout 10 \
+            --max-time 120 \
+            --output "$response_file" \
+            --write-out "%{http_code}" \
             -H "X-Cron-Secret: ${{ secrets.CRON_SECRET }}" \
-            "https://onix-coin.onrender.com/api/coins/cron-award-weekly-prizes"
+            "https://onix-coin.onrender.com/api/coins/cron-award-weekly-prizes")"
+
+          target_week="$(jq -r '.diagnostics.targetWeek // .week // "unknown"' "$response_file")"
+          winners_count="$(jq -r '.diagnostics.winnersCount // (.winners | length) // 0' "$response_file")"
+          status="$(jq -r '.status // "unknown"' "$response_file")"
+
+          echo "Weekly prize target week: $target_week"
+          echo "Weekly prize winners: $winners_count"
+
+          if [[ ! "$http_code" =~ ^2 ]]; then
+            echo "Weekly prize endpoint failed with HTTP $http_code"
+            exit 1
+          fi
+
+          if [[ "$status" == "no_eligible_users" ]]; then
+            echo "No eligible users for completed week $target_week"
+            exit 1
+          fi
+
+          if [[ "$status" != "awarded" && "$status" != "already_awarded" ]]; then
+            echo "Unexpected weekly prize response status: $status"
+            exit 1
+          fi
