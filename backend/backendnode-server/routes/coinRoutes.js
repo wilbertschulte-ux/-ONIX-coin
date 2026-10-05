@@ -1180,6 +1180,7 @@ function getPromoCodesConfig() {
     ONIX2026: getNumberEnv('PROMO_ONIX2026_REWARD', 10000),
     LAUNCH: getNumberEnv('PROMO_LAUNCH_REWARD', 15000),
     GG5000: getNumberEnv('PROMO_GG5000_REWARD', 5000),
+    GG7000: getNumberEnv('PROMO_GG7000_REWARD', 7000),
     WW10000: getNumberEnv('PROMO_WW10000_REWARD', 10000),
   };
 }
@@ -3794,6 +3795,7 @@ router.post('/claim-welcome-bonus', requireTelegramMiniAppUser, sensitiveRewardM
 
 // APPLY PROMO CODE
 router.post('/apply-promo', requireTelegramMiniAppUser, sensitiveRewardMutationGuard, async (req, res) => {
+  let session = null;
   try {
     const { code } = req.body;
     const requestedTelegramId = String(req.body?.telegramId || '');
@@ -3818,35 +3820,84 @@ router.post('/apply-promo', requireTelegramMiniAppUser, sensitiveRewardMutationG
       return res.status(400).json({ message: translate('promoMissing', await getUserLanguage(User, req.telegramUserId)) });
     }
 
-    const user = await User.findOne({ telegramId });
+    session = await mongoose.startSession();
+    let promoResult = null;
 
-    if (!user) {
+    await session.withTransaction(async () => {
+      promoResult = null;
+      const existingUser = await User.findOne({ telegramId }).session(session);
+
+      if (!existingUser) {
+        promoResult = { status: 'not_found' };
+        return;
+      }
+
+      normalizeUserFields(existingUser);
+
+      if (existingUser.isFrozen) {
+        promoResult = { status: 'frozen', user: existingUser };
+        return;
+      }
+
+      if (existingUser.usedPromoCodes.includes(cleanCode)) {
+        promoResult = { status: 'used', user: existingUser };
+        return;
+      }
+
+      const user = await User.findOneAndUpdate(
+        {
+          _id: existingUser._id,
+          usedPromoCodes: { $ne: cleanCode },
+        },
+        {
+          $addToSet: { usedPromoCodes: cleanCode },
+        },
+        {
+          new: true,
+          session,
+        }
+      );
+
+      if (!user) {
+        promoResult = { status: 'used', user: existingUser };
+        return;
+      }
+
+      normalizeUserFields(user);
+      user.balance = roundOnix(Number(user.balance || 0) + reward);
+      await addEarnings(user, reward, session);
+
+      addTransaction(user, 'income_promo', reward, `Promocode ${cleanCode}`);
+
+      addSecurityLog(user, 'promo', 'Promo code used', `${cleanCode}: +${reward} ONIX`);
+
+      const achievementBonuses = await applyAchievements(user, session);
+      const rankBonuses = await applyRankBonuses(user, session);
+      user.level = calculateLevel(user.totalEarned);
+      user.updatedAt = new Date();
+
+      await user.save({ session });
+      promoResult = {
+        status: 'success',
+        user,
+        achievementBonuses,
+        rankBonuses,
+      };
+    });
+
+    if (!promoResult || promoResult.status === 'not_found') {
       return res.status(404).json({ message: translate('userNotFound', await getUserLanguage(User, req.telegramUserId)) });
     }
 
-    normalizeUserFields(user);
-
-    const frozenResponse = ensureUserNotFrozen(user, res);
-    if (frozenResponse) return frozenResponse;
-
-    if (user.usedPromoCodes.includes(cleanCode)) {
-      return res.status(400).json({ message: translate('promoUsed', user.appLanguage) });
+    if (promoResult.status === 'frozen') {
+      return ensureUserNotFrozen(promoResult.user, res);
     }
 
-    user.usedPromoCodes.push(cleanCode);
-    user.balance = roundOnix(Number(user.balance || 0) + reward);
-    await addEarnings(user, reward);
+    if (promoResult.status === 'used') {
+      return res.status(400).json({ message: translate('promoUsed', promoResult.user.appLanguage) });
+    }
 
-    addTransaction(user, 'income_promo', reward, `Promocode ${cleanCode}`);
-
-    addSecurityLog(user, 'promo', 'Promo code used', `${cleanCode}: +${reward} ONIX`);
-
-    const achievementBonuses = await applyAchievements(user);
-    const rankBonuses = await applyRankBonuses(user);
-    user.level = calculateLevel(user.totalEarned);
-    user.updatedAt = new Date();
-
-    await user.save();
+    const { user, achievementBonuses, rankBonuses } = promoResult;
 
     return res.json({
       user: {
@@ -3865,6 +3916,8 @@ router.post('/apply-promo', requireTelegramMiniAppUser, sensitiveRewardMutationG
     });
   } catch (error) {
     return res.status(500).json({ error: error.message });
+  } finally {
+    if (session) await session.endSession();
   }
 });
 
