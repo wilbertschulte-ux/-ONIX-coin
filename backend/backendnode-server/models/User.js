@@ -176,6 +176,20 @@ const userSchema = new mongoose.Schema(
       default: null,
     },
 
+    trafficAttribution: {
+      type: new mongoose.Schema(
+        {
+          source: { type: String, required: true, maxlength: 64 },
+          campaign: { type: String, default: '', maxlength: 48 },
+          market: { type: String, default: '', maxlength: 8 },
+          firstSeenAt: { type: Date, required: true },
+          landingCode: { type: String, required: true, maxlength: 64 },
+        },
+        { _id: false }
+      ),
+      default: undefined,
+    },
+
     lastReferralUsername: {
       type: String,
       default: null,
@@ -650,6 +664,17 @@ const userSchema = new mongoose.Schema(
   {
     timestamps: true,
   }
+);
+
+// The compound index serves source filtering and source/date range reports.
+// A separate date index supports cross-source acquisition cohorts.
+userSchema.index(
+  { 'trafficAttribution.source': 1, 'trafficAttribution.firstSeenAt': 1 },
+  { partialFilterExpression: { 'trafficAttribution.source': { $type: 'string' } } }
+);
+userSchema.index(
+  { 'trafficAttribution.firstSeenAt': 1 },
+  { partialFilterExpression: { 'trafficAttribution.firstSeenAt': { $type: 'date' } } }
 );
 
 module.exports = mongoose.model('User', userSchema);

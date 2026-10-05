@@ -7,6 +7,13 @@ const {
   createTelegramWebhookRateLimiter,
   verifyTelegramWebhookSecret,
 } = require('./telegramWebhookSecurity');
+const {
+  buildMiniAppUrl,
+  extractTelegramStartPayload,
+  parseLaunchParam,
+} = require('./trafficAttribution');
+const { queueTrafficEvent } = require('./trafficEvents');
+const { storePendingTelegramLaunch } = require('./trustedTelegramLaunch');
 require("dotenv").config();
 
 const app = express();
@@ -37,14 +44,14 @@ async function sendTelegramMessage(chatId, text, replyMarkup) {
   });
 }
 
-function getStartKeyboard(language = 'de') {
+function getStartKeyboard(language = 'de', launchParam = '') {
   return {
     inline_keyboard: [
       [
         {
           text: translate('bot.open', language),
           web_app: {
-            url: WEB_APP_URL,
+            url: buildMiniAppUrl(WEB_APP_URL, launchParam),
           },
         },
       ],
@@ -70,6 +77,31 @@ app.post(
     const language = await getUserLanguage(User, message?.from?.id);
 
     if (text.startsWith("/start") || text.startsWith("/help")) {
+      const startPayload = text.startsWith('/start')
+        ? extractTelegramStartPayload(text)
+        : '';
+      const parsedLaunch = parseLaunchParam(startPayload);
+      let keyboardLaunchParam = '';
+
+      if (startPayload) {
+        const pendingLaunch = await storePendingTelegramLaunch({
+          telegramId: message?.from?.id,
+          payload: startPayload,
+        });
+        if (pendingLaunch.stored || pendingLaunch.existing) {
+          keyboardLaunchParam = startPayload;
+        } else if (pendingLaunch.reason === 'storage_error') {
+          console.warn('Pending Telegram launch storage failed');
+        }
+      }
+
+      queueTrafficEvent({
+        telegramId: message?.from?.id,
+        event: 'landing',
+        attribution: parsedLaunch.attribution,
+        deduplicationKey: parsedLaunch.attribution?.landingCode || '',
+      });
+
       await sendTelegramMessage(
         chatId,
         [
@@ -79,7 +111,7 @@ app.post(
           "",
           translate('bot.prompt', language),
         ].join("\n"),
-        getStartKeyboard(language)
+        getStartKeyboard(language, keyboardLaunchParam)
       );
 
       return res.sendStatus(200);

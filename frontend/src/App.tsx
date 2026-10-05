@@ -11717,6 +11717,12 @@ type SuspiciousUser = {
 
 const API_URL = 'https://onix-coin.onrender.com/api/coins';
 const DAY_MS = 24 * 60 * 60 * 1000;
+
+function getOnixLaunchParam() {
+  const telegramStartParam = window.Telegram?.WebApp?.initDataUnsafe?.start_param;
+  return telegramStartParam ? String(telegramStartParam) : '';
+}
+
 function getOnixUtcDayKey(timestamp = Date.now()) {
   return new Date(timestamp).toISOString().slice(0, 10);
 }
@@ -13266,7 +13272,7 @@ function App() {
   const [isAdminLoading, setIsAdminLoading] = useState(false);
 
   useEffect(() => {
-    const startParam = window.Telegram?.WebApp?.initDataUnsafe?.start_param || '';
+    const startParam = getOnixLaunchParam();
 
     if (startParam.startsWith('team_')) {
       joinTeamByCode(startParam.replace('team_', ''));
@@ -13321,12 +13327,9 @@ function App() {
         const telegramId =
           window.Telegram?.WebApp?.initDataUnsafe?.user?.id?.toString() || '';
 
-        const startParam =
-          window.Telegram?.WebApp?.initDataUnsafe?.start_param || null;
+        const startParam = getOnixLaunchParam();
 
-        await axios.post(`${API_URL}/create`, {
-          referredBy: startParam,
-        });
+        await axios.post(`${API_URL}/create`, {});
 
         const response = await axios.get(`${API_URL}/${telegramId}`);
         const user = response.data;
@@ -14095,8 +14098,8 @@ function App() {
     const telegramId = getTelegramId();
 
     return telegramId
-      ? `https://t.me/coinonix_bot/onix?startapp=${telegramId}`
-      : 'https://t.me/coinonix_bot/onix';
+      ? `https://t.me/coinonix_bot?start=${telegramId}`
+      : 'https://t.me/coinonix_bot';
   };
 
   const getReferralShareText = () =>

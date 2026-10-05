@@ -3,6 +3,16 @@ const axios = require('axios');
 const crypto = require('crypto');
 const express = require('express');
 const mongoose = require('mongoose');
+const { applyFirstTouchAttribution } = require('../trafficAttribution');
+const {
+  getUserTrafficAttribution,
+  queueTrafficEvent,
+} = require('../trafficEvents');
+const {
+  consumePendingTelegramLaunch,
+  getPendingTelegramLaunch,
+  selectTrustedTelegramLaunch,
+} = require('../trustedTelegramLaunch');
 
 const router = express.Router();
 
@@ -4344,6 +4354,13 @@ router.get('/:telegramId', requireTelegramMiniAppUser, async (req, res) => {
 
     await user.save();
 
+    queueTrafficEvent({
+      telegramId,
+      event: 'active',
+      attribution: getUserTrafficAttribution(user),
+      occurredAt: now,
+    });
+
     return res.json({
       ...user.toObject({ flattenMaps: true }),
       achievements: getAchievementsPayload(user),
@@ -4386,24 +4403,15 @@ router.post('/language', requireTelegramMiniAppUser, async (req, res) => {
 
 // CREATE USER
 router.post('/create', requireTelegramMiniAppUser, async (req, res) => {
+  let session = null;
   try {
     const {
       telegramId: bodyTelegramId,
       username: bodyUsername,
-      referredBy,
-      initData: bodyInitData,
     } = req.body;
 
-    // Step 3: use verified Telegram identity when available, but keep the
-    // legacy body fields as a fallback. This deliberately does NOT protect
-    // gameplay routes yet, so taps/progress cannot be broken by this step.
-    const initData = req.get('x-telegram-init-data') || bodyInitData || '';
-    const authResult = initData
-      ? validateTelegramInitData(initData, process.env.BOT_TOKEN)
-      : { ok: false, user: null };
-    const telegramUser = authResult.ok && authResult.user ? authResult.user : null;
-
     const telegramId = req.telegramUserId;
+    const telegramUser = req.telegramAuth?.user || null;
     if (bodyTelegramId && String(bodyTelegramId) !== telegramId) {
       return res.status(403).json({
         message: translate('telegramMismatch', await getUserLanguage(User, req.telegramUserId)),
@@ -4413,7 +4421,6 @@ router.post('/create', requireTelegramMiniAppUser, async (req, res) => {
     const lastName = String(telegramUser?.last_name || '').trim();
     const verifiedDisplayName = [firstName, lastName].filter(Boolean).join(' ').trim();
     const displayName = verifiedDisplayName || String(bodyUsername || '').trim() || 'Spieler';
-
     if (!telegramId) {
       return res.status(400).json({
         message: translate('telegramRequired', 'de'),
@@ -4421,136 +4428,150 @@ router.post('/create', requireTelegramMiniAppUser, async (req, res) => {
     }
 
     let user = await User.findOne({ telegramId });
+    let created = false;
 
     if (!user) {
-      user = new User({
-        telegramId,
-        username: displayName,
-        telegramUsername: telegramUser?.username || '',
-        firstName,
-        lastName,
-        displayName,
-        languageCode: telegramUser?.language_code || '',
-        appLanguage: (() => { const l=String(telegramUser?.language_code||'').toLowerCase().split('-')[0]; return ['de','en','ru','uk','tr','es','fr','it','pl','pt'].includes(l) ? l : 'de'; })(),
-        photoUrl: telegramUser?.photo_url || '',
-        referredBy: referredBy || null,
-        completedTasks: [],
-        completedAchievements: [],
-        ownedPerks: [],
-        perkLevels: {},
-        chestStats: {
-          opened: 0,
-          lastReward: '',
-        },
-        missionStats: {},
-        claimedDailyMissions: [],
-        claimedWeeklyMissions: [],
-        usedPromoCodes: [],
-        welcomeBonusClaimed: false,
-        lastWithdrawalCheckAt: 0,
-        claimedRankBonuses: [],
-        transactions: [],
-        totalTaps: 0,
-        totalBoostsUsed: 0,
-        totalUpgradesBought: 0,
-        offlineClaimsCount: 0,
-        dailyStreak: 0,
-        lastDailyClaimDay: null,
-        tapTimestamps: [],
+      session = await mongoose.startSession();
+      try {
+        await session.withTransaction(async () => {
+          created = false;
+          user = await User.findOne({ telegramId }).session(session);
+          if (user) return;
 
-        balance: 0,
-        energy: DEFAULT_ENERGY,
-        maxEnergy: DEFAULT_MAX_ENERGY,
-        tapPower: DEFAULT_TAP_POWER,
-        energyRecharge: DEFAULT_ENERGY_RECHARGE,
-        autoclickers: DEFAULT_MINER_INCOME,
-
-        totalEarned: 0,
-        weeklyEarned: 0,
-        weeklyEarnedWeek: getWeekKey(),
-        level: 1,
-
-        referralsCount: 0,
-        dailyReferralBonusCount: 0,
-        hourlyReferralBonusCount: 0,
-        lastReferralBonusHour: null,
-        lastReferralBonusDay: null,
-        withdrawalRequests: [],
-        seasonBadges: [],
-        selectedTitle: 'ONIX Player',
-        lastSeenSeasonPrizeWeek: '',
-        teamName: '',
-        teamJoinedAt: 0,
-        teamMissionClaims: [],
-        teamPrizeClaims: [],
-        league: 'Bronze',
-        isSuspicious: false,
-        isFrozen: false,
-        frozenReason: '',
-        suspiciousReasons: [],
-        securityLogs: [],
-        adminNotes: [],
-        frontendErrorLogs: [],
-
-        tapLevel: 1,
-        minerLevel: 1,
-        energyLevel: 1,
-        rechargeLevel: 1,
-
-        lastSeenAt: Date.now(),
-        lastMineTickAt: 0,
-        lastUpgradeBuyAt: 0,
-        lastOfflineIncome: 0,
-        lastOfflineSeconds: 0,
-        pendingOfflineIncome: 0,
-        pendingOfflineSeconds: 0,
-        activeBoost: 'none',
-        boostEndTime: 0,
-      });
-
-      if (referredBy && referredBy !== telegramId) {
-        const refUser = await User.findOne({
-          telegramId: referredBy,
-        });
-
-        if (refUser) {
-          normalizeUserFields(refUser);
-
-          const economyConfig = getEconomyConfig();
-
-          refUser.referralsCount += 1;
-          incrementMissionStat(refUser, 'weeklyReferrals');
-          refUser.lastReferralUsername = displayName || 'neuer Spieler';
-          refUser.updatedAt = new Date();
-
-          user.referredByUsername = refUser.username || 'Spielers';
-
-          // Реферальный бонус пригласившему теперь начисляется не сразу,
-          // а после активности нового игрока: 100 Taps.
-          user.referredByBonusPaid = false;
-
-          user.balance = roundOnix(Number(user.balance || 0) + economyConfig.referredUserReward);
-          await addEarnings(user, economyConfig.referredUserReward);
-
-          addTransaction(
-            user,
-            'income_referral',
-            economyConfig.referredUserReward,
-            'Bonus für Einstieg über Link'
+          const availablePendingLaunch = await getPendingTelegramLaunch(telegramId, { session });
+          const pendingLaunch = availablePendingLaunch?.teamCode
+            ? availablePendingLaunch
+            : await consumePendingTelegramLaunch(telegramId, { session });
+          const trustedLaunch = selectTrustedTelegramLaunch(
+            pendingLaunch,
+            req.telegramAuth?.startParam
           );
+          const referralTelegramId =
+            trustedLaunch.referralTelegramId && trustedLaunch.referralTelegramId !== telegramId
+              ? trustedLaunch.referralTelegramId
+              : null;
 
-          await applyAchievements(user);
-          await applyRankBonuses(user);
-          user.level = calculateLevel(user.totalEarned);
+          user = new User({
+          telegramId,
+          username: displayName,
+          telegramUsername: telegramUser?.username || '',
+          firstName,
+          lastName,
+          displayName,
+          languageCode: telegramUser?.language_code || '',
+          appLanguage: (() => { const l=String(telegramUser?.language_code||'').toLowerCase().split('-')[0]; return ['de','en','ru','uk','tr','es','fr','it','pl','pt'].includes(l) ? l : 'de'; })(),
+          photoUrl: telegramUser?.photo_url || '',
+          referredBy: referralTelegramId,
+          completedTasks: [],
+          completedAchievements: [],
+          ownedPerks: [],
+          perkLevels: {},
+          chestStats: { opened: 0, lastReward: '' },
+          missionStats: {},
+          claimedDailyMissions: [],
+          claimedWeeklyMissions: [],
+          usedPromoCodes: [],
+          welcomeBonusClaimed: false,
+          lastWithdrawalCheckAt: 0,
+          claimedRankBonuses: [],
+          transactions: [],
+          totalTaps: 0,
+          totalBoostsUsed: 0,
+          totalUpgradesBought: 0,
+          offlineClaimsCount: 0,
+          dailyStreak: 0,
+          lastDailyClaimDay: null,
+          tapTimestamps: [],
+          balance: 0,
+          energy: DEFAULT_ENERGY,
+          maxEnergy: DEFAULT_MAX_ENERGY,
+          tapPower: DEFAULT_TAP_POWER,
+          energyRecharge: DEFAULT_ENERGY_RECHARGE,
+          autoclickers: DEFAULT_MINER_INCOME,
+          totalEarned: 0,
+          weeklyEarned: 0,
+          weeklyEarnedWeek: getWeekKey(),
+          level: 1,
+          referralsCount: 0,
+          dailyReferralBonusCount: 0,
+          hourlyReferralBonusCount: 0,
+          lastReferralBonusHour: null,
+          lastReferralBonusDay: null,
+          withdrawalRequests: [],
+          seasonBadges: [],
+          selectedTitle: 'ONIX Player',
+          lastSeenSeasonPrizeWeek: '',
+          teamName: '',
+          teamJoinedAt: 0,
+          teamMissionClaims: [],
+          teamPrizeClaims: [],
+          league: 'Bronze',
+          isSuspicious: false,
+          isFrozen: false,
+          frozenReason: '',
+          suspiciousReasons: [],
+          securityLogs: [],
+          adminNotes: [],
+          frontendErrorLogs: [],
+          tapLevel: 1,
+          minerLevel: 1,
+          energyLevel: 1,
+          rechargeLevel: 1,
+          lastSeenAt: Date.now(),
+          lastMineTickAt: 0,
+          lastUpgradeBuyAt: 0,
+          lastOfflineIncome: 0,
+          lastOfflineSeconds: 0,
+          pendingOfflineIncome: 0,
+          pendingOfflineSeconds: 0,
+          activeBoost: 'none',
+          boostEndTime: 0,
+          });
 
-          await refUser.save();
-        }
+          applyFirstTouchAttribution(user, trustedLaunch.attribution, {
+            isNewUser: true,
+            now: trustedLaunch.firstSeenAt || Date.now(),
+          });
+
+          if (referralTelegramId) {
+            const refUser = await User.findOne({ telegramId: referralTelegramId }).session(session);
+            if (refUser) {
+              normalizeUserFields(refUser);
+              const economyConfig = getEconomyConfig();
+              refUser.referralsCount += 1;
+              incrementMissionStat(refUser, 'weeklyReferrals');
+              refUser.lastReferralUsername = displayName || 'neuer Spieler';
+              refUser.updatedAt = new Date();
+              user.referredByUsername = refUser.username || 'Spielers';
+              user.referredByBonusPaid = false;
+              user.balance = roundOnix(Number(user.balance || 0) + economyConfig.referredUserReward);
+              await addEarnings(user, economyConfig.referredUserReward, session);
+              addTransaction(user, 'income_referral', economyConfig.referredUserReward, 'Bonus für Einstieg über Link');
+              await applyAchievements(user, session);
+              await applyRankBonuses(user, session);
+              user.level = calculateLevel(user.totalEarned);
+              await refUser.save({ session });
+            }
+          }
+
+          await tryPayQualifiedReferralBonus(user, session);
+          await user.save({ session });
+          created = true;
+        });
+      } catch (error) {
+        if (error?.code !== 11000) throw error;
+        user = await User.findOne({ telegramId });
+        if (!user) throw error;
+        created = false;
       }
-
-      const referralBonus = await tryPayQualifiedReferralBonus(user);
-
-      await user.save();
     } else {
+      const pendingLaunch = await getPendingTelegramLaunch(telegramId);
+      if (!pendingLaunch?.teamCode) {
+        await consumePendingTelegramLaunch(telegramId);
+      }
+    }
+
+    if (!created) {
       normalizeUserFields(user);
 
       // Only signed initData is allowed to refresh Telegram-specific fields.
@@ -4583,6 +4604,24 @@ router.post('/create', requireTelegramMiniAppUser, async (req, res) => {
       await user.save();
     }
 
+    if (created) {
+      const attribution = getUserTrafficAttribution(user);
+      queueTrafficEvent({
+        telegramId,
+        event: 'landing',
+        attribution,
+        occurredAt: user.trafficAttribution?.firstSeenAt || Date.now(),
+        deduplicationKey: user.trafficAttribution?.landingCode || '',
+      });
+      queueTrafficEvent({
+        telegramId,
+        event: 'start',
+        attribution,
+        occurredAt: user.trafficAttribution?.firstSeenAt || Date.now(),
+        deduplicationKey: 'first',
+      });
+    }
+
     return res.json({
       ...user.toObject({ flattenMaps: true }),
       achievements: getAchievementsPayload(user),
@@ -4593,6 +4632,8 @@ router.post('/create', requireTelegramMiniAppUser, async (req, res) => {
     return res.status(500).json({
       error: error.message,
     });
+  } finally {
+    if (session) await session.endSession();
   }
 });
 
@@ -4619,6 +4660,7 @@ router.post('/save', requireTelegramMiniAppUser, async (req, res) => {
     }
 
     let user = await User.findOne({ telegramId });
+    const isNewUser = !user;
 
     if (!user) {
       user = new User({
@@ -4696,6 +4738,7 @@ router.post('/save', requireTelegramMiniAppUser, async (req, res) => {
         activeBoost: 'none',
         boostEndTime: 0,
       });
+
     }
 
     normalizeUserFields(user);
@@ -4722,6 +4765,30 @@ router.post('/save', requireTelegramMiniAppUser, async (req, res) => {
     const referralBonus = await tryPayQualifiedReferralBonus(user);
 
     await user.save();
+
+    const trafficAttribution = getUserTrafficAttribution(user);
+    if (isNewUser) {
+      queueTrafficEvent({
+        telegramId,
+        event: 'landing',
+        attribution: trafficAttribution,
+        occurredAt: user.trafficAttribution?.firstSeenAt || Date.now(),
+        deduplicationKey: user.trafficAttribution?.landingCode || '',
+      });
+      queueTrafficEvent({
+        telegramId,
+        event: 'start',
+        attribution: trafficAttribution,
+        occurredAt: user.trafficAttribution?.firstSeenAt || Date.now(),
+        deduplicationKey: 'first',
+      });
+    }
+    queueTrafficEvent({
+      telegramId,
+      event: 'active',
+      attribution: trafficAttribution,
+      occurredAt: user.lastSeenAt,
+    });
 
     return res.json(user);
   } catch (error) {
@@ -5199,9 +5266,36 @@ router.post('/join-team', requireTelegramMiniAppUser, async (req, res) => {
       });
     }
 
-    const cleanTeamName = String(teamName || decodeTeamCode(teamCode) || '')
-      .trim()
-      .slice(0, 24);
+    const requestedTeamCode = String(teamCode || '').trim();
+    let cleanTeamName = '';
+
+    if (requestedTeamCode) {
+      const signedTeamCode = selectTrustedTelegramLaunch(
+        null,
+        req.telegramAuth?.startParam
+      ).teamCode;
+      const pendingLaunch = signedTeamCode === requestedTeamCode
+        ? null
+        : await getPendingTelegramLaunch(telegramId);
+      const trustedTeamCode = signedTeamCode || pendingLaunch?.teamCode || '';
+
+      if (trustedTeamCode !== requestedTeamCode) {
+        return res.status(403).json({
+          message: translate('teamMissing', await getUserLanguage(User, req.telegramUserId)),
+        });
+      }
+
+      const decodedTeamName = normalizeTeamNameValue(decodeTeamCode(requestedTeamCode));
+      const suppliedTeamName = normalizeTeamNameValue(teamName);
+      if (suppliedTeamName && suppliedTeamName !== decodedTeamName) {
+        return res.status(403).json({
+          message: translate('teamMissing', await getUserLanguage(User, req.telegramUserId)),
+        });
+      }
+      cleanTeamName = decodedTeamName;
+    } else {
+      cleanTeamName = normalizeTeamNameValue(teamName);
+    }
 
     if (!cleanTeamName) {
       return res.status(400).json({ message: translate('teamMissing', await getUserLanguage(User, req.telegramUserId)) });
@@ -5675,6 +5769,14 @@ router.post('/request-withdrawal', requireTelegramMiniAppUser, withdrawalMutatio
 
     user.updatedAt = new Date();
     await user.save();
+
+    queueTrafficEvent({
+      telegramId,
+      event: 'withdrawal',
+      attribution: getUserTrafficAttribution(user),
+      occurredAt: user.withdrawalRequests[0].createdAt,
+      deduplicationKey: String(user.withdrawalRequests[0].createdAt),
+    });
 
     return res.json({
       user: {
