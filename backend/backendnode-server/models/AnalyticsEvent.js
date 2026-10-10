@@ -32,6 +32,7 @@ const analyticsEventSchema = new mongoose.Schema(
 
 analyticsEventSchema.index({ telegramId: 1, occurredAt: -1 });
 analyticsEventSchema.index({ event: 1, occurredAt: -1 });
+analyticsEventSchema.index({ occurredAt: -1 });
 analyticsEventSchema.index({ campaign: 1, event: 1, occurredAt: -1 });
 analyticsEventSchema.index(
   { telegramId: 1, event: 1, deduplicationKey: 1 },

@@ -503,6 +503,11 @@ router.use(async (req, res, next) => {
 const User = require('../models/User');
 const WeeklyScore = require('../models/WeeklyScore');
 const AnalyticsEvent = require('../models/AnalyticsEvent');
+const {
+  buildAnalyticsDashboardMatch,
+  buildAnalyticsDashboardPipeline,
+  formatAnalyticsDashboardResult,
+} = require('../analyticsDashboard');
 
 const WeeklyPrizeSchema = new mongoose.Schema({
   week: {
@@ -3376,6 +3381,13 @@ router.get('/admin-analytics-events', async (req, res) => {
 
     if (!isAdminRequest(req, secret, telegramId)) {
       return res.status(403).json({ message: 'Forbidden' });
+    }
+
+    if (String(req.query.dashboard || '') === '1') {
+      const { match, from, to } = buildAnalyticsDashboardMatch(req.query);
+      const pipeline = buildAnalyticsDashboardPipeline(match);
+      const result = await AnalyticsEvent.aggregate(pipeline);
+      return res.json(formatAnalyticsDashboardResult(result, from, to));
     }
 
     const filter = {};

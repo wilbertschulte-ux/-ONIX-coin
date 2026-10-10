@@ -11414,6 +11414,45 @@ type AdminEconomyDashboard = {
   }>;
 };
 
+type AdminAnalyticsEventName =
+  | 'landing'
+  | 'start'
+  | 'active'
+  | 'first_tap'
+  | 'first_task'
+  | 'promo_used'
+  | 'referral'
+  | 'withdrawal';
+
+type AdminAnalyticsDashboard = {
+  period: { from: string; to: string };
+  totals: { events: number; users: number };
+  byEvent: Array<{ event: string; events: number; users: number }>;
+  byCampaign: Array<{ campaign: string; events: number; users: number }>;
+  funnel: Array<{ event: AdminAnalyticsEventName; events: number; users: number }>;
+  campaigns: Array<{
+    campaign: string;
+    users: number;
+    active: number;
+    firstTap: number;
+    firstTask: number;
+    promoUsed: number;
+    referral: number;
+    withdrawal: number;
+  }>;
+};
+
+const ADMIN_ANALYTICS_EVENT_KEYS = {
+  landing: 'admin.analytics.event.landing',
+  start: 'admin.analytics.event.start',
+  active: 'admin.analytics.event.active',
+  first_tap: 'admin.analytics.event.firstTap',
+  first_task: 'admin.analytics.event.firstTask',
+  promo_used: 'admin.analytics.event.promoUsed',
+  referral: 'admin.analytics.event.referral',
+  withdrawal: 'admin.analytics.event.withdrawal',
+} as const satisfies Record<AdminAnalyticsEventName, MessageKey>;
+
 const ADMIN_ECONOMY_CONFIG_KEYS = [
   'ONIX_EUR_PER_1000',
   'MIN_WITHDRAW_ONIX',
@@ -13179,6 +13218,16 @@ function App() {
   const [launchPanel, setLaunchPanel] = useState<LaunchPanel>('overview');
   const [adminEconomyDashboard, setAdminEconomyDashboard] =
     useState<AdminEconomyDashboard | null>(null);
+  const [adminAnalyticsDashboard, setAdminAnalyticsDashboard] =
+    useState<AdminAnalyticsDashboard | null>(null);
+  const [adminAnalyticsFilters, setAdminAnalyticsFilters] = useState({
+    from: '',
+    to: '',
+    campaign: '',
+    source: '',
+    market: '',
+  });
+  const [adminAnalyticsError, setAdminAnalyticsError] = useState(false);
   const [adminSearchQuery, setAdminSearchQuery] = useState('');
   const [adminSearchResults, setAdminSearchResults] = useState<AdminUserSearchResult[]>([]);
   const [adminUserListTotal, setAdminUserListTotal] = useState(0);
@@ -13266,7 +13315,7 @@ function App() {
   const [totalBoostsUsed, setTotalBoostsUsed] = useState(0);
   const [totalUpgradesBought, setTotalUpgradesBought] = useState(0);
   const [offlineClaimsCount, setOfflineClaimsCount] = useState(0);
-  const [adminHubPage, setAdminHubPage] = useState<'overview' | 'prizes' | 'withdrawals' | 'economy' | 'search' | 'suspicious' | 'logs' | 'launch' | 'admin2'>('overview');
+  const [adminHubPage, setAdminHubPage] = useState<'overview' | 'prizes' | 'withdrawals' | 'economy' | 'analytics' | 'search' | 'suspicious' | 'logs' | 'launch' | 'admin2'>('overview');
   const [adminPrizePreview, setAdminPrizePreview] =
     useState<AdminPrizePreviewResponse | null>(null);
   const [isAdminLoading, setIsAdminLoading] = useState(false);
@@ -15126,6 +15175,33 @@ function App() {
       setAdminHubPage('economy');
     } catch (error: any) {
       showToast(error?.response?.data?.message || ((t) => t('admin.notice.economyLoadError')), 'error');
+    } finally {
+      setIsAdminLoading(false);
+    }
+  };
+
+  const loadAdminAnalyticsDashboard = async () => {
+    const telegramId = getTelegramId();
+
+    try {
+      setIsAdminLoading(true);
+      setAdminAnalyticsError(false);
+      setAdminHubPage('analytics');
+
+      const response = await axios.get(`${API_URL}/admin-analytics-events`, {
+        params: {
+          telegramId,
+          dashboard: '1',
+          ...Object.fromEntries(
+            Object.entries(adminAnalyticsFilters).filter(([, value]) => value.trim())
+          ),
+        },
+      });
+
+      setAdminAnalyticsDashboard(response.data);
+    } catch (error: any) {
+      setAdminAnalyticsError(true);
+      showToast(error?.response?.data?.message || ((t) => t('admin.notice.analyticsLoadError')), 'error');
     } finally {
       setIsAdminLoading(false);
     }
@@ -17719,6 +17795,8 @@ function App() {
                         ? t('admin.nav.withdrawals')
                         : adminHubPage === 'economy'
                         ? t('admin.nav.economy')
+                        : adminHubPage === 'analytics'
+                        ? t('admin.nav.analytics')
                         : adminHubPage === 'search'
                         ? t('admin.nav.search')
                         : adminHubPage === 'suspicious'
@@ -17754,6 +17832,9 @@ function App() {
                     </button>
                     <button type="button" onClick={loadAdminEconomyDashboard} disabled={isAdminLoading}>
                       <span>📊</span><strong>{t('admin.nav.economy')}</strong><em>{t('admin.overview.economyHint')}</em>
+                    </button>
+                    <button type="button" onClick={() => void loadAdminAnalyticsDashboard()} disabled={isAdminLoading}>
+                      <span>📈</span><strong>{t('admin.nav.analytics')}</strong><em>{t('admin.overview.analyticsHint')}</em>
                     </button>
                     <button type="button" onClick={() => { setAdminHubPage('search'); setAdminSearchQuery(''); void searchAdminUsers(1, ''); }} disabled={isAdminLoading}>
                       <span>👥</span><strong>{t('admin.players.all')}</strong><em>{t('admin.overview.playersHint')}</em>
@@ -17860,6 +17941,71 @@ function App() {
                         </>
                         ) : <p className="onix-admin-empty">{t('admin.economy.loadPrompt')}</p>}
                         <button type="button" className="onix-admin-secondary" onClick={loadAdminEconomyDashboard} disabled={isAdminLoading}>{t('admin.economy.refresh')}</button>
+                      </div>
+                    )}
+
+                    {adminHubPage === 'analytics' && (
+                      <div className="onix-admin-section-card">
+                        <div className="onix-admin-section-head"><strong>{t('admin.nav.analytics')}</strong><span>{t('admin.analytics.readOnly')}</span></div>
+                        <div className="onix-admin-config-grid">
+                          <label>{t('admin.analytics.from')}<input type="date" value={adminAnalyticsFilters.from} onChange={(event) => setAdminAnalyticsFilters((current) => ({ ...current, from: event.target.value }))} className="onix-admin-input" /></label>
+                          <label>{t('admin.analytics.to')}<input type="date" value={adminAnalyticsFilters.to} onChange={(event) => setAdminAnalyticsFilters((current) => ({ ...current, to: event.target.value }))} className="onix-admin-input" /></label>
+                          <label>{t('admin.analytics.campaign')}<input value={adminAnalyticsFilters.campaign} onChange={(event) => setAdminAnalyticsFilters((current) => ({ ...current, campaign: event.target.value }))} placeholder={t('admin.analytics.all')} className="onix-admin-input" /></label>
+                          <label>{t('admin.analytics.source')}<input value={adminAnalyticsFilters.source} onChange={(event) => setAdminAnalyticsFilters((current) => ({ ...current, source: event.target.value }))} placeholder={t('admin.analytics.all')} className="onix-admin-input" /></label>
+                          <label>{t('admin.analytics.market')}<input value={adminAnalyticsFilters.market} onChange={(event) => setAdminAnalyticsFilters((current) => ({ ...current, market: event.target.value }))} placeholder={t('admin.analytics.all')} className="onix-admin-input" /></label>
+                        </div>
+                        <p className="onix-admin-muted">{t('admin.analytics.periodHint')}</p>
+                        <button type="button" className="onix-admin-secondary" onClick={() => void loadAdminAnalyticsDashboard()} disabled={isAdminLoading}>{t('admin.analytics.apply')}</button>
+
+                        {isAdminLoading && <p className="onix-admin-muted">{t('admin.analytics.loading')}</p>}
+                        {!isAdminLoading && adminAnalyticsError && <p className="onix-admin-empty">{t('admin.analytics.error')}</p>}
+                        {!isAdminLoading && !adminAnalyticsError && adminAnalyticsDashboard && (<>
+                          <div className="onix-admin-metrics-grid">
+                            <div><span>{t('admin.analytics.totalEvents')}</span><strong>{formatOnix(adminAnalyticsDashboard.totals.events)}</strong></div>
+                            <div><span>{t('admin.analytics.uniqueUsers')}</span><strong>{formatOnix(adminAnalyticsDashboard.totals.users)}</strong></div>
+                          </div>
+
+                          <div className="onix-admin-section-head"><strong>{t('admin.analytics.funnel')}</strong><span>{t('admin.analytics.uniqueUsers')}</span></div>
+                          <div className="onix-admin-list">
+                            {adminAnalyticsDashboard.funnel.map((item) => (
+                              <div key={item.event} className="onix-admin-row">
+                                <div><strong>{t(ADMIN_ANALYTICS_EVENT_KEYS[item.event])}</strong><em>{t('admin.analytics.eventCount', { count: item.events })}</em></div>
+                                <b>{formatOnix(item.users)}</b>
+                              </div>
+                            ))}
+                          </div>
+
+                          <div className="onix-admin-section-head"><strong>{t('admin.analytics.campaignComparison')}</strong><span>{adminAnalyticsDashboard.campaigns.length}</span></div>
+                          {adminAnalyticsDashboard.campaigns.length > 0 ? (
+                            <div style={{ overflowX: 'auto' }}>
+                              <table style={{ width: '100%', minWidth: 760, borderCollapse: 'collapse', fontSize: 12 }}>
+                                <thead><tr>
+                                  <th style={{ textAlign: 'left', padding: 8 }}>{t('admin.analytics.campaign')}</th>
+                                  <th>{t('admin.analytics.users')}</th>
+                                  <th>{t('admin.analytics.event.active')}</th>
+                                  <th>{t('admin.analytics.event.firstTap')}</th>
+                                  <th>{t('admin.analytics.event.firstTask')}</th>
+                                  <th>{t('admin.analytics.event.promoUsed')}</th>
+                                  <th>{t('admin.analytics.event.referral')}</th>
+                                  <th>{t('admin.analytics.event.withdrawal')}</th>
+                                </tr></thead>
+                                <tbody>{adminAnalyticsDashboard.campaigns.map((campaign) => (
+                                  <tr key={campaign.campaign || '__empty__'}>
+                                    <td style={{ padding: 8, fontWeight: 800 }}>{campaign.campaign || '—'}</td>
+                                    <td style={{ textAlign: 'center' }}>{campaign.users}</td>
+                                    <td style={{ textAlign: 'center' }}>{campaign.active}</td>
+                                    <td style={{ textAlign: 'center' }}>{campaign.firstTap}</td>
+                                    <td style={{ textAlign: 'center' }}>{campaign.firstTask}</td>
+                                    <td style={{ textAlign: 'center' }}>{campaign.promoUsed}</td>
+                                    <td style={{ textAlign: 'center' }}>{campaign.referral}</td>
+                                    <td style={{ textAlign: 'center' }}>{campaign.withdrawal}</td>
+                                  </tr>
+                                ))}</tbody>
+                              </table>
+                            </div>
+                          ) : <p className="onix-admin-empty">{t('admin.analytics.campaignsEmpty')}</p>}
+                          {adminAnalyticsDashboard.totals.events === 0 && <p className="onix-admin-empty">{t('admin.analytics.empty')}</p>}
+                        </>)}
                       </div>
                     )}
 
