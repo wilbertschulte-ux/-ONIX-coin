@@ -8,6 +8,7 @@ const {
   getUserTrafficAttribution,
   queueTrafficEvent,
 } = require('../trafficEvents');
+const { trackAnalyticsEvent } = require('../analytics');
 const {
   consumePendingTelegramLaunch,
   getPendingTelegramLaunch,
@@ -501,6 +502,7 @@ router.use(async (req, res, next) => {
 
 const User = require('../models/User');
 const WeeklyScore = require('../models/WeeklyScore');
+const AnalyticsEvent = require('../models/AnalyticsEvent');
 
 const WeeklyPrizeSchema = new mongoose.Schema({
   week: {
@@ -3366,6 +3368,46 @@ router.get('/admin-frontend-errors', async (req, res) => {
   }
 });
 
+// ADMIN: READ-ONLY ANALYTICS EVENT JOURNAL
+router.get('/admin-analytics-events', async (req, res) => {
+  try {
+    const secret = req.query.secret ? String(req.query.secret) : '';
+    const telegramId = req.query.telegramId ? String(req.query.telegramId) : '';
+
+    if (!isAdminRequest(req, secret, telegramId)) {
+      return res.status(403).json({ message: 'Forbidden' });
+    }
+
+    const filter = {};
+    const exactFilters = ['event', 'campaign', 'source', 'market'];
+    exactFilters.forEach((key) => {
+      const value = String(req.query[key] || '').trim();
+      if (value && value.length <= 64) filter[key] = value;
+    });
+
+    const from = req.query.from ? new Date(String(req.query.from)) : null;
+    const to = req.query.to ? new Date(String(req.query.to)) : null;
+    if ((from && !Number.isNaN(from.getTime())) || (to && !Number.isNaN(to.getTime()))) {
+      filter.occurredAt = {};
+      if (from && !Number.isNaN(from.getTime())) filter.occurredAt.$gte = from;
+      if (to && !Number.isNaN(to.getTime())) filter.occurredAt.$lte = to;
+    }
+
+    const requestedLimit = Number(req.query.limit || 100);
+    const limit = Number.isFinite(requestedLimit)
+      ? Math.min(200, Math.max(1, Math.trunc(requestedLimit)))
+      : 100;
+    const events = await AnalyticsEvent.find(filter)
+      .sort({ occurredAt: -1, _id: -1 })
+      .limit(limit)
+      .lean();
+
+    return res.json({ events, count: events.length });
+  } catch (error) {
+    return res.status(500).json({ error: error.message });
+  }
+});
+
 
 // ADMIN 2.0: GET ECONOMY CONFIG
 router.get('/admin-economy-config', async (req, res) => {
@@ -3909,6 +3951,15 @@ router.post('/apply-promo', requireTelegramMiniAppUser, sensitiveRewardMutationG
 
     const { user, achievementBonuses, rankBonuses } = promoResult;
 
+    trackAnalyticsEvent({
+      telegramId,
+      event: 'promo_used',
+      attribution: getUserTrafficAttribution(user),
+      metadata: { promoCode: cleanCode },
+      occurredAt: Date.now(),
+      deduplicationKey: `promo:${cleanCode}`,
+    });
+
     return res.json({
       user: {
         ...user.toObject({ flattenMaps: true }),
@@ -4360,6 +4411,13 @@ router.get('/:telegramId', requireTelegramMiniAppUser, async (req, res) => {
       attribution: getUserTrafficAttribution(user),
       occurredAt: now,
     });
+    trackAnalyticsEvent({
+      telegramId,
+      event: 'active',
+      attribution: getUserTrafficAttribution(user),
+      occurredAt: now,
+      deduplicationKey: new Date(now).toISOString().slice(0, 10),
+    });
 
     return res.json({
       ...user.toObject({ flattenMaps: true }),
@@ -4429,12 +4487,14 @@ router.post('/create', requireTelegramMiniAppUser, async (req, res) => {
 
     let user = await User.findOne({ telegramId });
     let created = false;
+    let referralCreated = false;
 
     if (!user) {
       session = await mongoose.startSession();
       try {
         await session.withTransaction(async () => {
           created = false;
+          referralCreated = false;
           user = await User.findOne({ telegramId }).session(session);
           if (user) return;
 
@@ -4551,6 +4611,7 @@ router.post('/create', requireTelegramMiniAppUser, async (req, res) => {
               await applyRankBonuses(user, session);
               user.level = calculateLevel(user.totalEarned);
               await refUser.save({ session });
+              referralCreated = true;
             }
           }
 
@@ -4613,6 +4674,13 @@ router.post('/create', requireTelegramMiniAppUser, async (req, res) => {
         occurredAt: user.trafficAttribution?.firstSeenAt || Date.now(),
         deduplicationKey: user.trafficAttribution?.landingCode || '',
       });
+      trackAnalyticsEvent({
+        telegramId,
+        event: 'landing',
+        attribution,
+        occurredAt: user.trafficAttribution?.firstSeenAt || Date.now(),
+        deduplicationKey: user.trafficAttribution?.landingCode || 'first',
+      });
       queueTrafficEvent({
         telegramId,
         event: 'start',
@@ -4620,6 +4688,23 @@ router.post('/create', requireTelegramMiniAppUser, async (req, res) => {
         occurredAt: user.trafficAttribution?.firstSeenAt || Date.now(),
         deduplicationKey: 'first',
       });
+      trackAnalyticsEvent({
+        telegramId,
+        event: 'start',
+        attribution,
+        occurredAt: user.trafficAttribution?.firstSeenAt || Date.now(),
+        deduplicationKey: 'first',
+      });
+      if (referralCreated) {
+        trackAnalyticsEvent({
+          telegramId,
+          event: 'referral',
+          attribution,
+          metadata: { action: 'signup_reward' },
+          occurredAt: Date.now(),
+          deduplicationKey: 'signup_reward',
+        });
+      }
     }
 
     return res.json({
@@ -4775,7 +4860,21 @@ router.post('/save', requireTelegramMiniAppUser, async (req, res) => {
         occurredAt: user.trafficAttribution?.firstSeenAt || Date.now(),
         deduplicationKey: user.trafficAttribution?.landingCode || '',
       });
+      trackAnalyticsEvent({
+        telegramId,
+        event: 'landing',
+        attribution: trafficAttribution,
+        occurredAt: user.trafficAttribution?.firstSeenAt || Date.now(),
+        deduplicationKey: user.trafficAttribution?.landingCode || 'first',
+      });
       queueTrafficEvent({
+        telegramId,
+        event: 'start',
+        attribution: trafficAttribution,
+        occurredAt: user.trafficAttribution?.firstSeenAt || Date.now(),
+        deduplicationKey: 'first',
+      });
+      trackAnalyticsEvent({
         telegramId,
         event: 'start',
         attribution: trafficAttribution,
@@ -4788,6 +4887,13 @@ router.post('/save', requireTelegramMiniAppUser, async (req, res) => {
       event: 'active',
       attribution: trafficAttribution,
       occurredAt: user.lastSeenAt,
+    });
+    trackAnalyticsEvent({
+      telegramId,
+      event: 'active',
+      attribution: trafficAttribution,
+      occurredAt: user.lastSeenAt,
+      deduplicationKey: new Date(user.lastSeenAt).toISOString().slice(0, 10),
     });
 
     return res.json(user);
@@ -5482,6 +5588,15 @@ router.post('/claim-team-mission', requireTelegramMiniAppUser, sensitiveRewardMu
 
     await user.save();
 
+    trackAnalyticsEvent({
+      telegramId,
+      event: 'first_task',
+      attribution: getUserTrafficAttribution(user),
+      metadata: { taskId: mission.id },
+      occurredAt: Date.now(),
+      deduplicationKey: 'first_task',
+    });
+
     return res.json({
       user: {
         ...user.toObject({ flattenMaps: true }),
@@ -5774,6 +5889,14 @@ router.post('/request-withdrawal', requireTelegramMiniAppUser, withdrawalMutatio
       telegramId,
       event: 'withdrawal',
       attribution: getUserTrafficAttribution(user),
+      occurredAt: user.withdrawalRequests[0].createdAt,
+      deduplicationKey: String(user.withdrawalRequests[0].createdAt),
+    });
+    trackAnalyticsEvent({
+      telegramId,
+      event: 'withdrawal',
+      attribution: getUserTrafficAttribution(user),
+      metadata: { amountOnix: withdrawAmount, eurAmount },
       occurredAt: user.withdrawalRequests[0].createdAt,
       deduplicationKey: String(user.withdrawalRequests[0].createdAt),
     });
@@ -6084,6 +6207,15 @@ router.post('/claim-mission', requireTelegramMiniAppUser, sensitiveRewardMutatio
 
     await user.save();
 
+    trackAnalyticsEvent({
+      telegramId,
+      event: 'first_task',
+      attribution: getUserTrafficAttribution(user),
+      metadata: { taskId: mission.id },
+      occurredAt: user.lastSeenAt,
+      deduplicationKey: 'first_task',
+    });
+
     return res.json({
       user: {
         ...user.toObject({ flattenMaps: true }),
@@ -6244,6 +6376,15 @@ router.post('/claim-task', requireTelegramMiniAppUser, sensitiveRewardMutationGu
 
       await user.save();
 
+      trackAnalyticsEvent({
+        telegramId,
+        event: 'first_task',
+        attribution: getUserTrafficAttribution(user),
+        metadata: { taskId: 'channel' },
+        occurredAt: user.lastSeenAt,
+        deduplicationKey: 'first_task',
+      });
+
       return res.json({
         ...user.toObject({ flattenMaps: true }),
         perkLevels: getPerkLevelsPayload(user),
@@ -6287,6 +6428,15 @@ router.post('/claim-task', requireTelegramMiniAppUser, sensitiveRewardMutationGu
       user.lastSeenAt = Date.now();
 
       await user.save();
+
+      trackAnalyticsEvent({
+        telegramId,
+        event: 'first_task',
+        attribution: getUserTrafficAttribution(user),
+        metadata: { taskId: 'inviteFriend' },
+        occurredAt: user.lastSeenAt,
+        deduplicationKey: 'first_task',
+      });
 
       return res.json({
         ...user.toObject({ flattenMaps: true }),
@@ -6680,6 +6830,8 @@ router.post('/tap', requireTelegramMiniAppUser, async (req, res) => {
 
     normalizeUserFields(user);
 
+    const isFirstTap = Number(user.totalTaps || 0) === 0;
+
     const frozenResponse = ensureUserNotFrozen(user, res);
     if (frozenResponse) return frozenResponse;
 
@@ -6769,6 +6921,16 @@ router.post('/tap', requireTelegramMiniAppUser, async (req, res) => {
     user.lastSeenAt = now;
 
     await user.save();
+
+    if (isFirstTap) {
+      trackAnalyticsEvent({
+        telegramId,
+        event: 'first_tap',
+        attribution: getUserTrafficAttribution(user),
+        occurredAt: now,
+        deduplicationKey: 'first_tap',
+      });
+    }
 
     return res.json({
       user: {

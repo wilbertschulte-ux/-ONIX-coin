@@ -13,6 +13,7 @@ const {
   parseLaunchParam,
 } = require('./trafficAttribution');
 const { queueTrafficEvent } = require('./trafficEvents');
+const { trackAnalyticsEvent } = require('./analytics');
 const { storePendingTelegramLaunch } = require('./trustedTelegramLaunch');
 require("dotenv").config();
 
@@ -100,6 +101,13 @@ app.post(
         event: 'landing',
         attribution: parsedLaunch.attribution,
         deduplicationKey: parsedLaunch.attribution?.landingCode || '',
+      });
+      trackAnalyticsEvent({
+        telegramId: message?.from?.id,
+        event: 'landing',
+        attribution: parsedLaunch.attribution,
+        occurredAt: Date.now(),
+        deduplicationKey: parsedLaunch.attribution?.landingCode || 'first',
       });
 
       await sendTelegramMessage(
