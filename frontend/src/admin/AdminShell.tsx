@@ -8,16 +8,19 @@ import { AdminSidebar } from './components/AdminSidebar';
 import { AdminStateView } from './components/AdminStateView';
 import { LaunchChecklistSection } from './sections/LaunchChecklistSection';
 import { OverviewSection } from './sections/OverviewSection';
+import { UsersSection } from './sections/UsersSection';
+import { WithdrawalsSection } from './sections/WithdrawalsSection';
 import './admin.css';
 
 type AdminShellProps = {
   apiBaseUrl: string;
+  adminTelegramId: string;
   language: AppLanguage;
   onExit: () => void;
   onOpenLegacy: () => void;
 };
 
-export function AdminShell({ apiBaseUrl, language, onExit, onOpenLegacy }: AdminShellProps) {
+export function AdminShell({ apiBaseUrl, adminTelegramId, language, onExit, onOpenLegacy }: AdminShellProps) {
   const t = createTranslator(language);
   const [activeSection, setActiveSection] = useState<AdminSectionId>('overview');
   const [menuOpen, setMenuOpen] = useState(false);
@@ -46,13 +49,19 @@ export function AdminShell({ apiBaseUrl, language, onExit, onOpenLegacy }: Admin
       return <LaunchChecklistSection apiBaseUrl={apiBaseUrl} language={language} />;
     }
 
+    if (activeSection === 'users') {
+      return <UsersSection apiBaseUrl={apiBaseUrl} adminTelegramId={adminTelegramId} language={language} />;
+    }
+
+    if (activeSection === 'withdrawals') {
+      return <WithdrawalsSection apiBaseUrl={apiBaseUrl} adminTelegramId={adminTelegramId} language={language} />;
+    }
+
     return (
       <AdminStateView
         icon={activeItem.icon}
         title={t('admin.shell.placeholderTitle', { section: t(activeItem.labelKey) })}
         description={t('admin.shell.placeholderText')}
-        actionLabel={t('admin.shell.openLegacy')}
-        onAction={onOpenLegacy}
       />
     );
   };

@@ -283,6 +283,130 @@ body.onix-admin-mode #root {
 .admin-inline-error { margin-bottom: 12px; padding: 12px 14px; display: flex; flex-direction: column; gap: 3px; border: 1px solid rgba(248, 113, 113, .28); border-radius: 14px; color: #fecaca; background: rgba(127, 29, 29, .15); }
 .admin-inline-error span { color: #fca5a5; font-size: 11px; }
 
+.admin-section-heading-compact { margin-bottom: 12px; }
+.admin-search-form { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 8px; }
+.admin-search-form input,
+.admin-withdrawal-card textarea {
+  width: 100%;
+  min-width: 0;
+  border: 1px solid rgba(148, 163, 184, .2);
+  border-radius: 13px;
+  color: #f8fafc;
+  background: #0c1527;
+  outline: none;
+}
+.admin-search-form input { min-height: 44px; padding: 0 13px; }
+.admin-search-form input:focus,
+.admin-withdrawal-card textarea:focus { border-color: rgba(34, 211, 238, .5); box-shadow: 0 0 0 3px rgba(34, 211, 238, .08); }
+.admin-search-form button,
+.admin-clear-search,
+.admin-pagination button,
+.admin-back-button,
+.admin-link-button {
+  min-height: 42px;
+  padding: 0 14px;
+  border: 1px solid rgba(34, 211, 238, .28);
+  border-radius: 12px;
+  color: #a5f3fc;
+  background: rgba(8, 145, 178, .1);
+  font-weight: 800;
+}
+.admin-clear-search { width: 100%; margin-top: 8px; }
+.admin-user-list { margin-top: 12px; display: grid; gap: 8px; }
+.admin-user-list > button {
+  min-width: 0;
+  padding: 13px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  border: 1px solid rgba(148, 163, 184, .15);
+  border-radius: 15px;
+  color: #f8fafc;
+  text-align: left;
+  background: rgba(11, 18, 34, .88);
+}
+.admin-user-list > button.is-selected { border-color: rgba(34, 211, 238, .45); background: rgba(8, 145, 178, .1); }
+.admin-user-list > button > div { min-width: 0; }
+.admin-user-list strong,
+.admin-user-list span,
+.admin-user-list small { display: block; }
+.admin-user-list > button > div strong { overflow: hidden; font-size: 13px; text-overflow: ellipsis; white-space: nowrap; }
+.admin-user-list > button > div span { margin-top: 3px; overflow: hidden; color: #94a3b8; font-size: 11px; text-overflow: ellipsis; white-space: nowrap; }
+.admin-user-list > button > div small { margin-top: 4px; color: #64748b; font-size: 10px; }
+.admin-user-list aside { flex: 0 0 auto; text-align: right; }
+.admin-user-list aside strong { color: #fde047; font-size: 13px; }
+.admin-user-list aside small { color: #64748b; font-size: 9px; }
+.admin-pagination { margin-top: 12px; display: grid; grid-template-columns: auto minmax(0, 1fr) auto; align-items: center; gap: 8px; }
+.admin-pagination span { color: #94a3b8; text-align: center; font-size: 11px; }
+.admin-pagination button:disabled { opacity: .4; }
+.admin-user-detail-pane { display: none; }
+.admin-users-section.has-selection .admin-users-list-pane { display: none; }
+.admin-users-section.has-selection .admin-user-detail-pane { display: block; }
+.admin-user-detail { min-width: 0; }
+.admin-back-button { margin-bottom: 12px; }
+.admin-user-detail-head {
+  padding: 16px;
+  display: grid;
+  grid-template-columns: 48px minmax(0, 1fr);
+  gap: 12px;
+  border: 1px solid rgba(148, 163, 184, .16);
+  border-radius: 18px;
+  background: rgba(11, 18, 34, .9);
+}
+.admin-user-detail-head > img,
+.admin-user-detail-head > span { width: 48px; height: 48px; border-radius: 15px; object-fit: cover; display: grid; place-items: center; background: #172033; font-size: 22px; }
+.admin-user-detail-head h2 { margin: 0; font-size: 18px; }
+.admin-user-detail-head p { margin: 3px 0; color: #94a3b8; font-size: 12px; }
+.admin-user-detail-head small { color: #64748b; font-size: 10px; overflow-wrap: anywhere; }
+.admin-user-detail-head > em { grid-column: 1 / -1; width: fit-content; padding: 5px 9px; border-radius: 999px; color: #6ee7b7; background: rgba(16, 185, 129, .12); font-size: 9px; font-style: normal; font-weight: 900; text-transform: uppercase; }
+.admin-user-detail-head > em.is-blocked { color: #fca5a5; background: rgba(239, 68, 68, .12); }
+.admin-user-detail-head > em.is-suspicious { color: #fde68a; background: rgba(245, 158, 11, .12); }
+.admin-user-metrics { margin-top: 10px; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+.admin-user-metrics > div,
+.admin-user-info-card { border: 1px solid rgba(148, 163, 184, .15); border-radius: 15px; background: rgba(11, 18, 34, .82); }
+.admin-user-metrics > div { min-width: 0; padding: 12px; }
+.admin-user-metrics span,
+.admin-user-metrics strong { display: block; }
+.admin-user-metrics span { color: #94a3b8; font-size: 10px; }
+.admin-user-metrics strong { margin-top: 5px; overflow-wrap: anywhere; color: #f8fafc; font-size: 13px; }
+.admin-user-info-card { margin-top: 10px; padding: 14px; }
+.admin-user-info-card h3 { margin: 0 0 10px; font-size: 13px; }
+.admin-user-info-card dl { margin: 0; display: grid; gap: 8px; }
+.admin-user-info-card dl > div { min-width: 0; display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; }
+.admin-user-info-card dt { color: #94a3b8; font-size: 11px; }
+.admin-user-info-card dd { margin: 0; overflow-wrap: anywhere; text-align: right; font-size: 11px; font-weight: 800; }
+.admin-link-button { margin-top: 10px; display: flex; align-items: center; justify-content: center; text-decoration: none; }
+
+.admin-withdrawal-list { display: grid; gap: 10px; }
+.admin-withdrawal-card { min-width: 0; padding: 15px; border: 1px solid rgba(148, 163, 184, .16); border-radius: 18px; background: rgba(11, 18, 34, .9); }
+.admin-withdrawal-card > header { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; }
+.admin-withdrawal-card > header strong,
+.admin-withdrawal-card > header small { display: block; }
+.admin-withdrawal-card > header strong { font-size: 14px; }
+.admin-withdrawal-card > header small { margin-top: 3px; color: #64748b; font-size: 10px; overflow-wrap: anywhere; }
+.admin-withdrawal-card > header > span { flex: 0 0 auto; padding: 5px 8px; border-radius: 999px; color: #fde68a; background: rgba(245, 158, 11, .12); font-size: 9px; font-weight: 900; text-transform: uppercase; }
+.admin-withdrawal-amounts { margin-top: 12px; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+.admin-withdrawal-amounts > div { min-width: 0; padding: 11px; border-radius: 13px; background: #0c1527; }
+.admin-withdrawal-amounts span,
+.admin-withdrawal-amounts strong { display: block; }
+.admin-withdrawal-amounts span { color: #94a3b8; font-size: 10px; }
+.admin-withdrawal-amounts strong { margin-top: 4px; overflow-wrap: anywhere; color: #fde047; font-size: 13px; }
+.admin-withdrawal-card dl { margin: 12px 0 0; display: grid; gap: 7px; }
+.admin-withdrawal-card dl > div { display: flex; justify-content: space-between; gap: 12px; }
+.admin-withdrawal-card dt { color: #94a3b8; font-size: 11px; }
+.admin-withdrawal-card dd { margin: 0; text-align: right; font-size: 11px; font-weight: 800; }
+.admin-withdrawal-card label { margin-top: 12px; display: block; }
+.admin-withdrawal-card label > span { display: block; margin-bottom: 5px; color: #94a3b8; font-size: 10px; font-weight: 800; }
+.admin-withdrawal-card textarea { min-height: 72px; padding: 10px 12px; resize: vertical; font: inherit; }
+.admin-withdrawal-actions { margin-top: 10px; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+.admin-withdrawal-actions button { min-height: 43px; border-radius: 12px; font-weight: 900; }
+.admin-withdrawal-actions .is-reject { border: 1px solid rgba(248, 113, 113, .35); color: #fecaca; background: rgba(127, 29, 29, .18); }
+.admin-withdrawal-actions .is-approve { border: 1px solid rgba(52, 211, 153, .35); color: #a7f3d0; background: rgba(6, 95, 70, .18); }
+.admin-action-notice { margin-bottom: 12px; padding: 11px 13px; border-radius: 13px; font-size: 12px; font-weight: 800; }
+.admin-action-notice.is-success { border: 1px solid rgba(52, 211, 153, .25); color: #a7f3d0; background: rgba(6, 95, 70, .16); }
+.admin-action-notice.is-error { border: 1px solid rgba(248, 113, 113, .25); color: #fecaca; background: rgba(127, 29, 29, .16); }
+
 .admin-dialog-backdrop { align-items: center; justify-content: center; padding: 18px; }
 .admin-dialog { width: min(100%, 440px); padding: 22px; border: 1px solid rgba(148, 163, 184, .2); border-radius: 20px; background: #0b1222; }
 .admin-dialog h2 { margin: 0; }
@@ -318,6 +442,10 @@ body.onix-admin-mode #root {
   .admin-overview-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 14px; }
   .admin-overview-card { min-height: 166px; padding: 18px; }
   .admin-checklist { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .admin-users-section { display: grid; grid-template-columns: minmax(320px, .85fr) minmax(420px, 1.15fr); gap: 18px; align-items: start; }
+  .admin-user-detail-pane { display: block; }
+  .admin-users-section.has-selection .admin-users-list-pane { display: block; }
+  .admin-withdrawal-list { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
 
 @media (max-width: 520px) {

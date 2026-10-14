@@ -15988,6 +15988,7 @@ function App() {
     return (
       <AdminShell
         apiBaseUrl={API_URL}
+        adminTelegramId={getTelegramId()}
         language={appLanguage}
         onExit={() => {
           setAdminMode(false);
