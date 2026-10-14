@@ -9,6 +9,7 @@ import { createTranslator, getLanguageLocale, type AppLanguage, type MessageKey 
 import { germanMessages } from './i18n/messages';
 import { getMissionText, getWeeklyAchievementDescription, getMissionClaimErrorKey } from './i18n/missions';
 import { getAchievementText, getBadgeLabel, getProfileTitle, getRankName } from './i18n/entities';
+import { AdminShell } from './admin/AdminShell';
 import onixLogoCrystal from './assets/onix-logo-crystal.webp';
 import onixBoostTapStrengthIcon from './assets/onix-boost-icons/boost-tap-strength.png';
 import onixBoostCoinMultiplierIcon from './assets/onix-boost-icons/boost-coin-multiplier.png';
@@ -13296,6 +13297,7 @@ function App() {
   const [friendLeaderboard, setFriendLeaderboard] = useState<FriendLeaderboardItem[]>([]);
   const [profilePanel, setProfilePanel] =
     useState<'overview' | 'achievements' | 'ranks' | 'badges' | 'stats' | 'invited' | 'team' | 'admin'>('overview');
+  const [adminMode, setAdminMode] = useState(false);
   const [teamDetailPanel, setTeamDetailPanel] =
     useState<'overview' | 'missions' | 'top' | 'members' | 'create'>('overview');
   const [invitedProfiles, setInvitedProfiles] = useState<InvitedProfileItem[]>([]);
@@ -15982,6 +15984,24 @@ function App() {
     );
   }
 
+  if (adminMode && isAdmin()) {
+    return (
+      <AdminShell
+        apiBaseUrl={API_URL}
+        language={appLanguage}
+        onExit={() => {
+          setAdminMode(false);
+          setProfilePanel('overview');
+        }}
+        onOpenLegacy={() => {
+          setAdminHubPage('overview');
+          setProfilePanel('admin');
+          setAdminMode(false);
+        }}
+      />
+    );
+  }
+
   return (
     <div className={`onix-app-bg min-h-screen text-white ${activeTab === 'home' ? 'onix-home-reference-mode' : ''} ${activeTab === 'friends' ? 'onix-profile-arena-bg-mode' : ''} ${activeTab === 'wallet' ? 'onix-wallet-page-mode' : ''}`}>
       <style>{ONIX_THEME_STYLE}</style>
@@ -17690,7 +17710,14 @@ function App() {
                 <span>📊</span><strong>{t('ui.statistik')}</strong><em>{formatOnix(totalTaps)} {t('category.taps')}</em><b>›</b>
               </button>
               {isAdmin() && (
-                <button type="button" data-onix-i18n="notice" className={profilePanel === 'admin' ? 'is-active' : ''} onClick={() => setProfilePanel(profilePanel === 'admin' ? 'overview' : 'admin')}>
+                <button
+                  type="button"
+                  data-onix-i18n="notice"
+                  onClick={() => {
+                    setAdminHubPage('overview');
+                    setAdminMode(true);
+                  }}
+                >
                   <span>🛠️</span><strong>{t('admin.entry.title')}</strong><em>{t('admin.entry.subtitle')}</em><b>›</b>
                 </button>
               )}
