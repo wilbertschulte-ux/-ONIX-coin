@@ -153,3 +153,61 @@ export function createWithdrawalReviewPayload(
     adminComment,
   };
 }
+
+export type AdminWeeklyPrizeWinner = {
+  place: number;
+  telegramId: string;
+  username: string;
+  weeklyEarned: number;
+  prize: number;
+  totalEarned?: number;
+  balance?: number;
+};
+
+export type AdminWeeklyPrizeDiagnostics = {
+  targetWeek: string;
+  sourceUsersCount: number | null;
+  materializedWeeklyScoreCount: number | null;
+  eligibleCount: number | null;
+  alreadyAwarded: boolean;
+  winnersCount: number | null;
+};
+
+export type AdminWeeklyPrizePreviewResponse = {
+  week: string;
+  alreadyAwarded: boolean;
+  awardedAt: number | string | null;
+  awardedWinners: AdminWeeklyPrizeWinner[];
+  diagnostics: AdminWeeklyPrizeDiagnostics;
+  preview: AdminWeeklyPrizeWinner[];
+};
+
+export type AdminWeeklyPrizeAwardResponse = {
+  status: string;
+  week: string;
+  winners: AdminWeeklyPrizeWinner[];
+  diagnostics: AdminWeeklyPrizeDiagnostics;
+};
+
+export type AdminWeeklyPrizeViewState = 'loading' | 'error' | 'empty' | 'already-awarded' | 'ready';
+
+export function getAdminWeeklyPrizeViewState(
+  loading: boolean,
+  error: boolean,
+  preview: AdminWeeklyPrizePreviewResponse | null
+): AdminWeeklyPrizeViewState {
+  if (loading) return 'loading';
+  if (error) return 'error';
+  if (!preview) return 'empty';
+  if (preview.alreadyAwarded) return 'already-awarded';
+  if (preview.preview.length === 0) return 'empty';
+  return 'ready';
+}
+
+export function createWeeklyPrizeAwardPayload(telegramId: string, week: string) {
+  return {
+    telegramId,
+    confirm: 'AWARD_WEEKLY_PRIZES',
+    week,
+  };
+}

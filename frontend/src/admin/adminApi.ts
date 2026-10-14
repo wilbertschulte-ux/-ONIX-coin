@@ -1,6 +1,7 @@
 import axios from 'axios';
 import {
   createAdminUserSearchParams,
+  createWeeklyPrizeAwardPayload,
   createWithdrawalReviewPayload,
   type AdminHealthResponse,
   type AdminUserProfile,
@@ -8,6 +9,8 @@ import {
   type AdminWithdrawalAction,
   type AdminWithdrawalRequest,
   type AdminWithdrawalsResponse,
+  type AdminWeeklyPrizeAwardResponse,
+  type AdminWeeklyPrizePreviewResponse,
 } from './adminTypes';
 
 export async function loadAdminHealth(apiBaseUrl: string): Promise<AdminHealthResponse> {
@@ -60,4 +63,27 @@ export async function reviewAdminWithdrawal(
     `${apiBaseUrl}/admin-review-withdrawal`,
     createWithdrawalReviewPayload(telegramId, request, action, adminComment)
   );
+}
+
+export async function loadAdminWeeklyPrizePreview(
+  apiBaseUrl: string,
+  telegramId: string
+): Promise<AdminWeeklyPrizePreviewResponse> {
+  const response = await axios.get<AdminWeeklyPrizePreviewResponse>(
+    `${apiBaseUrl}/admin-weekly-prize-preview`,
+    { params: { telegramId } }
+  );
+  return response.data;
+}
+
+export async function awardAdminWeeklyPrizes(
+  apiBaseUrl: string,
+  telegramId: string,
+  week: string
+): Promise<AdminWeeklyPrizeAwardResponse> {
+  const response = await axios.post<AdminWeeklyPrizeAwardResponse>(
+    `${apiBaseUrl}/admin-award-weekly-prizes`,
+    createWeeklyPrizeAwardPayload(telegramId, week)
+  );
+  return response.data;
 }
