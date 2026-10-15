@@ -3,6 +3,18 @@ const axios = require('axios');
 const crypto = require('crypto');
 const express = require('express');
 const mongoose = require('mongoose');
+require('../models/AccountRecovery');
+const {
+  AccountRecoveryError,
+  buildRecoveryPreview,
+  confirmationPhrase,
+  createPreviewToken,
+  executeRecovery,
+  hashToken,
+  validateReferralGraphSafety,
+  verifyPreviewToken,
+  versionDescriptor,
+} = require('../accountRecovery');
 const { applyFirstTouchAttribution } = require('../trafficAttribution');
 const {
   getUserTrafficAttribution,
@@ -2751,6 +2763,146 @@ router.get('/admin-user-profile/:targetTelegramId', async (req, res) => {
     });
   } catch (error) {
     return res.status(500).json({ error: error.message });
+  }
+});
+
+// ADMIN: READ-ONLY ACCOUNT RECOVERY PREVIEW
+router.post('/admin-account-recovery-preview', async (req, res) => {
+  try {
+    const { secret, telegramId, oldTelegramId, newTelegramId } = req.body || {};
+    if (!isAdminRequest(req, secret, telegramId)) {
+      return res.status(403).json({ message: 'Forbidden' });
+    }
+
+    const oldId = String(oldTelegramId || '').trim();
+    const newId = String(newTelegramId || '').trim();
+    if (!oldId || !newId) {
+      return res.status(400).json({ message: 'Both Telegram IDs are required' });
+    }
+    if (oldId === newId) {
+      return res.status(409).json({
+        code: 'IDENTICAL_TELEGRAM_IDS',
+        message: 'Old and new Telegram IDs must differ',
+      });
+    }
+
+    const users = mongoose.connection.collection('users');
+    const [oldUser, newUser, newIdentityCount, weeklyScores, incomingReferrals] = await Promise.all([
+      users.findOne({ telegramId: oldId }),
+      users.findOne({ telegramId: newId }),
+      users.countDocuments({ telegramId: newId }, { limit: 2 }),
+      mongoose.connection
+        .collection('weeklyscores')
+        .find({ telegramId: { $in: [oldId, newId] } })
+        .toArray(),
+      users.find(
+        { referredBy: { $in: [oldId, newId] } },
+        { projection: { _id: 1, telegramId: 1, referredBy: 1 } }
+      ).toArray(),
+    ]);
+    if (!oldUser) return res.status(404).json({ code: 'OLD_USER_NOT_FOUND', message: 'Old user was not found' });
+    if (!newUser) return res.status(404).json({ code: 'NEW_USER_NOT_FOUND', message: 'New user was not found' });
+    if (newIdentityCount !== 1) {
+      return res.status(409).json({ code: 'NEW_IDENTITY_CONFLICT', message: 'New Telegram ID is not unique' });
+    }
+
+    const now = Date.now();
+    const referralGraphBlockers = await validateReferralGraphSafety(users, oldUser, newUser);
+    const preview = buildRecoveryPreview(oldUser, newUser, {
+      now,
+      weeklyScores,
+      incomingReferrals,
+      additionalBlockers: referralGraphBlockers,
+    });
+    const recoveryId = crypto.randomUUID();
+    const previewToken = createPreviewToken({
+      recoveryId,
+      oldTelegramId: oldId,
+      newTelegramId: newId,
+      oldVersion: versionDescriptor(oldUser),
+      newVersion: versionDescriptor(newUser),
+    }, process.env.ACCOUNT_RECOVERY_SECRET, now);
+
+    return res.json({
+      recoveryId,
+      previewToken,
+      confirmationPhrase: confirmationPhrase(oldId, newId),
+      preview,
+      expiresInMs: 10 * 60 * 1000,
+    });
+  } catch (error) {
+    if (error instanceof AccountRecoveryError) {
+      return res.status(error.status).json({ code: error.code, message: error.message, blockers: error.details || [] });
+    }
+    return res.status(500).json({ message: 'Account recovery preview failed' });
+  }
+});
+
+// ADMIN: CONFIRM ATOMIC ACCOUNT RECOVERY
+router.post('/admin-account-recovery-confirm', async (req, res) => {
+  try {
+    const {
+      secret,
+      telegramId,
+      recoveryId,
+      previewToken,
+      confirmation,
+      oldTelegramId,
+      newTelegramId,
+    } = req.body || {};
+    if (!isAdminRequest(req, secret, telegramId)) {
+      return res.status(403).json({ message: 'Forbidden' });
+    }
+
+    const tokenPayload = verifyPreviewToken(
+      previewToken,
+      process.env.ACCOUNT_RECOVERY_SECRET,
+      Date.now()
+    );
+    const oldId = String(oldTelegramId || '');
+    const newId = String(newTelegramId || '');
+    if (
+      String(recoveryId || '') !== String(tokenPayload.recoveryId || '') ||
+      oldId !== String(tokenPayload.oldTelegramId || '') ||
+      newId !== String(tokenPayload.newTelegramId || '')
+    ) {
+      return res.status(403).json({ code: 'RECOVERY_REQUEST_MISMATCH', message: 'Recovery request does not match preview' });
+    }
+    if (String(confirmation || '') !== confirmationPhrase(oldId, newId)) {
+      return res.status(400).json({ code: 'CONFIRMATION_REQUIRED', message: 'Exact confirmation phrase is required' });
+    }
+
+    const options = {
+      mongoose,
+      recoveryId: String(recoveryId),
+      previewTokenHash: hashToken(previewToken),
+      tokenPayload,
+      initiatedBy: String(telegramId || 'admin-secret'),
+      now: Date.now(),
+    };
+    let outcome;
+    try {
+      outcome = await executeRecovery(options);
+    } catch (error) {
+      if (error?.code !== 11000) throw error;
+      const existing = await mongoose.connection
+        .collection('account_recoveries')
+        .findOne({ recoveryId: String(recoveryId), status: 'completed' });
+      if (!existing) throw error;
+      outcome = { alreadyCompleted: true, recoveryId: String(recoveryId), result: existing.result };
+    }
+
+    return res.json({
+      success: true,
+      recoveryId: outcome.recoveryId,
+      alreadyCompleted: Boolean(outcome.alreadyCompleted),
+      result: outcome.result,
+    });
+  } catch (error) {
+    if (error instanceof AccountRecoveryError) {
+      return res.status(error.status).json({ code: error.code, message: error.message, blockers: error.details || [] });
+    }
+    return res.status(500).json({ message: 'Account recovery failed' });
   }
 });
 
