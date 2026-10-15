@@ -2,6 +2,9 @@ import axios from 'axios';
 import {
   createAdminUserSearchParams,
   createAdminFreezePayload,
+  createAdminBalanceAdjustmentPayload,
+  createAdminBanPayload,
+  createAdminNotePayload,
   createWeeklyPrizeAwardPayload,
   createWithdrawalReviewPayload,
   type AdminHealthResponse,
@@ -46,6 +49,44 @@ export async function loadAdminUserProfile(
     { params: { telegramId } }
   );
   return response.data.user;
+}
+
+export async function adjustAdminUserBalance(
+  apiBaseUrl: string,
+  telegramId: string,
+  targetTelegramId: string,
+  amount: number,
+  reason: string
+): Promise<void> {
+  await axios.post(
+    `${apiBaseUrl}/admin-adjust-balance`,
+    createAdminBalanceAdjustmentPayload(telegramId, targetTelegramId, amount, reason)
+  );
+}
+
+export async function setAdminUserBan(
+  apiBaseUrl: string,
+  telegramId: string,
+  targetTelegramId: string,
+  ban: boolean,
+  reason: string
+): Promise<void> {
+  await axios.post(
+    `${apiBaseUrl}/admin-ban-user`,
+    createAdminBanPayload(telegramId, targetTelegramId, ban, reason)
+  );
+}
+
+export async function addAdminUserNote(
+  apiBaseUrl: string,
+  telegramId: string,
+  targetTelegramId: string,
+  text: string
+): Promise<void> {
+  await axios.post(
+    `${apiBaseUrl}/admin-user-note`,
+    createAdminNotePayload(telegramId, targetTelegramId, text)
+  );
 }
 
 export async function loadAdminWithdrawals(

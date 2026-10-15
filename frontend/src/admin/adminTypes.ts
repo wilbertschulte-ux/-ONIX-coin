@@ -83,7 +83,102 @@ export type AdminUserProfile = AdminUserSummary & {
   withdrawalRequestsCount?: number;
   lastTapAt?: string | number | null;
   suspiciousReasons?: string[];
+  transactions: AdminUserTransaction[];
+  withdrawalRequests: AdminUserWithdrawal[];
+  securityLogs: AdminUserSecurityLog[];
+  adminNotes: AdminUserNote[];
 };
+
+export type AdminUserTransaction = {
+  type: string;
+  amount: number;
+  title: string;
+  status: string;
+  createdAt: number;
+};
+
+export type AdminUserWithdrawal = {
+  amount: number;
+  eurAmount: number;
+  status: string;
+  adminComment: string;
+  reviewedAt: number | null;
+  reviewedBy: string;
+  createdAt: number;
+};
+
+export type AdminUserSecurityLog = {
+  type: string;
+  title: string;
+  details: string;
+  createdAt: number;
+};
+
+export type AdminUserNote = {
+  text: string;
+  adminTelegramId: string;
+  createdAt: number;
+};
+
+export type AdminProfileViewState = 'loading' | 'error' | 'selected' | 'empty';
+
+export function getAdminProfileViewState(
+  loading: boolean,
+  error: boolean,
+  profile: AdminUserProfile | null
+): AdminProfileViewState {
+  if (loading) return 'loading';
+  if (error) return 'error';
+  if (profile) return 'selected';
+  return 'empty';
+}
+
+export function parseAdminBalanceAmount(value: string): number | null {
+  if (!value.trim()) return null;
+  const amount = Number(value);
+  return Number.isFinite(amount) && amount !== 0 ? amount : null;
+}
+
+export function createAdminBalanceAdjustmentPayload(
+  telegramId: string,
+  targetTelegramId: string,
+  amount: number,
+  reason: string
+) {
+  return { telegramId, targetTelegramId, amount, reason: reason.trim() };
+}
+
+export function createAdminBanPayload(
+  telegramId: string,
+  targetTelegramId: string,
+  ban: boolean,
+  reason: string
+) {
+  return { telegramId, targetTelegramId, ban, reason: ban ? reason.trim() : '' };
+}
+
+export function createAdminNotePayload(telegramId: string, targetTelegramId: string, text: string) {
+  return { telegramId, targetTelegramId, text };
+}
+
+export function acquireAdminMutationLock(lock: { current: boolean }): boolean {
+  if (lock.current) return false;
+  lock.current = true;
+  return true;
+}
+
+export function releaseAdminMutationLock(lock: { current: boolean }): void {
+  lock.current = false;
+}
+
+export type AdminProfileMutationKind = 'balance' | 'ban' | 'unban' | 'note';
+
+export function getAdminProfileMutationNoticeKey(kind: AdminProfileMutationKind, success: boolean): MessageKey {
+  if (kind === 'note') return success ? 'admin.notes.success' : 'admin.notes.error';
+  if (kind === 'balance') return success ? 'admin.players.balanceSuccess' : 'admin.players.balanceError';
+  if (!success) return 'admin.players.banError';
+  return kind === 'ban' ? 'admin.players.banSuccess' : 'admin.players.unbanSuccess';
+}
 
 export type AdminUserSearchResponse = {
   users: AdminUserSummary[];
