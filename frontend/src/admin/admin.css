@@ -546,6 +546,61 @@ body.onix-admin-mode #root {
   font: 10px/1.5 ui-monospace, SFMono-Regular, Consolas, monospace;
 }
 
+.admin-economy-section { width: 100%; max-width: 1240px; margin: 0 auto; }
+.admin-economy-panel { min-width: 0; margin-top: 14px; padding: 14px; border: 1px solid rgba(148, 163, 184, .16); border-radius: 18px; background: rgba(11, 18, 34, .84); }
+.admin-economy-panel > header,
+.admin-transaction-types > header,
+.admin-operations-grid > section > header { min-width: 0; display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+.admin-economy-panel > header h2,
+.admin-transaction-types h3,
+.admin-operations-grid h3 { margin: 0; overflow-wrap: anywhere; font-size: 14px; }
+.admin-economy-panel > header span { display: block; margin-bottom: 3px; color: #67e8f9; font-size: 8px; font-weight: 900; letter-spacing: .12em; text-transform: uppercase; }
+.admin-economy-panel > header button { min-height: 38px; padding: 0 11px; border: 1px solid rgba(34, 211, 238, .28); border-radius: 11px; color: #a5f3fc; background: rgba(8, 145, 178, .1); font-size: 10px; font-weight: 900; }
+.admin-economy-panel > header button:disabled { opacity: .45; }
+.admin-economy-groups { min-width: 0; margin-top: 12px; display: grid; gap: 10px; }
+.admin-economy-metric-group { min-width: 0; }
+.admin-economy-metric-group h3 { margin: 0 0 7px; color: #cbd5e1; font-size: 11px; }
+.admin-economy-metrics { min-width: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 7px; }
+.admin-economy-metrics article { min-width: 0; padding: 11px; border: 1px solid rgba(148, 163, 184, .13); border-radius: 13px; background: #0c1527; }
+.admin-economy-metrics span,
+.admin-economy-metrics strong { display: block; overflow-wrap: anywhere; }
+.admin-economy-metrics span { color: #94a3b8; font-size: 9px; line-height: 1.35; }
+.admin-economy-metrics strong { margin-top: 5px; color: #f8fafc; font-size: 12px; }
+.admin-transaction-types { min-width: 0; margin-top: 12px; padding-top: 12px; border-top: 1px solid rgba(148, 163, 184, .13); }
+.admin-transaction-types > header > span,
+.admin-operations-grid > section > header > span { min-width: 25px; padding: 4px 7px; border-radius: 999px; color: #67e8f9; background: rgba(8, 145, 178, .13); text-align: center; font-size: 9px; font-weight: 900; }
+.admin-transaction-types > div { min-width: 0; margin-top: 8px; display: grid; gap: 7px; }
+.admin-transaction-types article { min-width: 0; padding: 10px 11px; display: flex; align-items: flex-start; justify-content: space-between; gap: 10px; border: 1px solid rgba(148, 163, 184, .12); border-radius: 12px; background: #0c1527; }
+.admin-transaction-types article > div { min-width: 0; }
+.admin-transaction-types strong,
+.admin-transaction-types small { display: block; overflow-wrap: anywhere; }
+.admin-transaction-types strong { font-size: 11px; }
+.admin-transaction-types small { margin-top: 3px; color: #64748b; font-size: 9px; }
+.admin-transaction-types b { min-width: 0; overflow-wrap: anywhere; color: #e2e8f0; text-align: right; font-size: 10px; }
+.admin-transaction-types b.is-positive,
+.admin-operation-list b.is-positive { color: #6ee7b7; }
+.admin-transaction-types b.is-negative,
+.admin-operation-list b.is-negative { color: #fca5a5; }
+.admin-transaction-types > p { margin: 9px 0 0; color: #64748b; font-size: 10px; }
+.admin-operations-grid { min-width: 0; margin-top: 12px; display: grid; gap: 12px; }
+.admin-operations-grid > section { min-width: 0; }
+.admin-operation-limit { margin: 5px 0 8px; color: #64748b; font-size: 9px; }
+.admin-operation-list { min-width: 0; display: grid; gap: 8px; }
+.admin-operation-list article { min-width: 0; padding: 12px; overflow: hidden; border: 1px solid rgba(148, 163, 184, .13); border-radius: 14px; background: #0c1527; }
+.admin-operation-list article > header { min-width: 0; display: flex; align-items: flex-start; justify-content: space-between; gap: 10px; }
+.admin-operation-list article > header > div { min-width: 0; }
+.admin-operation-list article strong,
+.admin-operation-list article small { display: block; overflow-wrap: anywhere; }
+.admin-operation-list article strong { font-size: 11px; }
+.admin-operation-list article small { margin-top: 3px; color: #64748b; font-size: 9px; }
+.admin-operation-list article b { min-width: 0; overflow-wrap: anywhere; text-align: right; font-size: 10px; }
+.admin-operation-list dl { margin: 9px 0 0; display: grid; gap: 5px; }
+.admin-operation-list dl > div { min-width: 0; display: flex; align-items: flex-start; justify-content: space-between; gap: 10px; }
+.admin-operation-list dt { color: #64748b; font-size: 9px; }
+.admin-operation-list dd { min-width: 0; margin: 0; overflow-wrap: anywhere; text-align: right; font-size: 9px; font-weight: 800; }
+.admin-operation-list article p { margin: 8px 0 0; overflow-wrap: anywhere; white-space: pre-wrap; color: #cbd5e1; font-size: 10px; line-height: 1.45; }
+.admin-operation-list article time { display: block; margin-top: 8px; overflow-wrap: anywhere; color: #64748b; font-size: 9px; }
+
 .admin-dialog-backdrop { align-items: center; justify-content: center; padding: 18px; }
 .admin-dialog { width: min(100%, 440px); padding: 22px; border: 1px solid rgba(148, 163, 184, .2); border-radius: 20px; background: #0b1222; }
 .admin-dialog h2 { margin: 0; }
@@ -589,6 +644,10 @@ body.onix-admin-mode #root {
   .admin-prize-diagnostics { grid-template-columns: repeat(4, minmax(0, 1fr)); }
   .admin-prize-winners { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .admin-security-card-list { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .admin-economy-groups { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .admin-economy-metrics { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .admin-transaction-types > div { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .admin-operations-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
 
 @media (max-width: 520px) {

@@ -8,9 +8,11 @@ import {
   createWeeklyPrizeAwardPayload,
   createWithdrawalReviewPayload,
   type AdminHealthResponse,
+  type AdminEconomyDashboardResponse,
   type AdminFrontendErrorsResponse,
   type AdminFreezeUserResponse,
   type AdminSecurityLogsResponse,
+  type AdminOperationsResponse,
   type AdminSuspiciousUser,
   type AdminSuspiciousUsersResponse,
   type AdminUserProfile,
@@ -173,6 +175,26 @@ export async function loadAdminFrontendErrors(
   telegramId: string
 ): Promise<AdminFrontendErrorsResponse> {
   const response = await axios.get<AdminFrontendErrorsResponse>(`${apiBaseUrl}/admin-frontend-errors`, {
+    params: { telegramId },
+  });
+  return response.data;
+}
+
+export async function loadAdminEconomyDashboard(
+  apiBaseUrl: string,
+  telegramId: string
+): Promise<AdminEconomyDashboardResponse> {
+  const response = await axios.get<AdminEconomyDashboardResponse>(`${apiBaseUrl}/admin-economy-dashboard`, {
+    params: { telegramId },
+  });
+  return response.data;
+}
+
+export async function loadAdminOperations(
+  apiBaseUrl: string,
+  telegramId: string
+): Promise<AdminOperationsResponse> {
+  const response = await axios.get<AdminOperationsResponse>(`${apiBaseUrl}/admin-operations`, {
     params: { telegramId },
   });
   return response.data;

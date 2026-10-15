@@ -386,3 +386,177 @@ export function applyAdminFreezeResult(
     ? { ...user, isFrozen: result.isFrozen, frozenReason: result.frozenReason }
     : user);
 }
+
+export type AdminEconomyTotals = {
+  users: number;
+  frozenUsers: number;
+  suspiciousUsers: number;
+  totalBalance: number;
+  totalEarned: number;
+  weeklyEarned: number;
+  referrals: number;
+  taps: number;
+  pendingWithdrawals: number;
+  pendingWithdrawOnix: number;
+  approvedWithdrawals: number;
+  rejectedWithdrawals: number;
+  createdOnix: number;
+  spentOnix: number;
+  totalBalanceEur: number;
+  pendingWithdrawEur: number;
+};
+
+export type AdminEconomyTransactionType = {
+  type: string;
+  count: number;
+  amount: number;
+};
+
+export type AdminEconomyDashboardResponse = {
+  economyConfig: Record<string, number>;
+  totals: AdminEconomyTotals;
+  transactionTypes: AdminEconomyTransactionType[];
+};
+
+export type AdminEconomyViewState = 'loading' | 'error' | 'empty' | 'ready';
+export type AdminEconomyMetricUnit = 'count' | 'onix' | 'eur';
+export type AdminEconomyMetricLabelKey =
+  | 'admin.economy.players'
+  | 'admin.economy.totalEarned'
+  | 'admin.economy.weeklyEarned'
+  | 'admin.economy.referrals'
+  | 'admin.economy.taps'
+  | 'admin.economy.balance'
+  | 'admin.economy.positiveTransactionAmount'
+  | 'admin.economy.negativeTransactionAmount'
+  | 'admin.economy.totalBalanceEur'
+  | 'admin.economy.pendingWithdrawals'
+  | 'admin.economy.pendingWithdrawalAmount'
+  | 'admin.economy.approvedWithdrawals'
+  | 'admin.economy.rejectedWithdrawals'
+  | 'admin.economy.pendingWithdrawEur'
+  | 'admin.economy.suspicious'
+  | 'admin.economy.frozen';
+export type AdminEconomyGroupTitleKey =
+  | 'admin.economy.activityMetrics'
+  | 'admin.economy.balanceMetrics'
+  | 'admin.economy.withdrawalMetrics'
+  | 'admin.economy.riskMetrics';
+export type AdminEconomyMetric = {
+  key: keyof AdminEconomyTotals;
+  labelKey: AdminEconomyMetricLabelKey;
+  value: number;
+  unit: AdminEconomyMetricUnit;
+};
+
+export function getAdminEconomyViewState(
+  loading: boolean,
+  error: boolean,
+  dashboard: AdminEconomyDashboardResponse | null
+): AdminEconomyViewState {
+  if (loading) return 'loading';
+  if (error) return 'error';
+  return dashboard ? 'ready' : 'empty';
+}
+
+export function getAdminEconomyMetricGroups(dashboard: AdminEconomyDashboardResponse) {
+  const { totals } = dashboard;
+  const metric = (key: keyof AdminEconomyTotals, labelKey: AdminEconomyMetricLabelKey, unit: AdminEconomyMetricUnit): AdminEconomyMetric => ({
+    key,
+    labelKey,
+    value: Number(totals[key] || 0),
+    unit,
+  });
+
+  return [
+    {
+      id: 'activity',
+      titleKey: 'admin.economy.activityMetrics' as AdminEconomyGroupTitleKey,
+      metrics: [
+        metric('users', 'admin.economy.players', 'count'),
+        metric('totalEarned', 'admin.economy.totalEarned', 'onix'),
+        metric('weeklyEarned', 'admin.economy.weeklyEarned', 'onix'),
+        metric('referrals', 'admin.economy.referrals', 'count'),
+        metric('taps', 'admin.economy.taps', 'count'),
+      ],
+    },
+    {
+      id: 'balances',
+      titleKey: 'admin.economy.balanceMetrics' as AdminEconomyGroupTitleKey,
+      metrics: [
+        metric('totalBalance', 'admin.economy.balance', 'onix'),
+        metric('createdOnix', 'admin.economy.positiveTransactionAmount', 'onix'),
+        metric('spentOnix', 'admin.economy.negativeTransactionAmount', 'onix'),
+        metric('totalBalanceEur', 'admin.economy.totalBalanceEur', 'eur'),
+      ],
+    },
+    {
+      id: 'withdrawals',
+      titleKey: 'admin.economy.withdrawalMetrics' as AdminEconomyGroupTitleKey,
+      metrics: [
+        metric('pendingWithdrawals', 'admin.economy.pendingWithdrawals', 'count'),
+        metric('pendingWithdrawOnix', 'admin.economy.pendingWithdrawalAmount', 'onix'),
+        metric('approvedWithdrawals', 'admin.economy.approvedWithdrawals', 'count'),
+        metric('rejectedWithdrawals', 'admin.economy.rejectedWithdrawals', 'count'),
+        metric('pendingWithdrawEur', 'admin.economy.pendingWithdrawEur', 'eur'),
+      ],
+    },
+    {
+      id: 'risk',
+      titleKey: 'admin.economy.riskMetrics' as AdminEconomyGroupTitleKey,
+      metrics: [
+        metric('suspiciousUsers', 'admin.economy.suspicious', 'count'),
+        metric('frozenUsers', 'admin.economy.frozen', 'count'),
+      ],
+    },
+  ];
+}
+
+export type AdminOperationWithdrawal = {
+  telegramId: string;
+  username: string;
+  amount: number;
+  eurAmount: number;
+  status: string;
+  adminComment?: string;
+  reviewedAt?: number | null;
+  reviewedBy?: string;
+  createdAt?: number;
+};
+
+export type AdminOperationTransaction = {
+  telegramId: string;
+  username: string;
+  type: string;
+  amount: number;
+  title?: string;
+  status?: string;
+  createdAt?: number;
+};
+
+export type AdminOperationsResponse = {
+  withdrawals: AdminOperationWithdrawal[];
+  transactions: AdminOperationTransaction[];
+};
+
+export function getAdminOperationsViewState(
+  loading: boolean,
+  error: boolean,
+  operations: AdminOperationsResponse | null
+): AdminCollectionState {
+  return getAdminCollectionState(
+    loading,
+    error,
+    Number(operations?.withdrawals?.length || 0) + Number(operations?.transactions?.length || 0)
+  );
+}
+
+export function getAdminOperationPreview(operations: AdminOperationsResponse, limit = 50) {
+  const safeLimit = Math.max(1, Math.trunc(Number(limit) || 50));
+  return {
+    withdrawalTotal: operations.withdrawals.length,
+    transactionTotal: operations.transactions.length,
+    withdrawals: operations.withdrawals.slice(0, safeLimit),
+    transactions: operations.transactions.slice(0, safeLimit),
+  };
+}
