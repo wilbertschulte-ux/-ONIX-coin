@@ -1,6 +1,7 @@
 import axios from 'axios';
 import {
   createAdminUserSearchParams,
+  createAdminBroadcastPayload,
   ADMIN_EXPORT_DEFINITIONS,
   createAdminFreezePayload,
   createAdminBalanceAdjustmentPayload,
@@ -17,6 +18,7 @@ import {
   type AdminEconomyConfigResponse,
   type AdminExportDownload,
   type AdminVersionResponse,
+  type AdminBroadcastResponse,
   type AdminSuspiciousUser,
   type AdminSuspiciousUsersResponse,
   type AdminUserProfile,
@@ -239,4 +241,25 @@ export async function downloadAdminUsersCsv(
 export async function loadAdminVersion(apiBaseUrl: string): Promise<AdminVersionResponse> {
   const response = await axios.get<AdminVersionResponse>(`${apiBaseUrl}/version`);
   return response.data;
+}
+
+export async function runAdminBroadcast(
+  apiBaseUrl: string,
+  telegramId: string,
+  message: string,
+  dryRun: boolean
+): Promise<AdminBroadcastResponse> {
+  const response = await axios.post<AdminBroadcastResponse>(
+    `${apiBaseUrl}/admin-broadcast`,
+    createAdminBroadcastPayload(telegramId, message, dryRun)
+  );
+  return response.data;
+}
+
+export function getAdminApiErrorDetail(error: unknown): string {
+  if (!axios.isAxiosError(error)) return '';
+  const data = error.response?.data;
+  if (!data || typeof data !== 'object') return typeof data === 'string' ? data : '';
+  const message = 'message' in data ? data.message : 'error' in data ? data.error : '';
+  return typeof message === 'string' ? message : '';
 }

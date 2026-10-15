@@ -624,3 +624,34 @@ export function triggerAdminDownload(
     objectUrls.revokeObjectURL(objectUrl);
   }
 }
+
+export type AdminBroadcastResponse = {
+  dryRun: boolean;
+  recipients: number;
+  sent: number;
+  failed: number;
+};
+
+export function createAdminBroadcastPayload(
+  telegramId: string,
+  message: string,
+  dryRun: boolean
+) {
+  return { telegramId, message, dryRun };
+}
+
+export function isAdminBroadcastMessageValid(message: string): boolean {
+  return message.trim().length > 0;
+}
+
+export function canSendAdminBroadcast(
+  message: string,
+  dryRunMessage: string | null,
+  dryRunResult: AdminBroadcastResponse | null,
+  completed: boolean
+): boolean {
+  return !completed
+    && isAdminBroadcastMessageValid(message)
+    && dryRunMessage === message
+    && dryRunResult?.dryRun === true;
+}

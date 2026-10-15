@@ -8,7 +8,7 @@ export const adminNavigation = [
   { id: 'economy', icon: '◈', labelKey: 'admin.shell.economy', hintKey: 'admin.overview.economyHint', available: true },
   { id: 'analytics', icon: '▥', labelKey: 'admin.shell.analytics', hintKey: 'admin.overview.analyticsHint', available: false, mobilePrimary: true },
   { id: 'security', icon: '🛡', labelKey: 'admin.shell.security', hintKey: 'admin.overview.logsHint', available: true },
-  { id: 'broadcast', icon: '📣', labelKey: 'admin.shell.broadcast', hintKey: 'admin.shell.broadcastHint', available: false },
+  { id: 'broadcast', icon: '📣', labelKey: 'admin.shell.broadcast', hintKey: 'admin.shell.broadcastHint', available: true },
   { id: 'settings', icon: '⚙', labelKey: 'admin.shell.settings', hintKey: 'admin.shell.settingsHint', available: true },
   { id: 'launch', icon: '✓', labelKey: 'admin.shell.launch', hintKey: 'admin.overview.launchHint', available: true },
 ] as const satisfies readonly AdminNavigationItem[];

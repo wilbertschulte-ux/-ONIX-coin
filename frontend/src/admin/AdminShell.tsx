@@ -6,6 +6,7 @@ import { AdminHeader } from './components/AdminHeader';
 import { AdminMobileNav } from './components/AdminMobileNav';
 import { AdminSidebar } from './components/AdminSidebar';
 import { AdminStateView } from './components/AdminStateView';
+import { BroadcastSection } from './sections/BroadcastSection';
 import { LaunchChecklistSection } from './sections/LaunchChecklistSection';
 import { OverviewSection } from './sections/OverviewSection';
 import { SecuritySection } from './sections/SecuritySection';
@@ -75,6 +76,10 @@ export function AdminShell({ apiBaseUrl, adminTelegramId, language, onExit, onOp
 
     if (activeSection === 'settings') {
       return <SettingsSection apiBaseUrl={apiBaseUrl} adminTelegramId={adminTelegramId} language={language} />;
+    }
+
+    if (activeSection === 'broadcast') {
+      return <BroadcastSection apiBaseUrl={apiBaseUrl} adminTelegramId={adminTelegramId} language={language} />;
     }
 
     return (
