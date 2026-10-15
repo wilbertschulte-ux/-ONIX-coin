@@ -1,9 +1,15 @@
 import axios from 'axios';
 import {
   createAdminUserSearchParams,
+  createAdminFreezePayload,
   createWeeklyPrizeAwardPayload,
   createWithdrawalReviewPayload,
   type AdminHealthResponse,
+  type AdminFrontendErrorsResponse,
+  type AdminFreezeUserResponse,
+  type AdminSecurityLogsResponse,
+  type AdminSuspiciousUser,
+  type AdminSuspiciousUsersResponse,
   type AdminUserProfile,
   type AdminUserSearchResponse,
   type AdminWithdrawalAction,
@@ -85,5 +91,48 @@ export async function awardAdminWeeklyPrizes(
     `${apiBaseUrl}/admin-award-weekly-prizes`,
     createWeeklyPrizeAwardPayload(telegramId, week)
   );
+  return response.data;
+}
+
+export async function loadAdminSuspiciousUsers(
+  apiBaseUrl: string,
+  telegramId: string
+): Promise<AdminSuspiciousUsersResponse> {
+  const response = await axios.get<AdminSuspiciousUsersResponse>(`${apiBaseUrl}/admin-suspicious-users`, {
+    params: { telegramId },
+  });
+  return response.data;
+}
+
+export async function freezeAdminUser(
+  apiBaseUrl: string,
+  telegramId: string,
+  user: AdminSuspiciousUser,
+  reason: string
+): Promise<AdminFreezeUserResponse> {
+  const response = await axios.post<AdminFreezeUserResponse>(
+    `${apiBaseUrl}/admin-freeze-user`,
+    createAdminFreezePayload(telegramId, user, reason)
+  );
+  return response.data;
+}
+
+export async function loadAdminSecurityLogs(
+  apiBaseUrl: string,
+  telegramId: string
+): Promise<AdminSecurityLogsResponse> {
+  const response = await axios.get<AdminSecurityLogsResponse>(`${apiBaseUrl}/admin-security-logs`, {
+    params: { telegramId },
+  });
+  return response.data;
+}
+
+export async function loadAdminFrontendErrors(
+  apiBaseUrl: string,
+  telegramId: string
+): Promise<AdminFrontendErrorsResponse> {
+  const response = await axios.get<AdminFrontendErrorsResponse>(`${apiBaseUrl}/admin-frontend-errors`, {
+    params: { telegramId },
+  });
   return response.data;
 }

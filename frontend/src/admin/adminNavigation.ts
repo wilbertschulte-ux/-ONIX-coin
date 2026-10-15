@@ -7,7 +7,7 @@ export const adminNavigation = [
   { id: 'prizes', icon: '🏆', labelKey: 'admin.shell.prizes', hintKey: 'admin.overview.prizesHint', available: true, mobilePrimary: true },
   { id: 'economy', icon: '◈', labelKey: 'admin.shell.economy', hintKey: 'admin.overview.economyHint', available: false },
   { id: 'analytics', icon: '▥', labelKey: 'admin.shell.analytics', hintKey: 'admin.overview.analyticsHint', available: false, mobilePrimary: true },
-  { id: 'security', icon: '🛡', labelKey: 'admin.shell.security', hintKey: 'admin.overview.logsHint', available: false },
+  { id: 'security', icon: '🛡', labelKey: 'admin.shell.security', hintKey: 'admin.overview.logsHint', available: true },
   { id: 'broadcast', icon: '📣', labelKey: 'admin.shell.broadcast', hintKey: 'admin.shell.broadcastHint', available: false },
   { id: 'settings', icon: '⚙', labelKey: 'admin.shell.settings', hintKey: 'admin.shell.settingsHint', available: false },
   { id: 'launch', icon: '✓', labelKey: 'admin.shell.launch', hintKey: 'admin.overview.launchHint', available: true },

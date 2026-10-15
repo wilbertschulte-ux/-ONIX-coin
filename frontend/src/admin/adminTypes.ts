@@ -211,3 +211,83 @@ export function createWeeklyPrizeAwardPayload(telegramId: string, week: string) 
     week,
   };
 }
+
+export type AdminSecurityTab = 'suspicious' | 'security-logs' | 'frontend-errors';
+
+export type AdminSuspiciousUser = {
+  telegramId: string;
+  username: string;
+  balance: number;
+  totalEarned: number;
+  weeklyEarned: number;
+  referralsCount: number;
+  totalTaps: number;
+  isSuspicious: boolean;
+  suspiciousReasons: string[];
+  isFrozen: boolean;
+  frozenReason: string;
+};
+
+export type AdminSuspiciousUsersResponse = {
+  users: AdminSuspiciousUser[];
+};
+
+export type AdminFreezeUserResponse = {
+  message: string;
+  user: {
+    telegramId: string;
+    username: string;
+    isFrozen: boolean;
+    frozenReason: string;
+  };
+};
+
+export type AdminSecurityLog = {
+  telegramId: string;
+  username: string;
+  isFrozen: boolean;
+  isSuspicious: boolean;
+  type: string;
+  title: string;
+  details: string;
+  createdAt: number;
+};
+
+export type AdminSecurityLogsResponse = {
+  logs: AdminSecurityLog[];
+};
+
+export type AdminFrontendErrorLog = {
+  telegramId: string;
+  username: string;
+  message: string;
+  stack: string;
+  appVersion: string;
+  createdAt: number;
+};
+
+export type AdminFrontendErrorsResponse = {
+  logs: AdminFrontendErrorLog[];
+};
+
+export function createAdminFreezePayload(
+  telegramId: string,
+  user: Pick<AdminSuspiciousUser, 'telegramId' | 'isFrozen'>,
+  reason: string
+) {
+  return {
+    telegramId,
+    targetTelegramId: user.telegramId,
+    freeze: !user.isFrozen,
+    reason: user.isFrozen ? '' : reason.trim(),
+  };
+}
+
+export function applyAdminFreezeResult(
+  users: AdminSuspiciousUser[],
+  result: AdminFreezeUserResponse['user']
+) {
+  return users.map((user) => user.telegramId === result.telegramId
+    ? { ...user, isFrozen: result.isFrozen, frozenReason: result.frozenReason }
+    : user);
+}

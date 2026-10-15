@@ -8,6 +8,7 @@ import { AdminSidebar } from './components/AdminSidebar';
 import { AdminStateView } from './components/AdminStateView';
 import { LaunchChecklistSection } from './sections/LaunchChecklistSection';
 import { OverviewSection } from './sections/OverviewSection';
+import { SecuritySection } from './sections/SecuritySection';
 import { WeeklyPrizesSection } from './sections/WeeklyPrizesSection';
 import { UsersSection } from './sections/UsersSection';
 import { WithdrawalsSection } from './sections/WithdrawalsSection';
@@ -60,6 +61,10 @@ export function AdminShell({ apiBaseUrl, adminTelegramId, language, onExit, onOp
 
     if (activeSection === 'prizes') {
       return <WeeklyPrizesSection apiBaseUrl={apiBaseUrl} adminTelegramId={adminTelegramId} language={language} />;
+    }
+
+    if (activeSection === 'security') {
+      return <SecuritySection apiBaseUrl={apiBaseUrl} adminTelegramId={adminTelegramId} language={language} />;
     }
 
     return (
