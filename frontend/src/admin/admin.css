@@ -601,6 +601,52 @@ body.onix-admin-mode #root {
 .admin-operation-list article p { margin: 8px 0 0; overflow-wrap: anywhere; white-space: pre-wrap; color: #cbd5e1; font-size: 10px; line-height: 1.45; }
 .admin-operation-list article time { display: block; margin-top: 8px; overflow-wrap: anywhere; color: #64748b; font-size: 9px; }
 
+.admin-settings-section { width: 100%; max-width: 1240px; margin: 0 auto; }
+.admin-settings-panel { min-width: 0; margin-top: 14px; padding: 14px; overflow: hidden; border: 1px solid rgba(148, 163, 184, .16); border-radius: 18px; background: rgba(11, 18, 34, .84); }
+.admin-settings-panel > header { min-width: 0; display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+.admin-settings-panel > header h2 { margin: 0; overflow-wrap: anywhere; font-size: 14px; }
+.admin-settings-panel > header span { display: block; margin-bottom: 3px; color: #67e8f9; font-size: 8px; font-weight: 900; letter-spacing: .12em; text-transform: uppercase; }
+.admin-settings-panel > header button,
+.admin-settings-export-grid button { min-height: 38px; padding: 0 11px; border: 1px solid rgba(34, 211, 238, .28); border-radius: 11px; color: #a5f3fc; background: rgba(8, 145, 178, .1); font-size: 10px; font-weight: 900; }
+.admin-settings-panel button:disabled { opacity: .45; }
+.admin-settings-panel h3 { margin: 16px 0 8px; color: #cbd5e1; font-size: 11px; }
+.admin-settings-runtime-warning,
+.admin-settings-diagnostic-note { margin: 10px 0 0; padding: 10px 11px; overflow-wrap: anywhere; border: 1px solid rgba(251, 191, 36, .18); border-radius: 12px; color: #fde68a; background: rgba(120, 53, 15, .13); font-size: 10px; line-height: 1.45; }
+.admin-settings-diagnostic-note { margin: 0 0 8px; color: #cbd5e1; border-color: rgba(148, 163, 184, .14); background: #0c1527; }
+.admin-settings-value-grid,
+.admin-settings-overrides,
+.admin-settings-export-grid { min-width: 0; display: grid; gap: 8px; }
+.admin-settings-value-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.admin-settings-value-grid article,
+.admin-settings-overrides article,
+.admin-settings-export-grid article { min-width: 0; padding: 11px; overflow: hidden; border: 1px solid rgba(148, 163, 184, .13); border-radius: 13px; background: #0c1527; }
+.admin-settings-value-grid span,
+.admin-settings-value-grid strong,
+.admin-settings-overrides span,
+.admin-settings-overrides strong { display: block; overflow-wrap: anywhere; }
+.admin-settings-value-grid span,
+.admin-settings-overrides span { color: #94a3b8; font-size: 9px; line-height: 1.35; }
+.admin-settings-value-grid strong,
+.admin-settings-overrides strong { margin-top: 5px; color: #f8fafc; font-size: 12px; }
+.admin-settings-value-grid pre { max-width: 100%; margin: 6px 0 0; overflow: hidden; color: #e2e8f0; white-space: pre-wrap; overflow-wrap: anywhere; word-break: break-word; font: 9px/1.5 ui-monospace, SFMono-Regular, Consolas, monospace; }
+.admin-settings-overrides { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.admin-settings-empty { margin: 0; color: #64748b; font-size: 10px; }
+.admin-settings-export-grid article { display: flex; flex-direction: column; align-items: stretch; gap: 12px; }
+.admin-settings-export-grid article > div { min-width: 0; }
+.admin-settings-export-grid strong,
+.admin-settings-export-grid p,
+.admin-settings-export-grid small { display: block; overflow-wrap: anywhere; }
+.admin-settings-export-grid strong { font-size: 12px; }
+.admin-settings-export-grid p { margin: 6px 0; color: #94a3b8; font-size: 10px; line-height: 1.45; }
+.admin-settings-export-grid small { color: #64748b; font-size: 9px; }
+.admin-settings-notice { margin: 10px 0 0; padding: 9px 11px; overflow-wrap: anywhere; border-radius: 11px; font-size: 10px; }
+.admin-settings-notice.is-success { color: #a7f3d0; background: rgba(6, 95, 70, .18); }
+.admin-settings-notice.is-error { color: #fecaca; background: rgba(127, 29, 29, .2); }
+.admin-settings-system-grid { min-width: 0; margin: 12px 0 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+.admin-settings-system-grid > div { min-width: 0; padding: 11px; border: 1px solid rgba(148, 163, 184, .13); border-radius: 13px; background: #0c1527; }
+.admin-settings-system-grid dt { color: #94a3b8; font-size: 9px; }
+.admin-settings-system-grid dd { margin: 5px 0 0; overflow-wrap: anywhere; color: #f8fafc; font-size: 12px; font-weight: 800; }
+
 .admin-dialog-backdrop { align-items: center; justify-content: center; padding: 18px; }
 .admin-dialog { width: min(100%, 440px); padding: 22px; border: 1px solid rgba(148, 163, 184, .2); border-radius: 20px; background: #0b1222; }
 .admin-dialog h2 { margin: 0; }
@@ -648,6 +694,11 @@ body.onix-admin-mode #root {
   .admin-economy-metrics { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .admin-transaction-types > div { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .admin-operations-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .admin-settings-value-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+  .admin-settings-diagnostic-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .admin-settings-overrides,
+  .admin-settings-export-grid,
+  .admin-settings-system-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
 
 @media (max-width: 520px) {

@@ -560,3 +560,67 @@ export function getAdminOperationPreview(operations: AdminOperationsResponse, li
     transactions: operations.transactions.slice(0, safeLimit),
   };
 }
+
+export type AdminEconomyConfig = {
+  onixEurPer1000: number;
+  minWithdrawOnix: number;
+  referralReward: number;
+  referredUserReward: number;
+  welcomeBonus: number;
+  maxPaidReferralsPerDay: number;
+  maxPaidReferralsPerHour: number;
+  chestCost: number;
+  dailyMissionBaseReward: number;
+  weeklyMissionBaseReward: number;
+  seasonPrizes: Record<string, number>;
+  upgradeBaseCosts: Record<string, number>;
+  perkBaseCosts: Record<string, number>;
+};
+
+export type AdminEconomyConfigResponse = {
+  config: AdminEconomyConfig;
+  overrides: Record<string, number>;
+};
+
+export type AdminVersionResponse = {
+  version: string;
+  service: string;
+  time: number;
+};
+
+export type AdminSettingsLoadState = 'loading' | 'error' | 'ready';
+
+export function getAdminSettingsLoadState(loading: boolean, error: boolean): AdminSettingsLoadState {
+  if (loading) return 'loading';
+  if (error) return 'error';
+  return 'ready';
+}
+
+export type AdminExportKind = 'json' | 'csv';
+
+export type AdminExportDownload = {
+  blob: Blob;
+  filename: 'onix-backup.json' | 'onix-users.csv';
+  contentType: 'application/json' | 'text/csv';
+};
+
+export const ADMIN_EXPORT_DEFINITIONS = {
+  json: { filename: 'onix-backup.json', contentType: 'application/json' },
+  csv: { filename: 'onix-users.csv', contentType: 'text/csv' },
+} as const satisfies Record<AdminExportKind, Omit<AdminExportDownload, 'blob'>>;
+
+export function triggerAdminDownload(
+  download: AdminExportDownload,
+  browser: Pick<Document, 'createElement'> = document,
+  objectUrls: Pick<typeof URL, 'createObjectURL' | 'revokeObjectURL'> = URL
+) {
+  const objectUrl = objectUrls.createObjectURL(download.blob);
+  try {
+    const anchor = browser.createElement('a');
+    anchor.href = objectUrl;
+    anchor.download = download.filename;
+    anchor.click();
+  } finally {
+    objectUrls.revokeObjectURL(objectUrl);
+  }
+}

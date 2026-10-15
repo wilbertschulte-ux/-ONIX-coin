@@ -1,6 +1,7 @@
 import axios from 'axios';
 import {
   createAdminUserSearchParams,
+  ADMIN_EXPORT_DEFINITIONS,
   createAdminFreezePayload,
   createAdminBalanceAdjustmentPayload,
   createAdminBanPayload,
@@ -13,6 +14,9 @@ import {
   type AdminFreezeUserResponse,
   type AdminSecurityLogsResponse,
   type AdminOperationsResponse,
+  type AdminEconomyConfigResponse,
+  type AdminExportDownload,
+  type AdminVersionResponse,
   type AdminSuspiciousUser,
   type AdminSuspiciousUsersResponse,
   type AdminUserProfile,
@@ -197,5 +201,42 @@ export async function loadAdminOperations(
   const response = await axios.get<AdminOperationsResponse>(`${apiBaseUrl}/admin-operations`, {
     params: { telegramId },
   });
+  return response.data;
+}
+
+export async function loadAdminEconomyConfig(
+  apiBaseUrl: string,
+  telegramId: string
+): Promise<AdminEconomyConfigResponse> {
+  const response = await axios.get<AdminEconomyConfigResponse>(`${apiBaseUrl}/admin-economy-config`, {
+    params: { telegramId },
+  });
+  return response.data;
+}
+
+export async function downloadAdminJsonExport(
+  apiBaseUrl: string,
+  telegramId: string
+): Promise<AdminExportDownload> {
+  const response = await axios.get<Blob>(`${apiBaseUrl}/admin-backup`, {
+    params: { telegramId },
+    responseType: 'blob',
+  });
+  return { blob: response.data, ...ADMIN_EXPORT_DEFINITIONS.json };
+}
+
+export async function downloadAdminUsersCsv(
+  apiBaseUrl: string,
+  telegramId: string
+): Promise<AdminExportDownload> {
+  const response = await axios.get<Blob>(`${apiBaseUrl}/admin-export-users.csv`, {
+    params: { telegramId },
+    responseType: 'blob',
+  });
+  return { blob: response.data, ...ADMIN_EXPORT_DEFINITIONS.csv };
+}
+
+export async function loadAdminVersion(apiBaseUrl: string): Promise<AdminVersionResponse> {
+  const response = await axios.get<AdminVersionResponse>(`${apiBaseUrl}/version`);
   return response.data;
 }

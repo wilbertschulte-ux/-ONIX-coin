@@ -9,6 +9,7 @@ import { AdminStateView } from './components/AdminStateView';
 import { LaunchChecklistSection } from './sections/LaunchChecklistSection';
 import { OverviewSection } from './sections/OverviewSection';
 import { SecuritySection } from './sections/SecuritySection';
+import { SettingsSection } from './sections/SettingsSection';
 import { EconomySection } from './sections/EconomySection';
 import { WeeklyPrizesSection } from './sections/WeeklyPrizesSection';
 import { UsersSection } from './sections/UsersSection';
@@ -70,6 +71,10 @@ export function AdminShell({ apiBaseUrl, adminTelegramId, language, onExit, onOp
 
     if (activeSection === 'economy') {
       return <EconomySection apiBaseUrl={apiBaseUrl} adminTelegramId={adminTelegramId} language={language} />;
+    }
+
+    if (activeSection === 'settings') {
+      return <SettingsSection apiBaseUrl={apiBaseUrl} adminTelegramId={adminTelegramId} language={language} />;
     }
 
     return (
