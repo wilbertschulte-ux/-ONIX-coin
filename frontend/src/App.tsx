@@ -15994,11 +15994,6 @@ function App() {
           setAdminMode(false);
           setProfilePanel('overview');
         }}
-        onOpenLegacy={() => {
-          setAdminHubPage('overview');
-          setProfilePanel('admin');
-          setAdminMode(false);
-        }}
       />
     );
   }

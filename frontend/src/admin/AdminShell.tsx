@@ -23,10 +23,9 @@ type AdminShellProps = {
   adminTelegramId: string;
   language: AppLanguage;
   onExit: () => void;
-  onOpenLegacy: () => void;
 };
 
-export function AdminShell({ apiBaseUrl, adminTelegramId, language, onExit, onOpenLegacy }: AdminShellProps) {
+export function AdminShell({ apiBaseUrl, adminTelegramId, language, onExit }: AdminShellProps) {
   const t = createTranslator(language);
   const [activeSection, setActiveSection] = useState<AdminSectionId>('overview');
   const [menuOpen, setMenuOpen] = useState(false);
@@ -128,7 +127,6 @@ export function AdminShell({ apiBaseUrl, adminTelegramId, language, onExit, onOp
                 </button>
               ))}
             </nav>
-            <button type="button" className="admin-menu-legacy" onClick={onOpenLegacy}>{t('admin.shell.openLegacy')}</button>
           </section>
         </div>
       )}
