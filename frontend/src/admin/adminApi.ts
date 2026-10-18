@@ -8,6 +8,7 @@ import {
   createAdminBalanceAdjustmentPayload,
   createAdminBanPayload,
   createAdminNotePayload,
+  createAdminEconomyConfigUpdatePayload,
   createWeeklyPrizeAwardPayload,
   createWithdrawalReviewPayload,
   type AdminHealthResponse,
@@ -215,6 +216,17 @@ export async function loadAdminEconomyConfig(
 ): Promise<AdminEconomyConfigResponse> {
   const response = await axios.get<AdminEconomyConfigResponse>(`${apiBaseUrl}/admin-economy-config`, {
     params: { telegramId },
+  });
+  return response.data;
+}
+
+export async function updateAdminEconomyConfig(
+  apiBaseUrl: string,
+  telegramId: string,
+  updates: Record<string, string>
+): Promise<AdminEconomyConfigResponse> {
+  const response = await axios.post<AdminEconomyConfigResponse>(`${apiBaseUrl}/admin-economy-config`, {
+    ...createAdminEconomyConfigUpdatePayload(telegramId, updates),
   });
   return response.data;
 }

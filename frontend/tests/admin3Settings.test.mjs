@@ -4,7 +4,10 @@ import test from 'node:test';
 import { adminGermanMessages, adminRussianMessages } from '../src/i18n/admin.ts';
 import {
   acquireAdminMutationLock,
+  createAdminEconomyConfigDraft,
+  createAdminEconomyConfigUpdatePayload,
   ADMIN_EXPORT_DEFINITIONS,
+  getAdminEconomyConfigUpdate,
   getAdminSettingsLoadState,
   releaseAdminMutationLock,
   triggerAdminDownload,
@@ -71,16 +74,52 @@ test('export lock prevents a second submit until the first download finishes', (
   assert.equal(acquireAdminMutationLock(lock), true);
 });
 
-test('Settings uses only existing GET APIs and does not start downloads on mount', () => {
+test('Settings uses the existing config GET/POST APIs and does not start mutations on mount', () => {
   assert.match(apiSource, /\/admin-economy-config/);
   assert.match(apiSource, /\/admin-backup/);
   assert.match(apiSource, /\/admin-export-users\.csv/);
   assert.match(apiSource, /\/version/);
-  assert.doesNotMatch(sectionSource, /axios\.(post|put|patch|delete)/);
-  const effectBody = sectionSource.match(/useEffect\(\(\) => \{([\s\S]*?)\}, \[apiBaseUrl, adminTelegramId\]\);/)?.[1] || '';
+  assert.match(apiSource, /axios\.post<AdminEconomyConfigResponse>/);
+  assert.match(apiSource, /createAdminEconomyConfigUpdatePayload/);
+  const effectBody = sectionSource.match(/useEffect\(\(\) => \{([\s\S]*?)\}, \[apiBaseUrl, adminTelegramId, synchronizeEconomy\]\);/)?.[1] || '';
   assert.match(effectBody, /loadAdminEconomyConfig/);
   assert.match(effectBody, /loadAdminVersion/);
-  assert.doesNotMatch(effectBody, /downloadAdmin|triggerAdminDownload/);
+  assert.doesNotMatch(effectBody, /downloadAdmin|triggerAdminDownload|updateAdminEconomyConfig/);
+});
+
+const economyConfig = {
+  onixEurPer1000: 1.5, minWithdrawOnix: 1000, referralReward: 500,
+  referredUserReward: 250, welcomeBonus: 100, maxPaidReferralsPerDay: 10,
+  maxPaidReferralsPerHour: 2, chestCost: 50, dailyMissionBaseReward: 20,
+  weeklyMissionBaseReward: 100, seasonPrizes: {}, upgradeBaseCosts: {}, perkBaseCosts: {},
+};
+
+test('economy config maps exact legacy keys and sends only numerically changed fields', () => {
+  const saved = createAdminEconomyConfigDraft(economyConfig);
+  const draft = { ...saved, onixEurPer1000: '1.50', referralReward: ' 700 ', maxPaidReferralsPerHour: '0' };
+  const result = getAdminEconomyConfigUpdate(draft, saved);
+  assert.deepEqual(result.changedKeys, ['referralReward', 'maxPaidReferralsPerHour']);
+  assert.deepEqual(result.updates, { REFERRAL_REWARD: '700', MAX_PAID_REFERRALS_PER_HOUR: '0' });
+  assert.equal(result.error, null);
+  assert.deepEqual(createAdminEconomyConfigUpdatePayload('42', result.updates), {
+    telegramId: '42',
+    updates: { REFERRAL_REWARD: '700', MAX_PAID_REFERRALS_PER_HOUR: '0' },
+  });
+});
+
+test('economy config rejects blank, negative and non-finite changed values', () => {
+  const saved = createAdminEconomyConfigDraft(economyConfig);
+  assert.equal(getAdminEconomyConfigUpdate({ ...saved, chestCost: '' }, saved).error, 'required');
+  assert.equal(getAdminEconomyConfigUpdate({ ...saved, chestCost: '-1' }, saved).error, 'invalid');
+  assert.equal(getAdminEconomyConfigUpdate({ ...saved, chestCost: 'Infinity' }, saved).error, 'invalid');
+});
+
+test('economy save uses confirmation, synchronous locking and refetches after POST', () => {
+  assert.match(sectionSource, /setConfigConfirmation\(true\)/);
+  assert.match(sectionSource, /acquireAdminMutationLock\(configLock\)/);
+  assert.match(sectionSource, /await updateAdminEconomyConfig[\s\S]*await loadAdminEconomyConfig/);
+  assert.match(sectionSource, /setConfigNotice\('success'\)/);
+  assert.match(sectionSource, /setConfigNotice\('error'\)/);
 });
 
 test('economy diagnostics, runtime overrides and version fields render as read-only data', () => {

@@ -8,6 +8,7 @@ import {
   createAdminNotePayload,
   getAdminProfileMutationNoticeKey,
   getAdminProfileViewState,
+  getAdminUserStatus,
   parseAdminBalanceAmount,
   releaseAdminMutationLock,
 } from '../src/admin/adminTypes.ts';
@@ -24,6 +25,9 @@ const profile = {
   withdrawalRequests: [{ amount: 5, eurAmount: 0.05, status: 'approved', adminComment: 'ok', reviewedAt: 2, reviewedBy: '42', createdAt: 1 }],
   securityLogs: [{ type: 'admin_note', title: 'Note', details: 'raw details', createdAt: 1 }],
   adminNotes: [{ text: 'verbatim note', adminTelegramId: '42', createdAt: 1 }],
+  energy: 350, maxEnergy: 750, tapPower: 17, completedTasksCount: 12,
+  tapLevel: 4, minerLevel: 5, energyLevel: 6, rechargeLevel: 7,
+  suspiciousReasons: ['raw diagnostic: velocity > threshold'],
 };
 
 test('profile view behavior covers loading, error, empty and populated data', () => {
@@ -77,6 +81,23 @@ test('profile mutations use only the existing admin endpoints and typed payload 
   assert.match(apiSource, /createAdminBanPayload/);
   assert.match(apiSource, /\/admin-user-note/);
   assert.match(apiSource, /createAdminNotePayload/);
+});
+
+test('player search status is frozen first, suspicious second and active otherwise', () => {
+  assert.equal(getAdminUserStatus({ isFrozen: true, isSuspicious: true }), 'blocked');
+  assert.equal(getAdminUserStatus({ isFrozen: false, isSuspicious: true }), 'suspicious');
+  assert.equal(getAdminUserStatus({ isFrozen: false, isSuspicious: false }), 'active');
+  assert.match(usersSource, /getAdminUserStatus\(user\)/);
+  assert.match(usersSource, /admin-user-status is-\$\{status\}/);
+});
+
+test('profile renders all legacy diagnostics and preserves suspicious reasons verbatim', () => {
+  for (const field of ['energy', 'maxEnergy', 'tapPower', 'completedTasksCount', 'tapLevel', 'minerLevel', 'energyLevel', 'rechargeLevel', 'suspiciousReasons']) {
+    assert.match(usersSource, new RegExp(`selectedUser\\.${field}`));
+  }
+  assert.equal(profile.suspiciousReasons[0], 'raw diagnostic: velocity > threshold');
+  assert.match(usersSource, /selectedUser\.suspiciousReasons![\s\S]*\{reason\}/);
+  assert.match(cssSource, /\.admin-user-reason-list li \{[^}]*overflow-wrap: anywhere;[^}]*white-space: pre-wrap/);
 });
 
 test('confirmed balance and ban actions refresh the existing profile and expose outcomes', () => {

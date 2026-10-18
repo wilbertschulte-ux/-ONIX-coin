@@ -5,12 +5,17 @@ import {
   downloadAdminUsersCsv,
   loadAdminEconomyConfig,
   loadAdminVersion,
+  updateAdminEconomyConfig,
 } from '../adminApi';
 import {
   acquireAdminMutationLock,
+  createAdminEconomyConfigDraft,
+  getAdminEconomyConfigUpdate,
   getAdminSettingsLoadState,
   releaseAdminMutationLock,
   triggerAdminDownload,
+  type AdminEconomyConfigDraft,
+  type AdminEconomyConfigEditableKey,
   type AdminEconomyConfigResponse,
   type AdminExportKind,
   type AdminVersionResponse,
@@ -66,18 +71,32 @@ export function SettingsSection({ apiBaseUrl, adminTelegramId, language }: Setti
   const [downloading, setDownloading] = useState<AdminExportKind | null>(null);
   const [exportNotice, setExportNotice] = useState<{ kind: AdminExportKind; success: boolean } | null>(null);
   const downloadLock = useRef(false);
+  const configLock = useRef(false);
+  const [configDraft, setConfigDraft] = useState<AdminEconomyConfigDraft | null>(null);
+  const [savedConfigDraft, setSavedConfigDraft] = useState<AdminEconomyConfigDraft | null>(null);
+  const [configConfirmation, setConfigConfirmation] = useState(false);
+  const [configSaving, setConfigSaving] = useState(false);
+  const [configNotice, setConfigNotice] = useState<'success' | 'error' | 'required' | 'invalid' | null>(null);
+
+  const synchronizeEconomy = useCallback((result: AdminEconomyConfigResponse) => {
+    const draft = createAdminEconomyConfigDraft(result.config);
+    setEconomy(result);
+    setConfigDraft(draft);
+    setSavedConfigDraft(draft);
+  }, []);
 
   const refreshEconomy = useCallback(async () => {
     setEconomyLoading(true);
     setEconomyError(false);
     try {
-      setEconomy(await loadAdminEconomyConfig(apiBaseUrl, adminTelegramId));
+      synchronizeEconomy(await loadAdminEconomyConfig(apiBaseUrl, adminTelegramId));
+      setConfigNotice(null);
     } catch {
       setEconomyError(true);
     } finally {
       setEconomyLoading(false);
     }
-  }, [apiBaseUrl, adminTelegramId]);
+  }, [apiBaseUrl, adminTelegramId, synchronizeEconomy]);
 
   const refreshVersion = useCallback(async () => {
     setVersionLoading(true);
@@ -94,7 +113,7 @@ export function SettingsSection({ apiBaseUrl, adminTelegramId, language }: Setti
   useEffect(() => {
     let active = true;
     void loadAdminEconomyConfig(apiBaseUrl, adminTelegramId)
-      .then((result) => { if (active) setEconomy(result); })
+      .then((result) => { if (active) synchronizeEconomy(result); })
       .catch(() => { if (active) setEconomyError(true); })
       .finally(() => { if (active) setEconomyLoading(false); });
     void loadAdminVersion(apiBaseUrl)
@@ -102,7 +121,7 @@ export function SettingsSection({ apiBaseUrl, adminTelegramId, language }: Setti
       .catch(() => { if (active) setVersionError(true); })
       .finally(() => { if (active) setVersionLoading(false); });
     return () => { active = false; };
-  }, [apiBaseUrl, adminTelegramId]);
+  }, [apiBaseUrl, adminTelegramId, synchronizeEconomy]);
 
   const confirmDownload = async () => {
     const kind = confirmation;
@@ -124,6 +143,45 @@ export function SettingsSection({ apiBaseUrl, adminTelegramId, language }: Setti
     }
   };
 
+  const configUpdate = configDraft && savedConfigDraft
+    ? getAdminEconomyConfigUpdate(configDraft, savedConfigDraft)
+    : { changedKeys: [], updates: {}, error: null };
+
+  const requestConfigSave = () => {
+    if (configUpdate.changedKeys.length === 0) return;
+    if (configUpdate.error) {
+      setConfigNotice(configUpdate.error);
+      return;
+    }
+    setConfigNotice(null);
+    setConfigConfirmation(true);
+  };
+
+  const confirmConfigSave = async () => {
+    if (!configDraft || !savedConfigDraft || !acquireAdminMutationLock(configLock)) return;
+    const update = getAdminEconomyConfigUpdate(configDraft, savedConfigDraft);
+    if (update.changedKeys.length === 0 || update.error) {
+      setConfigConfirmation(false);
+      setConfigNotice(update.error);
+      releaseAdminMutationLock(configLock);
+      return;
+    }
+    setConfigSaving(true);
+    setConfigNotice(null);
+    try {
+      await updateAdminEconomyConfig(apiBaseUrl, adminTelegramId, update.updates);
+      synchronizeEconomy(await loadAdminEconomyConfig(apiBaseUrl, adminTelegramId));
+      setConfigConfirmation(false);
+      setConfigNotice('success');
+    } catch {
+      setConfigConfirmation(false);
+      setConfigNotice('error');
+    } finally {
+      setConfigSaving(false);
+      releaseAdminMutationLock(configLock);
+    }
+  };
+
   const economyState = getAdminSettingsLoadState(economyLoading, economyError);
   const versionState = getAdminSettingsLoadState(versionLoading, versionError);
   const config = economy?.config;
@@ -136,16 +194,22 @@ export function SettingsSection({ apiBaseUrl, adminTelegramId, language }: Setti
       </div>
 
       <section className="admin-settings-panel" aria-labelledby="admin-settings-config-title">
-        <header><div><span>{t('admin.settings.readOnly')}</span><h2 id="admin-settings-config-title">{t('admin.settings.config.title')}</h2></div><button type="button" onClick={() => void refreshEconomy()} disabled={economyLoading}>{t('admin.settings.refresh')}</button></header>
+        <header><div><span>{t('admin.settings.config.runtime')}</span><h2 id="admin-settings-config-title">{t('admin.settings.config.title')}</h2></div><button type="button" onClick={() => void refreshEconomy()} disabled={economyLoading || configSaving}>{t('admin.settings.refresh')}</button></header>
         <p className="admin-settings-runtime-warning">{t('admin.settings.config.runtimeWarning')}</p>
         {economyState === 'loading' && <AdminStateView icon="◌" title={t('admin.settings.config.loading')} />}
         {economyState === 'error' && <AdminStateView icon="!" title={t('admin.settings.config.error')} actionLabel={t('admin.settings.retry')} onAction={() => void refreshEconomy()} tone="error" />}
         {economyState === 'ready' && config && (
           <>
             <h3>{t('admin.settings.config.active')}</h3>
-            <div className="admin-settings-value-grid">
-              {activeConfigFields.map(([key, labelKey]) => <article key={key}><span>{t(labelKey)}</span><strong>{formatConfigValue(config[key], language)}</strong></article>)}
+            {configDraft && <div className="admin-settings-config-form">
+              {activeConfigFields.map(([key, labelKey]) => <label key={key}><span>{t(labelKey)}</span><input type="number" min="0" step="any" value={configDraft[key]} disabled={configSaving} onChange={(event) => setConfigDraft((current) => current ? { ...current, [key as AdminEconomyConfigEditableKey]: event.target.value } : current)} /></label>)}
+            </div>}
+            <div className="admin-settings-config-actions">
+              <button type="button" disabled={configSaving || configUpdate.changedKeys.length === 0} onClick={() => { if (savedConfigDraft) setConfigDraft({ ...savedConfigDraft }); setConfigNotice(null); }}>{t('admin.settings.config.cancel')}</button>
+              <button type="button" disabled={configSaving || configUpdate.changedKeys.length === 0} onClick={requestConfigSave}>{configSaving ? t('admin.settings.config.saving') : t('admin.settings.config.save')}</button>
             </div>
+            {configUpdate.changedKeys.length > 0 && <p className="admin-settings-dirty" role="status">{t('admin.settings.config.unsaved', { count: configUpdate.changedKeys.length })}</p>}
+            {configNotice && <p className={`admin-settings-notice is-${configNotice === 'success' ? 'success' : 'error'}`} role={configNotice === 'success' ? 'status' : 'alert'}>{t(configNotice === 'success' ? 'admin.settings.config.saveSuccess' : configNotice === 'required' ? 'admin.settings.config.valueRequired' : configNotice === 'invalid' ? 'admin.settings.config.invalidValue' : 'admin.settings.config.saveError')}</p>}
             <h3>{t('admin.settings.config.diagnostic')}</h3>
             <p className="admin-settings-diagnostic-note">{t('admin.settings.config.diagnosticNotice')}</p>
             <div className="admin-settings-value-grid admin-settings-diagnostic-grid">
@@ -182,6 +246,16 @@ export function SettingsSection({ apiBaseUrl, adminTelegramId, language }: Setti
         busy={downloading !== null}
         onConfirm={() => void confirmDownload()}
         onCancel={() => setConfirmation(null)}
+      />
+      <ConfirmAdminAction
+        language={language}
+        open={configConfirmation}
+        title={t('admin.settings.config.confirmTitle')}
+        description={t('admin.settings.config.confirmDescription', { count: configUpdate.changedKeys.length })}
+        confirmLabel={t('admin.settings.config.confirm')}
+        busy={configSaving}
+        onConfirm={() => void confirmConfigSave()}
+        onCancel={() => setConfigConfirmation(false)}
       />
     </section>
   );

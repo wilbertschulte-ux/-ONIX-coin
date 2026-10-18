@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { createTranslator, getLanguageLocale, type AppLanguage } from '../../i18n';
 import { addAdminUserNote, adjustAdminUserBalance, loadAdminUserProfile, searchAdminUsers, setAdminUserBan } from '../adminApi';
-import { acquireAdminMutationLock, getAdminCollectionState, getAdminProfileViewState, parseAdminBalanceAmount, releaseAdminMutationLock, type AdminProfileMutationKind, type AdminUserProfile, type AdminUserSummary } from '../adminTypes';
+import { acquireAdminMutationLock, getAdminCollectionState, getAdminProfileViewState, getAdminUserStatus, parseAdminBalanceAmount, releaseAdminMutationLock, type AdminProfileMutationKind, type AdminUserProfile, type AdminUserSummary } from '../adminTypes';
 import { ConfirmAdminAction } from '../components/ConfirmAdminAction';
 import { AdminStateView } from '../components/AdminStateView';
 
@@ -180,7 +180,18 @@ export function UsersSection({ apiBaseUrl, adminTelegramId, language }: UsersSec
             <div><dt>{t('admin.players.lastActivity')}</dt><dd>{formatDate(selectedUser.lastTapAt || selectedUser.updatedAt, language, true)}</dd></div>
             <div><dt>{t('admin.players.totalTaps')}</dt><dd>{formatInteger(selectedUser.totalTaps, language)}</dd></div>
             <div><dt>{t('admin.players.upgradesBought')}</dt><dd>{formatInteger(selectedUser.totalUpgradesBought, language)}</dd></div>
+            <div><dt>{t('admin.players.energy')}</dt><dd>{formatInteger(selectedUser.energy, language)} / {formatInteger(selectedUser.maxEnergy, language)}</dd></div>
+            <div><dt>{t('admin.players.tapPower')}</dt><dd>{formatInteger(selectedUser.tapPower, language)}</dd></div>
+            <div><dt>{t('admin.players.tasks')}</dt><dd>{formatInteger(selectedUser.completedTasksCount, language)}</dd></div>
           </dl></section>
+          <section className="admin-user-info-card"><h3>{t('admin.players.upgradesActivity')}</h3><dl>
+            <div><dt>{t('admin.players.upgrades')}</dt><dd>{t('admin.players.upgradeLevels', { tap: selectedUser.tapLevel ?? 1, miner: selectedUser.minerLevel ?? 1, energy: selectedUser.energyLevel ?? 1, recharge: selectedUser.rechargeLevel ?? 1 })}</dd></div>
+          </dl></section>
+          <section className="admin-user-info-card"><h3>{t('admin.players.suspiciousReasons')}</h3>
+            {(selectedUser.suspiciousReasons || []).length > 0
+              ? <ul className="admin-user-reason-list">{selectedUser.suspiciousReasons!.map((reason, index) => <li key={`${reason}-${index}`}>{reason}</li>)}</ul>
+              : <p className="admin-user-history-empty">{t('admin.players.suspiciousReasonsEmpty')}</p>}
+          </section>
           <section className="admin-user-info-card"><h3>{t('admin.players.referralInfo')}</h3><dl>
             <div><dt>{t('admin.players.referrals')}</dt><dd>{formatInteger(selectedUser.referralsCount, language)}</dd></div>
             <div><dt>{t('admin.players.withdrawalRequests')}</dt><dd>{formatInteger(selectedUser.withdrawalRequestsCount, language)}</dd></div>
@@ -233,7 +244,10 @@ export function UsersSection({ apiBaseUrl, adminTelegramId, language }: UsersSec
       {listState === 'loading' && <AdminStateView icon="◌" title={t('admin.players.loading')} />}
       {listState === 'error' && <AdminStateView icon="!" title={t('admin.players.loadError')} actionLabel={t('admin.launch.refresh')} onAction={() => void loadPage(page)} tone="error" />}
       {listState === 'empty' && <AdminStateView icon="◇" title={t('admin.players.empty')} />}
-      {listState === 'ready' && <div className="admin-user-list">{users.map((user) => <button key={user.telegramId} type="button" className={selectedUser?.telegramId === user.telegramId ? 'is-selected' : ''} onClick={() => void openProfile(user)}><div><strong>{user.displayName || user.username || t('admin.players.fallbackName')}</strong><span>{user.telegramUsername ? `@${user.telegramUsername.replace(/^@+/, '')}` : `ID: ${user.telegramId}`}</span><small>{t('admin.players.level', { level: user.level || 1 })} · {formatDate(user.updatedAt, language)}</small></div><aside><strong>{formatInteger(user.balance, language)}</strong><small>ONIX</small></aside></button>)}</div>}
+      {listState === 'ready' && <div className="admin-user-list">{users.map((user) => {
+        const status = getAdminUserStatus(user);
+        return <button key={user.telegramId} type="button" className={selectedUser?.telegramId === user.telegramId ? 'is-selected' : ''} onClick={() => void openProfile(user)}><div><strong>{user.displayName || user.username || t('admin.players.fallbackName')}</strong><span>{user.telegramUsername ? `@${user.telegramUsername.replace(/^@+/, '')}` : `ID: ${user.telegramId}`}</span><small>{t('admin.players.level', { level: user.level || 1 })} · {formatDate(user.updatedAt, language)}</small><em className={`admin-user-status is-${status}`}>{t(`admin.players.${status}`)}</em></div><aside><strong>{formatInteger(user.balance, language)}</strong><small>ONIX</small></aside></button>;
+      })}</div>}
       {totalPages > 1 && !loading && <div className="admin-pagination"><button type="button" onClick={() => void loadPage(page - 1)} disabled={page <= 1}>{t('admin.players.previous')}</button><span>{t('admin.players.page', { page, total: totalPages })}</span><button type="button" onClick={() => void loadPage(page + 1)} disabled={page >= totalPages}>{t('admin.players.next')}</button></div>}
     </div>
     <div className="admin-user-detail-pane">{profileContent}</div>

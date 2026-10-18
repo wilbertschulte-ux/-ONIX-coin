@@ -89,6 +89,14 @@ export type AdminUserProfile = AdminUserSummary & {
   adminNotes: AdminUserNote[];
 };
 
+export type AdminUserStatus = 'blocked' | 'suspicious' | 'active';
+
+export function getAdminUserStatus(user: Pick<AdminUserSummary, 'isFrozen' | 'isSuspicious'>): AdminUserStatus {
+  if (user.isFrozen) return 'blocked';
+  if (user.isSuspicious) return 'suspicious';
+  return 'active';
+}
+
 export type AdminUserTransaction = {
   type: string;
   amount: number;
@@ -581,6 +589,71 @@ export type AdminEconomyConfigResponse = {
   config: AdminEconomyConfig;
   overrides: Record<string, number>;
 };
+
+export const ADMIN_ECONOMY_CONFIG_FIELD_MAP = {
+  onixEurPer1000: 'ONIX_EUR_PER_1000',
+  minWithdrawOnix: 'MIN_WITHDRAW_ONIX',
+  referralReward: 'REFERRAL_REWARD',
+  referredUserReward: 'REFERRED_USER_REWARD',
+  welcomeBonus: 'WELCOME_BONUS',
+  chestCost: 'CHEST_COST',
+  maxPaidReferralsPerDay: 'MAX_PAID_REFERRALS_PER_DAY',
+  maxPaidReferralsPerHour: 'MAX_PAID_REFERRALS_PER_HOUR',
+} as const;
+
+export type AdminEconomyConfigEditableKey = keyof typeof ADMIN_ECONOMY_CONFIG_FIELD_MAP;
+export type AdminEconomyConfigDraft = Record<AdminEconomyConfigEditableKey, string>;
+export type AdminEconomyConfigValidationError = 'required' | 'invalid' | null;
+
+export function createAdminEconomyConfigDraft(config: AdminEconomyConfig): AdminEconomyConfigDraft {
+  return Object.fromEntries(
+    (Object.keys(ADMIN_ECONOMY_CONFIG_FIELD_MAP) as AdminEconomyConfigEditableKey[])
+      .map((key) => [key, String(config[key] ?? '')])
+  ) as AdminEconomyConfigDraft;
+}
+
+export function getAdminEconomyConfigUpdate(
+  draft: AdminEconomyConfigDraft,
+  saved: AdminEconomyConfigDraft
+): {
+  changedKeys: AdminEconomyConfigEditableKey[];
+  updates: Record<string, string>;
+  error: AdminEconomyConfigValidationError;
+} {
+  const keys = Object.keys(ADMIN_ECONOMY_CONFIG_FIELD_MAP) as AdminEconomyConfigEditableKey[];
+  const changedKeys = keys.filter((key) => {
+    const currentValue = draft[key].trim();
+    const savedValue = saved[key].trim();
+    if (currentValue === '' || savedValue === '') return currentValue !== savedValue;
+    const currentNumber = Number(currentValue);
+    const savedNumber = Number(savedValue);
+    return Number.isFinite(currentNumber) && Number.isFinite(savedNumber)
+      ? currentNumber !== savedNumber
+      : currentValue !== savedValue;
+  });
+
+  if (changedKeys.some((key) => draft[key].trim() === '')) {
+    return { changedKeys, updates: {}, error: 'required' };
+  }
+
+  const updates = Object.fromEntries(changedKeys.map((key) => [
+    ADMIN_ECONOMY_CONFIG_FIELD_MAP[key],
+    draft[key].trim(),
+  ]));
+
+  if (Object.values(updates).some((value) => !Number.isFinite(Number(value)) || Number(value) < 0)) {
+    return { changedKeys, updates: {}, error: 'invalid' };
+  }
+
+  return { changedKeys, updates, error: null };
+}
+
+export function createAdminEconomyConfigUpdatePayload(
+  telegramId: string,
+  updates: Record<string, string>
+) {
+  return { telegramId, updates };
+}
 
 export type AdminVersionResponse = {
   version: string;

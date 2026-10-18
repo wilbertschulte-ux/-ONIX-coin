@@ -337,6 +337,9 @@ body.onix-admin-mode #root {
 .admin-user-list aside { flex: 0 0 auto; text-align: right; }
 .admin-user-list aside strong { color: #fde047; font-size: 13px; }
 .admin-user-list aside small { color: #64748b; font-size: 9px; }
+.admin-user-status { width: fit-content; margin-top: 6px; padding: 4px 7px; border-radius: 999px; color: #6ee7b7; background: rgba(16, 185, 129, .12); font-size: 8px; font-style: normal; font-weight: 900; text-transform: uppercase; }
+.admin-user-status.is-blocked { color: #fca5a5; background: rgba(239, 68, 68, .12); }
+.admin-user-status.is-suspicious { color: #fde68a; background: rgba(245, 158, 11, .12); }
 .admin-pagination { margin-top: 12px; display: grid; grid-template-columns: auto minmax(0, 1fr) auto; align-items: center; gap: 8px; }
 .admin-pagination span { color: #94a3b8; text-align: center; font-size: 11px; }
 .admin-pagination button:disabled { opacity: .4; }
@@ -406,6 +409,8 @@ body.onix-admin-mode #root {
 .admin-user-history-list article time { display: block; margin-top: 7px; overflow-wrap: anywhere; color: #64748b; font-size: 9px; }
 .admin-user-history-empty { margin: 0; color: #64748b; font-size: 11px; }
 .admin-note-form { min-width: 0; margin-bottom: 10px; }
+.admin-user-reason-list { min-width: 0; margin: 0; padding-left: 18px; display: grid; gap: 6px; }
+.admin-user-reason-list li { overflow-wrap: anywhere; white-space: pre-wrap; color: #cbd5e1; font-size: 10px; line-height: 1.45; }
 
 .admin-withdrawal-list { display: grid; gap: 10px; }
 .admin-withdrawal-card { min-width: 0; padding: 15px; border: 1px solid rgba(148, 163, 184, .16); border-radius: 18px; background: rgba(11, 18, 34, .9); }
@@ -609,6 +614,13 @@ body.onix-admin-mode #root {
 .admin-settings-panel > header button,
 .admin-settings-export-grid button { min-height: 38px; padding: 0 11px; border: 1px solid rgba(34, 211, 238, .28); border-radius: 11px; color: #a5f3fc; background: rgba(8, 145, 178, .1); font-size: 10px; font-weight: 900; }
 .admin-settings-panel button:disabled { opacity: .45; }
+.admin-settings-config-form { min-width: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+.admin-settings-config-form label { min-width: 0; padding: 11px; overflow: hidden; border: 1px solid rgba(148, 163, 184, .13); border-radius: 13px; background: #0c1527; }
+.admin-settings-config-form span { display: block; overflow-wrap: anywhere; color: #94a3b8; font-size: 9px; line-height: 1.35; }
+.admin-settings-config-form input { width: 100%; min-width: 0; min-height: 38px; margin-top: 7px; padding: 0 9px; border: 1px solid rgba(148, 163, 184, .2); border-radius: 10px; color: #f8fafc; background: #111c31; outline: none; font: inherit; }
+.admin-settings-config-actions { min-width: 0; margin-top: 10px; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+.admin-settings-config-actions button { min-width: 0; min-height: 40px; padding: 0 10px; overflow-wrap: anywhere; border: 1px solid rgba(34, 211, 238, .28); border-radius: 11px; color: #a5f3fc; background: rgba(8, 145, 178, .1); font-size: 10px; font-weight: 900; }
+.admin-settings-dirty { margin: 8px 0 0; overflow-wrap: anywhere; color: #fde68a; font-size: 10px; }
 .admin-settings-panel h3 { margin: 16px 0 8px; color: #cbd5e1; font-size: 11px; }
 .admin-settings-runtime-warning,
 .admin-settings-diagnostic-note { margin: 10px 0 0; padding: 10px 11px; overflow-wrap: anywhere; border: 1px solid rgba(251, 191, 36, .18); border-radius: 12px; color: #fde68a; background: rgba(120, 53, 15, .13); font-size: 10px; line-height: 1.45; }
@@ -763,6 +775,7 @@ body.onix-admin-mode #root {
   .admin-transaction-types > div { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .admin-operations-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .admin-settings-value-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+  .admin-settings-config-form { grid-template-columns: repeat(4, minmax(0, 1fr)); }
   .admin-settings-diagnostic-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
   .admin-settings-overrides,
   .admin-settings-export-grid,
