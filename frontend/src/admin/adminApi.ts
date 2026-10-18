@@ -2,6 +2,7 @@ import axios from 'axios';
 import {
   createAdminUserSearchParams,
   createAdminBroadcastPayload,
+  createAdminAnalyticsParams,
   ADMIN_EXPORT_DEFINITIONS,
   createAdminFreezePayload,
   createAdminBalanceAdjustmentPayload,
@@ -19,6 +20,8 @@ import {
   type AdminExportDownload,
   type AdminVersionResponse,
   type AdminBroadcastResponse,
+  type AdminAnalyticsDashboardResponse,
+  type AdminAnalyticsFilters,
   type AdminSuspiciousUser,
   type AdminSuspiciousUsersResponse,
   type AdminUserProfile,
@@ -262,4 +265,16 @@ export function getAdminApiErrorDetail(error: unknown): string {
   if (!data || typeof data !== 'object') return typeof data === 'string' ? data : '';
   const message = 'message' in data ? data.message : 'error' in data ? data.error : '';
   return typeof message === 'string' ? message : '';
+}
+
+export async function loadAdminAnalyticsDashboard(
+  apiBaseUrl: string,
+  telegramId: string,
+  filters: AdminAnalyticsFilters
+): Promise<AdminAnalyticsDashboardResponse> {
+  const response = await axios.get<AdminAnalyticsDashboardResponse>(
+    `${apiBaseUrl}/admin-analytics-events`,
+    { params: createAdminAnalyticsParams(telegramId, filters) }
+  );
+  return response.data;
 }

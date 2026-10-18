@@ -655,3 +655,86 @@ export function canSendAdminBroadcast(
     && dryRunMessage === message
     && dryRunResult?.dryRun === true;
 }
+
+export type AdminAnalyticsEventName =
+  | 'landing'
+  | 'start'
+  | 'active'
+  | 'first_tap'
+  | 'first_task'
+  | 'promo_used'
+  | 'referral'
+  | 'withdrawal';
+
+export type AdminAnalyticsCount = {
+  event: string;
+  events: number;
+  users: number;
+};
+
+export type AdminAnalyticsCampaignCount = {
+  campaign: string;
+  events: number;
+  users: number;
+};
+
+export type AdminAnalyticsCampaign = {
+  campaign: string;
+  users: number;
+  active: number;
+  firstTap: number;
+  firstTask: number;
+  promoUsed: number;
+  referral: number;
+  withdrawal: number;
+};
+
+export type AdminAnalyticsDashboardResponse = {
+  period: { from: string; to: string };
+  totals: { events: number; users: number };
+  byEvent: AdminAnalyticsCount[];
+  byCampaign: AdminAnalyticsCampaignCount[];
+  funnel: Array<{ event: AdminAnalyticsEventName; events: number; users: number }>;
+  campaigns: AdminAnalyticsCampaign[];
+};
+
+export type AdminAnalyticsFilters = {
+  from: string;
+  to: string;
+  campaign: string;
+  source: string;
+  market: string;
+};
+
+export const EMPTY_ADMIN_ANALYTICS_FILTERS: AdminAnalyticsFilters = {
+  from: '',
+  to: '',
+  campaign: '',
+  source: '',
+  market: '',
+};
+
+export function createAdminAnalyticsParams(
+  telegramId: string,
+  filters: AdminAnalyticsFilters
+) {
+  const params: Record<string, string> = { telegramId, dashboard: '1' };
+  Object.entries(filters).forEach(([key, value]) => {
+    const normalized = value.trim();
+    if (normalized) params[key] = normalized;
+  });
+  return params;
+}
+
+export type AdminAnalyticsViewState = 'loading' | 'error' | 'empty' | 'ready';
+
+export function getAdminAnalyticsViewState(
+  loading: boolean,
+  error: boolean,
+  dashboard: AdminAnalyticsDashboardResponse | null
+): AdminAnalyticsViewState {
+  if (loading) return 'loading';
+  if (error) return 'error';
+  if (!dashboard || Number(dashboard.totals?.events || 0) === 0) return 'empty';
+  return 'ready';
+}
