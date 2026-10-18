@@ -13349,6 +13349,24 @@ function App() {
   }, []);
 
   useEffect(() => {
+    if (launchPanel !== 'about') return;
+
+    let active = true;
+
+    void axios.get(`${API_URL}/health`)
+      .then((response) => {
+        if (active) setBackendHealth(response.data);
+      })
+      .catch(() => {
+        if (active) setBackendHealth({ ok: false });
+      });
+
+    return () => {
+      active = false;
+    };
+  }, [launchPanel]);
+
+  useEffect(() => {
     const loadEconomyConfig = async () => {
       try {
         const response = await axios.get(`${API_URL}/config`);
