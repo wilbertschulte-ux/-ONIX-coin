@@ -109,6 +109,58 @@ test('confirmed balance and ban actions refresh the existing profile and expose 
   assert.match(usersSource, /addAdminUserNote/);
 });
 
+test('admin note waits for confirmation, submits once and refreshes the profile', async () => {
+  const lock = { current: false };
+  const noteText = '  exact note text  ';
+  let pendingAction = null;
+  let postCalls = 0;
+  let refreshCalls = 0;
+  let releasePost;
+  const postGate = new Promise((resolve) => { releasePost = resolve; });
+  const payloads = [];
+
+  const requestNoteSave = () => {
+    pendingAction = { kind: 'note', text: noteText };
+  };
+  const confirmNoteSave = async () => {
+    if (!pendingAction || !acquireAdminMutationLock(lock)) return false;
+    const action = pendingAction;
+    try {
+      postCalls += 1;
+      payloads.push(createAdminNotePayload('42', '100', action.text));
+      await postGate;
+      refreshCalls += 1;
+      pendingAction = null;
+      return true;
+    } finally {
+      releaseAdminMutationLock(lock);
+    }
+  };
+
+  requestNoteSave();
+  assert.deepEqual(pendingAction, { kind: 'note', text: noteText });
+  assert.equal(postCalls, 0);
+
+  const firstConfirm = confirmNoteSave();
+  const duplicateConfirm = confirmNoteSave();
+  await Promise.resolve();
+  assert.equal(postCalls, 1);
+  assert.equal(await duplicateConfirm, false);
+
+  releasePost();
+  assert.equal(await firstConfirm, true);
+  assert.equal(refreshCalls, 1);
+  assert.equal(pendingAction, null);
+  assert.deepEqual(payloads, [{ telegramId: '42', targetTelegramId: '100', text: noteText }]);
+
+  assert.match(usersSource, /setPendingAction\(\{ kind: 'note', text: noteDraft \}\)/);
+  assert.match(usersSource, /onClick=\{requestAdminNote\}/);
+  assert.match(usersSource, /pendingAction\?\.kind === 'note'/);
+  assert.match(usersSource, /addAdminUserNote\(apiBaseUrl, adminTelegramId, targetTelegramId, action\.text\)/);
+  assert.match(usersSource, /await refreshProfile\(targetTelegramId\)/);
+  assert.doesNotMatch(usersSource, /onClick=\{\(\) => void saveAdminNote\(\)\}/);
+});
+
 test('profile histories use mobile cards with wrapping and no horizontal scroller', () => {
   assert.match(usersSource, /selectedUser\.transactions/);
   assert.match(usersSource, /selectedUser\.withdrawalRequests/);

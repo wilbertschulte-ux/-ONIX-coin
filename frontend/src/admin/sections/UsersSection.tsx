@@ -9,6 +9,7 @@ type UsersSectionProps = { apiBaseUrl: string; adminTelegramId: string; language
 type PendingProfileAction =
   | { kind: 'balance'; amount: number; reason: string }
   | { kind: 'ban'; ban: boolean; reason: string }
+  | { kind: 'note'; text: string }
   | null;
 
 const formatInteger = (value: number | undefined, language: AppLanguage) => Math.trunc(Number(value || 0)).toLocaleString(getLanguageLocale(language));
@@ -117,6 +118,12 @@ export function UsersSection({ apiBaseUrl, adminTelegramId, language }: UsersSec
     setPendingAction({ kind: 'ban', ban, reason: ban ? banReason.trim() : '' });
   };
 
+  const requestAdminNote = () => {
+    if (!selectedUser || !noteDraft.trim()) return;
+    setNotice(null);
+    setPendingAction({ kind: 'note', text: noteDraft });
+  };
+
   const confirmProfileAction = async () => {
     if (!selectedUser || !pendingAction || !acquireAdminMutationLock(mutationRef)) return;
     const targetTelegramId = selectedUser.telegramId;
@@ -125,31 +132,18 @@ export function UsersSection({ apiBaseUrl, adminTelegramId, language }: UsersSec
     setNotice(null);
     try {
       if (action.kind === 'balance') await adjustAdminUserBalance(apiBaseUrl, adminTelegramId, targetTelegramId, action.amount, action.reason);
-      else await setAdminUserBan(apiBaseUrl, adminTelegramId, targetTelegramId, action.ban, action.reason);
+      else if (action.kind === 'ban') await setAdminUserBan(apiBaseUrl, adminTelegramId, targetTelegramId, action.ban, action.reason);
+      else await addAdminUserNote(apiBaseUrl, adminTelegramId, targetTelegramId, action.text);
       await refreshProfile(targetTelegramId);
-      if (action.kind === 'balance') { setBalanceAmount(''); setBalanceReason(''); } else setBanReason('');
+      if (action.kind === 'balance') { setBalanceAmount(''); setBalanceReason(''); }
+      else if (action.kind === 'ban') setBanReason('');
+      else setNoteDraft('');
       setPendingAction(null);
-      setNotice({ type: 'success', text: translateMutationNotice(action.kind === 'balance' ? 'balance' : action.ban ? 'ban' : 'unban', true) });
+      setNotice({ type: 'success', text: translateMutationNotice(action.kind === 'ban' ? action.ban ? 'ban' : 'unban' : action.kind, true) });
     } catch {
       setPendingAction(null);
-      setNotice({ type: 'error', text: translateMutationNotice(action.kind === 'balance' ? 'balance' : action.ban ? 'ban' : 'unban', false) });
+      setNotice({ type: 'error', text: translateMutationNotice(action.kind === 'ban' ? action.ban ? 'ban' : 'unban' : action.kind, false) });
     } finally {
-      releaseAdminMutationLock(mutationRef);
-      setMutating(false);
-    }
-  };
-
-  const saveAdminNote = async () => {
-    if (!selectedUser || !noteDraft.trim() || !acquireAdminMutationLock(mutationRef)) return;
-    const targetTelegramId = selectedUser.telegramId;
-    setMutating(true);
-    setNotice(null);
-    try {
-      await addAdminUserNote(apiBaseUrl, adminTelegramId, targetTelegramId, noteDraft);
-      await refreshProfile(targetTelegramId);
-      setNoteDraft('');
-      setNotice({ type: 'success', text: translateMutationNotice('note', true) });
-    } catch { setNotice({ type: 'error', text: translateMutationNotice('note', false) }); } finally {
       releaseAdminMutationLock(mutationRef);
       setMutating(false);
     }
@@ -226,13 +220,13 @@ export function UsersSection({ apiBaseUrl, adminTelegramId, language }: UsersSec
               : <p className="admin-user-history-empty">{t('admin.players.securityLogsEmpty')}</p>}
           </div></section>
 
-          <section className="admin-user-history-card"><h3>{t('admin.notes.title')}</h3><div className="admin-note-form"><textarea value={noteDraft} onChange={(event) => setNoteDraft(event.target.value)} placeholder={t('admin.notes.placeholder')} maxLength={500} /><button type="button" onClick={() => void saveAdminNote()} disabled={mutating || !noteDraft.trim()}>{t(mutating ? 'admin.notes.saving' : 'admin.notes.add')}</button></div><div className="admin-user-history-list">
+          <section className="admin-user-history-card"><h3>{t('admin.notes.title')}</h3><div className="admin-note-form"><textarea value={noteDraft} onChange={(event) => setNoteDraft(event.target.value)} placeholder={t('admin.notes.placeholder')} maxLength={500} /><button type="button" onClick={requestAdminNote} disabled={mutating || !noteDraft.trim()}>{t(mutating ? 'admin.notes.saving' : 'admin.notes.add')}</button></div><div className="admin-user-history-list">
             {(selectedUser.adminNotes || []).length ? selectedUser.adminNotes.map((note, index) => <article key={`${note.createdAt}-${index}`}><p>{note.text}</p><time>{formatDate(note.createdAt, language, true)} · ID: {note.adminTelegramId || '—'}</time></article>)
               : <p className="admin-user-history-empty">{t('admin.notes.empty')}</p>}
           </div></section>
 
           {selectedUser.telegramProfileUrl && <a className="admin-link-button" href={selectedUser.telegramProfileUrl} target="_blank" rel="noreferrer">{t('admin.players.openTelegram')}</a>}
-          <ConfirmAdminAction language={language} open={Boolean(pendingAction)} title={t(pendingAction?.kind === 'balance' ? 'admin.players.confirmBalanceTitle' : pendingAction?.ban ? 'admin.players.confirmBanTitle' : 'admin.players.confirmUnbanTitle')} description={pendingAction?.kind === 'balance' ? t('admin.players.confirmBalanceDescription', { amount: pendingAction.amount, name: selectedUser.username || selectedUser.telegramId }) : t('admin.players.confirmBanDescription', { name: selectedUser.username || selectedUser.telegramId })} confirmLabel={t(pendingAction?.kind === 'balance' ? 'admin.players.adjustBalance' : pendingAction?.ban ? 'admin.players.ban' : 'admin.players.unban')} busy={mutating} onCancel={() => setPendingAction(null)} onConfirm={() => void confirmProfileAction()} />
+          <ConfirmAdminAction language={language} open={Boolean(pendingAction)} title={t(pendingAction?.kind === 'balance' ? 'admin.players.confirmBalanceTitle' : pendingAction?.kind === 'note' ? 'admin.notes.confirmTitle' : pendingAction?.ban ? 'admin.players.confirmBanTitle' : 'admin.players.confirmUnbanTitle')} description={pendingAction?.kind === 'balance' ? t('admin.players.confirmBalanceDescription', { amount: pendingAction.amount, name: selectedUser.username || selectedUser.telegramId }) : pendingAction?.kind === 'note' ? t('admin.notes.confirmDescription', { name: selectedUser.username || selectedUser.telegramId }) : t('admin.players.confirmBanDescription', { name: selectedUser.username || selectedUser.telegramId })} confirmLabel={t(pendingAction?.kind === 'balance' ? 'admin.players.adjustBalance' : pendingAction?.kind === 'note' ? 'admin.notes.confirm' : pendingAction?.ban ? 'admin.players.ban' : 'admin.players.unban')} busy={mutating} onCancel={() => setPendingAction(null)} onConfirm={() => void confirmProfileAction()} />
         </article>
       ) : <AdminStateView icon="👤" title={t('admin.players.selectPrompt')} description={t('admin.players.selectPromptText')} />;
 
