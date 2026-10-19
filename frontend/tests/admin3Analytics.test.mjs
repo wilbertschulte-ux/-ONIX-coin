@@ -21,6 +21,16 @@ const dashboard = {
   byCampaign: [{ campaign: 'tg_de_01', events: 12, users: 5 }],
   funnel: [{ event: 'active', events: 7, users: 4 }],
   campaigns: [{ campaign: 'tg_de_01', users: 5, active: 4, firstTap: 3, firstTask: 2, promoUsed: 1, referral: 1, withdrawal: 1 }],
+  cohortFunnel: {
+    cohortUsers: 5,
+    attributionBasis: 'first_start',
+    eventOrderEnforced: false,
+    stages: [
+      { event: 'start', users: 5, conversionFromCohort: 100, conversionFromPrevious: 100 },
+      { event: 'first_tap', users: 3, conversionFromCohort: 60, conversionFromPrevious: 60 },
+    ],
+  },
+  retention: { cohortUsers: 5, d1Users: 3, d1Rate: 60, d7Users: 2, d7Rate: 40, timezone: 'UTC' },
 };
 
 test('analytics params preserve the existing dashboard contract and only include non-empty filters', () => {
@@ -49,6 +59,9 @@ test('dashboard response mapping keeps funnel, campaigns and internal values unc
   assert.equal(dashboard.funnel[0].event, 'active');
   assert.equal(dashboard.campaigns[0].campaign, 'tg_de_01');
   assert.equal(dashboard.campaigns[0].withdrawal, 1);
+  assert.equal(dashboard.cohortFunnel.stages[1].conversionFromCohort, 60);
+  assert.equal(dashboard.retention.d1Rate, 60);
+  assert.equal(dashboard.retention.d7Rate, 40);
 });
 
 test('Admin 3.0 calls only the existing analytics dashboard endpoint', () => {
@@ -67,6 +80,11 @@ test('all five existing filters and the complete legacy aggregates are rendered'
   assert.match(sectionSource, /dashboard\.totals\.users/);
   assert.match(sectionSource, /dashboard\.funnel\.map/);
   assert.match(sectionSource, /dashboard\.campaigns\.map/);
+  assert.match(sectionSource, /dashboard\.cohortFunnel\.stages\.map/);
+  assert.match(sectionSource, /stage\.conversionFromCohort/);
+  assert.match(sectionSource, /stage\.conversionFromPrevious/);
+  assert.match(sectionSource, /dashboard\.retention\.d1Rate/);
+  assert.match(sectionSource, /dashboard\.retention\.d7Rate/);
   for (const metric of ['active', 'firstTap', 'firstTask', 'promoUsed', 'referral', 'withdrawal']) {
     assert.match(sectionSource, new RegExp(`'${metric}'`));
   }
@@ -77,6 +95,10 @@ test('typed Analytics labels exist in German and Russian', () => {
   assert.equal(adminRussianMessages['admin.analytics.filters'], 'Фильтры');
   assert.equal(adminGermanMessages['admin.analytics.campaignComparison'], 'Kampagnenvergleich');
   assert.equal(adminRussianMessages['admin.analytics.campaignComparison'], 'Сравнение кампаний');
+  assert.equal(adminGermanMessages['admin.analytics.cohortFunnel'], 'Kohorten-Funnel');
+  assert.equal(adminRussianMessages['admin.analytics.cohortFunnel'], 'Когортная воронка');
+  assert.equal(adminGermanMessages['admin.analytics.retention'], 'D1 / D7 Retention');
+  assert.equal(adminRussianMessages['admin.analytics.retention'], 'Удержание D1 / D7');
 });
 
 test('Analytics is reachable and campaign cards avoid mobile horizontal scrolling', () => {
@@ -88,8 +110,10 @@ test('Analytics is reachable and campaign cards avoid mobile horizontal scrollin
   assert.doesNotMatch(cssSource, /\.admin-analytics[^}]*overflow-x:\s*auto/);
 });
 
-test('backend remains unchanged and existing dashboard tests define aggregation semantics', () => {
+test('existing analytics dashboard backend defines cohort and authorization semantics', () => {
   const backendTestSource = readFileSync(new URL('../../backend/backendnode-server/tests/analyticsDashboard.test.js', import.meta.url), 'utf8');
   assert.match(backendTestSource, /unique users for funnel and campaign comparison/);
+  assert.match(backendTestSource, /cohort funnel uses only start-cohort users/);
+  assert.match(backendTestSource, /D1 and D7 retention use the start cohort/);
   assert.match(backendTestSource, /dashboard rejects requests without admin authorization/);
 });

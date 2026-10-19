@@ -6,11 +6,14 @@ process.env.ADMIN_SECRET = 'analytics-dashboard-test-secret';
 
 const AnalyticsEvent = require('../models/AnalyticsEvent');
 const {
+  ANALYTICS_COHORT_EVENTS,
   ANALYTICS_FUNNEL_EVENTS,
   ANALYTICS_MAX_PERIOD_DAYS,
   buildAnalyticsDashboardMatch,
   buildAnalyticsDashboardPipeline,
+  formatCohortFunnel,
   formatAnalyticsDashboardResult,
+  formatRetention,
 } = require('../analyticsDashboard');
 const router = require('../routes/coinRoutes');
 
@@ -77,6 +80,89 @@ test('aggregation pipeline counts unique users for funnel and campaign compariso
     { $addToSet: { $cond: [{ $eq: ['$event', 'active'] }, '$telegramId', null] } }
   );
   assert.equal(facet.campaignComparison.at(-1).$limit, 100);
+  assert.deepEqual(facet.cohort[0], { $match: { event: 'start' } });
+  assert.equal(facet.cohort[3].$lookup.from, 'analytics_events');
+});
+
+test('cohort funnel uses only start-cohort users and reports both conversion rates', () => {
+  const funnel = formatCohortFunnel({
+    cohortUsers: 10,
+    firstTapUsers: 8,
+    firstTaskUsers: 4,
+    promoUsedUsers: 2,
+    referralUsers: 1,
+    withdrawalUsers: 1,
+  });
+
+  assert.equal(funnel.cohortUsers, 10);
+  assert.equal(funnel.attributionBasis, 'first_start');
+  assert.equal(funnel.eventOrderEnforced, false);
+  assert.deepEqual(funnel.stages.map((stage) => stage.event), ANALYTICS_COHORT_EVENTS);
+  assert.deepEqual(funnel.stages[0], {
+    event: 'start', users: 10, conversionFromCohort: 100, conversionFromPrevious: 100,
+  });
+  assert.deepEqual(funnel.stages[1], {
+    event: 'first_tap', users: 8, conversionFromCohort: 80, conversionFromPrevious: 80,
+  });
+  assert.deepEqual(funnel.stages[2], {
+    event: 'first_task', users: 4, conversionFromCohort: 40, conversionFromPrevious: 50,
+  });
+  assert.equal(funnel.stages[3].users, 2);
+  assert.equal(funnel.stages[4].users, 1);
+  assert.equal(funnel.stages[5].users, 1);
+});
+
+test('D1 and D7 retention use the start cohort as denominator', () => {
+  assert.deepEqual(formatRetention({ cohortUsers: 8, d1Users: 4, d7Users: 2 }), {
+    cohortUsers: 8,
+    d1Users: 4,
+    d1Rate: 50,
+    d7Users: 2,
+    d7Rate: 25,
+    timezone: 'UTC',
+  });
+});
+
+test('cohort facet uses exact UTC calendar-day boundaries for D1 and D7', () => {
+  const facet = buildAnalyticsDashboardPipeline({ occurredAt: { $gte: new Date(0), $lte: new Date() } })[1].$facet.cohort;
+  const retentionProjection = facet[5].$project;
+  const d1Date = retentionProjection.d1.$in[0].$dateToString.date.$add;
+  const d7Date = retentionProjection.d7.$in[0].$dateToString.date.$add;
+
+  assert.equal(retentionProjection.d1.$in[0].$dateToString.timezone, 'UTC');
+  assert.equal(retentionProjection.d7.$in[0].$dateToString.timezone, 'UTC');
+  assert.deepEqual(d1Date, ['$startAt', 24 * 60 * 60 * 1000]);
+  assert.deepEqual(d7Date, ['$startAt', 7 * 24 * 60 * 60 * 1000]);
+});
+
+test('repeated landing and later events without a start cannot enter the cohort', () => {
+  const facet = buildAnalyticsDashboardPipeline({
+    occurredAt: { $gte: new Date('2026-10-01'), $lte: new Date('2026-10-31') },
+    campaign: 'first_touch_campaign',
+    source: 'tg_de_01',
+    market: 'de',
+  })[1].$facet.cohort;
+
+  assert.deepEqual(facet[0], { $match: { event: 'start' } });
+  assert.deepEqual(facet[1], { $sort: { occurredAt: 1, _id: 1 } });
+  assert.equal(facet[2].$group.startAt.$first, '$occurredAt');
+  assert.ok(facet[3].$lookup.pipeline[0].$match.$expr.$and.some((condition) =>
+    condition.$eq?.[0] === '$telegramId' && condition.$eq?.[1] === '$$cohortTelegramId'
+  ));
+  assert.ok(facet[3].$lookup.pipeline[0].$match.$expr.$and.some((condition) =>
+    condition.$gte?.[0] === '$occurredAt' && condition.$gte?.[1] === '$$cohortStartAt'
+  ));
+});
+
+test('empty cohort has zero conversions and retention', () => {
+  const funnel = formatCohortFunnel({});
+  assert.equal(funnel.cohortUsers, 0);
+  assert.ok(funnel.stages.every((stage) => stage.users === 0
+    && stage.conversionFromCohort === 0
+    && stage.conversionFromPrevious === 0));
+  assert.deepEqual(formatRetention({}), {
+    cohortUsers: 0, d1Users: 0, d1Rate: 0, d7Users: 0, d7Rate: 0, timezone: 'UTC',
+  });
 });
 
 test('formatter returns the complete funnel with event and unique-user counts', () => {
@@ -90,6 +176,7 @@ test('formatter returns the complete funnel with event and unique-user counts', 
     ],
     byCampaign: [{ campaign: 'autumn_de', events: 5, users: 2 }],
     campaignComparison: [{ campaign: 'autumn_de', users: 2, active: 1 }],
+    cohort: [{ cohortUsers: 2, firstTapUsers: 1, d1Users: 1, d7Users: 0 }],
   }], from, to);
 
   assert.deepEqual(dashboard.funnel.map((item) => item.event), ANALYTICS_FUNNEL_EVENTS);
@@ -98,6 +185,8 @@ test('formatter returns the complete funnel with event and unique-user counts', 
   assert.deepEqual(dashboard.funnel[2], { event: 'active', events: 2, users: 1 });
   assert.equal(dashboard.totals.users, 2);
   assert.equal(dashboard.campaigns[0].campaign, 'autumn_de');
+  assert.equal(dashboard.cohortFunnel.stages[1].users, 1);
+  assert.equal(dashboard.retention.d1Rate, 50);
 });
 
 test('analytics dashboard rejects requests without admin authorization', async () => {
@@ -135,6 +224,10 @@ test('authorized dashboard request aggregates filtered data without returning ev
         campaign: 'autumn_de', users: 1, active: 1, firstTap: 0,
         firstTask: 0, promoUsed: 0, referral: 0, withdrawal: 0,
       }],
+      cohort: [{
+        cohortUsers: 1, firstTapUsers: 1, firstTaskUsers: 0, promoUsedUsers: 0,
+        referralUsers: 0, withdrawalUsers: 0, d1Users: 1, d7Users: 0,
+      }],
     }];
   };
 
@@ -155,6 +248,8 @@ test('authorized dashboard request aggregates filtered data without returning ev
     assert.equal(response.body.totals.users, 1);
     assert.equal(response.body.events, undefined);
     assert.equal(response.body.campaigns[0].active, 1);
+    assert.equal(response.body.cohortFunnel.cohortUsers, 1);
+    assert.equal(response.body.retention.d1Rate, 100);
   } finally {
     AnalyticsEvent.aggregate = originalAggregate;
   }

@@ -38,6 +38,7 @@ const campaignMetrics = [
 ] as const;
 
 const formatCount = (value: number, language: AppLanguage) => Number(value || 0).toLocaleString(getLanguageLocale(language), { maximumFractionDigits: 0 });
+const formatPercent = (value: number, language: AppLanguage) => `${Number(value || 0).toLocaleString(getLanguageLocale(language), { maximumFractionDigits: 2 })}%`;
 
 export function AnalyticsSection({ apiBaseUrl, adminTelegramId, language }: AnalyticsSectionProps) {
   const t = createTranslator(language);
@@ -105,6 +106,34 @@ export function AnalyticsSection({ apiBaseUrl, adminTelegramId, language }: Anal
             <header><div><span>{t('admin.analytics.uniqueUsers')}</span><h2 id="admin-analytics-funnel-title">{t('admin.analytics.funnel')}</h2></div></header>
             <div className="admin-analytics-funnel">
               {dashboard.funnel.map((item) => <article key={item.event}><div><strong>{t(eventLabelKeys[item.event])}</strong><small>{t('admin.analytics.eventCount', { count: formatCount(item.events, language) })}</small></div><b>{formatCount(item.users, language)}</b></article>)}
+            </div>
+          </section>
+
+          <section className="admin-analytics-panel" aria-labelledby="admin-analytics-cohort-title">
+            <header><div><span>{t('admin.analytics.startCohort', { count: formatCount(dashboard.cohortFunnel.cohortUsers, language) })}</span><h2 id="admin-analytics-cohort-title">{t('admin.analytics.cohortFunnel')}</h2></div></header>
+            <p className="admin-analytics-period-hint">{t('admin.analytics.cohortLimitation')}</p>
+            <div className="admin-analytics-funnel">
+              {dashboard.cohortFunnel.stages.map((stage) => (
+                <article key={stage.event}>
+                  <div>
+                    <strong>{t(eventLabelKeys[stage.event])}</strong>
+                    <small>{t('admin.analytics.cohortConversion', {
+                      cohort: formatPercent(stage.conversionFromCohort, language),
+                      previous: formatPercent(stage.conversionFromPrevious, language),
+                    })}</small>
+                  </div>
+                  <b>{formatCount(stage.users, language)}</b>
+                </article>
+              ))}
+            </div>
+          </section>
+
+          <section className="admin-analytics-panel" aria-labelledby="admin-analytics-retention-title">
+            <header><div><span>{t('admin.analytics.utcCalendar')}</span><h2 id="admin-analytics-retention-title">{t('admin.analytics.retention')}</h2></div></header>
+            <div className="admin-analytics-totals">
+              <article><span>{t('admin.analytics.cohortUsers')}</span><strong>{formatCount(dashboard.retention.cohortUsers, language)}</strong></article>
+              <article><span>{t('admin.analytics.d1')}</span><strong>{formatPercent(dashboard.retention.d1Rate, language)}</strong><small>{t('admin.analytics.retainedUsers', { count: formatCount(dashboard.retention.d1Users, language) })}</small></article>
+              <article><span>{t('admin.analytics.d7')}</span><strong>{formatPercent(dashboard.retention.d7Rate, language)}</strong><small>{t('admin.analytics.retainedUsers', { count: formatCount(dashboard.retention.d7Users, language) })}</small></article>
             </div>
           </section>
 

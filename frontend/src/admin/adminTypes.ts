@@ -762,6 +762,29 @@ export type AdminAnalyticsCampaign = {
   withdrawal: number;
 };
 
+export type AdminAnalyticsCohortStage = {
+  event: AdminAnalyticsEventName;
+  users: number;
+  conversionFromCohort: number;
+  conversionFromPrevious: number;
+};
+
+export type AdminAnalyticsCohortFunnel = {
+  cohortUsers: number;
+  attributionBasis: 'first_start';
+  eventOrderEnforced: false;
+  stages: AdminAnalyticsCohortStage[];
+};
+
+export type AdminAnalyticsRetention = {
+  cohortUsers: number;
+  d1Users: number;
+  d1Rate: number;
+  d7Users: number;
+  d7Rate: number;
+  timezone: 'UTC';
+};
+
 export type AdminAnalyticsDashboardResponse = {
   period: { from: string; to: string };
   totals: { events: number; users: number };
@@ -769,6 +792,8 @@ export type AdminAnalyticsDashboardResponse = {
   byCampaign: AdminAnalyticsCampaignCount[];
   funnel: Array<{ event: AdminAnalyticsEventName; events: number; users: number }>;
   campaigns: AdminAnalyticsCampaign[];
+  cohortFunnel: AdminAnalyticsCohortFunnel;
+  retention: AdminAnalyticsRetention;
 };
 
 export type AdminAnalyticsFilters = {
