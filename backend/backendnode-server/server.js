@@ -1,3 +1,5 @@
+require("dotenv").config();
+
 const { translate, getUserLanguage } = require('./i18n');
 const express = require("express");
 const mongoose = require("mongoose");
@@ -8,6 +10,10 @@ const {
   verifyTelegramWebhookSecret,
 } = require('./telegramWebhookSecurity');
 const {
+  createDeploymentIsolationConfig,
+  verifyStagingTelegramBotIdentity,
+} = require('./deploymentIsolation');
+const {
   buildMiniAppUrl,
   extractTelegramStartPayload,
   parseLaunchParam,
@@ -15,7 +21,6 @@ const {
 const { queueTrafficEvent } = require('./trafficEvents');
 const { trackAnalyticsEvent } = require('./analytics');
 const { storePendingTelegramLaunch } = require('./trustedTelegramLaunch');
-require("dotenv").config();
 
 const app = express();
 
@@ -139,20 +144,52 @@ app.post(
   }
 );
 
-mongoose.connect(process.env.MONGO_URI)
-.then(() => {
-    console.log("MongoDB connected");
-})
-.catch((err) => {
-    console.log(err);
-});
-
 app.get("/", (req, res) => {
     res.send("ONIX backend working");
 });
 
 const PORT = process.env.PORT || 5000;
 
-app.listen(PORT, () => {
+function listen() {
+  return app.listen(PORT, () => {
     console.log(`Server started on port ${PORT}`);
+  });
+}
+
+async function requestTelegramBotIdentity(botToken) {
+  return axios.get(`https://api.telegram.org/bot${botToken}/getMe`, {
+    timeout: 10_000,
+    maxRedirects: 0,
+  });
+}
+
+async function bootstrap() {
+  const isolation = createDeploymentIsolationConfig(process.env);
+
+  if (!isolation.staging) {
+    // Preserve the existing production startup behavior unless staging is
+    // explicitly selected through ONIX_DEPLOY_ENV.
+    mongoose.connect(process.env.MONGO_URI)
+      .then(() => {
+        console.log("MongoDB connected");
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+    listen();
+    return;
+  }
+
+  // This is the only Telegram API request allowed before the staging server
+  // starts listening. It verifies that BOT_TOKEN belongs to the configured
+  // staging bot, without logging or returning the token.
+  await verifyStagingTelegramBotIdentity(isolation, requestTelegramBotIdentity);
+  await mongoose.connect(isolation.mongoUri);
+  console.log("Staging isolation verified and MongoDB connected");
+  listen();
+}
+
+bootstrap().catch((error) => {
+  console.error('Server startup blocked by deployment isolation:', error?.code || 'STARTUP_FAILED');
+  process.exitCode = 1;
 });
