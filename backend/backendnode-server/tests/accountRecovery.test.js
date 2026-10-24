@@ -15,6 +15,7 @@ const {
   createPreviewToken,
   executeRecovery,
   performRecoveryTransaction,
+  validateFortuneWheelRecoverySafety,
   validateRecoverySafety,
   verifyPreviewToken,
   versionDescriptor,
@@ -244,6 +245,8 @@ function fakeMongoose(fixtures, options = {}) {
     weeklyscores: deepClone(fixtures.weeklyScores || []),
     weeklyprizes: [], traffic_events: [], pending_telegram_launches: [],
     analytics_events: [{ _id: 'analytics-new', telegramId: fixtures.newUser.telegramId, event: 'promo_used' }],
+    fortune_wheel_progress: deepClone(fixtures.fortuneWheelProgress || []),
+    physical_prize_requests: deepClone(fixtures.physicalPrizeRequests || []),
   };
   const operations = [];
   const failOperation = { value: options.failOperation || '' };
@@ -614,6 +617,116 @@ test('historical AnalyticsEvents are backed up and never rewritten', async () =>
   await executeRecovery({ mongoose: database, ...recoveryOptions(fixtures) });
   assert.equal(database.state.analytics_events[0].telegramId, '8815934880');
   assert.equal(database.operations.some((item) => item.startsWith('analytics_events.update')), false);
+});
+
+test('account recovery rebinds fortune wheel progress and physical prize requests without reissuing rewards', async () => {
+  const fixtures = nancyFixtures();
+  fixtures.fortuneWheelProgress = [{
+    _id: 'wheel-progress-old',
+    campaignKey: 'campaign-2026',
+    telegramId: fixtures.oldUser.telegramId,
+    completedSpins: 3,
+    claims: [
+      { spin: 1, rewardType: 'onix', amount: 50000, idempotencyKey: 'old-spin-1' },
+      { spin: 2, rewardType: 'onix', amount: 250000, idempotencyKey: 'old-spin-2' },
+      { spin: 3, rewardType: 'physical_prize', amount: 0, prizeCode: 'iphone_duo', idempotencyKey: 'old-spin-3' },
+    ],
+  }];
+  fixtures.physicalPrizeRequests = [{
+    _id: 'physical-request-old',
+    requestId: 'request-old',
+    idempotencyKey: 'wheel:old:color:1',
+    fortuneWheelProgressId: 'wheel-progress-old',
+    campaignKey: 'campaign-2026',
+    telegramId: fixtures.oldUser.telegramId,
+    prizeCode: 'iphone_duo',
+    color: 'gold',
+    status: 'pending',
+    statusHistory: [{ status: 'pending', changedAt: new Date(NOW), changedBy: 'player' }],
+  }];
+  const oldBalance = fixtures.oldUser.balance;
+  const newBalance = fixtures.newUser.balance;
+  const database = fakeMongoose(fixtures);
+
+  const outcome = await executeRecovery({ mongoose: database, ...recoveryOptions(fixtures) });
+
+  assert.equal(database.state.fortune_wheel_progress[0].telegramId, fixtures.newUser.telegramId);
+  assert.equal(database.state.fortune_wheel_progress[0].claims.length, 3);
+  assert.equal(database.state.physical_prize_requests[0].telegramId, fixtures.newUser.telegramId);
+  assert.equal(database.state.physical_prize_requests[0].fortuneWheelProgressId, 'wheel-progress-old');
+  assert.equal(database.state.physical_prize_requests[0].color, 'gold');
+  assert.equal(database.state.physical_prize_requests[0].idempotencyKey, 'wheel:old:color:1');
+  assert.equal(database.state.physical_prize_requests[0].statusHistory[0].status, 'pending');
+  assert.equal(database.state.users[0].balance, oldBalance + newBalance);
+  assert.deepEqual(outcome.result.fortuneWheelRecovery, {
+    progressRecordsRebound: 1,
+    physicalPrizeRequestsRebound: 1,
+    rewardsReissued: false,
+  });
+  assert.equal(database.state.account_recoveries[0].backup.linkedRecords.fortuneWheelProgress.length, 1);
+  assert.equal(database.state.account_recoveries[0].backup.linkedRecords.physicalPrizeRequests.length, 1);
+});
+
+test('account recovery blocks duplicate fortune wheel progress for the same campaign', async () => {
+  const fixtures = nancyFixtures();
+  fixtures.fortuneWheelProgress = [
+    { _id: 'wheel-old', campaignKey: 'campaign-2026', telegramId: fixtures.oldUser.telegramId },
+    { _id: 'wheel-new', campaignKey: 'campaign-2026', telegramId: fixtures.newUser.telegramId },
+  ];
+  const blockers = validateFortuneWheelRecoverySafety(
+    fixtures.oldUser.telegramId,
+    fixtures.newUser.telegramId,
+    fixtures.fortuneWheelProgress,
+    []
+  );
+  assert.deepEqual(blockers.map((item) => item.code), ['FORTUNE_WHEEL_PROGRESS_CONFLICT']);
+
+  const database = fakeMongoose(fixtures);
+  await assert.rejects(
+    executeRecovery({ mongoose: database, ...recoveryOptions(fixtures) }),
+    (error) => error instanceof AccountRecoveryError &&
+      error.details.some((item) => item.code === 'FORTUNE_WHEEL_PROGRESS_CONFLICT')
+  );
+  assert.equal(database.state.users.length, 2);
+  assert.equal(database.state.account_recoveries.length, 0);
+});
+
+test('account recovery blocks duplicate physical prize requests for the same campaign and prize', () => {
+  const fixtures = nancyFixtures();
+  const requests = [
+    { campaignKey: 'campaign-2026', prizeCode: 'iphone_duo', telegramId: fixtures.oldUser.telegramId },
+    { campaignKey: 'campaign-2026', prizeCode: 'iphone_duo', telegramId: fixtures.newUser.telegramId },
+  ];
+  const blockers = validateFortuneWheelRecoverySafety(
+    fixtures.oldUser.telegramId,
+    fixtures.newUser.telegramId,
+    [],
+    requests
+  );
+  assert.deepEqual(blockers.map((item) => item.code), ['PHYSICAL_PRIZE_REQUEST_CONFLICT']);
+});
+
+test('fortune wheel rebind failure rolls back users, progress, requests and audit', async () => {
+  const fixtures = nancyFixtures();
+  fixtures.fortuneWheelProgress = [{
+    _id: 'wheel-old', campaignKey: 'campaign-2026', telegramId: fixtures.oldUser.telegramId,
+  }];
+  fixtures.physicalPrizeRequests = [{
+    _id: 'request-old', campaignKey: 'campaign-2026', prizeCode: 'iphone_duo',
+    telegramId: fixtures.oldUser.telegramId,
+  }];
+  const database = fakeMongoose(fixtures, {
+    failOperation: 'physical_prize_requests.updateMany',
+  });
+
+  await assert.rejects(
+    executeRecovery({ mongoose: database, ...recoveryOptions(fixtures) }),
+    /simulated failure/
+  );
+  assert.equal(database.state.users.length, 2);
+  assert.equal(database.state.fortune_wheel_progress[0].telegramId, fixtures.oldUser.telegramId);
+  assert.equal(database.state.physical_prize_requests[0].telegramId, fixtures.oldUser.telegramId);
+  assert.equal(database.state.account_recoveries.length, 0);
 });
 
 test('NEW ObjectId and Telegram identity are preserved', () => {

@@ -9,11 +9,18 @@ import {
   createAdminBanPayload,
   createAdminNotePayload,
   createAdminEconomyConfigUpdatePayload,
+  createAdminPhysicalPrizeColorPayload,
+  createAdminPhysicalPrizeListParams,
+  createAdminPhysicalPrizeStatusPayload,
   createWeeklyPrizeAwardPayload,
   createWithdrawalReviewPayload,
   type AdminHealthResponse,
   type AdminEconomyDashboardResponse,
   type AdminFrontendErrorsResponse,
+  type AdminPhysicalPrizeFilters,
+  type AdminPhysicalPrizeListResponse,
+  type AdminPhysicalPrizeRequest,
+  type AdminPhysicalPrizeStatus,
   type AdminFreezeUserResponse,
   type AdminSecurityLogsResponse,
   type AdminOperationsResponse,
@@ -133,6 +140,57 @@ export async function loadAdminWeeklyPrizePreview(
     { params: { telegramId } }
   );
   return response.data;
+}
+
+export async function loadAdminPhysicalPrizes(
+  apiBaseUrl: string,
+  telegramId: string,
+  filters: AdminPhysicalPrizeFilters
+): Promise<AdminPhysicalPrizeListResponse> {
+  const response = await axios.get<AdminPhysicalPrizeListResponse>(`${apiBaseUrl}/admin-physical-prizes`, {
+    params: createAdminPhysicalPrizeListParams(telegramId, filters),
+  });
+  return response.data;
+}
+
+export async function updateAdminPhysicalPrizeStatus(
+  apiBaseUrl: string,
+  telegramId: string,
+  request: AdminPhysicalPrizeRequest,
+  nextStatus: AdminPhysicalPrizeStatus,
+  reason: string,
+  reasonCode: string,
+  resolution: string,
+  idempotencyKey: string
+): Promise<AdminPhysicalPrizeRequest> {
+  const response = await axios.post<{ request: AdminPhysicalPrizeRequest }>(
+    `${apiBaseUrl}/admin-physical-prizes/${encodeURIComponent(request.requestId)}/status`,
+    createAdminPhysicalPrizeStatusPayload(
+      telegramId,
+      request,
+      nextStatus,
+      reason,
+      reasonCode,
+      resolution,
+      idempotencyKey
+    )
+  );
+  return response.data.request;
+}
+
+export async function correctAdminPhysicalPrizeColor(
+  apiBaseUrl: string,
+  telegramId: string,
+  request: AdminPhysicalPrizeRequest,
+  color: string,
+  reason: string,
+  idempotencyKey: string
+): Promise<AdminPhysicalPrizeRequest> {
+  const response = await axios.post<{ request: AdminPhysicalPrizeRequest }>(
+    `${apiBaseUrl}/admin-physical-prizes/${encodeURIComponent(request.requestId)}/color`,
+    createAdminPhysicalPrizeColorPayload(telegramId, request, color, reason, idempotencyKey)
+  );
+  return response.data.request;
 }
 
 export async function awardAdminWeeklyPrizes(

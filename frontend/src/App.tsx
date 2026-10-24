@@ -6,10 +6,16 @@ import WebApp from '@twa-dev/sdk';
 import axios from 'axios';
 import { getTeamMissionText, formatTeamResetTime, teamActionError } from './i18n/teams';
 import { createTranslator, getLanguageLocale, type AppLanguage, type MessageKey } from './i18n';
+import {
+  FIRST_TAP_ONBOARDING_STORAGE_KEY,
+  markFirstTapOnboardingComplete,
+  shouldShowFirstTapCoachmark,
+} from './firstTapOnboarding';
 import { germanMessages } from './i18n/messages';
 import { getMissionText, getWeeklyAchievementDescription, getMissionClaimErrorKey } from './i18n/missions';
 import { getAchievementText, getBadgeLabel, getProfileTitle, getRankName } from './i18n/entities';
 import { AdminShell } from './admin/AdminShell';
+import { FortuneWheelSection } from './fortuneWheel/FortuneWheelSection';
 import onixLogoCrystal from './assets/onix-logo-crystal.webp';
 import onixBoostTapStrengthIcon from './assets/onix-boost-icons/boost-tap-strength.png';
 import onixBoostCoinMultiplierIcon from './assets/onix-boost-icons/boost-coin-multiplier.png';
@@ -12537,6 +12543,7 @@ function App() {
   const [level, setLevel] = useState(1);
   const [totalEarned, setTotalEarned] = useState(0);
   const [activeTab, setActiveTab] = useState<Tab>('home');
+  const [fortuneWheelOpen, setFortuneWheelOpen] = useState(false);
   const [dropRunning, setDropRunning] = useState(false);
   const [dropSeconds, setDropSeconds] = useState(30);
   const [dropScore, setDropScore] = useState(0);
@@ -12851,6 +12858,7 @@ function App() {
   }, [activeTab]);
   const [boostSubTab, setBoostSubTab] = useState<BoostSubTab>('tapping');
   const [isAppLoading, setIsAppLoading] = useState(true);
+  const [firstTapCoachmarkVisible, setFirstTapCoachmarkVisible] = useState(false);
   const [tutorialVisible, setTutorialVisible] = useState(false);
   const [tutorialStep, setTutorialStep] = useState(0);
   const [isTapped, setIsTapped] = useState(false);
@@ -13148,14 +13156,14 @@ function App() {
         setRechargeLevel(user.rechargeLevel || 1);
       applyUserStats(user);
         applyUserStats(user);
+
+        if (shouldShowFirstTapCoachmark(localStorage.getItem(FIRST_TAP_ONBOARDING_STORAGE_KEY))) {
+          setFirstTapCoachmarkVisible(true);
+        }
       } catch (error) {
         console.log('Fehler beim Laden des Spielers:', error);
       } finally {
         setIsAppLoading(false);
-
-        if (!localStorage.getItem('onixTutorialDone')) {
-          setTutorialVisible(true);
-        }
       }
     };
 
@@ -13464,6 +13472,11 @@ function App() {
       try {
         WebApp.HapticFeedback?.impactOccurred('medium');
       } catch {}
+
+      if (firstTapCoachmarkVisible) {
+        markFirstTapOnboardingComplete(localStorage);
+        setFirstTapCoachmarkVisible(false);
+      }
     } catch (error: any) {
       if (error?.response?.status === 429) {
         console.log('Zu viele Taps');
@@ -14826,8 +14839,15 @@ function App() {
   };
 
   const closeTutorial = () => {
-    localStorage.setItem('onixTutorialDone', 'true');
+    markFirstTapOnboardingComplete(localStorage);
+    setFirstTapCoachmarkVisible(false);
     setTutorialVisible(false);
+  };
+
+  const openTutorialGuide = () => {
+    setFirstTapCoachmarkVisible(false);
+    setTutorialStep(0);
+    setTutorialVisible(true);
   };
 
   const achievementCategories: Array<{
@@ -15030,6 +15050,25 @@ function App() {
         onExit={() => {
           setAdminMode(false);
           setProfilePanel('overview');
+        }}
+      />
+    );
+  }
+
+  if (fortuneWheelOpen) {
+    return (
+      <FortuneWheelSection
+        apiBaseUrl={API_URL}
+        language={appLanguage}
+        onBack={() => setFortuneWheelOpen(false)}
+        onConfirmedUser={(user) => {
+          if (Number.isFinite(Number(user.balance))) setBalance(Number(user.balance));
+          if (Number.isFinite(Number(user.totalEarned))) setTotalEarned(Number(user.totalEarned));
+          if (Number.isFinite(Number(user.weeklyEarned))) setWeeklyEarned(Number(user.weeklyEarned));
+          if (Number.isFinite(Number(user.energy))) setEnergy(Number(user.energy));
+          if (Number.isFinite(Number(user.maxEnergy))) setMaxEnergy(Number(user.maxEnergy));
+          if (Number.isFinite(Number(user.level))) setLevel(Number(user.level));
+          applyUserStats(user);
         }}
       />
     );
@@ -15426,6 +15465,38 @@ function App() {
 
           <button
             type="button"
+            className="fortune-wheel-promo"
+            onClick={() => setFortuneWheelOpen(true)}
+          >
+            <span className="fortune-wheel-promo-icon" aria-hidden="true">✦</span>
+            <span className="fortune-wheel-promo-copy">
+              <strong>{t('fortune.promoTitle')}</strong>
+              <small>{t('fortune.promoText')}</small>
+            </span>
+            <span className="fortune-wheel-promo-action">{t('fortune.promoCta')} <b aria-hidden="true">›</b></span>
+          </button>
+
+          {firstTapCoachmarkVisible && (
+            <div
+              data-onix-first-tap-coachmark="true"
+              className="relative z-20 mt-3 w-full max-w-sm rounded-2xl border border-cyan-300/35 bg-[#080b18]/90 px-12 py-3 text-center shadow-[0_0_24px_rgba(34,211,238,0.18)]"
+            >
+              <p className="m-0 text-sm font-bold leading-5 text-white">
+                {t('tutorial.tap.coachmark')}
+              </p>
+              <button
+                type="button"
+                aria-label={t('tutorial.skip')}
+                onClick={closeTutorial}
+                className="absolute right-2 top-1/2 h-9 w-9 -translate-y-1/2 rounded-full border border-white/10 bg-white/5 text-lg text-gray-300 active:scale-95"
+              >
+                ×
+              </button>
+            </div>
+          )}
+
+          <button
+            type="button"
             onClick={handleTap}
             className={`onix-ref-v5-coin ${isTapped ? 'onix-ref-v5-coin-tapped' : ''}`}
           >
@@ -15700,6 +15771,19 @@ function App() {
                     <b className="onix-launch-action-arrow-v3">›</b>
                   </button>
                 ))}
+                <button
+                  type="button"
+                  className="onix-launch-action-card-v3"
+                  onClick={openTutorialGuide}
+                >
+                  <span className="onix-launch-action-icon-v3">📖</span>
+                  <span className="onix-launch-action-text-v3">
+                    <strong>{t('tutorial.tap.title')}</strong>
+                    <em>{t('tutorial.tap.text')}</em>
+                  </span>
+                  <span className="onix-launch-action-badge-v3">ONIX</span>
+                  <b className="onix-launch-action-arrow-v3">›</b>
+                </button>
               </div>
             ) : (
               <div className="onix-launch-detail-page-v3">

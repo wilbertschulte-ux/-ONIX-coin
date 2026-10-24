@@ -16,6 +16,7 @@ import { EconomySection } from './sections/EconomySection';
 import { WeeklyPrizesSection } from './sections/WeeklyPrizesSection';
 import { UsersSection } from './sections/UsersSection';
 import { WithdrawalsSection } from './sections/WithdrawalsSection';
+import { PhysicalPrizesSection } from './sections/PhysicalPrizesSection';
 import './admin.css';
 
 type AdminShellProps = {
@@ -64,6 +65,10 @@ export function AdminShell({ apiBaseUrl, adminTelegramId, language, onExit }: Ad
 
     if (activeSection === 'prizes') {
       return <WeeklyPrizesSection apiBaseUrl={apiBaseUrl} adminTelegramId={adminTelegramId} language={language} />;
+    }
+
+    if (activeSection === 'physical-prizes') {
+      return <PhysicalPrizesSection apiBaseUrl={apiBaseUrl} adminTelegramId={adminTelegramId} language={language} />;
     }
 
     if (activeSection === 'security') {

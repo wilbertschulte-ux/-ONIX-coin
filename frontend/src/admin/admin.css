@@ -439,6 +439,57 @@ body.onix-admin-mode #root {
 .admin-action-notice.is-success { border: 1px solid rgba(52, 211, 153, .25); color: #a7f3d0; background: rgba(6, 95, 70, .16); }
 .admin-action-notice.is-error { border: 1px solid rgba(248, 113, 113, .25); color: #fecaca; background: rgba(127, 29, 29, .16); }
 
+.admin-physical-prizes-section { min-width: 0; }
+.admin-physical-prize-filters { display: grid; grid-template-columns: minmax(220px, 1.4fr) repeat(2, minmax(150px, .7fr)) auto; gap: 10px; margin-bottom: 14px; padding: 14px; border: 1px solid rgba(148, 163, 184, .14); border-radius: 18px; background: rgba(15, 23, 42, .62); }
+.admin-physical-prize-filters label, .admin-physical-prize-editor label { min-width: 0; display: grid; gap: 6px; color: #94a3b8; font-size: 11px; font-weight: 800; }
+.admin-physical-prize-filters input, .admin-physical-prize-filters select, .admin-physical-prize-editor select, .admin-physical-prize-editor textarea { width: 100%; min-width: 0; box-sizing: border-box; border: 1px solid rgba(148, 163, 184, .22); border-radius: 12px; padding: 10px 11px; color: #f8fafc; background: rgba(2, 6, 23, .72); }
+.admin-physical-prize-filters > button { align-self: end; min-height: 40px; padding: 0 15px; border: 1px solid rgba(56, 189, 248, .3); border-radius: 12px; color: #bae6fd; background: rgba(14, 116, 144, .18); font-weight: 900; }
+.admin-physical-prize-list { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+.admin-physical-prize-card { min-width: 0; padding: 15px; border: 1px solid rgba(148, 163, 184, .15); border-radius: 19px; background: linear-gradient(145deg, rgba(15, 23, 42, .92), rgba(8, 16, 32, .9)); box-shadow: 0 12px 30px rgba(0, 0, 0, .15); }
+.admin-physical-prize-card > header { display: flex; align-items: flex-start; justify-content: space-between; gap: 10px; }
+.admin-physical-prize-card > header div { min-width: 0; }
+.admin-physical-prize-card > header strong, .admin-physical-prize-card > header small { display: block; overflow-wrap: anywhere; }
+.admin-physical-prize-card > header small { margin-top: 4px; color: #64748b; font-size: 10px; }
+.admin-physical-prize-card > header > span { flex: 0 0 auto; padding: 5px 8px; border-radius: 999px; border: 1px solid rgba(56, 189, 248, .25); color: #bae6fd; background: rgba(14, 116, 144, .14); font-size: 10px; font-weight: 900; }
+.admin-physical-prize-card > header > span.is-delivered { border-color: rgba(52, 211, 153, .3); color: #a7f3d0; background: rgba(6, 95, 70, .18); }
+.admin-physical-prize-card > header > span.is-cancelled { border-color: rgba(248, 113, 113, .3); color: #fecaca; background: rgba(127, 29, 29, .18); }
+.admin-physical-prize-facts { margin: 14px 0; display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.admin-physical-prize-facts div { min-width: 0; padding: 9px; border-radius: 12px; background: rgba(2, 6, 23, .45); }
+.admin-physical-prize-facts dt { color: #64748b; font-size: 10px; }
+.admin-physical-prize-facts dd { margin: 3px 0 0; color: #e2e8f0; font-size: 12px; overflow-wrap: anywhere; }
+.admin-physical-prize-history { margin-top: 10px; border-top: 1px solid rgba(148, 163, 184, .12); padding-top: 10px; }
+.admin-physical-prize-history summary { color: #93c5fd; cursor: pointer; font-size: 12px; font-weight: 800; }
+.admin-physical-prize-history > div { display: grid; gap: 8px; margin-top: 10px; }
+.admin-physical-prize-history article { min-width: 0; padding: 10px; border-left: 2px solid rgba(56, 189, 248, .35); border-radius: 0 10px 10px 0; background: rgba(2, 6, 23, .45); }
+.admin-physical-prize-history article strong, .admin-physical-prize-history article time, .admin-physical-prize-history article small { display: block; overflow-wrap: anywhere; }
+.admin-physical-prize-history article time, .admin-physical-prize-history article small { color: #64748b; font-size: 10px; }
+.admin-physical-prize-history article p { margin: 5px 0 0; color: #cbd5e1; font-size: 11px; overflow-wrap: anywhere; white-space: pre-wrap; }
+.admin-physical-prize-actions { display: flex; flex-wrap: wrap; gap: 7px; margin-top: 12px; }
+.admin-physical-prize-actions button { min-height: 36px; padding: 7px 10px; border: 1px solid rgba(56, 189, 248, .25); border-radius: 11px; color: #bae6fd; background: rgba(14, 116, 144, .13); font-size: 11px; font-weight: 800; }
+.admin-physical-prize-editor { display: grid; gap: 10px; margin-top: 12px; padding: 12px; border: 1px solid rgba(250, 204, 21, .24); border-radius: 14px; background: rgba(120, 53, 15, .09); }
+.admin-physical-prize-editor textarea { min-height: 76px; resize: vertical; overflow-wrap: anywhere; }
+.admin-physical-prize-editor > div { display: flex; justify-content: flex-end; gap: 8px; }
+.admin-physical-prize-editor > div button { min-height: 38px; padding: 0 12px; border: 1px solid rgba(148, 163, 184, .2); border-radius: 11px; color: white; background: #172033; font-weight: 800; }
+.admin-physical-prize-editor > div button:last-child { border-color: rgba(250, 204, 21, .35); color: #fef08a; background: rgba(161, 98, 7, .16); }
+.admin-physical-prize-pagination { display: flex; align-items: center; justify-content: center; gap: 12px; margin-top: 16px; }
+.admin-physical-prize-pagination button { min-height: 38px; padding: 0 12px; border: 1px solid rgba(148, 163, 184, .2); border-radius: 11px; color: #e2e8f0; background: #172033; }
+.admin-physical-prize-pagination span { color: #94a3b8; font-size: 12px; }
+
+@media (max-width: 820px) {
+  .admin-physical-prize-filters { grid-template-columns: 1fr 1fr; }
+  .admin-physical-prize-filters label:first-child { grid-column: 1 / -1; }
+  .admin-physical-prize-list { grid-template-columns: 1fr; }
+}
+
+@media (max-width: 480px) {
+  .admin-physical-prize-filters { grid-template-columns: 1fr; padding: 11px; }
+  .admin-physical-prize-filters label:first-child { grid-column: auto; }
+  .admin-physical-prize-facts { grid-template-columns: 1fr; }
+  .admin-physical-prize-card { padding: 12px; }
+  .admin-physical-prize-card > header { align-items: flex-start; }
+  .admin-physical-prize-editor > div { display: grid; grid-template-columns: 1fr 1fr; }
+}
+
 .admin-prize-status { margin-bottom: 12px; padding: 13px 14px; display: flex; flex-direction: column; gap: 3px; border-radius: 14px; }
 .admin-prize-status.is-awarded { border: 1px solid rgba(52, 211, 153, .28); color: #a7f3d0; background: rgba(6, 95, 70, .16); }
 .admin-prize-status strong { font-size: 13px; }

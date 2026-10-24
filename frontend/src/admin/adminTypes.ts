@@ -5,6 +5,7 @@ export type AdminSectionId =
   | 'users'
   | 'withdrawals'
   | 'prizes'
+  | 'physical-prizes'
   | 'economy'
   | 'analytics'
   | 'security'
@@ -31,6 +32,119 @@ export type AdminHealthResponse = {
 };
 
 export type AdminCollectionState = 'loading' | 'error' | 'empty' | 'ready';
+
+export type AdminPhysicalPrizeStatus =
+  | 'pending'
+  | 'approved'
+  | 'preparing'
+  | 'shipped'
+  | 'delivered'
+  | 'cancelled';
+
+export type AdminPhysicalPrizeHistoryEntry = {
+  action: 'created' | 'status_changed' | 'color_corrected';
+  status: AdminPhysicalPrizeStatus;
+  previousStatus: string;
+  color: string;
+  previousColor: string;
+  reasonCode: string;
+  reason: string;
+  resolution: string;
+  changedAt: string | null;
+  changedBy: string;
+  operationKey: string;
+};
+
+export type AdminPhysicalPrizeRequest = {
+  requestId: string;
+  campaignKey: string;
+  telegramId: string;
+  telegramUsername: string;
+  prizeCode: string;
+  color: string;
+  status: AdminPhysicalPrizeStatus;
+  createdAt: string | null;
+  updatedAt: string | null;
+  reviewedAt: string | null;
+  reviewedBy: string;
+  version: number;
+  statusHistory: AdminPhysicalPrizeHistoryEntry[];
+  allowedTransitions: AdminPhysicalPrizeStatus[];
+};
+
+export type AdminPhysicalPrizeFilters = {
+  status: '' | AdminPhysicalPrizeStatus;
+  search: string;
+  sort: 'newest' | 'oldest';
+  page: number;
+};
+
+export type AdminPhysicalPrizeListResponse = {
+  requests: AdminPhysicalPrizeRequest[];
+  pagination: {
+    page: number;
+    limit: number;
+    total: number;
+    totalPages: number;
+    hasNextPage: boolean;
+    hasPrevPage: boolean;
+  };
+  filters: {
+    statuses: AdminPhysicalPrizeStatus[];
+    availableColors: string[];
+    cancellationReasons: string[];
+  };
+};
+
+export function createAdminPhysicalPrizeListParams(
+  telegramId: string,
+  filters: AdminPhysicalPrizeFilters
+) {
+  return {
+    telegramId,
+    status: filters.status || undefined,
+    search: filters.search.trim() || undefined,
+    sort: filters.sort,
+    page: Math.max(1, Math.trunc(filters.page || 1)),
+    limit: 20,
+  };
+}
+
+export function createAdminPhysicalPrizeStatusPayload(
+  telegramId: string,
+  request: AdminPhysicalPrizeRequest,
+  nextStatus: AdminPhysicalPrizeStatus,
+  reason: string,
+  reasonCode: string,
+  resolution: string,
+  idempotencyKey: string
+) {
+  return {
+    telegramId,
+    nextStatus,
+    reason,
+    reasonCode,
+    resolution,
+    expectedVersion: request.version,
+    idempotencyKey,
+  };
+}
+
+export function createAdminPhysicalPrizeColorPayload(
+  telegramId: string,
+  request: AdminPhysicalPrizeRequest,
+  color: string,
+  reason: string,
+  idempotencyKey: string
+) {
+  return {
+    telegramId,
+    color,
+    reason,
+    expectedVersion: request.version,
+    idempotencyKey,
+  };
+}
 
 export function getAdminCollectionState(loading: boolean, error: boolean, count: number): AdminCollectionState {
   if (loading) return 'loading';

@@ -657,6 +657,56 @@ function buildRecoveryPreview(oldUser, newUser, options = {}) {
   };
 }
 
+function validateFortuneWheelRecoverySafety(
+  oldTelegramId,
+  newTelegramId,
+  fortuneWheelProgress = [],
+  physicalPrizeRequests = []
+) {
+  const oldId = String(oldTelegramId || '');
+  const newId = String(newTelegramId || '');
+  const blockers = [];
+  const oldProgressCampaigns = new Set(
+    fortuneWheelProgress
+      .filter((item) => String(item.telegramId || '') === oldId)
+      .map((item) => String(item.campaignKey || ''))
+      .filter(Boolean)
+  );
+  const newProgressCampaigns = new Set(
+    fortuneWheelProgress
+      .filter((item) => String(item.telegramId || '') === newId)
+      .map((item) => String(item.campaignKey || ''))
+      .filter(Boolean)
+  );
+  for (const campaignKey of oldProgressCampaigns) {
+    if (newProgressCampaigns.has(campaignKey)) {
+      blockers.push({
+        code: 'FORTUNE_WHEEL_PROGRESS_CONFLICT',
+        message: `Both accounts have fortune wheel progress for campaign ${campaignKey}`,
+      });
+    }
+  }
+
+  const requestKey = (item) => `${String(item.campaignKey || '')}:${String(item.prizeCode || '')}`;
+  const newRequestKeys = new Set(
+    physicalPrizeRequests
+      .filter((item) => String(item.telegramId || '') === newId)
+      .map(requestKey)
+  );
+  for (const request of physicalPrizeRequests) {
+    if (
+      String(request.telegramId || '') === oldId &&
+      newRequestKeys.has(requestKey(request))
+    ) {
+      blockers.push({
+        code: 'PHYSICAL_PRIZE_REQUEST_CONFLICT',
+        message: `Both accounts have a physical prize request for ${requestKey(request)}`,
+      });
+    }
+  }
+  return blockers;
+}
+
 function confirmationPhrase(oldTelegramId, newTelegramId) {
   return `RECOVER ${oldTelegramId} INTO ${newTelegramId}`;
 }
@@ -733,7 +783,16 @@ function assertVersion(user, expected, label) {
 async function loadLinkedRecords(connection, oldTelegramId, newTelegramId, session) {
   const ids = [oldTelegramId, newTelegramId];
   const options = { session };
-  const [weeklyScores, weeklyPrizes, trafficEvents, analyticsEvents, pendingLaunches, incomingReferrals] =
+  const [
+    weeklyScores,
+    weeklyPrizes,
+    trafficEvents,
+    analyticsEvents,
+    pendingLaunches,
+    incomingReferrals,
+    fortuneWheelProgress,
+    physicalPrizeRequests,
+  ] =
     await Promise.all([
       connection.collection('weeklyscores').find({ telegramId: { $in: ids } }, options).toArray(),
       connection.collection('weeklyprizes').find({ 'winners.telegramId': { $in: ids } }, options).toArray(),
@@ -744,8 +803,25 @@ async function loadLinkedRecords(connection, oldTelegramId, newTelegramId, sessi
         { referredBy: { $in: ids } },
         { ...options, projection: { _id: 1, telegramId: 1, referredBy: 1, __v: 1, updatedAt: 1 } }
       ).toArray(),
+      connection.collection('fortune_wheel_progress').find(
+        { telegramId: { $in: ids } },
+        options
+      ).toArray(),
+      connection.collection('physical_prize_requests').find(
+        { telegramId: { $in: ids } },
+        options
+      ).toArray(),
     ]);
-  return { weeklyScores, weeklyPrizes, trafficEvents, analyticsEvents, pendingLaunches, incomingReferrals };
+  return {
+    weeklyScores,
+    weeklyPrizes,
+    trafficEvents,
+    analyticsEvents,
+    pendingLaunches,
+    incomingReferrals,
+    fortuneWheelProgress,
+    physicalPrizeRequests,
+  };
 }
 
 function estimateBackupBytes(value) {
@@ -816,6 +892,20 @@ async function performRecoveryTransaction({
       referralBlockers
     );
   }
+  const fortuneWheelBlockers = validateFortuneWheelRecoverySafety(
+    oldTelegramId,
+    newTelegramId,
+    linkedRecords.fortuneWheelProgress,
+    linkedRecords.physicalPrizeRequests
+  );
+  if (fortuneWheelBlockers.length) {
+    throw new AccountRecoveryError(
+      'RECOVERY_BLOCKED',
+      'Account recovery safety checks failed',
+      409,
+      fortuneWheelBlockers
+    );
+  }
   const merged = buildMergedUser(oldUser, newUser, { now });
   const weeklyScorePlan = buildRecoveryWeeklyScorePlan(
     oldUser,
@@ -854,6 +944,21 @@ async function performRecoveryTransaction({
     weeklyScorePlan,
     session
   );
+
+  const fortuneWheelProgressUpdate = await connection
+    .collection('fortune_wheel_progress')
+    .updateMany(
+      { telegramId: oldTelegramId },
+      { $set: { telegramId: newTelegramId, updatedAt: new Date(now) } },
+      { session }
+    );
+  const physicalPrizeRequestUpdate = await connection
+    .collection('physical_prize_requests')
+    .updateMany(
+      { telegramId: oldTelegramId },
+      { $set: { telegramId: newTelegramId, updatedAt: new Date(now) } },
+      { session }
+    );
 
   await users.updateMany(
     { referredBy: oldTelegramId },
@@ -895,6 +1000,11 @@ async function performRecoveryTransaction({
       ),
     analyticsEventsRewritten: false,
     weeklyScoreRecovery,
+    fortuneWheelRecovery: {
+      progressRecordsRebound: Number(fortuneWheelProgressUpdate.modifiedCount || 0),
+      physicalPrizeRequestsRebound: Number(physicalPrizeRequestUpdate.modifiedCount || 0),
+      rewardsReissued: false,
+    },
   };
   const completedRecovery = await recoveries.updateOne(
     { recoveryId, status: 'processing' },
@@ -947,6 +1057,7 @@ module.exports = {
   hashToken,
   performRecoveryTransaction,
   validateRecoverySafety,
+  validateFortuneWheelRecoverySafety,
   validateIncomingReferralSafety,
   validateReferralGraphSafety,
   verifyPreviewToken,
