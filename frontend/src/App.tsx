@@ -16,6 +16,7 @@ import { getMissionText, getWeeklyAchievementDescription, getMissionClaimErrorKe
 import { getAchievementText, getBadgeLabel, getProfileTitle, getRankName } from './i18n/entities';
 import { AdminShell } from './admin/AdminShell';
 import { FortuneWheelSection } from './fortuneWheel/FortuneWheelSection';
+import { resolveApiBaseUrl } from './apiConfig';
 import onixLogoCrystal from './assets/onix-logo-crystal.webp';
 import onixBoostTapStrengthIcon from './assets/onix-boost-icons/boost-tap-strength.png';
 import onixBoostCoinMultiplierIcon from './assets/onix-boost-icons/boost-coin-multiplier.png';
@@ -11441,7 +11442,12 @@ type AppNotification = {
 };
 
 
-const API_URL = 'https://onix-coin.onrender.com/api/coins';
+const API_URL = resolveApiBaseUrl({
+  configuredUrl: import.meta.env.VITE_API_URL,
+  deployEnvironment: import.meta.env.VITE_DEPLOY_ENV,
+  hostingEnvironment: __ONIX_HOSTING_ENV__,
+  productionBuild: import.meta.env.PROD,
+});
 const DAY_MS = 24 * 60 * 60 * 1000;
 
 function getOnixLaunchParam() {
