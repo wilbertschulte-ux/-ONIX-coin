@@ -223,10 +223,22 @@ test('server verifies staging isolation before Telegram getMe, MongoDB and liste
   const configIndex = source.indexOf('createDeploymentIsolationConfig(process.env)');
   const getMeIndex = source.indexOf('verifyStagingTelegramBotIdentity(isolation');
   const stagingMongoIndex = source.indexOf('mongoose.connect(isolation.mongoUri)');
-  const stagingListenIndex = source.indexOf('\n  listen();', stagingMongoIndex);
+  const stagingListenIndex = source.indexOf('\n  await listen();', stagingMongoIndex);
 
   assert.ok(configIndex >= 0);
   assert.ok(getMeIndex > configIndex);
   assert.ok(stagingMongoIndex > getMeIndex);
   assert.ok(stagingListenIndex > stagingMongoIndex);
+});
+
+test('server reports only a safe startup stage and classified error code', () => {
+  const source = fs.readFileSync(path.join(__dirname, '..', 'server.js'), 'utf8');
+
+  assert.match(source, /startupStage = 'deployment-config'/);
+  assert.match(source, /startupStage = 'telegram-bot-verification'/);
+  assert.match(source, /startupStage = 'mongodb-connect'/);
+  assert.match(source, /startupStage = 'http-listen'/);
+  assert.match(source, /getSafeStartupFailure\(startupStage, error\)/);
+  assert.doesNotMatch(source, /Server startup blocked[\s\S]*error\.message/);
+  assert.doesNotMatch(source, /Server startup blocked[\s\S]*error\.stack/);
 });

@@ -13,6 +13,7 @@ const {
   createDeploymentIsolationConfig,
   verifyStagingTelegramBotIdentity,
 } = require('./deploymentIsolation');
+const { getSafeStartupFailure } = require('./startupDiagnostics');
 const {
   buildMiniAppUrl,
   extractTelegramStartPayload,
@@ -151,8 +152,15 @@ app.get("/", (req, res) => {
 const PORT = process.env.PORT || 5000;
 
 function listen() {
-  return app.listen(PORT, () => {
-    console.log(`Server started on port ${PORT}`);
+  return new Promise((resolve, reject) => {
+    const server = app.listen(PORT);
+    const handleStartupError = (error) => reject(error);
+    server.once('error', handleStartupError);
+    server.once('listening', () => {
+      server.off('error', handleStartupError);
+      console.log(`Server started on port ${PORT}`);
+      resolve(server);
+    });
   });
 }
 
@@ -163,7 +171,10 @@ async function requestTelegramBotIdentity(botToken) {
   });
 }
 
+let startupStage = 'deployment-config';
+
 async function bootstrap() {
+  startupStage = 'deployment-config';
   const isolation = createDeploymentIsolationConfig(process.env);
 
   if (!isolation.staging) {
@@ -176,20 +187,27 @@ async function bootstrap() {
       .catch((err) => {
         console.log(err);
       });
-    listen();
+    startupStage = 'http-listen';
+    await listen();
     return;
   }
 
   // This is the only Telegram API request allowed before the staging server
   // starts listening. It verifies that BOT_TOKEN belongs to the configured
   // staging bot, without logging or returning the token.
+  startupStage = 'telegram-bot-verification';
   await verifyStagingTelegramBotIdentity(isolation, requestTelegramBotIdentity);
+  startupStage = 'mongodb-connect';
   await mongoose.connect(isolation.mongoUri);
   console.log("Staging isolation verified and MongoDB connected");
-  listen();
+  startupStage = 'http-listen';
+  await listen();
 }
 
 bootstrap().catch((error) => {
-  console.error('Server startup blocked by deployment isolation:', error?.code || 'STARTUP_FAILED');
+  const failure = getSafeStartupFailure(startupStage, error);
+  console.error(
+    `Server startup blocked by deployment isolation: stage=${failure.stage} code=${failure.code}`
+  );
   process.exitCode = 1;
 });
