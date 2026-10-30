@@ -46,7 +46,16 @@ const fortuneWheelGermanMessages = {
   "fortune.requestCreated": "Deine physische Prämienanfrage wurde bestätigt.",
   "fortune.requestTitle": "Prämienanfrage",
   "fortune.color": "Farbe",
-  "fortune.requestId": "Anfrage-ID"
+  "fortune.colorStagingTest": "Testfarbe",
+  "fortune.colorOption": "Farboption {number}",
+  "fortune.requestId": "Anfrage-ID",
+  "fortune.requestStatus.pending": "Wird geprüft",
+  "fortune.requestStatus.approved": "Bestätigt",
+  "fortune.requestStatus.preparing": "Wird vorbereitet",
+  "fortune.requestStatus.shipped": "Versendet",
+  "fortune.requestStatus.delivered": "Zugestellt",
+  "fortune.requestStatus.cancelled": "Storniert",
+  "fortune.requestStatus.processing": "In Bearbeitung"
 } as const;
 
 const fortuneWheelRussianMessages: Record<keyof typeof fortuneWheelGermanMessages, string> = {
@@ -95,7 +104,16 @@ const fortuneWheelRussianMessages: Record<keyof typeof fortuneWheelGermanMessage
   "fortune.requestCreated": "Заявка на физический приз подтверждена.",
   "fortune.requestTitle": "Заявка на приз",
   "fortune.color": "Цвет",
-  "fortune.requestId": "ID заявки"
+  "fortune.colorStagingTest": "Тестовый цвет",
+  "fortune.colorOption": "Вариант цвета {number}",
+  "fortune.requestId": "ID заявки",
+  "fortune.requestStatus.pending": "На проверке",
+  "fortune.requestStatus.approved": "Подтверждена",
+  "fortune.requestStatus.preparing": "Готовится к отправке",
+  "fortune.requestStatus.shipped": "Отправлена",
+  "fortune.requestStatus.delivered": "Доставлена",
+  "fortune.requestStatus.cancelled": "Отменена",
+  "fortune.requestStatus.processing": "Обрабатывается"
 };
 
 // Existing UI wording is preserved for all supported languages.

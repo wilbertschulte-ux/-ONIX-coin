@@ -10,6 +10,7 @@ const typesPath = path.join(root, 'src', 'fortuneWheel', 'fortuneWheelTypes.ts')
 const componentPath = path.join(root, 'src', 'fortuneWheel', 'FortuneWheelSection.tsx');
 const premiumWheelPath = path.join(root, 'src', 'fortuneWheel', 'components', 'PremiumWheel.tsx');
 const resultScreenPath = path.join(root, 'src', 'fortuneWheel', 'components', 'RewardResultScreen.tsx');
+const presentationPath = path.join(root, 'src', 'fortuneWheel', 'fortuneWheelPresentation.ts');
 const cssPath = path.join(root, 'src', 'fortuneWheel', 'fortuneWheel.css');
 const appPath = path.join(root, 'src', 'App.tsx');
 const messagesPath = path.join(root, 'src', 'i18n', 'messages.ts');
@@ -26,6 +27,7 @@ function loadTypeScriptModule(filePath) {
 }
 
 const wheel = loadTypeScriptModule(typesPath);
+const presentation = loadTypeScriptModule(presentationPath);
 
 function status(overrides = {}) {
   return {
@@ -87,6 +89,20 @@ test('one shared sector manifest drives SVG geometry and landing calculations', 
   assert.match(premiumSource, /className="premium-wheel-pointer"/);
   assert.match(premiumSource, /sectorPath\(sector\)/);
   assert.doesNotMatch(premiumSource, /Math\.random|response\.claim|axios/);
+});
+
+test('premium SVG labels stay horizontal and use lightweight reward icons', () => {
+  const source = fs.readFileSync(premiumWheelPath, 'utf8');
+  const css = fs.readFileSync(cssPath, 'utf8');
+  assert.match(source, /--label-counter-rotation/);
+  assert.match(source, /`\$\{-rotation\}deg`/);
+  assert.match(source, /premium-wheel-sector-icon is-onix/);
+  assert.match(source, /premium-wheel-sector-icon is-phone/);
+  assert.match(source, /premium-wheel-emblem[^>]*>ONIX</);
+  assert.match(source, /Array\.from\(\{ length: 18 \}/);
+  assert.match(css, /\.premium-wheel-label\s*\{[^}]*rotate\(var\(--label-counter-rotation\)\)/);
+  assert.doesNotMatch(source, /rotate\(\$\{sector\.centerAngle \+ 90\}\)/);
+  assert.doesNotMatch(source, /<image|\.png|\.webp|\.jpe?g/i);
 });
 
 test('a pending spin keeps one idempotency key until a confirmed response clears it', () => {
@@ -201,6 +217,21 @@ test('persisted server progress remains authoritative and never auto-starts a sp
   assert.match(source, /onSpin=\{\(\) => void spin\(\)\}/);
 });
 
+test('physical prize presentation hides technical codes without changing server values', () => {
+  assert.equal(JSON.stringify(presentation.getPrizeColorDisplay('staging-test', ['staging-test'])), JSON.stringify({ kind: 'staging' }));
+  assert.equal(JSON.stringify(presentation.getPrizeColorDisplay('space_black', ['space_black', 'gold'])), JSON.stringify({ kind: 'option', number: 1 }));
+  assert.equal(JSON.stringify(presentation.getPrizeColorDisplay('Gold', ['Gold'])), JSON.stringify({ kind: 'literal', value: 'Gold' }));
+  assert.equal(presentation.getPrizeRequestStatusKey('pending'), 'pending');
+  assert.equal(presentation.getPrizeRequestStatusKey('internal-new-state'), 'processing');
+
+  const source = fs.readFileSync(componentPath, 'utf8');
+  assert.match(source, /getPrizeColorDisplay\(color, status\?\.physicalPrize\.colors \?\? \[\]\)/);
+  assert.match(source, /\{ color: confirmedColor, idempotencyKey \}/);
+  assert.match(source, /fortune\.requestStatus\./);
+  assert.doesNotMatch(source, /<dd>\{status\.physicalPrize\.request\.color\}<\/dd>/);
+  assert.doesNotMatch(source, /<strong>\{status\.physicalPrize\.request\.status\}<\/strong>/);
+});
+
 test('reload, errors, unavailable campaign and accessibility states are present', () => {
   const source = fs.readFileSync(componentPath, 'utf8');
   assert.match(source, /void loadStatus\(\)/);
@@ -227,6 +258,10 @@ test('German, Russian and German fallback catalogs contain typed fortune message
   assert.match(source, /"fortune\.closedTitle": "Акция закрыта для новых вращений"/);
   assert.match(source, /"fortune\.resultOnixTitle": "Deine garantierte Belohnung"/);
   assert.match(source, /"fortune\.resultOnixTitle": "Ваша гарантированная награда"/);
+  assert.match(source, /"fortune\.colorStagingTest": "Testfarbe"/);
+  assert.match(source, /"fortune\.colorStagingTest": "Тестовый цвет"/);
+  assert.match(source, /"fortune\.requestStatus\.pending": "Wird geprüft"/);
+  assert.match(source, /"fortune\.requestStatus\.pending": "На проверке"/);
   assert.equal((source.match(/\.\.\.fortuneWheelGermanMessages/g) || []).length, 10);
   assert.equal((source.match(/\.\.\.fortuneWheelRussianMessages/g) || []).length, 1);
 });
@@ -242,5 +277,7 @@ test('mobile layout uses Telegram viewport, safe areas and prevents horizontal o
   assert.match(css, /\.premium-wheel-stage/);
   assert.match(css, /\.fortune-result-screen/);
   assert.match(css, /\.fortune-wheel-progress\s*\{[^}]*repeat\(3, minmax\(0, 1fr\)\)/);
+  assert.match(css, /\.fortune-wheel-progress::before/);
+  assert.match(css, /\.fortune-wheel-request header/);
   assert.match(css, /@media \(prefers-reduced-motion: reduce\)/);
 });

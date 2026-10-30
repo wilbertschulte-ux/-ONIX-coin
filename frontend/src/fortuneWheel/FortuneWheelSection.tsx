@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import axios from 'axios';
-import { ArrowLeft, Check, RefreshCw, ShieldCheck, Sparkles } from 'lucide-react';
+import { ArrowLeft, Check, RefreshCw, ShieldCheck, Smartphone, Sparkles } from 'lucide-react';
 import { createTranslator, getLanguageLocale, type AppLanguage } from '../i18n';
 import {
   canRequestSpin,
@@ -19,6 +19,7 @@ import {
 } from './fortuneWheelTypes';
 import { PremiumWheel } from './components/PremiumWheel';
 import { RewardResultScreen } from './components/RewardResultScreen';
+import { getPrizeColorDisplay, getPrizeRequestStatusKey } from './fortuneWheelPresentation';
 import './fortuneWheel.css';
 
 interface FortuneWheelSectionProps {
@@ -144,6 +145,12 @@ export function FortuneWheelSection({
     [status]
   );
   const wheelBusy = spinning || highlightedSpin !== null;
+  const formatPrizeColor = (color: string): string => {
+    const display = getPrizeColorDisplay(color, status?.physicalPrize.colors ?? []);
+    if (display.kind === 'staging') return t('fortune.colorStagingTest');
+    if (display.kind === 'option') return t('fortune.colorOption', { number: display.number });
+    return display.value;
+  };
 
   const finishSpinAnimation = (claim: FortuneWheelClaim) => {
     setHighlightedSpin(null);
@@ -344,9 +351,9 @@ export function FortuneWheelSection({
             </>
           )}
 
-          <section className="fortune-wheel-progress" aria-label={t('fortune.progress')}>
+          <section className="fortune-wheel-progress" aria-label={t('fortune.progress')} role="list">
             {status.rewards.map((reward) => (
-              <article key={reward.spin} className={`fortune-wheel-reward is-${reward.status}`}>
+              <article key={reward.spin} className={`fortune-wheel-reward is-${reward.status}`} role="listitem">
                 <span className="fortune-wheel-reward-number">{reward.spin}</span>
                 <div>
                   <strong>{formatReward(reward, locale, physicalPrizeLabel)}</strong>
@@ -365,10 +372,18 @@ export function FortuneWheelSection({
 
           {status.physicalPrize.request && (
             <section className="fortune-wheel-request">
-              <span>{t('fortune.requestTitle')}</span>
-              <strong>{status.physicalPrize.request.status}</strong>
+              <header>
+                <span className="fortune-wheel-request-icon" aria-hidden="true"><Smartphone /></span>
+                <div>
+                  <span>{t('fortune.requestTitle')}</span>
+                  <strong>iPhone Duo</strong>
+                </div>
+                <span className={`fortune-wheel-request-status is-${getPrizeRequestStatusKey(status.physicalPrize.request.status)}`}>
+                  {t(`fortune.requestStatus.${getPrizeRequestStatusKey(status.physicalPrize.request.status)}`)}
+                </span>
+              </header>
               <dl>
-                <div><dt>{t('fortune.color')}</dt><dd>{status.physicalPrize.request.color}</dd></div>
+                <div><dt>{t('fortune.color')}</dt><dd>{formatPrizeColor(status.physicalPrize.request.color)}</dd></div>
                 <div><dt>{t('fortune.requestId')}</dt><dd>{status.physicalPrize.request.requestId}</dd></div>
               </dl>
             </section>
@@ -390,7 +405,7 @@ export function FortuneWheelSection({
                   disabled={colorError && selectedColor !== color}
                   onClick={() => setSelectedColor(color)}
                 >
-                  {color}
+                  {formatPrizeColor(color)}
                 </button>
               ))}
             </div>
@@ -416,7 +431,7 @@ export function FortuneWheelSection({
         <div className="fortune-wheel-modal-backdrop fortune-wheel-confirm-layer" role="presentation">
           <section className="fortune-wheel-modal" role="alertdialog" aria-modal="true" aria-labelledby="fortune-confirm-title">
             <h2 id="fortune-confirm-title">{t('fortune.confirmColorTitle')}</h2>
-            <p>{t('fortune.confirmColorText', { color: selectedColor })}</p>
+            <p>{t('fortune.confirmColorText', { color: formatPrizeColor(selectedColor) })}</p>
             <div className="fortune-wheel-modal-actions">
               <button type="button" className="fortune-wheel-secondary" disabled={submittingColor} onClick={() => setColorConfirmationOpen(false)}>
                 {t('fortune.cancel')}

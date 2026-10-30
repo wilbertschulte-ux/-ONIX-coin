@@ -37,6 +37,12 @@ function labelPosition(sector: FortuneWheelSectorDefinition): { x: number; y: nu
   return { x, y };
 }
 
+function sectorFill(kind: FortuneWheelSectorKind): string {
+  if (kind === 'iphone-duo') return 'url(#fortune-sector-iphone)';
+  if (kind === 'onix-250k') return 'url(#fortune-sector-blue-deep)';
+  return 'url(#fortune-sector-blue)';
+}
+
 export function PremiumWheel({
   rotation,
   spinning,
@@ -75,6 +81,21 @@ export function PremiumWheel({
               <stop offset="0.5" stopColor="#f5c651" />
               <stop offset="1" stopColor="#9b5e0b" />
             </radialGradient>
+            <linearGradient id="fortune-sector-blue" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0" stopColor="#1e65b7" />
+              <stop offset="0.52" stopColor="#0c326d" />
+              <stop offset="1" stopColor="#071a3b" />
+            </linearGradient>
+            <linearGradient id="fortune-sector-blue-deep" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0" stopColor="#163d83" />
+              <stop offset="0.55" stopColor="#091d49" />
+              <stop offset="1" stopColor="#040d24" />
+            </linearGradient>
+            <linearGradient id="fortune-sector-iphone" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0" stopColor="#b27a20" />
+              <stop offset="0.5" stopColor="#67400e" />
+              <stop offset="1" stopColor="#211608" />
+            </linearGradient>
             <filter id="fortune-sector-glow" x="-30%" y="-30%" width="160%" height="160%">
               <feDropShadow dx="0" dy="0" stdDeviation="7" floodColor="#ffe68f" floodOpacity="0.92" />
             </filter>
@@ -95,7 +116,7 @@ export function PremiumWheel({
                 data-spin={sector.spin}
                 data-primary={sector.primary ? 'true' : 'false'}
               >
-                <path d={sectorPath(sector)} filter={isWinner ? 'url(#fortune-sector-glow)' : undefined} />
+                <path className="premium-wheel-sector-face" d={sectorPath(sector)} fill={sectorFill(sector.kind)} filter={isWinner ? 'url(#fortune-sector-glow)' : undefined} />
                 <line
                   x1="200"
                   y1="200"
@@ -103,12 +124,33 @@ export function PremiumWheel({
                   y2={polarPoint(sector.centerAngle - 30, RADIUS)[1]}
                   className="premium-wheel-divider"
                 />
-                <g transform={`translate(${point.x} ${point.y}) rotate(${sector.centerAngle + 90})`}>
-                  <text className="premium-wheel-label-main" textAnchor="middle" y="-3">{copy.top}</text>
-                  <text className="premium-wheel-label-sub" textAnchor="middle" y="15">{copy.bottom}</text>
+                <g transform={`translate(${point.x} ${point.y})`}>
+                  <g
+                    className="premium-wheel-label"
+                    style={{ '--label-counter-rotation': `${-rotation}deg` } as CSSProperties}
+                  >
+                    {sector.kind === 'iphone-duo' ? (
+                      <g className="premium-wheel-sector-icon is-phone" aria-hidden="true">
+                        <rect x="-6" y="-28" width="12" height="20" rx="3" />
+                        <line x1="-2" y1="-25" x2="2" y2="-25" />
+                      </g>
+                    ) : (
+                      <g className="premium-wheel-sector-icon is-onix" aria-hidden="true">
+                        <circle cx="0" cy="-18" r="8" />
+                        <path d="M 0 -23 L 5 -18 L 0 -13 L -5 -18 Z" />
+                      </g>
+                    )}
+                    <text className="premium-wheel-label-main" textAnchor="middle" y="5">{copy.top}</text>
+                    <text className="premium-wheel-label-sub" textAnchor="middle" y="20">{copy.bottom}</text>
+                  </g>
                 </g>
               </g>
             );
+          })}
+
+          {Array.from({ length: 18 }, (_, index) => {
+            const [x, y] = polarPoint(index * 20, 187);
+            return <circle key={index} cx={x} cy={y} r="2.4" className="premium-wheel-rim-light" />;
           })}
 
           <circle cx="200" cy="200" r="66" fill="#020712" stroke="#17243a" strokeWidth="8" />
@@ -124,7 +166,8 @@ export function PremiumWheel({
         aria-busy={busy}
         onClick={onSpin}
       >
-        <span>{spinLabel}</span>
+        <span className="premium-wheel-emblem" aria-hidden="true">ONIX</span>
+        <strong>{spinLabel}</strong>
         {spinDetail && <small>{spinDetail}</small>}
       </button>
     </section>
