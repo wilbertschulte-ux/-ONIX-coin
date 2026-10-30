@@ -80,6 +80,7 @@ export interface KeyValueStorage {
 
 const IDEMPOTENCY_PREFIX = 'onix:fortune-wheel:v1';
 const SPIN_SECTOR_BY_NUMBER: Record<1 | 2 | 3, number> = { 1: 0, 2: 2, 3: 4 };
+const TOP_POINTER_ANGLE = 270;
 
 function createClientRequestId(): string {
   if (typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function') {
@@ -121,11 +122,13 @@ export function clearIdempotencyKey(storage: KeyValueStorage, storageKey: string
 
 export function getLandingRotation(spin: 1 | 2 | 3, currentRotation: number): number {
   const sectorAngle = 60;
-  // The CSS gradient starts at -30deg, so sector zero is centered under the
-  // top pointer at 0deg. Spins map only to the matching repeated reward sector.
+  // Sector labels are laid out clockwise from the right-hand axis (0deg), while
+  // the fixed pointer is at the top (270deg) in that same coordinate system.
+  // Rotate the server-confirmed reward sector to the pointer; never choose a
+  // client-side result or a random landing position.
   const sectorCenter = SPIN_SECTOR_BY_NUMBER[spin] * sectorAngle;
   const normalizedCurrent = ((currentRotation % 360) + 360) % 360;
-  const desiredNormalized = (360 - sectorCenter) % 360;
+  const desiredNormalized = (TOP_POINTER_ANGLE - sectorCenter + 360) % 360;
   const forwardDelta = (desiredNormalized - normalizedCurrent + 360) % 360;
   return currentRotation + 4 * 360 + forwardDelta;
 }

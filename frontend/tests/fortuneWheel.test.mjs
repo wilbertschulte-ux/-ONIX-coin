@@ -53,11 +53,16 @@ function status(overrides = {}) {
 
 test('all three server spins land on their fixed matching sectors without randomness', () => {
   let rotation = 0;
-  const expectedNormalized = [0, 240, 120];
+  const pointerAngle = 270;
+  const expectedNormalized = [270, 150, 30];
+  const expectedSectorCenters = [0, 120, 240];
   for (const [index, spin] of [1, 2, 3].entries()) {
     rotation = wheel.getLandingRotation(spin, rotation);
+    const normalizedRotation = ((rotation % 360) + 360) % 360;
+    const sectorUnderPointer = (pointerAngle - normalizedRotation + 360) % 360;
     assert.ok(rotation >= (index + 1) * 4 * 360);
-    assert.equal(((rotation % 360) + 360) % 360, expectedNormalized[index]);
+    assert.equal(normalizedRotation, expectedNormalized[index]);
+    assert.equal(sectorUnderPointer, expectedSectorCenters[index]);
   }
   assert.doesNotMatch(fs.readFileSync(typesPath, 'utf8'), /Math\.random/);
 });
