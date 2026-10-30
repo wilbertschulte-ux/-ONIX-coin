@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import axios from 'axios';
-import { ArrowLeft, Check, Gift, RefreshCw, ShieldCheck, Sparkles } from 'lucide-react';
+import { ArrowLeft, Check, RefreshCw, ShieldCheck, Sparkles } from 'lucide-react';
 import { createTranslator, getLanguageLocale, type AppLanguage } from '../i18n';
 import {
   canRequestSpin,
@@ -17,6 +17,8 @@ import {
   type FortuneWheelSpinResponse,
   type FortuneWheelStatus,
 } from './fortuneWheelTypes';
+import { PremiumWheel } from './components/PremiumWheel';
+import { RewardResultScreen } from './components/RewardResultScreen';
 import './fortuneWheel.css';
 
 interface FortuneWheelSectionProps {
@@ -27,6 +29,7 @@ interface FortuneWheelSectionProps {
 }
 
 const ANIMATION_MS = 2800;
+const WINNER_HIGHLIGHT_MS = 620;
 
 function formatReward(reward: FortuneWheelReward, locale: string, physicalPrizeLabel: string): string {
   if (reward.type === 'onix') return `${Number(reward.amount || 0).toLocaleString(locale)} ONIX`;
@@ -62,6 +65,7 @@ export function FortuneWheelSection({
   const [spinError, setSpinError] = useState(false);
   const [colorError, setColorError] = useState(false);
   const [spinning, setSpinning] = useState(false);
+  const [highlightedSpin, setHighlightedSpin] = useState<1 | 2 | 3 | null>(null);
   const [rotation, setRotation] = useState(0);
   const [result, setResult] = useState<FortuneWheelClaim | null>(null);
   const [announcement, setAnnouncement] = useState('');
@@ -72,6 +76,7 @@ export function FortuneWheelSection({
   const spinLock = useRef(false);
   const colorLock = useRef(false);
   const animationTimer = useRef<number | null>(null);
+  const revealTimer = useRef<number | null>(null);
 
   const loadStatus = async () => {
     setLoading(true);
@@ -119,6 +124,7 @@ export function FortuneWheelSection({
       active = false;
       window.clearTimeout(initialLoad);
       if (animationTimer.current !== null) window.clearTimeout(animationTimer.current);
+      if (revealTimer.current !== null) window.clearTimeout(revealTimer.current);
     };
   }, [apiBaseUrl]);
 
@@ -137,16 +143,26 @@ export function FortuneWheelSection({
     () => status?.rewards.find((reward) => reward.spin === status.nextSpin) ?? null,
     [status]
   );
+  const wheelBusy = spinning || highlightedSpin !== null;
 
-  const finishSpinAnimation = (claim: FortuneWheelClaim, confirmedStatus: FortuneWheelStatus) => {
-    setSpinning(false);
+  const finishSpinAnimation = (claim: FortuneWheelClaim) => {
+    setHighlightedSpin(null);
     spinLock.current = false;
     setResult(claim);
     const resultText = claim.rewardType === 'onix'
       ? t('fortune.resultOnix', { amount: Number(claim.amount || 0).toLocaleString(locale) })
       : t('fortune.resultPhysical');
     setAnnouncement(resultText);
-    if (shouldOfferColorSelection(confirmedStatus)) setColorDialogOpen(true);
+  };
+
+  const revealConfirmedSector = (claim: FortuneWheelClaim) => {
+    setSpinning(false);
+    setHighlightedSpin(claim.spin);
+    const revealDelay = reducedMotion ? 0 : WINNER_HIGHLIGHT_MS;
+    revealTimer.current = window.setTimeout(
+      () => finishSpinAnimation(claim),
+      revealDelay
+    );
   };
 
   const spin = async () => {
@@ -172,13 +188,14 @@ export function FortuneWheelSection({
 
       const delay = reducedMotion ? 0 : ANIMATION_MS;
       animationTimer.current = window.setTimeout(
-        () => finishSpinAnimation(response.data.claim, response.data.status),
+        () => revealConfirmedSector(response.data.claim),
         delay
       );
     } catch {
       // Keep the same persisted key so a network retry is idempotent server-side.
       setSpinError(true);
       setSpinning(false);
+      setHighlightedSpin(null);
       spinLock.current = false;
     }
   };
@@ -268,7 +285,7 @@ export function FortuneWheelSection({
       )}
 
       {!loading && !loadError && status && (available || hasPersistedReward) && (
-        <div className="fortune-wheel-content">
+        <div className={`fortune-wheel-content${result ? ' has-result' : ''}`}>
           {!available && (
             <section className="fortune-wheel-closed-notice">
               <ShieldCheck aria-hidden="true" />
@@ -278,60 +295,53 @@ export function FortuneWheelSection({
               </div>
             </section>
           )}
-          <section className="fortune-wheel-guarantee">
-            <Sparkles aria-hidden="true" />
-            <div>
-              <strong>{t('fortune.guaranteed')}</strong>
-              <p>{t('fortune.sequence')}</p>
-            </div>
-          </section>
+          {result ? (
+            <RewardResultScreen
+              claim={result}
+              locale={locale}
+              confirmedLabel={t('fortune.confirmed')}
+              onixTitle={t('fortune.resultOnixTitle')}
+              physicalTitle={t('fortune.resultPhysicalTitle')}
+              physicalText={t('fortune.resultPhysicalText')}
+              continueLabel={t('fortune.resultContinue')}
+              chooseColorLabel={t('fortune.chooseColor')}
+              canChooseColor={shouldOfferColorSelection(status)}
+              onContinue={() => setResult(null)}
+              onChooseColor={() => setColorDialogOpen(true)}
+            />
+          ) : (
+            <>
+              <section className="fortune-wheel-guarantee">
+                <Sparkles aria-hidden="true" />
+                <div>
+                  <strong>{t('fortune.guaranteed')}</strong>
+                  <p>{t('fortune.sequence')}</p>
+                </div>
+              </section>
 
-          <section className="fortune-wheel-stage">
-            <div className="fortune-wheel-pointer" aria-hidden="true" />
-            <div
-              className={`fortune-wheel-disc ${spinning ? 'is-spinning' : ''}`}
-              style={{ transform: `rotate(${rotation}deg)` }}
-              data-reduced-motion={reducedMotion ? 'true' : 'false'}
-              aria-hidden="true"
-            >
-              {[
-                ['50K', 'sector-one'], [physicalPrizeLabel, 'sector-two'], ['250K', 'sector-three'],
-                ['50K', 'sector-four'], [physicalPrizeLabel, 'sector-five'], ['250K', 'sector-six'],
-              ].map(([label, className]) => (
-                <span key={className} className={`fortune-wheel-sector-label ${className}`}>{label}</span>
-              ))}
-            </div>
-            <button
-              type="button"
-              className="fortune-wheel-spin"
-              onClick={() => void spin()}
-              disabled={!canRequestSpin(status) || spinning}
-              aria-busy={spinning}
-            >
-              <span>{spinning ? t('fortune.spinning') : completed ? t('fortune.completed') : t('fortune.spin')}</span>
-              {!spinning && nextReward && <small>{formatReward(nextReward, locale, physicalPrizeLabel)}</small>}
-            </button>
-          </section>
+              <PremiumWheel
+                rotation={rotation}
+                spinning={spinning}
+                reducedMotion={reducedMotion}
+                highlightedSpin={highlightedSpin}
+                labels={{
+                  'onix-50k': { top: '50 000', bottom: 'ONIX' },
+                  'onix-250k': { top: '250 000', bottom: 'ONIX' },
+                  'iphone-duo': { top: 'iPhone', bottom: 'Duo' },
+                }}
+                spinLabel={wheelBusy ? t('fortune.spinning') : completed ? t('fortune.completed') : t('fortune.spin')}
+                spinDetail={!wheelBusy && nextReward ? formatReward(nextReward, locale, physicalPrizeLabel) : undefined}
+                disabled={!canRequestSpin(status) || wheelBusy}
+                onSpin={() => void spin()}
+              />
 
-          {spinError && (
-            <div className="fortune-wheel-inline-error" role="alert">
-              <p>{t('fortune.spinError')}</p>
-              <button type="button" onClick={() => void spin()}>{t('fortune.retrySame')}</button>
-            </div>
-          )}
-
-          {result && (
-            <section className="fortune-wheel-result" data-result-spin={result.spin}>
-              <Gift aria-hidden="true" />
-              <div>
-                <span>{t('fortune.confirmed')}</span>
-                <strong>
-                  {result.rewardType === 'onix'
-                    ? t('fortune.resultOnix', { amount: Number(result.amount || 0).toLocaleString(locale) })
-                    : t('fortune.resultPhysical')}
-                </strong>
-              </div>
-            </section>
+              {spinError && (
+                <div className="fortune-wheel-inline-error" role="alert">
+                  <p>{t('fortune.spinError')}</p>
+                  <button type="button" onClick={() => void spin()}>{t('fortune.retrySame')}</button>
+                </div>
+              )}
+            </>
           )}
 
           <section className="fortune-wheel-progress" aria-label={t('fortune.progress')}>
@@ -347,7 +357,7 @@ export function FortuneWheelSection({
             ))}
           </section>
 
-          {shouldOfferColorSelection(status) && (
+          {!result && shouldOfferColorSelection(status) && (
             <button type="button" className="fortune-wheel-primary" onClick={() => setColorDialogOpen(true)}>
               {t('fortune.chooseColor')}
             </button>

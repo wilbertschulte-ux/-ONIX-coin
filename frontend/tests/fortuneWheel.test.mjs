@@ -8,6 +8,8 @@ import ts from 'typescript';
 const root = path.resolve(import.meta.dirname, '..');
 const typesPath = path.join(root, 'src', 'fortuneWheel', 'fortuneWheelTypes.ts');
 const componentPath = path.join(root, 'src', 'fortuneWheel', 'FortuneWheelSection.tsx');
+const premiumWheelPath = path.join(root, 'src', 'fortuneWheel', 'components', 'PremiumWheel.tsx');
+const resultScreenPath = path.join(root, 'src', 'fortuneWheel', 'components', 'RewardResultScreen.tsx');
 const cssPath = path.join(root, 'src', 'fortuneWheel', 'fortuneWheel.css');
 const appPath = path.join(root, 'src', 'App.tsx');
 const messagesPath = path.join(root, 'src', 'i18n', 'messages.ts');
@@ -65,6 +67,26 @@ test('all three server spins land on their fixed matching sectors without random
     assert.equal(sectorUnderPointer, expectedSectorCenters[index]);
   }
   assert.doesNotMatch(fs.readFileSync(typesPath, 'utf8'), /Math\.random/);
+});
+
+test('one shared sector manifest drives SVG geometry and landing calculations', () => {
+  const manifest = Array.from(wheel.FORTUNE_WHEEL_SECTORS);
+  assert.equal(manifest.length, 6);
+  assert.deepEqual(
+    manifest.filter((sector) => sector.primary).map(({ spin, centerAngle, kind }) => ({ spin, centerAngle, kind })),
+    [
+      { spin: 1, centerAngle: 0, kind: 'onix-50k' },
+      { spin: 2, centerAngle: 120, kind: 'onix-250k' },
+      { spin: 3, centerAngle: 240, kind: 'iphone-duo' },
+    ]
+  );
+  assert.equal(wheel.FORTUNE_WHEEL_POINTER_ANGLE, 270);
+
+  const premiumSource = fs.readFileSync(premiumWheelPath, 'utf8');
+  assert.match(premiumSource, /FORTUNE_WHEEL_SECTORS\.map/);
+  assert.match(premiumSource, /className="premium-wheel-pointer"/);
+  assert.match(premiumSource, /sectorPath\(sector\)/);
+  assert.doesNotMatch(premiumSource, /Math\.random|response\.claim|axios/);
 });
 
 test('a pending spin keeps one idempotency key until a confirmed response clears it', () => {
@@ -155,6 +177,30 @@ test('component uses authenticated API endpoints, server rewards, locks and conf
   assert.doesNotMatch(source, /setBalance|Math\.random/);
 });
 
+test('server claim stops, highlights, and only then opens the dedicated result screen', () => {
+  const source = fs.readFileSync(componentPath, 'utf8');
+  const resultSource = fs.readFileSync(resultScreenPath, 'utf8');
+  assert.match(source, /getLandingRotation\(response\.data\.claim\.spin, current\)/);
+  assert.match(source, /setHighlightedSpin\(claim\.spin\)/);
+  assert.match(source, /WINNER_HIGHLIGHT_MS/);
+  assert.match(source, /setResult\(claim\)/);
+  assert.match(source, /setHighlightedSpin\(claim\.spin\);[^]*?setTimeout\([^]*?finishSpinAnimation\(claim\)/);
+  assert.match(source, /<RewardResultScreen/);
+  assert.match(resultSource, /Number\(claim\.amount \|\| 0\)\.toLocaleString\(locale\)/);
+  assert.match(resultSource, /claim\.rewardType === 'onix'/);
+  assert.match(resultSource, /data-result-spin=\{claim\.spin\}/);
+  assert.doesNotMatch(resultSource, /50000|250000|Math\.random/);
+});
+
+test('persisted server progress remains authoritative and never auto-starts a spin', () => {
+  const source = fs.readFileSync(componentPath, 'utf8');
+  assert.match(source, /status\.completedSpins > 0/);
+  assert.match(source, /status\.rewards\.map/);
+  assert.match(source, /status\.physicalPrize\.request &&/);
+  assert.match(source, /disabled=\{!canRequestSpin\(status\) \|\| wheelBusy\}/);
+  assert.match(source, /onSpin=\{\(\) => void spin\(\)\}/);
+});
+
 test('reload, errors, unavailable campaign and accessibility states are present', () => {
   const source = fs.readFileSync(componentPath, 'utf8');
   assert.match(source, /void loadStatus\(\)/);
@@ -179,6 +225,8 @@ test('German, Russian and German fallback catalogs contain typed fortune message
   assert.match(source, /"fortune\.title": "Колесо акции"/);
   assert.match(source, /"fortune\.closedTitle": "Aktion für neue Drehungen geschlossen"/);
   assert.match(source, /"fortune\.closedTitle": "Акция закрыта для новых вращений"/);
+  assert.match(source, /"fortune\.resultOnixTitle": "Deine garantierte Belohnung"/);
+  assert.match(source, /"fortune\.resultOnixTitle": "Ваша гарантированная награда"/);
   assert.equal((source.match(/\.\.\.fortuneWheelGermanMessages/g) || []).length, 10);
   assert.equal((source.match(/\.\.\.fortuneWheelRussianMessages/g) || []).length, 1);
 });
@@ -190,5 +238,9 @@ test('mobile layout uses Telegram viewport, safe areas and prevents horizontal o
   assert.match(css, /env\(safe-area-inset-bottom\)/);
   assert.match(css, /overflow-x:\s*hidden/);
   assert.match(css, /@media \(max-width: 374px\)/);
+  assert.match(css, /width:\s*clamp\(276px, 82vw, 356px\)/);
+  assert.match(css, /\.premium-wheel-stage/);
+  assert.match(css, /\.fortune-result-screen/);
+  assert.match(css, /\.fortune-wheel-progress\s*\{[^}]*repeat\(3, minmax\(0, 1fr\)\)/);
   assert.match(css, /@media \(prefers-reduced-motion: reduce\)/);
 });
