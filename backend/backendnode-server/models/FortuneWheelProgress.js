@@ -87,6 +87,7 @@ const fortuneWheelProgressSchema = new mongoose.Schema(
   {
     collection: 'fortune_wheel_progress',
     timestamps: true,
+    autoCreate: false,
     autoIndex: false,
   }
 );

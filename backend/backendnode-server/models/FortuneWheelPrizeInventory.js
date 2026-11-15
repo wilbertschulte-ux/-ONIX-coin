@@ -64,6 +64,7 @@ const fortuneWheelPrizeInventorySchema = new mongoose.Schema(
   {
     collection: 'fortune_wheel_prize_inventory',
     timestamps: true,
+    autoCreate: false,
     autoIndex: false,
   }
 );

@@ -99,6 +99,7 @@ const fortuneWheelPrizeEntitlementSchema = new mongoose.Schema(
   {
     collection: 'fortune_wheel_prize_entitlements',
     timestamps: true,
+    autoCreate: false,
     autoIndex: false,
   }
 );
