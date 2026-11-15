@@ -20,9 +20,10 @@ const { serializePhysicalPrizeRequest } = require('../fortuneWheel');
 const router = require('../routes/coinRoutes');
 
 const listRoute = router.stack.find((layer) => layer.route?.path === '/admin-physical-prizes' && layer.route?.methods?.get);
+const dashboardRoute = router.stack.find((layer) => layer.route?.path === '/admin-fortune-wheel' && layer.route?.methods?.get);
 const statusRoute = router.stack.find((layer) => layer.route?.path === '/admin-physical-prizes/:requestId/status' && layer.route?.methods?.post);
 const colorRoute = router.stack.find((layer) => layer.route?.path === '/admin-physical-prizes/:requestId/color' && layer.route?.methods?.post);
-assert.ok(listRoute && statusRoute && colorRoute);
+assert.ok(dashboardRoute && listRoute && statusRoute && colorRoute);
 
 const {
   getAdminAuditActor,
@@ -113,6 +114,14 @@ test('list query validates filters, bounds pagination and escapes search input',
   assert.equal(normalizeAdminPhysicalPrizeListQuery({ sort: 'random' }).ok, false);
 });
 
+test('list query accepts both production and staging legacy campaign keys', () => {
+  for (const campaignKey of ['fortune-wheel-v1', 'fortune-wheel-staging-v1']) {
+    const normalized = normalizeAdminPhysicalPrizeListQuery({ campaignKey });
+    assert.equal(normalized.ok, true);
+    assert.equal(normalized.campaignKey, campaignKey);
+  }
+});
+
 test('status transitions are ordered and cancellation fails closed without configured reason and resolution', () => {
   const request = baseRequest();
   const common = { request, expectedVersion: 0, idempotencyKey: 'status-change-0001', reason: 'Verified eligibility' };
@@ -154,6 +163,7 @@ test('ordinary and mismatched Telegram users cannot list or mutate physical priz
     get(name) { return name.toLowerCase() === 'x-telegram-init-data' ? ordinaryInitData : ''; },
   };
   assert.equal((await invokeRoute(listRoute, request)).statusCode, 403);
+  assert.equal((await invokeRoute(dashboardRoute, request)).statusCode, 403);
   assert.equal((await invokeRoute(statusRoute, request)).statusCode, 403);
   assert.equal((await invokeRoute(colorRoute, request)).statusCode, 403);
 });
@@ -286,6 +296,7 @@ test('delivered transition fulfills the linked reservation in the same transacti
       actor: 'telegram:9000',
       session,
       cancellationReasons: [],
+      EntitlementModel: { findOneAndUpdate: async () => null },
     });
     assert.equal(result.status, 'success');
     assert.equal(request.status, 'delivered');
@@ -333,6 +344,7 @@ test('delivered transition fails closed when its linked reservation cannot be fu
         actor: 'telegram:9000',
         session,
         cancellationReasons: [],
+        EntitlementModel: { findOneAndUpdate: async () => null },
       }),
       /reservation is missing/
     );
@@ -340,6 +352,130 @@ test('delivered transition fails closed when its linked reservation cannot be fu
     PhysicalPrizeRequest.findOne = originalFindOne;
     PhysicalPrizeRequest.findOneAndUpdate = originalFindOneAndUpdate;
     FortuneWheelProgress.findOneAndUpdate = originalProgressFindOneAndUpdate;
+  }
+});
+
+test('weekly delivered transition fulfills entitlement and increments inventory exactly once', async () => {
+  const originalFindOne = PhysicalPrizeRequest.findOne;
+  const originalFindOneAndUpdate = PhysicalPrizeRequest.findOneAndUpdate;
+  const request = baseRequest({ campaignKey: 'fortune-wheel-weekly-v1', status: 'shipped', __v: 4 });
+  const entitlement = {
+    _id: 'entitlement-1', campaignKey: request.campaignKey, telegramId: request.telegramId,
+    prizeCode: request.prizeCode, progressId: request.fortuneWheelProgressId,
+    physicalPrizeRequestId: request._id, status: 'reserved',
+  };
+  const session = { id: 'weekly-delivery-session' };
+  let fulfilledIncrements = 0;
+  let progressUpdates = 0;
+  PhysicalPrizeRequest.findOne = () => ({ session: async () => request });
+  PhysicalPrizeRequest.findOneAndUpdate = async (_filter, update) => {
+    request.status = update.$set.status;
+    request.statusHistory.push(update.$push.statusHistory);
+    request.__v += 1;
+    return request;
+  };
+  const EntitlementModel = {
+    findOne: () => ({ session: async (observed) => { assert.equal(observed, session); return entitlement; } }),
+    findOneAndUpdate: async (_filter, update, options) => {
+      assert.equal(options.session, session);
+      entitlement.status = update.$set.status;
+      return entitlement;
+    },
+  };
+  const InventoryModel = {
+    findOneAndUpdate: async (filter, update, options) => {
+      assert.deepEqual(filter.$expr, { $lt: ['$fulfilled', '$reserved'] });
+      assert.equal(options.session, session);
+      fulfilledIncrements += update.$inc.fulfilled;
+      return { capacity: 100, reserved: 1, fulfilled: fulfilledIncrements };
+    },
+  };
+  const ProgressModel = {
+    findOneAndUpdate: async (_filter, _update, options) => {
+      assert.equal(options.session, session);
+      progressUpdates += 1;
+      return { _id: request.fortuneWheelProgressId };
+    },
+  };
+  const payload = {
+    nextStatus: 'delivered', reason: 'Carrier delivery confirmed', expectedVersion: 4,
+    idempotencyKey: 'weekly-delivered-0001',
+  };
+  try {
+    const first = await performAdminPhysicalPrizeStatusUpdate({
+      requestId: request.requestId, payload, actor: 'telegram:9000', session, cancellationReasons: [],
+      EntitlementModel, InventoryModel, ProgressModel,
+      storageReadinessCheck: async () => ({ ready: true, code: 'WEEKLY_STORAGE_READY' }),
+    });
+    assert.equal(first.status, 'success');
+    assert.equal(entitlement.status, 'fulfilled');
+    assert.equal(fulfilledIncrements, 1);
+    assert.equal(progressUpdates, 1);
+    const replay = await performAdminPhysicalPrizeStatusUpdate({
+      requestId: request.requestId, payload, actor: 'telegram:9000', session, cancellationReasons: [],
+      EntitlementModel, InventoryModel, ProgressModel,
+      storageReadinessCheck: async () => ({ ready: true, code: 'WEEKLY_STORAGE_READY' }),
+    });
+    assert.equal(replay.status, 'success');
+    assert.equal(replay.idempotent, true);
+    assert.equal(fulfilledIncrements, 1);
+    assert.equal(progressUpdates, 1);
+  } finally {
+    PhysicalPrizeRequest.findOne = originalFindOne;
+    PhysicalPrizeRequest.findOneAndUpdate = originalFindOneAndUpdate;
+  }
+});
+
+test('weekly mutation is blocked before writing when inventory or required indexes are absent', async () => {
+  const originalFindOne = PhysicalPrizeRequest.findOne;
+  const originalFindOneAndUpdate = PhysicalPrizeRequest.findOneAndUpdate;
+  const request = baseRequest({ campaignKey: 'fortune-wheel-weekly-v1', status: 'shipped', __v: 2 });
+  let wrote = false;
+  PhysicalPrizeRequest.findOne = () => ({ session: async () => request });
+  PhysicalPrizeRequest.findOneAndUpdate = async () => { wrote = true; return request; };
+  try {
+    const result = await performAdminPhysicalPrizeStatusUpdate({
+      requestId: request.requestId,
+      payload: { nextStatus: 'delivered', reason: 'Carrier confirmed', expectedVersion: 2, idempotencyKey: 'weekly-delivered-0002' },
+      actor: 'telegram:9000', session: {}, cancellationReasons: [],
+      storageReadinessCheck: async () => ({ ready: false, code: 'WEEKLY_INVENTORY_NOT_READY' }),
+    });
+    assert.equal(result.status, 'not_ready');
+    assert.equal(result.code, 'WEEKLY_INVENTORY_NOT_READY');
+    assert.equal(wrote, false);
+  } finally {
+    PhysicalPrizeRequest.findOne = originalFindOne;
+    PhysicalPrizeRequest.findOneAndUpdate = originalFindOneAndUpdate;
+  }
+});
+
+test('weekly delivery throws inside the transaction when inventory fulfillment cannot commit', async () => {
+  const originalFindOne = PhysicalPrizeRequest.findOne;
+  const originalFindOneAndUpdate = PhysicalPrizeRequest.findOneAndUpdate;
+  const request = baseRequest({ campaignKey: 'fortune-wheel-weekly-v1', status: 'shipped', __v: 1 });
+  const session = { id: 'rollback-session' };
+  PhysicalPrizeRequest.findOne = () => ({ session: async () => request });
+  PhysicalPrizeRequest.findOneAndUpdate = async (_filter, update) => ({ ...request, status: update.$set.status, __v: 2 });
+  const entitlement = { _id: 'entitlement-1', status: 'reserved', physicalPrizeRequestId: request._id };
+  try {
+    await assert.rejects(
+      performAdminPhysicalPrizeStatusUpdate({
+        requestId: request.requestId,
+        payload: { nextStatus: 'delivered', reason: 'Carrier confirmed', expectedVersion: 1, idempotencyKey: 'weekly-delivered-0003' },
+        actor: 'telegram:9000', session, cancellationReasons: [],
+        storageReadinessCheck: async () => ({ ready: true, code: 'WEEKLY_STORAGE_READY' }),
+        EntitlementModel: {
+          findOne: () => ({ session: async () => entitlement }),
+          findOneAndUpdate: async () => ({ ...entitlement, status: 'fulfilled' }),
+        },
+        InventoryModel: { findOneAndUpdate: async () => null },
+        ProgressModel: { findOneAndUpdate: async () => { throw new Error('progress must not run'); } },
+      }),
+      /inventory is missing/
+    );
+  } finally {
+    PhysicalPrizeRequest.findOne = originalFindOne;
+    PhysicalPrizeRequest.findOneAndUpdate = originalFindOneAndUpdate;
   }
 });
 

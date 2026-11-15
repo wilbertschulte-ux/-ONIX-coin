@@ -10,6 +10,7 @@ import {
   createAdminNotePayload,
   createAdminEconomyConfigUpdatePayload,
   createAdminPhysicalPrizeColorPayload,
+  createAdminFortuneWheelParams,
   createAdminPhysicalPrizeListParams,
   createAdminPhysicalPrizeStatusPayload,
   createWeeklyPrizeAwardPayload,
@@ -18,6 +19,8 @@ import {
   type AdminEconomyDashboardResponse,
   type AdminFrontendErrorsResponse,
   type AdminPhysicalPrizeFilters,
+  type AdminFortuneWheelDashboardResponse,
+  type AdminFortuneWheelFilters,
   type AdminPhysicalPrizeListResponse,
   type AdminPhysicalPrizeRequest,
   type AdminPhysicalPrizeStatus,
@@ -149,6 +152,17 @@ export async function loadAdminPhysicalPrizes(
 ): Promise<AdminPhysicalPrizeListResponse> {
   const response = await axios.get<AdminPhysicalPrizeListResponse>(`${apiBaseUrl}/admin-physical-prizes`, {
     params: createAdminPhysicalPrizeListParams(telegramId, filters),
+  });
+  return response.data;
+}
+
+export async function loadAdminFortuneWheelDashboard(
+  apiBaseUrl: string,
+  telegramId: string,
+  filters: AdminFortuneWheelFilters
+): Promise<AdminFortuneWheelDashboardResponse> {
+  const response = await axios.get<AdminFortuneWheelDashboardResponse>(`${apiBaseUrl}/admin-fortune-wheel`, {
+    params: createAdminFortuneWheelParams(telegramId, filters),
   });
   return response.data;
 }

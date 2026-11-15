@@ -18,6 +18,12 @@ const PHYSICAL_PRIZE_TRANSITIONS = Object.freeze({
 
 const OPERATION_KEY_PATTERN = /^[A-Za-z0-9][A-Za-z0-9._:-]{7,127}$/;
 const CANCELLATION_REASON_PATTERN = /^[a-z0-9][a-z0-9_-]{1,47}$/;
+const {
+  ALL_FORTUNE_WHEEL_CAMPAIGN_KEYS,
+  WEEKLY_FORTUNE_WHEEL_CAMPAIGN_KEY,
+} = require('./fortuneWheelCampaigns');
+const PHYSICAL_PRIZE_CAMPAIGNS = ALL_FORTUNE_WHEEL_CAMPAIGN_KEYS;
+const WEEK_KEY_PATTERN = /^\d{4}-\d{2}-\d{2}$/;
 
 function parseCancellationReasons(environment = process.env) {
   return [...new Set(
@@ -33,6 +39,8 @@ function normalizeAdminPhysicalPrizeListQuery(query = {}) {
   const status = rawStatus === 'all' ? '' : rawStatus;
   const search = String(query.search || '').trim();
   const sort = String(query.sort || 'newest').trim().toLowerCase();
+  const campaignKey = String(query.campaignKey || '').trim();
+  const weekKey = String(query.weekKey || '').trim();
   const page = Math.max(1, Math.trunc(Number(query.page) || 1));
   const limit = Math.min(50, Math.max(1, Math.trunc(Number(query.limit) || 20)));
 
@@ -45,8 +53,17 @@ function normalizeAdminPhysicalPrizeListQuery(query = {}) {
   if (!['newest', 'oldest'].includes(sort)) {
     return { ok: false, code: 'INVALID_PHYSICAL_PRIZE_SORT' };
   }
+  if (campaignKey && !PHYSICAL_PRIZE_CAMPAIGNS.includes(campaignKey)) {
+    return { ok: false, code: 'INVALID_PHYSICAL_PRIZE_CAMPAIGN' };
+  }
+  if (weekKey && !WEEK_KEY_PATTERN.test(weekKey)) {
+    return { ok: false, code: 'INVALID_PHYSICAL_PRIZE_WEEK' };
+  }
+  if (weekKey && campaignKey !== WEEKLY_FORTUNE_WHEEL_CAMPAIGN_KEY) {
+    return { ok: false, code: 'PHYSICAL_PRIZE_WEEK_REQUIRES_WEEKLY_CAMPAIGN' };
+  }
 
-  return { ok: true, status, search, sort, page, limit };
+  return { ok: true, status, search, sort, campaignKey, weekKey, page, limit };
 }
 
 function escapeRegExp(value) {
@@ -56,6 +73,7 @@ function escapeRegExp(value) {
 function buildAdminPhysicalPrizeFilter(normalized) {
   const filter = {};
   if (normalized.status) filter.status = normalized.status;
+  if (normalized.campaignKey) filter.campaignKey = normalized.campaignKey;
   if (normalized.search) {
     const safeSearch = new RegExp(`^${escapeRegExp(normalized.search)}`);
     filter.$or = [{ requestId: safeSearch }, { telegramId: safeSearch }];

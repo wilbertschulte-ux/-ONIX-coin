@@ -10,8 +10,22 @@ test('startup diagnostics preserve only known startup stages', () => {
   assert.equal(safeStartupStage('deployment-config'), 'deployment-config');
   assert.equal(safeStartupStage('telegram-bot-verification'), 'telegram-bot-verification');
   assert.equal(safeStartupStage('mongodb-connect'), 'mongodb-connect');
+  assert.equal(safeStartupStage('fortune-wheel-readiness'), 'fortune-wheel-readiness');
   assert.equal(safeStartupStage('http-listen'), 'http-listen');
   assert.equal(safeStartupStage('mongodb://secret@example.invalid/db'), 'deployment-config');
+});
+
+test('startup diagnostics preserve safe weekly readiness failures', () => {
+  assert.deepEqual(
+    getSafeStartupFailure('fortune-wheel-readiness', {
+      code: 'WEEKLY_REQUIRED_INDEX_MISSING',
+      message: 'sensitive database details must not be logged',
+    }),
+    {
+      stage: 'fortune-wheel-readiness',
+      code: 'WEEKLY_REQUIRED_INDEX_MISSING',
+    }
+  );
 });
 
 test('startup diagnostics preserve safe deployment isolation codes', () => {

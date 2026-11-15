@@ -55,7 +55,46 @@ const fortuneWheelGermanMessages = {
   "fortune.requestStatus.shipped": "Versendet",
   "fortune.requestStatus.delivered": "Zugestellt",
   "fortune.requestStatus.cancelled": "Storniert",
-  "fortune.requestStatus.processing": "In Bearbeitung"
+  "fortune.requestStatus.processing": "In Bearbeitung",
+  "fortune.preview.title": "Lokale Design-Vorschau",
+  "fortune.preview.safe": "Nur Mock-Daten · keine API-Anfragen",
+  "fortune.preview.state.wheel": "Aktionsrad",
+  "fortune.preview.state.result-50": "50K Ergebnis",
+  "fortune.preview.state.result-250": "250K Ergebnis",
+  "fortune.preview.state.result-iphone": "iPhone Ergebnis",
+  "fortune.preview.state.completed": "Abgeschlossen"
+  ,"fortune.weeklyTitle": "3 Ziehungen pro Woche"
+  ,"fortune.weeklyText": "Jedes Ergebnis wird sicher auf dem Server gezogen. Neue Ziehungen gibt es montags um 00:00 UTC."
+  ,"fortune.weeklyStatus": "Wöchentlicher Ziehungsstatus"
+  ,"fortune.spinsRemaining": "von {total} Ziehungen verfügbar"
+  ,"fortune.resetIn": "Zurücksetzung in "
+  ,"fortune.nextWeekIn": "Neue Ziehungen in "
+  ,"fortune.serverDraw": "Serverbestimmtes Ergebnis"
+  ,"fortune.rules": "Regeln & Chancen"
+  ,"fortune.rulesTitle": "Regeln und Gewinnchancen"
+  ,"fortune.rulesText": "Du erhältst bis zu drei Ziehungen je UTC-Kalenderwoche. Nicht genutzte Ziehungen werden nicht übertragen."
+  ,"fortune.visualOddsNotice": "Das Rad ist eine Animation. Maßgeblich sind ausschließlich die hier angezeigten effektiven Server-Wahrscheinlichkeiten."
+  ,"fortune.iphoneRemaining": "Verfügbare iPhone-Duo-Prämien: {count}"
+  ,"fortune.close": "Schließen"
+  ,"fortune.weeklyProgress": "Wöchentlicher Fortschritt"
+  ,"fortune.resultOnixTitleWeekly": "Dein Gewinn"
+  ,"fortune.iphoneUnavailable": "iPhone Duo ist aktuell nicht verfügbar. Die angezeigten ONIX-Chancen wurden vom Server neu berechnet."
+  ,"fortune.newWeek": "Neue UTC-Woche: drei neue Ziehungen sind verfügbar."
+  ,"fortune.preview.state.spins-3": "3 Ziehungen"
+  ,"fortune.preview.state.spins-2": "2 Ziehungen"
+  ,"fortune.preview.state.spins-1": "1 Ziehung"
+  ,"fortune.preview.state.spins-0": "0 Ziehungen"
+  ,"fortune.preview.state.result-5k": "5K Ergebnis"
+  ,"fortune.preview.state.result-10k": "10K Ergebnis"
+  ,"fortune.preview.state.result-25k": "25K Ergebnis"
+  ,"fortune.preview.state.result-50k": "50K Ergebnis"
+  ,"fortune.preview.state.result-250k": "250K Ergebnis"
+  ,"fortune.preview.state.color": "Farbauswahl"
+  ,"fortune.preview.state.request": "Anfrage"
+  ,"fortune.preview.state.iphone-unavailable": "iPhone nicht verfügbar"
+  ,"fortune.preview.state.new-week": "Neue Woche"
+  ,"fortune.preview.state.loading": "Laden"
+  ,"fortune.preview.state.error": "Fehler"
 } as const;
 
 const fortuneWheelRussianMessages: Record<keyof typeof fortuneWheelGermanMessages, string> = {
@@ -113,7 +152,46 @@ const fortuneWheelRussianMessages: Record<keyof typeof fortuneWheelGermanMessage
   "fortune.requestStatus.shipped": "Отправлена",
   "fortune.requestStatus.delivered": "Доставлена",
   "fortune.requestStatus.cancelled": "Отменена",
-  "fortune.requestStatus.processing": "Обрабатывается"
+  "fortune.requestStatus.processing": "Обрабатывается",
+  "fortune.preview.title": "Локальный просмотр дизайна",
+  "fortune.preview.safe": "Только mock-данные · без API-запросов",
+  "fortune.preview.state.wheel": "Колесо",
+  "fortune.preview.state.result-50": "Результат 50K",
+  "fortune.preview.state.result-250": "Результат 250K",
+  "fortune.preview.state.result-iphone": "Результат iPhone",
+  "fortune.preview.state.completed": "Завершено"
+  ,"fortune.weeklyTitle": "3 вращения в неделю"
+  ,"fortune.weeklyText": "Каждый результат безопасно определяется сервером. Новые вращения появляются по понедельникам в 00:00 UTC."
+  ,"fortune.weeklyStatus": "Статус недельных вращений"
+  ,"fortune.spinsRemaining": "из {total} вращений доступно"
+  ,"fortune.resetIn": "Обновление через "
+  ,"fortune.nextWeekIn": "Новые вращения через "
+  ,"fortune.serverDraw": "Результат определяет сервер"
+  ,"fortune.rules": "Правила и шансы"
+  ,"fortune.rulesTitle": "Правила и вероятности"
+  ,"fortune.rulesText": "Доступно до трёх вращений за календарную неделю UTC. Неиспользованные вращения не переносятся."
+  ,"fortune.visualOddsNotice": "Колесо является анимацией. Точные шансы определяются только эффективными серверными вероятностями, указанными здесь."
+  ,"fortune.iphoneRemaining": "Доступно призов iPhone Duo: {count}"
+  ,"fortune.close": "Закрыть"
+  ,"fortune.weeklyProgress": "Недельный прогресс"
+  ,"fortune.resultOnixTitleWeekly": "Ваш выигрыш"
+  ,"fortune.iphoneUnavailable": "iPhone Duo сейчас недоступен. Сервер пересчитал показанные вероятности ONIX."
+  ,"fortune.newWeek": "Новая неделя UTC: доступны три новых вращения."
+  ,"fortune.preview.state.spins-3": "3 вращения"
+  ,"fortune.preview.state.spins-2": "2 вращения"
+  ,"fortune.preview.state.spins-1": "1 вращение"
+  ,"fortune.preview.state.spins-0": "0 вращений"
+  ,"fortune.preview.state.result-5k": "Результат 5K"
+  ,"fortune.preview.state.result-10k": "Результат 10K"
+  ,"fortune.preview.state.result-25k": "Результат 25K"
+  ,"fortune.preview.state.result-50k": "Результат 50K"
+  ,"fortune.preview.state.result-250k": "Результат 250K"
+  ,"fortune.preview.state.color": "Выбор цвета"
+  ,"fortune.preview.state.request": "Заявка"
+  ,"fortune.preview.state.iphone-unavailable": "iPhone недоступен"
+  ,"fortune.preview.state.new-week": "Новая неделя"
+  ,"fortune.preview.state.loading": "Загрузка"
+  ,"fortune.preview.state.error": "Ошибка"
 };
 
 // Existing UI wording is preserved for all supported languages.

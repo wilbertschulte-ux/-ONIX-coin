@@ -11,6 +11,7 @@ const {
   createPreviewToken,
   executeRecovery,
   hashToken,
+  lookupPhysicalPrizeRequestsForCompatibility,
   validateFortuneWheelRecoverySafety,
   validateReferralGraphSafety,
   verifyPreviewToken,
@@ -23,7 +24,17 @@ const {
 } = require('../trafficEvents');
 const { trackAnalyticsEvent } = require('../analytics');
 const FortuneWheelProgress = require('../models/FortuneWheelProgress');
+const FortuneWheelPrizeInventory = require('../models/FortuneWheelPrizeInventory');
+const FortuneWheelPrizeEntitlement = require('../models/FortuneWheelPrizeEntitlement');
 const PhysicalPrizeRequest = require('../models/PhysicalPrizeRequest');
+const {
+  ADMIN_ENTITLEMENT_STATUSES,
+  buildAdminFortuneWheelDashboard,
+  buildEntitlementFilter,
+  buildProgressStatsPipeline,
+  normalizeAdminFortuneWheelQuery,
+  serializeAdminEntitlement,
+} = require('../fortuneWheelAdmin');
 const {
   PHYSICAL_PRIZE_STATUSES,
   buildAdminPhysicalPrizeFilter,
@@ -46,6 +57,20 @@ const {
   validateIphoneColorRequest,
   validateSpinRequest,
 } = require('../fortuneWheel');
+const {
+  FortuneWheelWeeklyApiError,
+  LEGACY_CAMPAIGN_KEYS,
+  WEEKLY_CAMPAIGN_KEY,
+  WEEKLY_MODE,
+  buildWeeklyFortuneWheelStatus,
+  checkWeeklyFortuneWheelReadiness,
+  checkWeeklyFortuneWheelStorageReadiness,
+  findPhysicalPrizeOwnership,
+  getFortuneWheelMode,
+  performWeeklyFortuneWheelSpin,
+  performWeeklyIphoneColorSelection,
+} = require('../fortuneWheelWeeklyApi');
+const { getFortuneWheelRandomSecret, getUtcWeekWindow } = require('../fortuneWheelWeekly');
 const {
   consumePendingTelegramLaunch,
   getPendingTelegramLaunch,
@@ -2836,6 +2861,7 @@ router.post('/admin-account-recovery-preview', async (req, res) => {
       incomingReferrals,
       fortuneWheelProgress,
       physicalPrizeRequests,
+      physicalPrizeEntitlements,
     ] = await Promise.all([
       users.findOne({ telegramId: oldId }),
       users.findOne({ telegramId: newId }),
@@ -2856,6 +2882,10 @@ router.post('/admin-account-recovery-preview', async (req, res) => {
         .collection('physical_prize_requests')
         .find({ telegramId: { $in: [oldId, newId] } })
         .toArray(),
+      mongoose.connection
+        .collection('fortune_wheel_prize_entitlements')
+        .find({ telegramId: { $in: [oldId, newId] } })
+        .toArray(),
     ]);
     if (!oldUser) return res.status(404).json({ code: 'OLD_USER_NOT_FOUND', message: 'Old user was not found' });
     if (!newUser) return res.status(404).json({ code: 'NEW_USER_NOT_FOUND', message: 'New user was not found' });
@@ -2869,7 +2899,8 @@ router.post('/admin-account-recovery-preview', async (req, res) => {
       oldId,
       newId,
       fortuneWheelProgress,
-      physicalPrizeRequests
+      physicalPrizeRequests,
+      physicalPrizeEntitlements
     );
     const preview = buildRecoveryPreview(oldUser, newUser, {
       now,
@@ -4216,6 +4247,11 @@ async function performAdminPhysicalPrizeStatusUpdate({
   session,
   cancellationReasons,
   now = new Date(),
+  connection = mongoose.connection,
+  ProgressModel = FortuneWheelProgress,
+  EntitlementModel = FortuneWheelPrizeEntitlement,
+  InventoryModel = FortuneWheelPrizeInventory,
+  storageReadinessCheck = checkWeeklyFortuneWheelStorageReadiness,
 }) {
   const request = await PhysicalPrizeRequest.findOne({ requestId }).session(session);
   if (!request) return { status: 'not_found' };
@@ -4240,6 +4276,13 @@ async function performAdminPhysicalPrizeStatusUpdate({
   if (!validated.ok) return { status: 'invalid', code: validated.code, request };
   if (Number(request.__v || 0) !== validated.expectedVersion) {
     return { status: 'version_conflict', request };
+  }
+
+  if (request.campaignKey === WEEKLY_CAMPAIGN_KEY) {
+    const readiness = await storageReadinessCheck({ connection });
+    if (!readiness.ready) {
+      return { status: 'not_ready', code: readiness.code, request };
+    }
   }
 
   const historyEntry = {
@@ -4273,7 +4316,63 @@ async function performAdminPhysicalPrizeStatusUpdate({
     { new: true, runValidators: true, session }
   );
   if (updated && validated.nextStatus === 'delivered') {
-    const fulfilledProgress = await FortuneWheelProgress.findOneAndUpdate(
+    if (request.campaignKey === WEEKLY_CAMPAIGN_KEY) {
+      const entitlement = await EntitlementModel.findOne({
+        campaignKey: request.campaignKey,
+        telegramId: request.telegramId,
+        prizeCode: request.prizeCode,
+        progressId: request.fortuneWheelProgressId,
+      }).session(session);
+      if (!entitlement || (
+        entitlement.physicalPrizeRequestId &&
+        String(entitlement.physicalPrizeRequestId) !== String(request._id)
+      )) {
+        throw new Error('Weekly physical prize entitlement is missing for delivered request');
+      }
+      if (entitlement.status === 'reserved') {
+        const fulfilledEntitlement = await EntitlementModel.findOneAndUpdate(
+          { _id: entitlement._id, status: 'reserved' },
+          {
+            $set: {
+              status: 'fulfilled',
+              fulfilledAt: now,
+              physicalPrizeRequestId: request._id,
+            },
+          },
+          { new: true, runValidators: true, session }
+        );
+        if (!fulfilledEntitlement) {
+          throw new Error('Weekly physical prize entitlement changed concurrently');
+        }
+        const inventory = await InventoryModel.findOneAndUpdate(
+          {
+            campaignKey: request.campaignKey,
+            prizeCode: request.prizeCode,
+            $expr: { $lt: ['$fulfilled', '$reserved'] },
+          },
+          { $inc: { fulfilled: 1 } },
+          { new: true, runValidators: true, session }
+        );
+        if (!inventory) {
+          throw new Error('Weekly physical prize inventory is missing for delivered request');
+        }
+      } else if (entitlement.status !== 'fulfilled') {
+        throw new Error('Weekly physical prize entitlement status is invalid');
+      }
+    } else {
+      await EntitlementModel.findOneAndUpdate(
+        {
+          campaignKey: request.campaignKey,
+          telegramId: request.telegramId,
+          prizeCode: request.prizeCode,
+          progressId: request.fortuneWheelProgressId,
+          status: 'reserved',
+        },
+        { $set: { status: 'fulfilled', fulfilledAt: now, physicalPrizeRequestId: request._id } },
+        { new: true, runValidators: true, session }
+      );
+    }
+    const fulfilledProgress = await ProgressModel.findOneAndUpdate(
       {
         _id: request.fortuneWheelProgressId,
         campaignKey: request.campaignKey,
@@ -4299,6 +4398,8 @@ async function performAdminPhysicalPrizeColorCorrection({
   session,
   allowedColors,
   now = new Date(),
+  connection = mongoose.connection,
+  storageReadinessCheck = checkWeeklyFortuneWheelStorageReadiness,
 }) {
   const request = await PhysicalPrizeRequest.findOne({ requestId }).session(session);
   if (!request) return { status: 'not_found' };
@@ -4320,6 +4421,12 @@ async function performAdminPhysicalPrizeColorCorrection({
   if (!validated.ok) return { status: 'invalid', code: validated.code, request };
   if (Number(request.__v || 0) !== validated.expectedVersion) {
     return { status: 'version_conflict', request };
+  }
+  if (request.campaignKey === WEEKLY_CAMPAIGN_KEY) {
+    const readiness = await storageReadinessCheck({ connection });
+    if (!readiness.ready) {
+      return { status: 'not_ready', code: readiness.code, request };
+    }
   }
 
   const historyEntry = {
@@ -4355,6 +4462,107 @@ async function performAdminPhysicalPrizeColorCorrection({
     : { status: 'version_conflict', request };
 }
 
+// ADMIN: FORTUNE WHEEL CAMPAIGN STATISTICS AND ENTITLEMENT LEDGER — READ ONLY
+router.get('/admin-fortune-wheel', async (req, res) => {
+  const secret = req.query.secret ? String(req.query.secret) : '';
+  const telegramId = req.query.telegramId ? String(req.query.telegramId) : '';
+  if (!isAdminRequest(req, secret, telegramId)) {
+    return res.status(403).json({ message: 'Forbidden' });
+  }
+
+  try {
+    const normalized = normalizeAdminFortuneWheelQuery(req.query);
+    if (!normalized.ok) {
+      return res.status(400).json({ code: normalized.code, message: 'Invalid Fortune Wheel admin query' });
+    }
+    const progressPipeline = buildProgressStatsPipeline(normalized);
+    const entitlementFilter = buildEntitlementFilter(normalized);
+    const skip = (normalized.page - 1) * normalized.limit;
+    const weekly = normalized.campaignKey === WEEKLY_CAMPAIGN_KEY;
+    const [aggregation, inventory, storageReadiness, entitlementDocuments, entitlementTotal, awaitingColorTotal] = await Promise.all([
+      FortuneWheelProgress.aggregate(progressPipeline),
+      weekly
+        ? FortuneWheelPrizeInventory.findOne({ campaignKey: WEEKLY_CAMPAIGN_KEY, prizeCode: 'iphone_duo' }).lean()
+        : Promise.resolve(null),
+      weekly
+        ? checkWeeklyFortuneWheelStorageReadiness({ connection: mongoose.connection })
+        : Promise.resolve({ ready: true, code: 'LEGACY_READY' }),
+      FortuneWheelPrizeEntitlement.find(entitlementFilter)
+        .sort({ reservedAt: -1, _id: -1 })
+        .skip(skip)
+        .limit(normalized.limit)
+        .lean(),
+      FortuneWheelPrizeEntitlement.countDocuments(entitlementFilter),
+      FortuneWheelPrizeEntitlement.countDocuments({
+        campaignKey: normalized.campaignKey,
+        prizeCode: 'iphone_duo',
+        ...(normalized.weekKey ? { weekKey: normalized.weekKey } : {}),
+        status: 'reserved',
+        physicalPrizeRequestId: null,
+      }),
+    ]);
+
+    const requestObjectIds = entitlementDocuments
+      .map((entitlement) => entitlement.physicalPrizeRequestId)
+      .filter(Boolean);
+    const playerTelegramIds = [...new Set(entitlementDocuments.map((entitlement) => String(entitlement.telegramId || '')))];
+    const [linkedRequests, players] = await Promise.all([
+      requestObjectIds.length
+        ? PhysicalPrizeRequest.find({ _id: { $in: requestObjectIds } }).lean()
+        : Promise.resolve([]),
+      playerTelegramIds.length
+        ? User.find({ telegramId: { $in: playerTelegramIds } })
+            .select('telegramId username telegramUsername')
+            .lean()
+        : Promise.resolve([]),
+    ]);
+    const requestById = new Map(linkedRequests.map((request) => [String(request._id), request]));
+    const userByTelegramId = new Map(players.map((user) => [String(user.telegramId), user]));
+    const entitlements = entitlementDocuments.map((entitlement) => serializeAdminEntitlement(entitlement, {
+      request: requestById.get(String(entitlement.physicalPrizeRequestId || '')) || null,
+      user: userByTelegramId.get(String(entitlement.telegramId || '')) || null,
+    }));
+    const campaignConfig = getFortuneWheelCampaignConfig();
+    let mode = 'invalid';
+    try {
+      mode = getFortuneWheelMode();
+    } catch {
+      mode = 'invalid';
+    }
+    const totalPages = Math.max(1, Math.ceil(entitlementTotal / normalized.limit));
+    return res.json({
+      campaigns: [
+        ...LEGACY_CAMPAIGN_KEYS.map((campaignKey) => ({
+          campaignKey,
+          mode: 'legacy_fixed_v1',
+        })),
+        { campaignKey: WEEKLY_CAMPAIGN_KEY, mode: WEEKLY_MODE },
+      ],
+      dashboard: buildAdminFortuneWheelDashboard({
+        normalized,
+        aggregation,
+        inventory,
+        campaignConfig,
+        mode,
+        storageReadiness,
+      }),
+      entitlements,
+      awaitingColorTotal,
+      entitlementPagination: {
+        page: normalized.page,
+        limit: normalized.limit,
+        total: entitlementTotal,
+        totalPages,
+        hasNextPage: normalized.page < totalPages,
+        hasPrevPage: normalized.page > 1,
+      },
+      filters: { entitlementStatuses: ADMIN_ENTITLEMENT_STATUSES },
+    });
+  } catch (error) {
+    return res.status(500).json({ code: 'ADMIN_FORTUNE_WHEEL_LOAD_FAILED', message: 'Fortune Wheel dashboard could not be loaded' });
+  }
+});
+
 // ADMIN: PHYSICAL PRIZE REQUESTS — FILTERED, PAGINATED, ADMIN ONLY
 router.get('/admin-physical-prizes', async (req, res) => {
   const secret = req.query.secret ? String(req.query.secret) : '';
@@ -4367,6 +4575,13 @@ router.get('/admin-physical-prizes', async (req, res) => {
     const normalized = normalizeAdminPhysicalPrizeListQuery(req.query);
     if (!normalized.ok) return res.status(400).json({ code: normalized.code, message: 'Invalid physical prize query' });
     const filter = buildAdminPhysicalPrizeFilter(normalized);
+    if (normalized.weekKey) {
+      const progressIds = await FortuneWheelProgress.find({
+        campaignKey: normalized.campaignKey,
+        weekKey: normalized.weekKey,
+      }).select('_id').lean();
+      filter.fortuneWheelProgressId = { $in: progressIds.map((progress) => progress._id) };
+    }
     const direction = normalized.sort === 'oldest' ? 1 : -1;
     const skip = (normalized.page - 1) * normalized.limit;
     const [documents, total] = await Promise.all([
@@ -4427,6 +4642,7 @@ router.post('/admin-physical-prizes/:requestId/status', async (req, res) => {
 
     if (result?.status === 'not_found') return res.status(404).json({ code: 'PHYSICAL_PRIZE_REQUEST_NOT_FOUND', message: 'Request not found' });
     if (result?.status === 'invalid') return res.status(400).json({ code: result.code, message: 'Physical prize status update rejected' });
+    if (result?.status === 'not_ready') return res.status(503).json({ code: result.code, message: 'Weekly physical prize storage is not ready' });
     if (result?.status === 'version_conflict' || result?.status === 'idempotency_conflict') {
       return res.status(409).json({ code: result.status.toUpperCase(), message: 'Physical prize request changed concurrently' });
     }
@@ -4469,6 +4685,7 @@ router.post('/admin-physical-prizes/:requestId/color', async (req, res) => {
 
     if (result?.status === 'not_found') return res.status(404).json({ code: 'PHYSICAL_PRIZE_REQUEST_NOT_FOUND', message: 'Request not found' });
     if (result?.status === 'invalid') return res.status(400).json({ code: result.code, message: 'Physical prize color correction rejected' });
+    if (result?.status === 'not_ready') return res.status(503).json({ code: result.code, message: 'Weekly physical prize storage is not ready' });
     if (result?.status === 'version_conflict' || result?.status === 'idempotency_conflict') {
       return res.status(409).json({ code: result.status.toUpperCase(), message: 'Physical prize request changed concurrently' });
     }
@@ -4484,11 +4701,59 @@ router.post('/admin-physical-prizes/:requestId/color', async (req, res) => {
   }
 });
 
+async function loadWeeklyFortuneWheelStatus({ telegramId, user, config, readiness, now = new Date() }) {
+  const week = getUtcWeekWindow(now);
+  const [progress, inventory, ownership, compatibility] = await Promise.all([
+    FortuneWheelProgress.findOne({
+      campaignKey: WEEKLY_CAMPAIGN_KEY,
+      telegramId,
+      weekKey: week.weekKey,
+    }).lean(),
+    FortuneWheelPrizeInventory.findOne({
+      campaignKey: WEEKLY_CAMPAIGN_KEY,
+      prizeCode: 'iphone_duo',
+    }).lean(),
+    findPhysicalPrizeOwnership({
+      telegramId,
+      ProgressModel: FortuneWheelProgress,
+      EntitlementModel: FortuneWheelPrizeEntitlement,
+      RequestModel: PhysicalPrizeRequest,
+    }),
+    lookupPhysicalPrizeRequestsForCompatibility({
+      collection: PhysicalPrizeRequest.collection,
+      telegramId,
+      activeCampaignKey: WEEKLY_CAMPAIGN_KEY,
+    }),
+  ]);
+  return buildWeeklyFortuneWheelStatus({
+    user,
+    progress,
+    inventory,
+    playerHasPhysicalPrize: ownership.owned,
+    physicalPrizeRequests: compatibility.requests.map(serializePhysicalPrizeRequest),
+    weeklyEntitlement: ownership.entitlement,
+    hasWeeklyPhysicalPrizeRequest: compatibility.activeRequests.length > 0,
+    config,
+    readiness,
+    now,
+  });
+}
+
 // FORTUNE WHEEL STATUS — READ ONLY
 router.get('/fortune-wheel/status', requireTelegramMiniAppUser, async (req, res) => {
   try {
     const telegramId = req.telegramUserId;
     const config = getFortuneWheelCampaignConfig();
+    if (getFortuneWheelMode() === WEEKLY_MODE) {
+      const user = await User.findOne({ telegramId }).select('telegramId isFrozen').lean();
+      if (!user) {
+        return res.status(404).json({
+          message: translate('userNotFound', await getUserLanguage(User, telegramId)),
+        });
+      }
+      const readiness = await checkWeeklyFortuneWheelReadiness({ connection: mongoose.connection });
+      return res.json(await loadWeeklyFortuneWheelStatus({ telegramId, user, config, readiness }));
+    }
     const [user, progress] = await Promise.all([
       User.findOne({ telegramId }).select('telegramId isFrozen').lean(),
       FortuneWheelProgress.findOne({
@@ -4672,6 +4937,37 @@ async function performFortuneWheelSpin({
   };
 }
 
+async function creditWeeklyFortuneWheelOnix({ user, amount, session, now, expectedSpin }) {
+  user.balance = roundOnix(Number(user.balance || 0) + amount);
+  await addEarnings(user, amount, session);
+  addTransaction(user, 'income_fortune_wheel', amount, `Glücksrad: Wochenziehung ${expectedSpin}`);
+  addSecurityLog(
+    user,
+    'fortune_wheel',
+    'Weekly fortune wheel reward claimed',
+    `Weekly spin ${expectedSpin}: +${amount} ONIX`
+  );
+  const achievementBonuses = await applyAchievements(user, session);
+  const rankBonuses = await applyRankBonuses(user, session);
+  user.level = calculateLevel(user.totalEarned);
+  user.updatedAt = now;
+  await user.save({ session });
+  return { achievementBonuses, rankBonuses };
+}
+
+function serializeWeeklyClaimForResponse(claim) {
+  return {
+    spin: Number(claim.spin),
+    rewardType: String(claim.rewardType || ''),
+    amount: Number(claim.amount || 0),
+    prizeCode: String(claim.prizeCode || ''),
+    rewardCode: String(claim.rewardCode || ''),
+    configVersion: String(claim.configVersion || ''),
+    drawVersion: String(claim.drawVersion || ''),
+    claimedAt: claim.claimedAt || null,
+  };
+}
+
 // FORTUNE WHEEL SPIN — FIXED, GUARANTEED REWARD SEQUENCE
 router.post(
   '/fortune-wheel/spin',
@@ -4687,6 +4983,62 @@ router.post(
     try {
       const telegramId = req.telegramUserId;
       const config = getFortuneWheelCampaignConfig();
+      if (getFortuneWheelMode() === WEEKLY_MODE) {
+        const operationNow = new Date();
+        const readiness = await checkWeeklyFortuneWheelReadiness({ connection: mongoose.connection });
+        if (!readiness.ready) {
+          return res.status(503).json({ code: readiness.code, message: 'Weekly Fortune Wheel is not ready' });
+        }
+        const secret = getFortuneWheelRandomSecret();
+        session = await mongoose.startSession();
+        let weeklyResult = null;
+        await session.withTransaction(async () => {
+          weeklyResult = await performWeeklyFortuneWheelSpin({
+            telegramId,
+            expectedSpin: validated.expectedSpin,
+            idempotencyKey: validated.idempotencyKey,
+            config,
+            readiness,
+            session,
+            secret,
+            now: operationNow,
+            UserModel: User,
+            normalizeUser: normalizeUserFields,
+            creditOnix: creditWeeklyFortuneWheelOnix,
+          });
+        }, {
+          readConcern: { level: 'snapshot' },
+          writeConcern: { w: 'majority' },
+          readPreference: 'primary',
+        });
+        if (!weeklyResult || weeklyResult.status === 'not_found') {
+          return res.status(404).json({ code: 'USER_NOT_FOUND', message: 'User not found' });
+        }
+        if (weeklyResult.status === 'frozen') return ensureUserNotFrozen(weeklyResult.user, res);
+        if (weeklyResult.status !== 'success') {
+          return res.status(409).json({
+            code: weeklyResult.code || weeklyResult.status.toUpperCase(),
+            message: 'Weekly Fortune Wheel spin was not applied',
+            ...(weeklyResult.expectedSpin ? { expectedSpin: weeklyResult.expectedSpin } : {}),
+          });
+        }
+        const status = await loadWeeklyFortuneWheelStatus({
+          telegramId,
+          user: weeklyResult.user,
+          config,
+          readiness,
+          now: operationNow,
+        });
+        return res.json({
+          success: true,
+          idempotent: Boolean(weeklyResult.idempotent),
+          claim: serializeWeeklyClaimForResponse(weeklyResult.claim),
+          status,
+          user: buildFortuneWheelUserPayload(weeklyResult.user),
+          achievementBonuses: weeklyResult.achievementBonuses || [],
+          rankBonuses: weeklyResult.rankBonuses || [],
+        });
+      }
       session = await mongoose.startSession();
       let result = null;
 
@@ -4743,6 +5095,15 @@ router.post(
         rankBonuses: result.rankBonuses || [],
       });
     } catch (error) {
+      if (
+        error instanceof FortuneWheelWeeklyApiError &&
+        error.code === 'CONCURRENT_SPIN_CONFLICT'
+      ) {
+        return res.status(409).json({
+          code: error.code,
+          message: 'Fortune wheel spin conflicted with another request; retry with the same idempotency key',
+        });
+      }
       if (error?.code === 11000) {
         return res.status(409).json({
           code: 'CONCURRENT_SPIN_CONFLICT',
@@ -4901,15 +5262,34 @@ router.post(
     try {
       session = await mongoose.startSession();
       let result = null;
+      const weeklyMode = getFortuneWheelMode() === WEEKLY_MODE;
       await session.withTransaction(
         async () => {
-          result = await performIphoneColorSelection({
-            telegramId,
-            color: validated.color,
-            idempotencyKey: validated.idempotencyKey,
-            config,
-            session,
-          });
+          if (weeklyMode) {
+            result = await performWeeklyIphoneColorSelection({
+              telegramId,
+              color: validated.color,
+              idempotencyKey: validated.idempotencyKey,
+              config,
+              session,
+              UserModel: User,
+              legacySelection: (legacyCampaignKey) => performIphoneColorSelection({
+                telegramId,
+                color: validated.color,
+                idempotencyKey: validated.idempotencyKey,
+                config: { ...config, campaignKey: legacyCampaignKey },
+                session,
+              }),
+            });
+          } else {
+            result = await performIphoneColorSelection({
+              telegramId,
+              color: validated.color,
+              idempotencyKey: validated.idempotencyKey,
+              config,
+              session,
+            });
+          }
         },
         {
           readConcern: { level: 'snapshot' },
@@ -4935,6 +5315,20 @@ router.post(
         });
       }
 
+      if (weeklyMode) {
+        const readiness = await checkWeeklyFortuneWheelReadiness({ connection: mongoose.connection });
+        return res.json({
+          success: true,
+          idempotent: Boolean(result.idempotent),
+          physicalPrizeRequest: serializePhysicalPrizeRequest(result.request),
+          status: await loadWeeklyFortuneWheelStatus({
+            telegramId,
+            user: result.user,
+            config,
+            readiness,
+          }),
+        });
+      }
       return res.json({
         success: true,
         idempotent: Boolean(result.idempotent),
@@ -4947,13 +5341,46 @@ router.post(
         }),
       });
     } catch (error) {
+      if (
+        error instanceof FortuneWheelWeeklyApiError &&
+        error.code === 'CONCURRENT_PHYSICAL_PRIZE_CONFLICT'
+      ) {
+        return res.status(409).json({
+          code: error.code,
+          message: 'Physical prize request conflicted with another request',
+        });
+      }
       if (error?.code === 11000) {
-        const existing = await PhysicalPrizeRequest.findOne({
-          campaignKey: config.campaignKey,
-          telegramId,
-          prizeCode: 'iphone_duo',
-        }).lean();
+        const weeklyMode = getFortuneWheelMode() === WEEKLY_MODE;
+        const compatibility = weeklyMode
+          ? await lookupPhysicalPrizeRequestsForCompatibility({
+              collection: PhysicalPrizeRequest.collection,
+              telegramId,
+              activeCampaignKey: WEEKLY_CAMPAIGN_KEY,
+            })
+          : null;
+        const existing = weeklyMode
+          ? compatibility.requests[0] || null
+          : await PhysicalPrizeRequest.findOne({
+              campaignKey: config.campaignKey,
+              telegramId,
+              prizeCode: 'iphone_duo',
+            }).lean();
         if (existing && String(existing.color || '') === validated.color) {
+          if (weeklyMode) {
+            const readiness = await checkWeeklyFortuneWheelReadiness({ connection: mongoose.connection });
+            return res.json({
+              success: true,
+              idempotent: true,
+              physicalPrizeRequest: serializePhysicalPrizeRequest(existing),
+              status: await loadWeeklyFortuneWheelStatus({
+                telegramId,
+                user: { telegramId, isFrozen: false },
+                config,
+                readiness,
+              }),
+            });
+          }
           const progress = await FortuneWheelProgress.findOne({
             campaignKey: config.campaignKey,
             telegramId,

@@ -2,7 +2,22 @@ const STARTUP_STAGES = Object.freeze([
   'deployment-config',
   'telegram-bot-verification',
   'mongodb-connect',
+  'fortune-wheel-readiness',
   'http-listen',
+]);
+
+const SAFE_FORTUNE_WHEEL_ERROR_CODES = new Set([
+  'FORTUNE_WHEEL_MODE_INVALID',
+  'RANDOM_SECRET_INVALID',
+  'WEEKLY_ACCOUNT_RECOVERY_NOT_READY',
+  'WEEKLY_CAMPAIGN_KEY_INVALID',
+  'WEEKLY_CONFIG_VERSION_INVALID',
+  'WEEKLY_DATABASE_MISMATCH',
+  'WEEKLY_INVENTORY_NOT_READY',
+  'WEEKLY_LEGACY_PROGRESS_INDEX_ACTIVE',
+  'WEEKLY_READINESS_FAILED',
+  'WEEKLY_REQUIRED_INDEX_MISSING',
+  'WEEKLY_STAGING_REQUIRED',
 ]);
 
 const SAFE_DEPLOYMENT_ERROR_CODES = new Set([
@@ -50,6 +65,7 @@ function classifyStartupError(error, stage) {
 
   const code = typeof error?.code === 'string' ? error.code : '';
   if (SAFE_DEPLOYMENT_ERROR_CODES.has(code)) return code;
+  if (stage === 'fortune-wheel-readiness' && SAFE_FORTUNE_WHEEL_ERROR_CODES.has(code)) return code;
   if (stage === 'http-listen' && code === 'EADDRINUSE') return 'HTTP_PORT_IN_USE';
   if (stage === 'http-listen' && code === 'EACCES') return 'HTTP_LISTEN_PERMISSION_DENIED';
   return 'STARTUP_FAILED';

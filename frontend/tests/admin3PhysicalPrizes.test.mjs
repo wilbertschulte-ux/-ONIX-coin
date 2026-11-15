@@ -34,11 +34,32 @@ const request = {
 
 test('list parameters preserve status, sort and bounded pagination while trimming search', () => {
   const params = helpers.createAdminPhysicalPrizeListParams('9000', {
+    campaignKey: 'fortune-wheel-weekly-v1', weekKey: '2026-11-09',
     status: 'pending', search: '  request-1  ', sort: 'oldest', page: -2,
   });
   assert.deepEqual(JSON.parse(JSON.stringify(params)), {
-    telegramId: '9000', status: 'pending', search: 'request-1', sort: 'oldest', page: 1, limit: 20,
+    telegramId: '9000', campaignKey: 'fortune-wheel-weekly-v1', weekKey: '2026-11-09',
+    status: 'pending', search: 'request-1', sort: 'oldest', page: 1, limit: 20,
   });
+});
+
+test('campaign dashboard parameters preserve weekly filters and legacy never sends a week', () => {
+  const weekly = helpers.createAdminFortuneWheelParams('9000', {
+    campaignKey: 'fortune-wheel-weekly-v1', weekKey: '2026-11-09',
+    entitlementStatus: 'awaiting_color', entitlementSearch: ' 9001 ', entitlementPage: 0,
+  });
+  assert.deepEqual(JSON.parse(JSON.stringify(weekly)), {
+    telegramId: '9000', campaignKey: 'fortune-wheel-weekly-v1', weekKey: '2026-11-09',
+    entitlementStatus: 'awaiting_color', entitlementSearch: '9001', entitlementPage: 1, entitlementLimit: 20,
+  });
+  const legacy = helpers.createAdminFortuneWheelParams('9000', {
+    campaignKey: 'fortune-wheel-v1', weekKey: '2026-11-09', entitlementStatus: '', entitlementSearch: '', entitlementPage: 1,
+  });
+  assert.equal(legacy.weekKey, undefined);
+  const stagingLegacy = helpers.createAdminFortuneWheelParams('9000', {
+    campaignKey: 'fortune-wheel-staging-v1', weekKey: '2026-11-09', entitlementStatus: '', entitlementSearch: '', entitlementPage: 1,
+  });
+  assert.equal(stagingLegacy.weekKey, undefined);
 });
 
 test('status and color payloads carry optimistic version and one idempotency key', () => {
@@ -58,6 +79,7 @@ test('status and color payloads carry optimistic version and one idempotency key
 test('Admin 3.0 uses only the protected physical prize list and mutation endpoints', () => {
   const api = fs.readFileSync(apiPath, 'utf8');
   assert.match(api, /\/admin-physical-prizes`/);
+  assert.match(api, /\/admin-fortune-wheel`/);
   assert.match(api, /\/admin-physical-prizes\/\$\{encodeURIComponent\(request\.requestId\)\}\/status/);
   assert.match(api, /\/admin-physical-prizes\/\$\{encodeURIComponent\(request\.requestId\)\}\/color/);
   assert.doesNotMatch(api, /ADMIN_SECRET|secret:/);
@@ -74,6 +96,16 @@ test('section supports filters, pagination, cards and full expandable audit hist
   assert.match(source, /<details className="admin-physical-prize-history">/);
   assert.match(source, /hasNextPage/);
   assert.match(source, /hasPrevPage/);
+  assert.match(source, /admin-fortune-campaign-switch/);
+  assert.match(source, /fortune-wheel-staging-v1/);
+  assert.match(source, /campaign\.stats\.uniquePlayers/);
+  assert.match(source, /campaign\.stats\.spinsUsed/);
+  assert.match(source, /campaign\.stats\.totalOnix/);
+  assert.match(source, /campaign\.configuredProbabilities/);
+  assert.match(source, /campaign\.effectiveProbabilities/);
+  assert.match(source, /dashboard\?\.awaitingColorTotal/);
+  assert.match(source, /entitlement\.requestId/);
+  assert.match(source, /entitlement\.weekKey/);
 });
 
 test('every mutation requires confirmation and a synchronous duplicate-submit lock', () => {
@@ -105,6 +137,8 @@ test('German and Russian typed labels exist and other languages retain German ad
   const source = fs.readFileSync(i18nPath, 'utf8');
   assert.match(source, /"admin\.shell\.physicalPrizes": "Physische Prämien"/);
   assert.match(source, /"admin\.shell\.physicalPrizes": "Физические призы"/);
+  assert.match(source, /"admin\.physicalPrizes\.weeklyCampaign": "Wöchentliche Kampagne"/);
+  assert.match(source, /"admin\.physicalPrizes\.weeklyCampaign": "Еженедельная кампания"/);
   assert.match(source, /adminRussianMessages[\s\S]*satisfies Record<AdminMessageKey, string>/);
   const messages = fs.readFileSync(path.join(root, 'src', 'i18n', 'messages.ts'), 'utf8');
   assert.ok((messages.match(/\.\.\.adminGermanMessages/g) || []).length >= 9);
@@ -116,4 +150,6 @@ test('mobile cards wrap long values and avoid horizontal table layouts', () => {
   assert.match(css, /\.admin-physical-prize-card[\s\S]*min-width:\s*0/);
   assert.match(css, /overflow-wrap:\s*anywhere/);
   assert.match(css, /@media \(max-width: 480px\)[\s\S]*\.admin-physical-prize-facts/);
+  assert.match(css, /\.admin-fortune-metrics[\s\S]*minmax\(0, 1fr\)/);
+  assert.match(css, /@media \(max-width: 480px\)[\s\S]*\.admin-fortune-dashboard-columns/);
 });

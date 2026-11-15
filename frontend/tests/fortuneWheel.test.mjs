@@ -10,7 +10,12 @@ const typesPath = path.join(root, 'src', 'fortuneWheel', 'fortuneWheelTypes.ts')
 const componentPath = path.join(root, 'src', 'fortuneWheel', 'FortuneWheelSection.tsx');
 const premiumWheelPath = path.join(root, 'src', 'fortuneWheel', 'components', 'PremiumWheel.tsx');
 const resultScreenPath = path.join(root, 'src', 'fortuneWheel', 'components', 'RewardResultScreen.tsx');
+const progressPath = path.join(root, 'src', 'fortuneWheel', 'components', 'RewardProgress.tsx');
+const prizeCardPath = path.join(root, 'src', 'fortuneWheel', 'components', 'PhysicalPrizeCard.tsx');
 const presentationPath = path.join(root, 'src', 'fortuneWheel', 'fortuneWheelPresentation.ts');
+const previewPath = path.join(root, 'src', 'fortuneWheel', 'FortuneWheelPreview.tsx');
+const previewEntryPath = path.join(root, 'src', 'fortuneWheel', 'preview.tsx');
+const previewHtmlPath = path.join(root, 'fortune-wheel-preview.html');
 const cssPath = path.join(root, 'src', 'fortuneWheel', 'fortuneWheel.css');
 const appPath = path.join(root, 'src', 'App.tsx');
 const messagesPath = path.join(root, 'src', 'i18n', 'messages.ts');
@@ -55,18 +60,28 @@ function status(overrides = {}) {
   };
 }
 
-test('all three server spins land on their fixed matching sectors without randomness', () => {
+function weeklyStatus(overrides = {}) {
+  return {
+    mode: 'weekly_random_v1', campaignKey: 'fortune-wheel-weekly-v1', enabled: true, guaranteed: false,
+    serverTime: '2026-11-04T12:00:00.000Z', weekKey: '2026-11-02', resetsAt: '2026-11-09T00:00:00.000Z',
+    eligibility: { eligible: true, code: 'ELIGIBLE' }, spins: { limit: 3, used: 1, remaining: 2 }, claims: [],
+    prizes: [
+      { code: 'onix_5000', type: 'onix', amount: 5000, prizeCode: '', configuredWeightPpm: 350000, effectiveWeightPpm: 350000, available: true },
+      { code: 'iphone_duo', type: 'physical_prize', amount: 0, prizeCode: 'iphone_duo', configuredWeightPpm: 49000, effectiveWeightPpm: 49000, available: true },
+    ], inventory: { capacity: 100, reserved: 1, fulfilled: 0, remaining: 99 },
+    physicalPrize: { alreadyOwned: false, unlocked: false, canSelectColor: false, colors: [], requests: [] },
+    ...overrides,
+  };
+}
+
+test('all six server reward codes land under the fixed pointer without client randomness', () => {
   let rotation = 0;
-  const pointerAngle = 270;
-  const expectedNormalized = [270, 150, 30];
-  const expectedSectorCenters = [0, 120, 240];
-  for (const [index, spin] of [1, 2, 3].entries()) {
-    rotation = wheel.getLandingRotation(spin, rotation);
+  for (const [index, sector] of Array.from(wheel.FORTUNE_WHEEL_SECTORS).entries()) {
+    rotation = wheel.getLandingRotationByRewardCode(sector.rewardCode, rotation);
     const normalizedRotation = ((rotation % 360) + 360) % 360;
-    const sectorUnderPointer = (pointerAngle - normalizedRotation + 360) % 360;
+    const sectorUnderPointer = (wheel.FORTUNE_WHEEL_POINTER_ANGLE - normalizedRotation + 360) % 360;
     assert.ok(rotation >= (index + 1) * 4 * 360);
-    assert.equal(normalizedRotation, expectedNormalized[index]);
-    assert.equal(sectorUnderPointer, expectedSectorCenters[index]);
+    assert.equal(sectorUnderPointer, sector.centerAngle);
   }
   assert.doesNotMatch(fs.readFileSync(typesPath, 'utf8'), /Math\.random/);
 });
@@ -74,18 +89,11 @@ test('all three server spins land on their fixed matching sectors without random
 test('one shared sector manifest drives SVG geometry and landing calculations', () => {
   const manifest = Array.from(wheel.FORTUNE_WHEEL_SECTORS);
   assert.equal(manifest.length, 6);
-  assert.deepEqual(
-    manifest.filter((sector) => sector.primary).map(({ spin, centerAngle, kind }) => ({ spin, centerAngle, kind })),
-    [
-      { spin: 1, centerAngle: 0, kind: 'onix-50k' },
-      { spin: 2, centerAngle: 120, kind: 'onix-250k' },
-      { spin: 3, centerAngle: 240, kind: 'iphone-duo' },
-    ]
-  );
+  assert.deepEqual(manifest.map(({ rewardCode }) => rewardCode), ['onix_5000', 'onix_10000', 'onix_25000', 'onix_50000', 'onix_250000', 'iphone_duo']);
   assert.equal(wheel.FORTUNE_WHEEL_POINTER_ANGLE, 270);
 
   const premiumSource = fs.readFileSync(premiumWheelPath, 'utf8');
-  assert.match(premiumSource, /FORTUNE_WHEEL_SECTORS\.map/);
+  assert.match(premiumSource, /sectors\.map/);
   assert.match(premiumSource, /className="premium-wheel-pointer"/);
   assert.match(premiumSource, /sectorPath\(sector\)/);
   assert.doesNotMatch(premiumSource, /Math\.random|response\.claim|axios/);
@@ -98,8 +106,11 @@ test('premium SVG labels stay horizontal and use lightweight reward icons', () =
   assert.match(source, /`\$\{-rotation\}deg`/);
   assert.match(source, /premium-wheel-sector-icon is-onix/);
   assert.match(source, /premium-wheel-sector-icon is-phone/);
-  assert.match(source, /premium-wheel-emblem[^>]*>ONIX</);
+  assert.match(source, /premium-wheel-emblem/);
+  assert.match(source, /<i>O<\/i><b>ONIX<\/b>/);
   assert.match(source, /Array\.from\(\{ length: 18 \}/);
+  assert.match(source, /premium-wheel-glass/);
+  assert.match(source, /premium-wheel-emblem/);
   assert.match(css, /\.premium-wheel-label\s*\{[^}]*rotate\(var\(--label-counter-rotation\)\)/);
   assert.doesNotMatch(source, /rotate\(\$\{sector\.centerAngle \+ 90\}\)/);
   assert.doesNotMatch(source, /<image|\.png|\.webp|\.jpe?g/i);
@@ -112,7 +123,8 @@ test('a pending spin keeps one idempotency key until a confirmed response clears
     setItem: (key, value) => values.set(key, value),
     removeItem: (key) => values.delete(key),
   };
-  const storageKey = wheel.spinIdempotencyStorageKey('fw-test', 1);
+  const storageKey = wheel.spinIdempotencyStorageKey('fw-test', '2026-11-02', 1);
+  assert.match(storageKey, /fw-test:2026-11-02:1$/);
   const first = wheel.getOrCreateIdempotencyKey(storage, storageKey);
   const networkRetry = wheel.getOrCreateIdempotencyKey(storage, storageKey);
   assert.equal(networkRetry, first);
@@ -133,6 +145,24 @@ test('spin availability follows only server status and does not skip steps', () 
   assert.equal(wheel.canRequestSpin(status({ enabled: false })), false);
   assert.equal(wheel.canRequestSpin(status({ eligibility: { eligible: false, code: 'NO' } })), false);
   assert.equal(wheel.canRequestSpin(status({ nextSpin: 2 })), false);
+});
+
+test('weekly status controls remaining spins, week-scoped idempotency and prior-week color rights', () => {
+  const active = weeklyStatus();
+  assert.equal(wheel.canRequestSpin(active), true);
+  assert.equal(wheel.getExpectedSpin(active), 2);
+  assert.equal(wheel.canRequestSpin(weeklyStatus({ spins: { limit: 3, used: 3, remaining: 0 } })), false);
+  const unlocked = weeklyStatus({
+    physicalPrize: { alreadyOwned: true, unlocked: true, canSelectColor: true, colors: ['server-color'], requests: [] },
+  });
+  assert.equal(wheel.shouldOfferColorSelection(unlocked), true);
+  assert.equal(wheel.shouldOfferColorSelection({
+    ...unlocked, physicalPrize: { ...unlocked.physicalPrize, requests: [{ requestId: 'existing' }] },
+  }), false);
+  assert.notEqual(
+    wheel.spinIdempotencyStorageKey(active.campaignKey, active.weekKey, 1),
+    wheel.spinIdempotencyStorageKey(active.campaignKey, '2026-11-09', 1)
+  );
 });
 
 test('color selection is offered only after server unlock and reservation', () => {
@@ -175,7 +205,7 @@ test('closed campaign keeps an earned physical prize and request accessible with
 
   const source = fs.readFileSync(componentPath, 'utf8');
   assert.match(source, /status && \(available \|\| hasPersistedReward\)/);
-  assert.match(source, /status\.physicalPrize\.request &&/);
+  assert.match(source, /getPhysicalPrizeRequests\(status\)/);
   assert.match(source, /fortune\.closedTitle/);
 });
 
@@ -188,19 +218,19 @@ test('component uses authenticated API endpoints, server rewards, locks and conf
   assert.match(source, /spinLock\.current/);
   assert.match(source, /colorLock\.current/);
   assert.match(source, /setColorConfirmationOpen\(true\)/);
-  assert.match(source, /status\.physicalPrize\.colors\.map/);
-  assert.match(source, /status\?\.physicalPrize\.reserved \? 'iPhone Duo' : t\('fortune\.physicalPrize'\)/);
+  assert.match(source, /colors\.map/);
+  assert.match(source, /status\.physicalPrize\.alreadyOwned/);
   assert.doesNotMatch(source, /setBalance|Math\.random/);
 });
 
 test('server claim stops, highlights, and only then opens the dedicated result screen', () => {
   const source = fs.readFileSync(componentPath, 'utf8');
   const resultSource = fs.readFileSync(resultScreenPath, 'utf8');
-  assert.match(source, /getLandingRotation\(response\.data\.claim\.spin, current\)/);
-  assert.match(source, /setHighlightedSpin\(claim\.spin\)/);
+  assert.match(source, /getLandingRotationByRewardCode\(getClaimRewardCode\(response\.data\.claim\), current\)/);
+  assert.match(source, /setHighlightedRewardCode\(getClaimRewardCode\(claim\)\)/);
   assert.match(source, /WINNER_HIGHLIGHT_MS/);
   assert.match(source, /setResult\(claim\)/);
-  assert.match(source, /setHighlightedSpin\(claim\.spin\);[^]*?setTimeout\([^]*?finishSpinAnimation\(claim\)/);
+  assert.match(source, /setHighlightedRewardCode\(getClaimRewardCode\(claim\)\);[^]*?setTimeout\([^]*?finishSpinAnimation\(claim\)/);
   assert.match(source, /<RewardResultScreen/);
   assert.match(resultSource, /Number\(claim\.amount \|\| 0\)\.toLocaleString\(locale\)/);
   assert.match(resultSource, /claim\.rewardType === 'onix'/);
@@ -210,11 +240,41 @@ test('server claim stops, highlights, and only then opens the dedicated result s
 
 test('persisted server progress remains authoritative and never auto-starts a spin', () => {
   const source = fs.readFileSync(componentPath, 'utf8');
-  assert.match(source, /status\.completedSpins > 0/);
-  assert.match(source, /status\.rewards\.map/);
-  assert.match(source, /status\.physicalPrize\.request &&/);
+  assert.match(source, /status\.claims\.length > 0/);
+  assert.match(source, /<RewardProgress/);
+  assert.match(source, /getPhysicalPrizeRequests\(status\)/);
+  assert.match(source, /status\.spins\.remaining/);
   assert.match(source, /disabled=\{!canRequestSpin\(status\) \|\| wheelBusy\}/);
   assert.match(source, /onSpin=\{\(\) => void spin\(\)\}/);
+});
+
+test('reward progress and physical prize card are shared presentation components', () => {
+  const source = fs.readFileSync(componentPath, 'utf8');
+  const progressSource = fs.readFileSync(progressPath, 'utf8');
+  const prizeSource = fs.readFileSync(prizeCardPath, 'utf8');
+  assert.match(source, /<RewardProgress/);
+  assert.match(source, /<PhysicalPrizeCard/);
+  assert.match(progressSource, /role="list"/);
+  assert.match(progressSource, /role="listitem"/);
+  assert.match(prizeSource, /getPrizeRequestStatusKey\(request\.status\)/);
+  assert.doesNotMatch(progressSource + prizeSource, /axios|fetch\(|XMLHttpRequest/);
+});
+
+test('isolated visual preview covers weekly limits, all rewards and recovery states without any API client', () => {
+  const source = fs.readFileSync(previewPath, 'utf8');
+  const entry = fs.readFileSync(previewEntryPath, 'utf8');
+  const html = fs.readFileSync(previewHtmlPath, 'utf8');
+  assert.match(source, /data-mock-only="true"/);
+  assert.match(source, /'spins-3', 'spins-2', 'spins-1', 'spins-0'/);
+  for (const amount of [5000, 10000, 25000, 50000, 250000]) assert.match(source, new RegExp(`amount: ${amount}`));
+  assert.match(source, /rewardType: 'physical_prize'/);
+  assert.match(source, /'color', 'request', 'iphone-unavailable', 'new-week', 'loading', 'error'/);
+  assert.match(source, /<PremiumWheel/);
+  assert.match(source, /<RewardResultScreen/);
+  assert.match(source, /<PhysicalPrizeCard/);
+  assert.match(entry, /<FortuneWheelPreview/);
+  assert.match(html, /fortune-wheel-preview\.html|Mock Preview/);
+  assert.doesNotMatch(source + entry + html, /axios|fetch\(|XMLHttpRequest|onrender\.com|\/fortune-wheel\/spin/);
 });
 
 test('physical prize presentation hides technical codes without changing server values', () => {
@@ -225,7 +285,7 @@ test('physical prize presentation hides technical codes without changing server 
   assert.equal(presentation.getPrizeRequestStatusKey('internal-new-state'), 'processing');
 
   const source = fs.readFileSync(componentPath, 'utf8');
-  assert.match(source, /getPrizeColorDisplay\(color, status\?\.physicalPrize\.colors \?\? \[\]\)/);
+  assert.match(source, /getPrizeColorDisplay\(color, colors\)/);
   assert.match(source, /\{ color: confirmedColor, idempotencyKey \}/);
   assert.match(source, /fortune\.requestStatus\./);
   assert.doesNotMatch(source, /<dd>\{status\.physicalPrize\.request\.color\}<\/dd>/);
@@ -262,6 +322,12 @@ test('German, Russian and German fallback catalogs contain typed fortune message
   assert.match(source, /"fortune\.colorStagingTest": "Тестовый цвет"/);
   assert.match(source, /"fortune\.requestStatus\.pending": "Wird geprüft"/);
   assert.match(source, /"fortune\.requestStatus\.pending": "На проверке"/);
+  assert.match(source, /"fortune\.preview\.safe": "Nur Mock-Daten · keine API-Anfragen"/);
+  assert.match(source, /"fortune\.preview\.safe": "Только mock-данные · без API-запросов"/);
+  assert.match(source, /"fortune\.weeklyTitle": "3 Ziehungen pro Woche"/);
+  assert.match(source, /"fortune\.weeklyTitle": "3 вращения в неделю"/);
+  assert.match(source, /"fortune\.visualOddsNotice": "Das Rad ist eine Animation/);
+  assert.match(source, /"fortune\.visualOddsNotice": "Колесо является анимацией/);
   assert.equal((source.match(/\.\.\.fortuneWheelGermanMessages/g) || []).length, 10);
   assert.equal((source.match(/\.\.\.fortuneWheelRussianMessages/g) || []).length, 1);
 });
@@ -273,11 +339,12 @@ test('mobile layout uses Telegram viewport, safe areas and prevents horizontal o
   assert.match(css, /env\(safe-area-inset-bottom\)/);
   assert.match(css, /overflow-x:\s*hidden/);
   assert.match(css, /@media \(max-width: 374px\)/);
-  assert.match(css, /width:\s*clamp\(276px, 82vw, 356px\)/);
+  assert.match(css, /width:\s*clamp\(292px, 91vw, 420px\)/);
   assert.match(css, /\.premium-wheel-stage/);
   assert.match(css, /\.fortune-result-screen/);
   assert.match(css, /\.fortune-wheel-progress\s*\{[^}]*repeat\(3, minmax\(0, 1fr\)\)/);
   assert.match(css, /\.fortune-wheel-progress::before/);
   assert.match(css, /\.fortune-wheel-request header/);
+  assert.match(css, /@media \(min-width: 375px\) and \(max-width: 430px\)/);
   assert.match(css, /@media \(prefers-reduced-motion: reduce\)/);
 });

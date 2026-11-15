@@ -1,16 +1,17 @@
 import type { CSSProperties } from 'react';
 import {
   FORTUNE_WHEEL_SECTORS,
+  type FortuneWheelRewardCode,
   type FortuneWheelSectorDefinition,
-  type FortuneWheelSectorKind,
 } from '../fortuneWheelTypes';
 
 interface PremiumWheelProps {
+  sectors?: readonly FortuneWheelSectorDefinition[];
   rotation: number;
   spinning: boolean;
   reducedMotion: boolean;
-  highlightedSpin: 1 | 2 | 3 | null;
-  labels: Record<FortuneWheelSectorKind, { top: string; bottom: string }>;
+  highlightedRewardCode: FortuneWheelRewardCode | null;
+  labels: Record<FortuneWheelRewardCode, { top: string; bottom: string }>;
   spinLabel: string;
   spinDetail?: string;
   disabled: boolean;
@@ -37,24 +38,25 @@ function labelPosition(sector: FortuneWheelSectorDefinition): { x: number; y: nu
   return { x, y };
 }
 
-function sectorFill(kind: FortuneWheelSectorKind): string {
-  if (kind === 'iphone-duo') return 'url(#fortune-sector-iphone)';
-  if (kind === 'onix-250k') return 'url(#fortune-sector-blue-deep)';
+function sectorFill(rewardCode: FortuneWheelRewardCode): string {
+  if (rewardCode === 'iphone_duo') return 'url(#fortune-sector-iphone)';
+  if (rewardCode === 'onix_250000' || rewardCode === 'onix_25000') return 'url(#fortune-sector-blue-deep)';
   return 'url(#fortune-sector-blue)';
 }
 
 export function PremiumWheel({
+  sectors = FORTUNE_WHEEL_SECTORS,
   rotation,
   spinning,
   reducedMotion,
-  highlightedSpin,
+  highlightedRewardCode,
   labels,
   spinLabel,
   spinDetail,
   disabled,
   onSpin,
 }: PremiumWheelProps) {
-  const busy = spinning || highlightedSpin !== null;
+  const busy = spinning || highlightedRewardCode !== null;
 
   return (
     <section className="premium-wheel-stage" data-premium-wheel="true">
@@ -63,7 +65,7 @@ export function PremiumWheel({
         <span />
       </div>
       <div
-        className={`premium-wheel-disc${spinning ? ' is-spinning' : ''}${highlightedSpin ? ' is-revealing' : ''}`}
+        className={`premium-wheel-disc${spinning ? ' is-spinning' : ''}${highlightedRewardCode ? ' is-revealing' : ''}`}
         style={{ '--wheel-rotation': `${rotation}deg` } as CSSProperties}
         data-reduced-motion={reducedMotion ? 'true' : 'false'}
         aria-hidden="true"
@@ -101,22 +103,23 @@ export function PremiumWheel({
             </filter>
           </defs>
 
-          <circle cx="200" cy="200" r="193" fill="#030711" stroke="url(#fortune-gold-rim)" strokeWidth="12" />
-          <circle cx="200" cy="200" r="181" fill="#061020" stroke="#5b390b" strokeWidth="3" />
+          <circle cx="200" cy="200" r="196" fill="#02040a" stroke="#2a1704" strokeWidth="5" />
+          <circle cx="200" cy="200" r="190" fill="#030711" stroke="url(#fortune-gold-rim)" strokeWidth="10" />
+          <circle cx="200" cy="200" r="182" fill="none" stroke="rgba(0,229,255,.52)" strokeWidth="2" />
+          <circle cx="200" cy="200" r="178" fill="#061020" stroke="#5b390b" strokeWidth="4" />
 
-          {FORTUNE_WHEEL_SECTORS.map((sector) => {
-            const copy = labels[sector.kind];
+          {sectors.map((sector) => {
+            const copy = labels[sector.rewardCode];
             const point = labelPosition(sector);
-            const isWinner = highlightedSpin === sector.spin && sector.primary;
+            const isWinner = highlightedRewardCode === sector.rewardCode;
             return (
               <g
                 key={sector.index}
-                className={`premium-wheel-sector is-${sector.kind}${isWinner ? ' is-winner' : ''}`}
+                className={`premium-wheel-sector is-${sector.rewardCode.replaceAll('_', '-')}${isWinner ? ' is-winner' : ''}`}
                 data-sector-index={sector.index}
-                data-spin={sector.spin}
-                data-primary={sector.primary ? 'true' : 'false'}
+                data-reward-code={sector.rewardCode}
               >
-                <path className="premium-wheel-sector-face" d={sectorPath(sector)} fill={sectorFill(sector.kind)} filter={isWinner ? 'url(#fortune-sector-glow)' : undefined} />
+                <path className="premium-wheel-sector-face" d={sectorPath(sector)} fill={sectorFill(sector.rewardCode)} filter={isWinner ? 'url(#fortune-sector-glow)' : undefined} />
                 <line
                   x1="200"
                   y1="200"
@@ -129,7 +132,7 @@ export function PremiumWheel({
                     className="premium-wheel-label"
                     style={{ '--label-counter-rotation': `${-rotation}deg` } as CSSProperties}
                   >
-                    {sector.kind === 'iphone-duo' ? (
+                    {sector.rewardCode === 'iphone_duo' ? (
                       <g className="premium-wheel-sector-icon is-phone" aria-hidden="true">
                         <rect x="-6" y="-28" width="12" height="20" rx="3" />
                         <line x1="-2" y1="-25" x2="2" y2="-25" />
@@ -149,10 +152,11 @@ export function PremiumWheel({
           })}
 
           {Array.from({ length: 18 }, (_, index) => {
-            const [x, y] = polarPoint(index * 20, 187);
+            const [x, y] = polarPoint(index * 20, 186);
             return <circle key={index} cx={x} cy={y} r="2.4" className="premium-wheel-rim-light" />;
           })}
 
+          <circle cx="200" cy="200" r="171" className="premium-wheel-glass" />
           <circle cx="200" cy="200" r="66" fill="#020712" stroke="#17243a" strokeWidth="8" />
           <circle cx="200" cy="200" r="56" fill="url(#fortune-hub)" stroke="#fff0a2" strokeWidth="2" />
           <circle cx="183" cy="183" r="15" fill="rgba(255,255,255,.18)" />
@@ -166,7 +170,9 @@ export function PremiumWheel({
         aria-busy={busy}
         onClick={onSpin}
       >
-        <span className="premium-wheel-emblem" aria-hidden="true">ONIX</span>
+        <span className="premium-wheel-emblem" aria-hidden="true">
+          <i>O</i><b>ONIX</b>
+        </span>
         <strong>{spinLabel}</strong>
         {spinDetail && <small>{spinDetail}</small>}
       </button>

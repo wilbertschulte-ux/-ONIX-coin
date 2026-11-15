@@ -15,6 +15,11 @@ const {
 } = require('./deploymentIsolation');
 const { getSafeStartupFailure } = require('./startupDiagnostics');
 const {
+  WEEKLY_MODE,
+  assertWeeklyFortuneWheelStartupReady,
+  getFortuneWheelMode,
+} = require('./fortuneWheelWeeklyApi');
+const {
   buildMiniAppUrl,
   extractTelegramStartPayload,
   parseLaunchParam,
@@ -176,8 +181,14 @@ let startupStage = 'deployment-config';
 async function bootstrap() {
   startupStage = 'deployment-config';
   const isolation = createDeploymentIsolationConfig(process.env);
+  const fortuneWheelMode = getFortuneWheelMode(process.env);
 
   if (!isolation.staging) {
+    if (fortuneWheelMode === WEEKLY_MODE) {
+      const error = new Error('Weekly Fortune Wheel is staging-only before production activation');
+      error.code = 'WEEKLY_STAGING_REQUIRED';
+      throw error;
+    }
     // Preserve the existing production startup behavior unless staging is
     // explicitly selected through ONIX_DEPLOY_ENV.
     mongoose.connect(process.env.MONGO_URI)
@@ -200,6 +211,11 @@ async function bootstrap() {
   startupStage = 'mongodb-connect';
   await mongoose.connect(isolation.mongoUri);
   console.log("Staging isolation verified and MongoDB connected");
+  startupStage = 'fortune-wheel-readiness';
+  await assertWeeklyFortuneWheelStartupReady({
+    connection: mongoose.connection,
+    environment: process.env,
+  });
   startupStage = 'http-listen';
   await listen();
 }
