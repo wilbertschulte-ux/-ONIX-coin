@@ -489,15 +489,6 @@ export function FortuneWheelSection({
           <section className="fortune-wheel-modal fortune-rules-modal" role="dialog" aria-modal="true" aria-labelledby="fortune-rules-title">
             <h2 id="fortune-rules-title">{t('fortune.rulesTitle')}</h2>
             <p>{t('fortune.rulesText')}</p>
-            <p className="fortune-rules-note">{t('fortune.visualOddsNotice')}</p>
-            <div className="fortune-probabilities">
-              {weeklyStatus.prizes.map((prize) => (
-                <div key={prize.code} className={!prize.available ? 'is-unavailable' : ''}>
-                  <span>{prize.type === 'onix' ? `${Number(prize.amount).toLocaleString(locale)} ONIX` : 'iPhone Duo'}</span>
-                  <strong>{(prize.effectiveWeightPpm / 10_000).toLocaleString(locale, { maximumFractionDigits: 4 })}%</strong>
-                </div>
-              ))}
-            </div>
             {weeklyStatus.inventory && <p>{t('fortune.iphoneRemaining', { count: weeklyStatus.inventory.remaining })}</p>}
             <button type="button" className="fortune-wheel-primary" onClick={() => setRulesOpen(false)}>{t('fortune.close')}</button>
           </section>

@@ -326,10 +326,22 @@ test('German, Russian and German fallback catalogs contain typed fortune message
   assert.match(source, /"fortune\.preview\.safe": "Только mock-данные · без API-запросов"/);
   assert.match(source, /"fortune\.weeklyTitle": "3 Ziehungen pro Woche"/);
   assert.match(source, /"fortune\.weeklyTitle": "3 вращения в неделю"/);
-  assert.match(source, /"fortune\.visualOddsNotice": "Das Rad ist eine Animation/);
-  assert.match(source, /"fortune\.visualOddsNotice": "Колесо является анимацией/);
+  assert.match(source, /"fortune\.rulesTitle": "Aktionsregeln"/);
+  assert.match(source, /"fortune\.rulesTitle": "Правила акции"/);
+  assert.doesNotMatch(source, /fortune\.visualOddsNotice/);
   assert.equal((source.match(/\.\.\.fortuneWheelGermanMessages/g) || []).length, 10);
   assert.equal((source.match(/\.\.\.fortuneWheelRussianMessages/g) || []).length, 1);
+});
+
+test('weekly rules keep campaign conditions and inventory without rendering prize probabilities', () => {
+  const section = fs.readFileSync(componentPath, 'utf8');
+  const messages = fs.readFileSync(messagesPath, 'utf8');
+  assert.doesNotMatch(section, /fortune\.visualOddsNotice|fortune-probabilities|weeklyStatus\.prizes\.map/);
+  assert.match(section, /fortune\.iphoneRemaining/);
+  assert.match(messages, /Доступно до трёх вращений/);
+  assert.match(messages, /Nicht genutzte Ziehungen werden nicht übertragen/);
+  assert.match(messages, /Неиспользованные вращения не переносятся/);
+  assert.match(messages, /Доступно призов iPhone Duo: \{count\}/);
 });
 
 test('mobile layout uses Telegram viewport, safe areas and prevents horizontal overflow', () => {
