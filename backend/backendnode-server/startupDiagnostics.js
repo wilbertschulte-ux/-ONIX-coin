@@ -48,19 +48,94 @@ function safeStartupStage(stage) {
   return STARTUP_STAGES.includes(stage) ? stage : 'deployment-config';
 }
 
-function isMongoAuthenticationError(error) {
-  return [error, error?.cause, error?.reason?.error].some((candidate) =>
+function collectMongoErrorChain(error) {
+  const candidates = [];
+  const queue = [error];
+  const visited = new Set();
+
+  while (queue.length > 0 && candidates.length < 64) {
+    const candidate = queue.shift();
+    if (!candidate || (typeof candidate !== 'object' && typeof candidate !== 'function')) continue;
+    if (visited.has(candidate)) continue;
+    visited.add(candidate);
+    candidates.push(candidate);
+
+    for (const nested of [candidate.cause, candidate.reason, candidate.error]) {
+      if (nested) queue.push(nested);
+    }
+
+    const servers = candidate.servers;
+    if (servers instanceof Map) {
+      for (const server of servers.values()) queue.push(server, server?.error, server?.cause);
+    } else if (servers && typeof servers === 'object') {
+      for (const server of Object.values(servers)) queue.push(server, server?.error, server?.cause);
+    }
+
+    if (Array.isArray(candidate.errors)) queue.push(...candidate.errors);
+  }
+
+  return candidates;
+}
+
+function errorCode(candidate) {
+  return String(candidate?.code || '').trim().toUpperCase();
+}
+
+function errorName(candidate) {
+  return String(candidate?.name || candidate?.constructor?.name || '').trim();
+}
+
+function isMongoAuthenticationError(candidates) {
+  return candidates.some((candidate) =>
     Number(candidate?.code) === 18 || candidate?.codeName === 'AuthenticationFailed'
   );
 }
 
+function classifyMongoConnectionError(error) {
+  const candidates = collectMongoErrorChain(error);
+
+  if (isMongoAuthenticationError(candidates)) return 'MONGODB_AUTH_FAILED';
+  if (candidates.some((candidate) => errorName(candidate) === 'MongoParseError')) {
+    return 'MONGODB_URI_PARSE_FAILED';
+  }
+
+  const codes = candidates.map(errorCode);
+  const names = candidates.map(errorName);
+  if (codes.some((code) => ['ENOTFOUND', 'EAI_AGAIN', 'ESERVFAIL', 'ENODATA'].includes(code))) {
+    return 'MONGODB_DNS_FAILED';
+  }
+  if (codes.some((code) =>
+    code.startsWith('ERR_SSL_') ||
+    code.startsWith('ERR_TLS_') ||
+    ['DEPTH_ZERO_SELF_SIGNED_CERT', 'UNABLE_TO_VERIFY_LEAF_SIGNATURE', 'CERT_HAS_EXPIRED'].includes(code)
+  )) {
+    return 'MONGODB_TLS_FAILED';
+  }
+  if (
+    codes.some((code) => ['ETIMEDOUT', 'ESOCKETTIMEDOUT'].includes(code)) ||
+    names.some((name) => name === 'MongoNetworkTimeoutError')
+  ) {
+    return 'MONGODB_NETWORK_TIMEOUT';
+  }
+  if (
+    codes.some((code) => ['ECONNREFUSED', 'ECONNRESET', 'EHOSTUNREACH', 'ENETUNREACH', 'EPIPE'].includes(code)) ||
+    names.some((name) => name === 'MongoNetworkError')
+  ) {
+    return 'MONGODB_NETWORK_FAILED';
+  }
+  if (names.some((name) =>
+    name === 'MongoServerSelectionError' || name === 'MongooseServerSelectionError'
+  )) {
+    return 'MONGODB_SERVER_SELECTION_FAILED';
+  }
+
+  return null;
+}
+
 function classifyStartupError(error, stage) {
   if (stage === 'mongodb-connect') {
-    if (isMongoAuthenticationError(error)) return 'MONGODB_AUTH_FAILED';
-    if (error?.name === 'MongoParseError') return 'MONGODB_URI_PARSE_FAILED';
-    if (error?.name === 'MongoServerSelectionError') {
-      return 'MONGODB_SERVER_SELECTION_FAILED';
-    }
+    const mongoCode = classifyMongoConnectionError(error);
+    if (mongoCode) return mongoCode;
   }
 
   const code = typeof error?.code === 'string' ? error.code : '';
