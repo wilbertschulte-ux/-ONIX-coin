@@ -50,7 +50,7 @@ function expectValidationError(document, path) {
   assert.ok(error.errors[path], `expected validation error for ${path}`);
 }
 
-test('FortuneWheelProgress keeps the legacy index and prepares the weekly unique index', () => {
+test('FortuneWheelProgress keeps only the post-switch weekly progress uniqueness contract', () => {
   const legacy = indexByKeys(FortuneWheelProgress, { campaignKey: 1, telegramId: 1 });
   const weekly = indexByKeys(FortuneWheelProgress, { campaignKey: 1, telegramId: 1, weekKey: 1 });
   const idempotency = indexByKeys(FortuneWheelProgress, {
@@ -58,7 +58,7 @@ test('FortuneWheelProgress keeps the legacy index and prepares the weekly unique
     telegramId: 1,
     'claims.idempotencyKey': 1,
   });
-  assert.equal(legacy?.[1]?.unique, true);
+  assert.equal(legacy, undefined);
   assert.equal(weekly?.[1]?.unique, true);
   assert.equal(idempotency?.[1]?.unique, true);
   assert.deepEqual(idempotency?.[1]?.partialFilterExpression, {

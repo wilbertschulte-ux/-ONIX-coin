@@ -365,14 +365,18 @@ function analyzeFortuneWheelMigration(snapshot = {}) {
       blockers.push({ code: 'INDEX_OPTIONS_CONFLICT', index: name });
     }
   }
-  if (indexChecks.progressLegacy.state !== 'ready') {
+  const legacyProgressIndexActive = indexChecks.progressLegacy.state === 'ready';
+  const weeklyProgressIndexReady = indexChecks.progressWeekly.state === 'ready';
+  if (!legacyProgressIndexActive && !weeklyProgressIndexReady) {
     blockers.push({ code: 'LEGACY_PROGRESS_UNIQUE_INDEX_MISSING' });
   }
 
-  warnings.push({
-    code: 'LEGACY_PROGRESS_INDEX_REMAINS',
-    message: 'The unique (campaignKey, telegramId) index still blocks a second weekly document.',
-  });
+  if (legacyProgressIndexActive) {
+    warnings.push({
+      code: 'LEGACY_PROGRESS_INDEX_REMAINS',
+      message: 'The unique (campaignKey, telegramId) index still blocks a second weekly document.',
+    });
+  }
   warnings.push({
     code: 'LEGACY_ENDPOINT_COMPATIBILITY_REQUIRED',
     message: 'A future endpoint switch must keep legacy prize request and color lookups available.',

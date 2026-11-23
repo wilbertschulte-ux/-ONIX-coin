@@ -242,10 +242,43 @@ test('preflight blocks requests without matching progress or reservation', () =>
   );
 });
 
-test('preflight detects missing legacy index and conflicting target inventory', () => {
+test('post-switch dry-run accepts the weekly unique index without the legacy index', () => {
   const indexes = requiredIndexes();
   indexes[COLLECTIONS.progress] = indexes[COLLECTIONS.progress].filter(
-    (index) => Object.keys(index.key).length !== 2
+    (index) => JSON.stringify(index.key) !== JSON.stringify(REQUIRED_INDEXES.progressLegacy.key)
+  );
+  const report = analyzeFortuneWheelMigration(snapshot({ indexes }));
+  assert.equal(report.ok, true);
+  assert.equal(report.indexChecks.progressLegacy.state, 'missing');
+  assert.equal(report.indexChecks.progressWeekly.state, 'ready');
+  assert.equal(report.blockers.some(
+    (blocker) => blocker.code === 'LEGACY_PROGRESS_UNIQUE_INDEX_MISSING'
+  ), false);
+  assert.equal(report.warnings.some(
+    (warning) => warning.code === 'LEGACY_PROGRESS_INDEX_REMAINS'
+  ), false);
+  assert.equal(report.operations.dropLegacyProgressIndex, false);
+});
+
+test('pre-switch preflight fails closed when neither legacy nor weekly uniqueness exists', () => {
+  const indexes = requiredIndexes();
+  indexes[COLLECTIONS.progress] = indexes[COLLECTIONS.progress].filter((index) => (
+    !['progressLegacy', 'progressWeekly'].some((name) => (
+      JSON.stringify(index.key) === JSON.stringify(REQUIRED_INDEXES[name].key)
+    ))
+  ));
+  const report = analyzeFortuneWheelMigration(snapshot({ indexes }));
+  assert.equal(report.ok, false);
+  assert.equal(report.blockers.some(
+    (blocker) => blocker.code === 'LEGACY_PROGRESS_UNIQUE_INDEX_MISSING'
+  ), true);
+  assert.equal(report.operations.createIndexes.includes('progressWeekly'), true);
+});
+
+test('post-switch dry-run still blocks a conflicting target inventory', () => {
+  const indexes = requiredIndexes();
+  indexes[COLLECTIONS.progress] = indexes[COLLECTIONS.progress].filter(
+    (index) => JSON.stringify(index.key) !== JSON.stringify(REQUIRED_INDEXES.progressLegacy.key)
   );
   const report = analyzeFortuneWheelMigration(snapshot({
     indexes,
@@ -259,7 +292,7 @@ test('preflight detects missing legacy index and conflicting target inventory', 
     }],
   }));
   const codes = new Set(report.blockers.map((blocker) => blocker.code));
-  assert.equal(codes.has('LEGACY_PROGRESS_UNIQUE_INDEX_MISSING'), true);
+  assert.equal(codes.has('LEGACY_PROGRESS_UNIQUE_INDEX_MISSING'), false);
   assert.equal(codes.has('TARGET_INVENTORY_CONFLICT'), true);
 });
 

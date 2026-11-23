@@ -154,12 +154,6 @@ fortuneWheelProgressSchema.path('weekKey').validate(function validateWeeklyPerio
 }, 'Weekly fortune wheel period must be one Monday-to-Monday UTC week');
 
 fortuneWheelProgressSchema.index(
-  { campaignKey: 1, telegramId: 1 },
-  { unique: true }
-);
-// Prepared for weekly_random_v1. The legacy unique index above intentionally
-// remains in place until a separately reviewed migration has completed.
-fortuneWheelProgressSchema.index(
   { campaignKey: 1, telegramId: 1, weekKey: 1 },
   { unique: true }
 );

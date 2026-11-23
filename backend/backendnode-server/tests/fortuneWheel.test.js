@@ -354,13 +354,26 @@ test('official allowlist order cannot admit more users than reserved capacity', 
   assert.equal(getConfiguredReservationSlot(config, '9002'), null);
 });
 
-test('FortuneWheelProgress enforces unique player progress and reservation slots', () => {
+test('FortuneWheelProgress declares weekly uniqueness without the obsolete player-only index', () => {
   const indexes = FortuneWheelProgress.schema.indexes();
   assert.ok(indexes.some(([keys, options]) =>
-    keys.campaignKey === 1 && keys.telegramId === 1 && options.unique === true
+    Object.keys(keys).length === 3 &&
+    keys.campaignKey === 1 &&
+    keys.telegramId === 1 &&
+    keys.weekKey === 1 &&
+    options.unique === true
   ));
+  assert.equal(indexes.some(([keys, options]) =>
+    Object.keys(keys).length === 2 &&
+    keys.campaignKey === 1 &&
+    keys.telegramId === 1 &&
+    options.unique === true
+  ), false);
   assert.ok(indexes.some(([keys, options]) =>
-    keys.campaignKey === 1 && keys['physicalPrizeReservation.slot'] === 1 && options.unique === true
+    Object.keys(keys).length === 2 &&
+    keys.campaignKey === 1 &&
+    keys['physicalPrizeReservation.slot'] === 1 &&
+    options.unique === true
   ));
 });
 

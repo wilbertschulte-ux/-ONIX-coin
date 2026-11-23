@@ -124,15 +124,17 @@ test('weekly mode is explicit and legacy remains the default', () => {
   assert.throws(() => getFortuneWheelMode({ FORTUNE_WHEEL_MODE: 'random' }));
 });
 
-test('readiness requires staging, migrated indexes, secret and inventory capacity 100', async () => {
+test('readiness accepts the post-switch weekly index and rejects the obsolete legacy index', async () => {
   const ready = await checkWeeklyFortuneWheelReadiness({
     connection: readyConnection(), environment: stagingEnvironment(),
   });
   assert.equal(ready.ready, true);
+  assert.equal(ready.code, 'WEEKLY_READY');
 
   const legacyIndex = await checkWeeklyFortuneWheelReadiness({
     connection: readyConnection({ legacyIndex: true }), environment: stagingEnvironment(),
   });
+  assert.equal(legacyIndex.ready, false);
   assert.equal(legacyIndex.code, 'WEEKLY_LEGACY_PROGRESS_INDEX_ACTIVE');
 
   const noInventory = await checkWeeklyFortuneWheelReadiness({
