@@ -1,0 +1,205 @@
+name: CI
+
+on:
+  pull_request:
+    branches:
+      - main
+    types:
+      - opened
+      - synchronize
+      - reopened
+      - ready_for_review
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+env:
+  CI: "true"
+  NODE_VERSION: "22.14.0"
+
+jobs:
+  backend-tests:
+    name: Backend tests
+    runs-on: ubuntu-22.04
+    timeout-minutes: 15
+    defaults:
+      run:
+        working-directory: backend/backendnode-server
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          persist-credentials: false
+
+      - name: Set up Node.js
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: npm
+          cache-dependency-path: backend/backendnode-server/package-lock.json
+
+      - name: Install dependencies
+        env:
+          MONGOMS_DISABLE_POSTINSTALL: "1"
+        run: npm ci
+
+      - name: Run backend tests
+        shell: bash
+        run: |
+          mapfile -t files < <(
+            find tests -maxdepth 1 -type f -name '*.test.js' \
+              ! -name 'fortuneWheelMongoIntegration.test.js' \
+              ! -name 'fortuneWheelWeeklyMongoIntegration.test.js' \
+              ! -name 'fortuneWheelStartupAutoCreate.test.js' \
+              | sort
+          )
+          test "${#files[@]}" -gt 0
+          node --test --test-reporter=tap "${files[@]}" | tee backend-tests.tap
+          grep -Fqx '# skipped 0' backend-tests.tap
+
+  mongodb-integration:
+    name: MongoDB replica-set integration
+    runs-on: ubuntu-22.04
+    timeout-minutes: 30
+    defaults:
+      run:
+        working-directory: backend/backendnode-server
+    env:
+      MONGOMS_VERSION: "8.0.37"
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          persist-credentials: false
+
+      - name: Set up Node.js
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: npm
+          cache-dependency-path: backend/backendnode-server/package-lock.json
+
+      - name: Cache MongoDB binary
+        uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4
+        with:
+          path: ${{ runner.temp }}/mongodb-binaries
+          key: mongodb-${{ runner.os }}-${{ runner.arch }}-8.0.37
+
+      - name: Install dependencies
+        env:
+          MONGOMS_DISABLE_POSTINSTALL: "1"
+        run: npm ci
+
+      - name: Run isolated replica-set tests
+        shell: bash
+        env:
+          MONGOMS_DOWNLOAD_DIR: ${{ runner.temp }}/mongodb-binaries
+        run: |
+          node --test --test-concurrency=1 --test-reporter=tap \
+            tests/fortuneWheelMongoIntegration.test.js \
+            tests/fortuneWheelWeeklyMongoIntegration.test.js \
+            tests/fortuneWheelStartupAutoCreate.test.js \
+            | tee mongodb-integration.tap
+          grep -Fqx '# skipped 0' mongodb-integration.tap
+
+  frontend-tests:
+    name: Frontend tests
+    runs-on: ubuntu-22.04
+    timeout-minutes: 10
+    defaults:
+      run:
+        working-directory: frontend
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          persist-credentials: false
+
+      - name: Set up Node.js
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run frontend tests
+        shell: bash
+        run: |
+          node --test --test-reporter=tap tests/*.test.mjs | tee frontend-tests.tap
+          grep -Fqx '# skipped 0' frontend-tests.tap
+
+  frontend-quality:
+    name: Frontend typecheck and targeted lint
+    runs-on: ubuntu-22.04
+    timeout-minutes: 10
+    defaults:
+      run:
+        working-directory: frontend
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          persist-credentials: false
+
+      - name: Set up Node.js
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Typecheck
+        run: npx --no-install tsc -b --pretty false
+
+      - name: Targeted lint
+        run: |
+          npx --no-install eslint \
+            "src/fortuneWheel/**/*.{ts,tsx}" \
+            "src/admin/**/*.{ts,tsx}" \
+            src/apiConfig.ts \
+            src/firstTapOnboarding.ts \
+            src/i18n/admin.ts \
+            src/i18n/messages.ts \
+            vite.config.ts
+
+  frontend-build:
+    name: Frontend production build
+    runs-on: ubuntu-22.04
+    timeout-minutes: 15
+    defaults:
+      run:
+        working-directory: frontend
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          persist-credentials: false
+
+      - name: Set up Node.js
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build
+        run: npm run build
