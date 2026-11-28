@@ -1,3 +1,5 @@
+require("dotenv").config();
+
 const { translate, getUserLanguage } = require('./i18n');
 const express = require("express");
 const mongoose = require("mongoose");
@@ -8,6 +10,16 @@ const {
   verifyTelegramWebhookSecret,
 } = require('./telegramWebhookSecurity');
 const {
+  createDeploymentIsolationConfig,
+  verifyStagingTelegramBotIdentity,
+} = require('./deploymentIsolation');
+const { getSafeStartupFailure } = require('./startupDiagnostics');
+const {
+  WEEKLY_MODE,
+  assertWeeklyFortuneWheelStartupReady,
+  getFortuneWheelMode,
+} = require('./fortuneWheelWeeklyApi');
+const {
   buildMiniAppUrl,
   extractTelegramStartPayload,
   parseLaunchParam,
@@ -15,7 +27,6 @@ const {
 const { queueTrafficEvent } = require('./trafficEvents');
 const { trackAnalyticsEvent } = require('./analytics');
 const { storePendingTelegramLaunch } = require('./trustedTelegramLaunch');
-require("dotenv").config();
 
 const app = express();
 
@@ -139,20 +150,80 @@ app.post(
   }
 );
 
-mongoose.connect(process.env.MONGO_URI)
-.then(() => {
-    console.log("MongoDB connected");
-})
-.catch((err) => {
-    console.log(err);
-});
-
 app.get("/", (req, res) => {
     res.send("ONIX backend working");
 });
 
 const PORT = process.env.PORT || 5000;
 
-app.listen(PORT, () => {
-    console.log(`Server started on port ${PORT}`);
+function listen() {
+  return new Promise((resolve, reject) => {
+    const server = app.listen(PORT);
+    const handleStartupError = (error) => reject(error);
+    server.once('error', handleStartupError);
+    server.once('listening', () => {
+      server.off('error', handleStartupError);
+      console.log(`Server started on port ${PORT}`);
+      resolve(server);
+    });
+  });
+}
+
+async function requestTelegramBotIdentity(botToken) {
+  return axios.get(`https://api.telegram.org/bot${botToken}/getMe`, {
+    timeout: 10_000,
+    maxRedirects: 0,
+  });
+}
+
+let startupStage = 'deployment-config';
+
+async function bootstrap() {
+  startupStage = 'deployment-config';
+  const isolation = createDeploymentIsolationConfig(process.env);
+  const fortuneWheelMode = getFortuneWheelMode(process.env);
+
+  if (!isolation.staging) {
+    if (fortuneWheelMode === WEEKLY_MODE) {
+      const error = new Error('Weekly Fortune Wheel is staging-only before production activation');
+      error.code = 'WEEKLY_STAGING_REQUIRED';
+      throw error;
+    }
+    // Preserve the existing production startup behavior unless staging is
+    // explicitly selected through ONIX_DEPLOY_ENV.
+    mongoose.connect(process.env.MONGO_URI)
+      .then(() => {
+        console.log("MongoDB connected");
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+    startupStage = 'http-listen';
+    await listen();
+    return;
+  }
+
+  // This is the only Telegram API request allowed before the staging server
+  // starts listening. It verifies that BOT_TOKEN belongs to the configured
+  // staging bot, without logging or returning the token.
+  startupStage = 'telegram-bot-verification';
+  await verifyStagingTelegramBotIdentity(isolation, requestTelegramBotIdentity);
+  startupStage = 'mongodb-connect';
+  await mongoose.connect(isolation.mongoUri);
+  console.log("Staging isolation verified and MongoDB connected");
+  startupStage = 'fortune-wheel-readiness';
+  await assertWeeklyFortuneWheelStartupReady({
+    connection: mongoose.connection,
+    environment: process.env,
+  });
+  startupStage = 'http-listen';
+  await listen();
+}
+
+bootstrap().catch((error) => {
+  const failure = getSafeStartupFailure(startupStage, error);
+  console.error(
+    `Server startup blocked by deployment isolation: stage=${failure.stage} code=${failure.code}`
+  );
+  process.exitCode = 1;
 });

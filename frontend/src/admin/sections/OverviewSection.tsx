@@ -9,6 +9,7 @@ type OverviewSectionProps = {
 
 const overviewSectionIds: AdminSectionId[] = [
   'prizes',
+  'physical-prizes',
   'withdrawals',
   'economy',
   'analytics',

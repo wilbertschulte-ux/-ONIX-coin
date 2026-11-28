@@ -657,6 +657,305 @@ function buildRecoveryPreview(oldUser, newUser, options = {}) {
   };
 }
 
+const FORTUNE_WHEEL_ENTITLEMENT_LEDGER_RECOVERY_VERSION = 1;
+const {
+  LEGACY_FORTUNE_WHEEL_CAMPAIGN_KEYS,
+} = require('./fortuneWheelCampaigns');
+
+function fortuneWheelProgressRecoveryKey(item) {
+  const campaignKey = String(item?.campaignKey || '');
+  const weekly = item?.mode === 'weekly_random_v1' || Boolean(item?.weekKey);
+  return `${campaignKey}:${weekly ? String(item?.weekKey || '') : 'legacy'}`;
+}
+
+function physicalPrizeOwnershipKey(item) {
+  return `${String(item?.campaignKey || '')}:${String(item?.prizeCode || 'iphone_duo')}`;
+}
+
+function addRecoveryBlocker(blockers, code, message, key = '') {
+  if (!blockers.some((item) => item.code === code && String(item.key || '') === key)) {
+    blockers.push({ code, message, ...(key ? { key } : {}) });
+  }
+}
+
+function validateFortuneWheelRecoverySafety(
+  oldTelegramId,
+  newTelegramId,
+  fortuneWheelProgress = [],
+  physicalPrizeRequests = [],
+  physicalPrizeEntitlements = []
+) {
+  const oldId = String(oldTelegramId || '');
+  const newId = String(newTelegramId || '');
+  const blockers = [];
+  const progressFor = (telegramId) => fortuneWheelProgress.filter(
+    (item) => String(item.telegramId || '') === telegramId
+  );
+  const legacyOwnershipCampaignsFor = (telegramId) => new Set([
+    ...fortuneWheelProgress
+      .filter((item) => String(item.telegramId || '') === telegramId)
+      .filter((item) => Number(item?.physicalPrizeReservation?.slot || 0) > 0)
+      .map((item) => String(item.campaignKey || '')),
+    ...physicalPrizeRequests
+      .filter((item) => String(item.telegramId || '') === telegramId)
+      .map((item) => String(item.campaignKey || '')),
+    ...physicalPrizeEntitlements
+      .filter((item) => String(item.telegramId || '') === telegramId)
+      .map((item) => String(item.campaignKey || '')),
+  ].filter((campaignKey) => LEGACY_FORTUNE_WHEEL_CAMPAIGN_KEYS.includes(campaignKey)));
+  for (const telegramId of [oldId, newId]) {
+    const legacyCampaigns = legacyOwnershipCampaignsFor(telegramId);
+    if (legacyCampaigns.size > 1) {
+      addRecoveryBlocker(
+        blockers,
+        'FORTUNE_WHEEL_LEGACY_OWNERSHIP_AMBIGUOUS',
+        'Account contains physical prize ownership in multiple legacy campaigns',
+        telegramId
+      );
+    }
+  }
+  const progressKeysFor = (telegramId) => {
+    const keys = new Set();
+    for (const item of progressFor(telegramId)) {
+      if ((item.mode === 'weekly_random_v1' || item.schemaVersion === 2) && !item.weekKey) {
+        addRecoveryBlocker(
+          blockers,
+          'FORTUNE_WHEEL_WEEK_KEY_MISSING',
+          'Weekly fortune wheel progress is missing its UTC week key',
+          String(item._id || '')
+        );
+      }
+      const key = fortuneWheelProgressRecoveryKey(item);
+      if (keys.has(key)) {
+        addRecoveryBlocker(
+          blockers,
+          'FORTUNE_WHEEL_PROGRESS_DUPLICATE',
+          `Account has duplicate fortune wheel progress for ${key}`,
+          `${telegramId}:${key}`
+        );
+      }
+      keys.add(key);
+    }
+    return keys;
+  };
+  const oldProgressKeys = progressKeysFor(oldId);
+  const newProgressKeys = progressKeysFor(newId);
+  for (const progressKey of oldProgressKeys) {
+    if (newProgressKeys.has(progressKey)) {
+      addRecoveryBlocker(
+        blockers,
+        'FORTUNE_WHEEL_PROGRESS_CONFLICT',
+        `Both accounts have fortune wheel progress for ${progressKey}`,
+        progressKey
+      );
+    }
+  }
+  const claimKeysFor = (telegramId) => {
+    const keys = new Set();
+    for (const progress of progressFor(telegramId)) {
+      for (const claim of progress.claims || []) {
+        const idempotencyKey = String(claim.idempotencyKey || '');
+        if (!idempotencyKey) continue;
+        const key = `${String(progress.campaignKey || '')}:${idempotencyKey}`;
+        if (keys.has(key)) {
+          addRecoveryBlocker(
+            blockers,
+            'FORTUNE_WHEEL_IDEMPOTENCY_DUPLICATE',
+            'Account has duplicate Fortune Wheel idempotency history',
+            `${telegramId}:${key}`
+          );
+        }
+        keys.add(key);
+      }
+    }
+    return keys;
+  };
+  const oldClaimKeys = claimKeysFor(oldId);
+  const newClaimKeys = claimKeysFor(newId);
+  for (const claimKey of oldClaimKeys) {
+    if (newClaimKeys.has(claimKey)) {
+      addRecoveryBlocker(
+        blockers,
+        'FORTUNE_WHEEL_IDEMPOTENCY_CONFLICT',
+        'Both accounts contain the same Fortune Wheel idempotency key',
+        claimKey
+      );
+    }
+  }
+
+  const requestKey = (item) => `${String(item.campaignKey || '')}:${String(item.prizeCode || '')}`;
+  const newRequestKeys = new Set(
+    physicalPrizeRequests
+      .filter((item) => String(item.telegramId || '') === newId)
+      .map(requestKey)
+  );
+  for (const request of physicalPrizeRequests) {
+    if (
+      String(request.telegramId || '') === oldId &&
+      newRequestKeys.has(requestKey(request))
+    ) {
+      addRecoveryBlocker(
+        blockers,
+        'PHYSICAL_PRIZE_REQUEST_CONFLICT',
+        `Both accounts have a physical prize request for ${requestKey(request)}`,
+        requestKey(request)
+      );
+    }
+  }
+
+  const entitlementKeysFor = (telegramId) => {
+    const keys = new Set();
+    for (const entitlement of physicalPrizeEntitlements.filter(
+      (item) => String(item.telegramId || '') === telegramId
+    )) {
+      const key = physicalPrizeOwnershipKey(entitlement);
+      if (keys.has(key)) {
+        addRecoveryBlocker(
+          blockers,
+          'FORTUNE_WHEEL_ENTITLEMENT_DUPLICATE',
+          `Account has duplicate physical prize entitlements for ${key}`,
+          `${telegramId}:${key}`
+        );
+      }
+      keys.add(key);
+    }
+    return keys;
+  };
+  const oldEntitlementKeys = entitlementKeysFor(oldId);
+  const newEntitlementKeys = entitlementKeysFor(newId);
+  for (const entitlementKey of oldEntitlementKeys) {
+    if (newEntitlementKeys.has(entitlementKey)) {
+      addRecoveryBlocker(
+        blockers,
+        'FORTUNE_WHEEL_ENTITLEMENT_CONFLICT',
+        `Both accounts own a physical prize entitlement for ${entitlementKey}`,
+        entitlementKey
+      );
+    }
+  }
+
+  const progressById = new Map(fortuneWheelProgress.map((item) => [String(item._id || ''), item]));
+  const requestsById = new Map(physicalPrizeRequests.map((item) => [String(item._id || ''), item]));
+  for (const entitlement of physicalPrizeEntitlements) {
+    const owner = String(entitlement.telegramId || '');
+    if (owner !== oldId && owner !== newId) continue;
+    const progress = progressById.get(String(entitlement.progressId || ''));
+    if (
+      !progress ||
+      String(progress.telegramId || '') !== owner ||
+      String(progress.campaignKey || '') !== String(entitlement.campaignKey || '')
+    ) {
+      addRecoveryBlocker(
+        blockers,
+        'FORTUNE_WHEEL_ENTITLEMENT_PROGRESS_MISMATCH',
+        'Physical prize entitlement is not linked to progress owned by the same player and campaign',
+        String(entitlement._id || '')
+      );
+    }
+    if (entitlement.physicalPrizeRequestId) {
+      const request = requestsById.get(String(entitlement.physicalPrizeRequestId));
+      if (
+        !request ||
+        String(request.telegramId || '') !== owner ||
+        String(request.campaignKey || '') !== String(entitlement.campaignKey || '') ||
+        String(request.prizeCode || '') !== String(entitlement.prizeCode || '')
+      ) {
+        addRecoveryBlocker(
+          blockers,
+          'FORTUNE_WHEEL_ENTITLEMENT_REQUEST_MISMATCH',
+          'Physical prize entitlement is not linked to a request owned by the same player and campaign',
+          String(entitlement._id || '')
+        );
+      }
+    }
+  }
+
+  const ownershipKeysFor = (telegramId) => new Set([
+    ...progressFor(telegramId)
+      .filter((item) => Number(item?.physicalPrizeReservation?.slot || 0) > 0)
+      .map((item) => `${String(item.campaignKey || '')}:iphone_duo`),
+    ...physicalPrizeRequests
+      .filter((item) => String(item.telegramId || '') === telegramId)
+      .map(physicalPrizeOwnershipKey),
+    ...physicalPrizeEntitlements
+      .filter((item) => String(item.telegramId || '') === telegramId)
+      .map(physicalPrizeOwnershipKey),
+  ]);
+  const oldOwnershipKeys = ownershipKeysFor(oldId);
+  const newOwnershipKeys = ownershipKeysFor(newId);
+  for (const ownershipKey of oldOwnershipKeys) {
+    if (
+      newOwnershipKeys.has(ownershipKey) &&
+      !blockers.some((item) => (
+        item.key === ownershipKey && [
+          'PHYSICAL_PRIZE_REQUEST_CONFLICT',
+          'FORTUNE_WHEEL_ENTITLEMENT_CONFLICT',
+        ].includes(item.code)
+      ))
+    ) {
+      addRecoveryBlocker(
+        blockers,
+        'PHYSICAL_PRIZE_OWNERSHIP_CONFLICT',
+        `Both accounts have physical prize ownership records for ${ownershipKey}`,
+        ownershipKey
+      );
+    }
+  }
+  return blockers;
+}
+
+function getPhysicalPrizeCompatibilityCampaignKeys(
+  activeCampaignKey,
+  legacyCampaignKeys = LEGACY_FORTUNE_WHEEL_CAMPAIGN_KEYS
+) {
+  return [...new Set([
+    String(activeCampaignKey || '').trim(),
+    ...legacyCampaignKeys.map((key) => String(key || '').trim()),
+  ].filter((key) => /^[a-z0-9][a-z0-9_-]{0,63}$/i.test(key)))];
+}
+
+async function lookupPhysicalPrizeRequestsForCompatibility({
+  collection,
+  telegramId,
+  activeCampaignKey,
+  legacyCampaignKeys = LEGACY_FORTUNE_WHEEL_CAMPAIGN_KEYS,
+  prizeCode = 'iphone_duo',
+  session,
+}) {
+  const normalizedTelegramId = String(telegramId || '');
+  if (!/^\d{1,32}$/.test(normalizedTelegramId)) {
+    throw new AccountRecoveryError('INVALID_TELEGRAM_ID', 'A valid Telegram ID is required', 400);
+  }
+  const campaignKeys = getPhysicalPrizeCompatibilityCampaignKeys(
+    activeCampaignKey,
+    legacyCampaignKeys
+  );
+  if (campaignKeys.length === 0) {
+    throw new AccountRecoveryError('INVALID_CAMPAIGN_KEY', 'At least one campaign key is required', 400);
+  }
+  const requests = await collection.find(
+    {
+      telegramId: normalizedTelegramId,
+      campaignKey: { $in: campaignKeys },
+      prizeCode,
+    },
+    { session }
+  ).toArray();
+  const cloned = requests.map((request) => cloneValue(request));
+  const legacyCampaigns = [...new Set(cloned
+    .filter((request) => request.campaignKey !== activeCampaignKey)
+    .map((request) => String(request.campaignKey || ''))
+    .filter((campaignKey) => legacyCampaignKeys.includes(campaignKey)))].sort();
+  return {
+    campaignKeys,
+    ambiguousLegacyCampaigns: legacyCampaigns.length > 1,
+    legacyCampaignKeys: legacyCampaigns,
+    activeRequests: cloned.filter((request) => request.campaignKey === activeCampaignKey),
+    legacyRequests: cloned.filter((request) => request.campaignKey !== activeCampaignKey),
+    requests: cloned,
+  };
+}
+
 function confirmationPhrase(oldTelegramId, newTelegramId) {
   return `RECOVER ${oldTelegramId} INTO ${newTelegramId}`;
 }
@@ -730,10 +1029,66 @@ function assertVersion(user, expected, label) {
   }
 }
 
+function isFortuneWheelOwnershipWriteConflict(error) {
+  return (
+    error?.code === 11000 ||
+    error?.code === 112 ||
+    error?.codeName === 'DuplicateKey' ||
+    error?.codeName === 'WriteConflict' ||
+    error?.errorLabels?.includes?.('TransientTransactionError')
+  );
+}
+
+async function rebindFortuneWheelOwnership(
+  connection,
+  oldTelegramId,
+  newTelegramId,
+  session,
+  now
+) {
+  try {
+    const progress = await connection.collection('fortune_wheel_progress').updateMany(
+      { telegramId: oldTelegramId },
+      { $set: { telegramId: newTelegramId, updatedAt: new Date(now) } },
+      { session }
+    );
+    const requests = await connection.collection('physical_prize_requests').updateMany(
+      { telegramId: oldTelegramId },
+      { $set: { telegramId: newTelegramId, updatedAt: new Date(now) } },
+      { session }
+    );
+    const entitlements = await connection.collection('fortune_wheel_prize_entitlements').updateMany(
+      { telegramId: oldTelegramId },
+      { $set: { telegramId: newTelegramId, updatedAt: new Date(now) } },
+      { session }
+    );
+    return { progress, requests, entitlements };
+  } catch (error) {
+    if (isFortuneWheelOwnershipWriteConflict(error)) {
+      throw new AccountRecoveryError(
+        'FORTUNE_WHEEL_OWNERSHIP_WRITE_CONFLICT',
+        'Fortune Wheel ownership changed during account recovery',
+        409
+      );
+    }
+    throw error;
+  }
+}
+
 async function loadLinkedRecords(connection, oldTelegramId, newTelegramId, session) {
   const ids = [oldTelegramId, newTelegramId];
   const options = { session };
-  const [weeklyScores, weeklyPrizes, trafficEvents, analyticsEvents, pendingLaunches, incomingReferrals] =
+  const [
+    weeklyScores,
+    weeklyPrizes,
+    trafficEvents,
+    analyticsEvents,
+    pendingLaunches,
+    incomingReferrals,
+    fortuneWheelProgress,
+    physicalPrizeRequests,
+    physicalPrizeEntitlements,
+  ] =
     await Promise.all([
       connection.collection('weeklyscores').find({ telegramId: { $in: ids } }, options).toArray(),
       connection.collection('weeklyprizes').find({ 'winners.telegramId': { $in: ids } }, options).toArray(),
@@ -744,8 +1099,30 @@ async function loadLinkedRecords(connection, oldTelegramId, newTelegramId, sessi
         { referredBy: { $in: ids } },
         { ...options, projection: { _id: 1, telegramId: 1, referredBy: 1, __v: 1, updatedAt: 1 } }
       ).toArray(),
+      connection.collection('fortune_wheel_progress').find(
+        { telegramId: { $in: ids } },
+        options
+      ).toArray(),
+      connection.collection('physical_prize_requests').find(
+        { telegramId: { $in: ids } },
+        options
+      ).toArray(),
+      connection.collection('fortune_wheel_prize_entitlements').find(
+        { telegramId: { $in: ids } },
+        options
+      ).toArray(),
     ]);
-  return { weeklyScores, weeklyPrizes, trafficEvents, analyticsEvents, pendingLaunches, incomingReferrals };
+  return {
+    weeklyScores,
+    weeklyPrizes,
+    trafficEvents,
+    analyticsEvents,
+    pendingLaunches,
+    incomingReferrals,
+    fortuneWheelProgress,
+    physicalPrizeRequests,
+    physicalPrizeEntitlements,
+  };
 }
 
 function estimateBackupBytes(value) {
@@ -816,6 +1193,21 @@ async function performRecoveryTransaction({
       referralBlockers
     );
   }
+  const fortuneWheelBlockers = validateFortuneWheelRecoverySafety(
+    oldTelegramId,
+    newTelegramId,
+    linkedRecords.fortuneWheelProgress,
+    linkedRecords.physicalPrizeRequests,
+    linkedRecords.physicalPrizeEntitlements
+  );
+  if (fortuneWheelBlockers.length) {
+    throw new AccountRecoveryError(
+      'RECOVERY_BLOCKED',
+      'Account recovery safety checks failed',
+      409,
+      fortuneWheelBlockers
+    );
+  }
   const merged = buildMergedUser(oldUser, newUser, { now });
   const weeklyScorePlan = buildRecoveryWeeklyScorePlan(
     oldUser,
@@ -853,6 +1245,14 @@ async function performRecoveryTransaction({
     connection.collection('weeklyscores'),
     weeklyScorePlan,
     session
+  );
+
+  const fortuneWheelUpdates = await rebindFortuneWheelOwnership(
+    connection,
+    oldTelegramId,
+    newTelegramId,
+    session,
+    now
   );
 
   await users.updateMany(
@@ -895,6 +1295,12 @@ async function performRecoveryTransaction({
       ),
     analyticsEventsRewritten: false,
     weeklyScoreRecovery,
+    fortuneWheelRecovery: {
+      progressRecordsRebound: Number(fortuneWheelUpdates.progress.modifiedCount || 0),
+      physicalPrizeRequestsRebound: Number(fortuneWheelUpdates.requests.modifiedCount || 0),
+      physicalPrizeEntitlementsRebound: Number(fortuneWheelUpdates.entitlements.modifiedCount || 0),
+      rewardsReissued: false,
+    },
   };
   const completedRecovery = await recoveries.updateOne(
     { recoveryId, status: 'processing' },
@@ -934,6 +1340,8 @@ async function executeRecovery({ mongoose, ...options }) {
 module.exports = {
   ACTIVE_TRANSACTION_LIMIT,
   AccountRecoveryError,
+  FORTUNE_WHEEL_ENTITLEMENT_LEDGER_RECOVERY_VERSION,
+  LEGACY_FORTUNE_WHEEL_CAMPAIGN_KEYS,
   applyRecoveryWeeklyScorePlan,
   buildMergedUser,
   buildRecoveryPreview,
@@ -945,8 +1353,13 @@ module.exports = {
   executeRecovery,
   getIsoWeekKey,
   hashToken,
+  getPhysicalPrizeCompatibilityCampaignKeys,
+  isFortuneWheelOwnershipWriteConflict,
+  lookupPhysicalPrizeRequestsForCompatibility,
   performRecoveryTransaction,
+  rebindFortuneWheelOwnership,
   validateRecoverySafety,
+  validateFortuneWheelRecoverySafety,
   validateIncomingReferralSafety,
   validateReferralGraphSafety,
   verifyPreviewToken,

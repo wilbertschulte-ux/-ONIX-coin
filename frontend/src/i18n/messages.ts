@@ -1,10 +1,203 @@
 import { adminGermanMessages, adminRussianMessages } from './admin';
 
+const fortuneWheelGermanMessages = {
+  "fortune.promoTitle": "ONIX Aktionsrad",
+  "fortune.promoText": "Prüfe deine Teilnahme und deine garantierte Belohnungsfolge.",
+  "fortune.promoCta": "Aktionsrad öffnen",
+  "fortune.title": "Aktionsrad",
+  "fortune.back": "Zurück",
+  "fortune.loading": "Aktionsstatus wird geladen …",
+  "fortune.errorTitle": "Status nicht verfügbar",
+  "fortune.errorText": "Der Serverstatus konnte nicht geladen werden.",
+  "fortune.retry": "Erneut laden",
+  "fortune.unavailableTitle": "Aktion nicht verfügbar",
+  "fortune.unavailableText": "Für dieses Konto ist aktuell keine bestätigte Teilnahme verfügbar.",
+  "fortune.closedTitle": "Aktion für neue Drehungen geschlossen",
+  "fortune.closedText": "Bereits bestätigte Belohnungen und deine Prämienanfrage bleiben verfügbar.",
+  "fortune.guaranteed": "Garantierte Reihenfolge",
+  "fortune.sequence": "Der Server bestätigt jede Belohnung in fester Reihenfolge. Es gibt keine Zufallsauswahl.",
+  "fortune.spin": "Drehen",
+  "fortune.spinning": "Wird bestätigt …",
+  "fortune.completed": "Abgeschlossen",
+  "fortune.progress": "Belohnungsfortschritt",
+  "fortune.status.claimed": "Erhalten",
+  "fortune.status.available": "Als Nächstes",
+  "fortune.status.locked": "Gesperrt",
+  "fortune.confirmed": "Vom Server bestätigt",
+  "fortune.resultOnix": "+{amount} ONIX",
+  "fortune.resultPhysical": "iPhone Duo freigeschaltet",
+  "fortune.resultOnixTitle": "Deine garantierte Belohnung",
+  "fortune.resultPhysicalTitle": "Dein garantierter Sachpreis",
+  "fortune.resultPhysicalText": "Dein Anspruch wurde vom Server bestätigt. Wähle jetzt eine der verfügbaren Farben.",
+  "fortune.resultContinue": "Zum nächsten Schritt",
+  "fortune.physicalPrize": "Physische Prämie",
+  "fortune.spinError": "Die Bestätigung ist fehlgeschlagen. Ein erneuter Versuch verwendet dieselbe sichere Anfrage-ID.",
+  "fortune.retrySame": "Sicher erneut versuchen",
+  "fortune.chooseColor": "Farbe auswählen",
+  "fortune.colorTitle": "Farbe des iPhone Duo",
+  "fortune.colorText": "Wähle eine der vom Server angebotenen Farben. Die Auswahl kann danach nicht selbst geändert werden.",
+  "fortune.continue": "Weiter",
+  "fortune.confirmColorTitle": "Farbe verbindlich bestätigen",
+  "fortune.confirmColorText": "Möchtest du die Farbe „{color}“ endgültig bestätigen?",
+  "fortune.cancel": "Abbrechen",
+  "fortune.confirmColor": "Farbe bestätigen",
+  "fortune.saving": "Wird gespeichert …",
+  "fortune.colorError": "Die Farbauswahl konnte nicht bestätigt werden. Du kannst dieselbe Auswahl sicher erneut senden.",
+  "fortune.requestCreated": "Deine physische Prämienanfrage wurde bestätigt.",
+  "fortune.requestTitle": "Prämienanfrage",
+  "fortune.color": "Farbe",
+  "fortune.colorStagingTest": "Testfarbe",
+  "fortune.colorOption": "Farboption {number}",
+  "fortune.requestId": "Anfrage-ID",
+  "fortune.requestStatus.pending": "Wird geprüft",
+  "fortune.requestStatus.approved": "Bestätigt",
+  "fortune.requestStatus.preparing": "Wird vorbereitet",
+  "fortune.requestStatus.shipped": "Versendet",
+  "fortune.requestStatus.delivered": "Zugestellt",
+  "fortune.requestStatus.cancelled": "Storniert",
+  "fortune.requestStatus.processing": "In Bearbeitung",
+  "fortune.preview.title": "Lokale Design-Vorschau",
+  "fortune.preview.safe": "Nur Mock-Daten · keine API-Anfragen",
+  "fortune.preview.state.wheel": "Aktionsrad",
+  "fortune.preview.state.result-50": "50K Ergebnis",
+  "fortune.preview.state.result-250": "250K Ergebnis",
+  "fortune.preview.state.result-iphone": "iPhone Ergebnis",
+  "fortune.preview.state.completed": "Abgeschlossen"
+  ,"fortune.weeklyTitle": "3 Ziehungen pro Woche"
+  ,"fortune.weeklyText": "Jedes Ergebnis wird sicher auf dem Server gezogen. Neue Ziehungen gibt es montags um 00:00 UTC."
+  ,"fortune.weeklyStatus": "Wöchentlicher Ziehungsstatus"
+  ,"fortune.spinsRemaining": "von {total} Ziehungen verfügbar"
+  ,"fortune.resetIn": "Zurücksetzung in "
+  ,"fortune.nextWeekIn": "Neue Ziehungen in "
+  ,"fortune.serverDraw": "Serverbestimmtes Ergebnis"
+  ,"fortune.rules": "Aktionsregeln"
+  ,"fortune.rulesTitle": "Aktionsregeln"
+  ,"fortune.rulesText": "Du erhältst bis zu drei Ziehungen je UTC-Kalenderwoche. Nicht genutzte Ziehungen werden nicht übertragen."
+  ,"fortune.iphoneRemaining": "Verfügbare iPhone-Duo-Prämien: {count}"
+  ,"fortune.close": "Schließen"
+  ,"fortune.weeklyProgress": "Wöchentlicher Fortschritt"
+  ,"fortune.resultOnixTitleWeekly": "Dein Gewinn"
+  ,"fortune.iphoneUnavailable": "iPhone Duo ist aktuell nicht verfügbar. Die angezeigten ONIX-Chancen wurden vom Server neu berechnet."
+  ,"fortune.newWeek": "Neue UTC-Woche: drei neue Ziehungen sind verfügbar."
+  ,"fortune.preview.state.spins-3": "3 Ziehungen"
+  ,"fortune.preview.state.spins-2": "2 Ziehungen"
+  ,"fortune.preview.state.spins-1": "1 Ziehung"
+  ,"fortune.preview.state.spins-0": "0 Ziehungen"
+  ,"fortune.preview.state.result-5k": "5K Ergebnis"
+  ,"fortune.preview.state.result-10k": "10K Ergebnis"
+  ,"fortune.preview.state.result-25k": "25K Ergebnis"
+  ,"fortune.preview.state.result-50k": "50K Ergebnis"
+  ,"fortune.preview.state.result-250k": "250K Ergebnis"
+  ,"fortune.preview.state.color": "Farbauswahl"
+  ,"fortune.preview.state.request": "Anfrage"
+  ,"fortune.preview.state.iphone-unavailable": "iPhone nicht verfügbar"
+  ,"fortune.preview.state.new-week": "Neue Woche"
+  ,"fortune.preview.state.loading": "Laden"
+  ,"fortune.preview.state.error": "Fehler"
+} as const;
+
+const fortuneWheelRussianMessages: Record<keyof typeof fortuneWheelGermanMessages, string> = {
+  "fortune.promoTitle": "Колесо акции ONIX",
+  "fortune.promoText": "Проверьте участие и гарантированную последовательность наград.",
+  "fortune.promoCta": "Открыть колесо",
+  "fortune.title": "Колесо акции",
+  "fortune.back": "Назад",
+  "fortune.loading": "Загружаем статус акции…",
+  "fortune.errorTitle": "Статус недоступен",
+  "fortune.errorText": "Не удалось загрузить статус с сервера.",
+  "fortune.retry": "Загрузить снова",
+  "fortune.unavailableTitle": "Акция недоступна",
+  "fortune.unavailableText": "Для этого аккаунта сейчас нет подтверждённого участия.",
+  "fortune.closedTitle": "Акция закрыта для новых вращений",
+  "fortune.closedText": "Уже подтверждённые награды и заявка на приз остаются доступными.",
+  "fortune.guaranteed": "Гарантированная последовательность",
+  "fortune.sequence": "Сервер подтверждает каждую награду в фиксированном порядке. Случайного выбора нет.",
+  "fortune.spin": "Вращать",
+  "fortune.spinning": "Подтверждаем…",
+  "fortune.completed": "Завершено",
+  "fortune.progress": "Прогресс наград",
+  "fortune.status.claimed": "Получено",
+  "fortune.status.available": "Следующая",
+  "fortune.status.locked": "Заблокировано",
+  "fortune.confirmed": "Подтверждено сервером",
+  "fortune.resultOnix": "+{amount} ONIX",
+  "fortune.resultPhysical": "Право на iPhone Duo открыто",
+  "fortune.resultOnixTitle": "Ваша гарантированная награда",
+  "fortune.resultPhysicalTitle": "Ваш гарантированный физический приз",
+  "fortune.resultPhysicalText": "Право подтверждено сервером. Теперь выберите один из доступных цветов.",
+  "fortune.resultContinue": "К следующему шагу",
+  "fortune.physicalPrize": "Физический приз",
+  "fortune.spinError": "Подтверждение не удалось. Повтор использует тот же безопасный идентификатор запроса.",
+  "fortune.retrySame": "Безопасно повторить",
+  "fortune.chooseColor": "Выбрать цвет",
+  "fortune.colorTitle": "Цвет iPhone Duo",
+  "fortune.colorText": "Выберите один из цветов, предложенных сервером. Самостоятельно изменить выбор после подтверждения нельзя.",
+  "fortune.continue": "Продолжить",
+  "fortune.confirmColorTitle": "Подтвердить цвет",
+  "fortune.confirmColorText": "Окончательно подтвердить цвет «{color}»?",
+  "fortune.cancel": "Отмена",
+  "fortune.confirmColor": "Подтвердить цвет",
+  "fortune.saving": "Сохраняем…",
+  "fortune.colorError": "Не удалось подтвердить цвет. Тот же выбор можно безопасно отправить повторно.",
+  "fortune.requestCreated": "Заявка на физический приз подтверждена.",
+  "fortune.requestTitle": "Заявка на приз",
+  "fortune.color": "Цвет",
+  "fortune.colorStagingTest": "Тестовый цвет",
+  "fortune.colorOption": "Вариант цвета {number}",
+  "fortune.requestId": "ID заявки",
+  "fortune.requestStatus.pending": "На проверке",
+  "fortune.requestStatus.approved": "Подтверждена",
+  "fortune.requestStatus.preparing": "Готовится к отправке",
+  "fortune.requestStatus.shipped": "Отправлена",
+  "fortune.requestStatus.delivered": "Доставлена",
+  "fortune.requestStatus.cancelled": "Отменена",
+  "fortune.requestStatus.processing": "Обрабатывается",
+  "fortune.preview.title": "Локальный просмотр дизайна",
+  "fortune.preview.safe": "Только mock-данные · без API-запросов",
+  "fortune.preview.state.wheel": "Колесо",
+  "fortune.preview.state.result-50": "Результат 50K",
+  "fortune.preview.state.result-250": "Результат 250K",
+  "fortune.preview.state.result-iphone": "Результат iPhone",
+  "fortune.preview.state.completed": "Завершено"
+  ,"fortune.weeklyTitle": "3 вращения в неделю"
+  ,"fortune.weeklyText": "Каждый результат безопасно определяется сервером. Новые вращения появляются по понедельникам в 00:00 UTC."
+  ,"fortune.weeklyStatus": "Статус недельных вращений"
+  ,"fortune.spinsRemaining": "из {total} вращений доступно"
+  ,"fortune.resetIn": "Обновление через "
+  ,"fortune.nextWeekIn": "Новые вращения через "
+  ,"fortune.serverDraw": "Результат определяет сервер"
+  ,"fortune.rules": "Правила акции"
+  ,"fortune.rulesTitle": "Правила акции"
+  ,"fortune.rulesText": "Доступно до трёх вращений за календарную неделю UTC. Неиспользованные вращения не переносятся."
+  ,"fortune.iphoneRemaining": "Доступно призов iPhone Duo: {count}"
+  ,"fortune.close": "Закрыть"
+  ,"fortune.weeklyProgress": "Недельный прогресс"
+  ,"fortune.resultOnixTitleWeekly": "Ваш выигрыш"
+  ,"fortune.iphoneUnavailable": "iPhone Duo сейчас недоступен. Сервер пересчитал показанные вероятности ONIX."
+  ,"fortune.newWeek": "Новая неделя UTC: доступны три новых вращения."
+  ,"fortune.preview.state.spins-3": "3 вращения"
+  ,"fortune.preview.state.spins-2": "2 вращения"
+  ,"fortune.preview.state.spins-1": "1 вращение"
+  ,"fortune.preview.state.spins-0": "0 вращений"
+  ,"fortune.preview.state.result-5k": "Результат 5K"
+  ,"fortune.preview.state.result-10k": "Результат 10K"
+  ,"fortune.preview.state.result-25k": "Результат 25K"
+  ,"fortune.preview.state.result-50k": "Результат 50K"
+  ,"fortune.preview.state.result-250k": "Результат 250K"
+  ,"fortune.preview.state.color": "Выбор цвета"
+  ,"fortune.preview.state.request": "Заявка"
+  ,"fortune.preview.state.iphone-unavailable": "iPhone недоступен"
+  ,"fortune.preview.state.new-week": "Новая неделя"
+  ,"fortune.preview.state.loading": "Загрузка"
+  ,"fortune.preview.state.error": "Ошибка"
+};
+
 // Existing UI wording is preserved for all supported languages.
 export const DEFAULT_LANGUAGE = 'de' as const;
 
 export const germanMessages = {
   ...adminGermanMessages,
+  ...fortuneWheelGermanMessages,
   "ui.range": "Ränge",
   "ui.letzter_preis": "Letzter Preis: ",
   "ui.zufalliger_preis_und_geheime_daily_mission": "Zufälliger Preis und geheime Daily-Mission",
@@ -358,6 +551,7 @@ export const germanMessages = {
   "error.reload": "Aktualisieren",
   "tutorial.tap.title": "Tippe und verdiene",
   "tutorial.tap.text": "Tippe auf die Münze, verdiene ONIX und behalte deine Energie im Blick.",
+  "tutorial.tap.coachmark": "Tippe auf die Münze, um ONIX zu verdienen",
   "tutorial.upgrade.title": "Verbessere dich",
   "tutorial.upgrade.text": "Kaufe Upgrades, Perks und Boosts, um schneller zu verdienen.",
   "tutorial.tasks.title": "Erledige Aufgaben",
@@ -617,6 +811,7 @@ export const messages: Record<AppLanguage, Record<MessageKey, string>> = {
   de: germanMessages,
   en: {
     ...adminGermanMessages,
+    ...fortuneWheelGermanMessages,
     "ui.range": "Ranks",
     "ui.letzter_preis": "Last prize: ",
     "ui.zufalliger_preis_und_geheime_daily_mission": "Random prize and secret daily mission",
@@ -970,6 +1165,7 @@ export const messages: Record<AppLanguage, Record<MessageKey, string>> = {
     "error.reload": "Refresh",
     "tutorial.tap.title": "Tap and earn",
     "tutorial.tap.text": "Tap the coin, earn ONIX and keep track of your energy.",
+    "tutorial.tap.coachmark": "Tippe auf die Münze, um ONIX zu verdienen",
     "tutorial.upgrade.title": "Improve yourself",
     "tutorial.upgrade.text": "Buy upgrades, perks and boosts to earn faster.",
     "tutorial.tasks.title": "Complete tasks",
@@ -1223,6 +1419,8 @@ export const messages: Record<AppLanguage, Record<MessageKey, string>> = {
   },
   ru: {
     ...adminRussianMessages,
+    ...fortuneWheelGermanMessages,
+    ...fortuneWheelRussianMessages,
     "ui.range": "Ранги",
     "ui.letzter_preis": "Последний приз: ",
     "ui.zufalliger_preis_und_geheime_daily_mission": "Случайный приз и секретная ежедневная миссия",
@@ -1576,6 +1774,7 @@ export const messages: Record<AppLanguage, Record<MessageKey, string>> = {
     "error.reload": "Обновить",
     "tutorial.tap.title": "Нажимайте и зарабатывайте",
     "tutorial.tap.text": "Нажимайте на монету, зарабатывайте ONIX и следите за энергией.",
+    "tutorial.tap.coachmark": "Нажми на монету, чтобы заработать ONIX",
     "tutorial.upgrade.title": "Развивайтесь",
     "tutorial.upgrade.text": "Покупайте улучшения, навыки и усиления, чтобы зарабатывать быстрее.",
     "tutorial.tasks.title": "Выполняйте задания",
@@ -1829,6 +2028,7 @@ export const messages: Record<AppLanguage, Record<MessageKey, string>> = {
   },
   uk: {
     ...adminGermanMessages,
+    ...fortuneWheelGermanMessages,
     "ui.range": "Ранги",
     "ui.letzter_preis": "Останній приз: ",
     "ui.zufalliger_preis_und_geheime_daily_mission": "Випадковий приз і секретна щоденна місія",
@@ -2182,6 +2382,7 @@ export const messages: Record<AppLanguage, Record<MessageKey, string>> = {
     "error.reload": "Оновити",
     "tutorial.tap.title": "Натисніть і заробіть",
     "tutorial.tap.text": "Торкніться монети, заробіть ONIX і стежте за своєю енергією.",
+    "tutorial.tap.coachmark": "Tippe auf die Münze, um ONIX zu verdienen",
     "tutorial.upgrade.title": "Вдосконалюйтеся",
     "tutorial.upgrade.text": "Купуйте покращення, перки та бусти, щоб заробляти швидше.",
     "tutorial.tasks.title": "Виконайте завдання",
@@ -2435,6 +2636,7 @@ export const messages: Record<AppLanguage, Record<MessageKey, string>> = {
   },
   tr: {
     ...adminGermanMessages,
+    ...fortuneWheelGermanMessages,
     "ui.range": "Rütbeler",
     "ui.letzter_preis": "Son ödül: ",
     "ui.zufalliger_preis_und_geheime_daily_mission": "Rastgele ödül ve gizli günlük görev",
@@ -2788,6 +2990,7 @@ export const messages: Record<AppLanguage, Record<MessageKey, string>> = {
     "error.reload": "Yenile",
     "tutorial.tap.title": "Dokunun ve kazanın",
     "tutorial.tap.text": "Paraya dokunun, ONIX kazanın ve enerjinizi takip edin.",
+    "tutorial.tap.coachmark": "Tippe auf die Münze, um ONIX zu verdienen",
     "tutorial.upgrade.title": "Kendinizi geliştirin",
     "tutorial.upgrade.text": "Daha hızlı kazanmak için yükseltmeler, perkler ve güçlendirmeler satın alın.",
     "tutorial.tasks.title": "Görevleri tamamla",
@@ -3041,6 +3244,7 @@ export const messages: Record<AppLanguage, Record<MessageKey, string>> = {
   },
   es: {
     ...adminGermanMessages,
+    ...fortuneWheelGermanMessages,
     "ui.range": "Rangos",
     "ui.letzter_preis": "Último premio: ",
     "ui.zufalliger_preis_und_geheime_daily_mission": "Premio aleatorio y misión diaria secreta.",
@@ -3394,6 +3598,7 @@ export const messages: Record<AppLanguage, Record<MessageKey, string>> = {
     "error.reload": "Actualizar",
     "tutorial.tap.title": "Toca y gana",
     "tutorial.tap.text": "Toque la moneda, gane ONIX y realice un seguimiento de su energía.",
+    "tutorial.tap.coachmark": "Tippe auf die Münze, um ONIX zu verdienen",
     "tutorial.upgrade.title": "Mejorate a ti mismo",
     "tutorial.upgrade.text": "Compra mejoras, ventajas y boosts para ganar más rápido.",
     "tutorial.tasks.title": "Tareas completas",
@@ -3647,6 +3852,7 @@ export const messages: Record<AppLanguage, Record<MessageKey, string>> = {
   },
   fr: {
     ...adminGermanMessages,
+    ...fortuneWheelGermanMessages,
     "ui.range": "Rangs",
     "ui.letzter_preis": "Dernier prix : ",
     "ui.zufalliger_preis_und_geheime_daily_mission": "Prix aléatoire et mission quotidienne secrète",
@@ -4000,6 +4206,7 @@ export const messages: Record<AppLanguage, Record<MessageKey, string>> = {
     "error.reload": "Actualiser",
     "tutorial.tap.title": "Appuyez et gagnez",
     "tutorial.tap.text": "Appuyez sur la pièce, gagnez du ONIX et suivez votre énergie.",
+    "tutorial.tap.coachmark": "Tippe auf die Münze, um ONIX zu verdienen",
     "tutorial.upgrade.title": "Améliorez-vous",
     "tutorial.upgrade.text": "Achetez des améliorations, des perks et des boosts pour gagner plus vite.",
     "tutorial.tasks.title": "Terminer les tâches",
@@ -4253,6 +4460,7 @@ export const messages: Record<AppLanguage, Record<MessageKey, string>> = {
   },
   it: {
     ...adminGermanMessages,
+    ...fortuneWheelGermanMessages,
     "ui.range": "Ranghi",
     "ui.letzter_preis": "Ultimo premio: ",
     "ui.zufalliger_preis_und_geheime_daily_mission": "Premio casuale e missione quotidiana segreta",
@@ -4606,6 +4814,7 @@ export const messages: Record<AppLanguage, Record<MessageKey, string>> = {
     "error.reload": "Aggiorna",
     "tutorial.tap.title": "Tocca e guadagna",
     "tutorial.tap.text": "Tocca la moneta, guadagna ONIX e tieni traccia della tua energia.",
+    "tutorial.tap.coachmark": "Tippe auf die Münze, um ONIX zu verdienen",
     "tutorial.upgrade.title": "Migliora te stesso",
     "tutorial.upgrade.text": "Acquista potenziamenti, perk e boost per guadagnare più velocemente.",
     "tutorial.tasks.title": "Compiti completi",
@@ -4859,6 +5068,7 @@ export const messages: Record<AppLanguage, Record<MessageKey, string>> = {
   },
   pl: {
     ...adminGermanMessages,
+    ...fortuneWheelGermanMessages,
     "ui.range": "Rangi",
     "ui.letzter_preis": "Ostatnia nagroda: ",
     "ui.zufalliger_preis_und_geheime_daily_mission": "Losowa nagroda i tajna codzienna misja",
@@ -5212,6 +5422,7 @@ export const messages: Record<AppLanguage, Record<MessageKey, string>> = {
     "error.reload": "Odśwież",
     "tutorial.tap.title": "Dotknij i zarabiaj",
     "tutorial.tap.text": "Dotknij monety, zarabiaj ONIX i śledź swoją energię.",
+    "tutorial.tap.coachmark": "Tippe auf die Münze, um ONIX zu verdienen",
     "tutorial.upgrade.title": "Popraw się",
     "tutorial.upgrade.text": "Kupuj ulepszenia, perki i boosty, aby zarabiać szybciej.",
     "tutorial.tasks.title": "Wykonaj zadania",
@@ -5465,6 +5676,7 @@ export const messages: Record<AppLanguage, Record<MessageKey, string>> = {
   },
   pt: {
     ...adminGermanMessages,
+    ...fortuneWheelGermanMessages,
     "ui.range": "Ranks",
     "ui.letzter_preis": "Último prêmio: ",
     "ui.zufalliger_preis_und_geheime_daily_mission": "Prêmio aleatório e missão diária secreta",
@@ -5818,6 +6030,7 @@ export const messages: Record<AppLanguage, Record<MessageKey, string>> = {
     "error.reload": "Atualizar",
     "tutorial.tap.title": "Toque e ganhe",
     "tutorial.tap.text": "Toque na moeda, ganhe ONIX e controle sua energia.",
+    "tutorial.tap.coachmark": "Tippe auf die Münze, um ONIX zu verdienen",
     "tutorial.upgrade.title": "Melhore-se",
     "tutorial.upgrade.text": "Compre melhorias, perks e boosts para ganhar mais rápido.",
     "tutorial.tasks.title": "Concluir tarefas",

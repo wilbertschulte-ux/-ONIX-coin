@@ -5,6 +5,7 @@ export type AdminSectionId =
   | 'users'
   | 'withdrawals'
   | 'prizes'
+  | 'physical-prizes'
   | 'economy'
   | 'analytics'
   | 'security'
@@ -31,6 +32,227 @@ export type AdminHealthResponse = {
 };
 
 export type AdminCollectionState = 'loading' | 'error' | 'empty' | 'ready';
+
+export type AdminPhysicalPrizeStatus =
+  | 'pending'
+  | 'approved'
+  | 'preparing'
+  | 'shipped'
+  | 'delivered'
+  | 'cancelled';
+
+export type AdminFortuneWheelCampaignKey =
+  | 'fortune-wheel-v1'
+  | 'fortune-wheel-staging-v1'
+  | 'fortune-wheel-weekly-v1';
+export type AdminFortuneWheelEntitlementStatus = '' | 'reserved' | 'fulfilled' | 'awaiting_color';
+
+export type AdminPhysicalPrizeHistoryEntry = {
+  action: 'created' | 'status_changed' | 'color_corrected';
+  status: AdminPhysicalPrizeStatus;
+  previousStatus: string;
+  color: string;
+  previousColor: string;
+  reasonCode: string;
+  reason: string;
+  resolution: string;
+  changedAt: string | null;
+  changedBy: string;
+  operationKey: string;
+};
+
+export type AdminPhysicalPrizeRequest = {
+  requestId: string;
+  campaignKey: string;
+  telegramId: string;
+  telegramUsername: string;
+  prizeCode: string;
+  color: string;
+  status: AdminPhysicalPrizeStatus;
+  createdAt: string | null;
+  updatedAt: string | null;
+  reviewedAt: string | null;
+  reviewedBy: string;
+  version: number;
+  statusHistory: AdminPhysicalPrizeHistoryEntry[];
+  allowedTransitions: AdminPhysicalPrizeStatus[];
+};
+
+export type AdminPhysicalPrizeFilters = {
+  campaignKey: AdminFortuneWheelCampaignKey;
+  weekKey: string;
+  status: '' | AdminPhysicalPrizeStatus;
+  search: string;
+  sort: 'newest' | 'oldest';
+  page: number;
+};
+
+export type AdminPhysicalPrizeListResponse = {
+  requests: AdminPhysicalPrizeRequest[];
+  pagination: {
+    page: number;
+    limit: number;
+    total: number;
+    totalPages: number;
+    hasNextPage: boolean;
+    hasPrevPage: boolean;
+  };
+  filters: {
+    statuses: AdminPhysicalPrizeStatus[];
+    availableColors: string[];
+    cancellationReasons: string[];
+  };
+};
+
+export type AdminFortuneWheelRewardCount = {
+  rewardCode: string;
+  count: number;
+  totalOnix: number;
+};
+
+export type AdminFortuneWheelProbability = {
+  rewardCode: string;
+  type?: 'onix' | 'physical_prize';
+  amount?: number;
+  weightPpm?: number;
+  effectiveWeightPpm?: number;
+  available?: boolean;
+};
+
+export type AdminFortuneWheelEntitlement = {
+  id: string;
+  telegramId: string;
+  telegramUsername: string;
+  campaignKey: AdminFortuneWheelCampaignKey;
+  weekKey: string;
+  prizeCode: string;
+  slot: number;
+  status: 'reserved' | 'fulfilled';
+  color: string;
+  requestId: string;
+  requestStatus: AdminPhysicalPrizeStatus | '';
+  wonAt: string | null;
+  fulfilledAt: string | null;
+  awaitingColor: boolean;
+};
+
+export type AdminFortuneWheelDashboardResponse = {
+  campaigns: Array<{ campaignKey: AdminFortuneWheelCampaignKey; mode: 'legacy_fixed_v1' | 'weekly_random_v1' }>;
+  dashboard: {
+    campaignKey: AdminFortuneWheelCampaignKey;
+    mode: 'legacy_fixed_v1' | 'weekly_random_v1';
+    active: boolean;
+    enabled: boolean;
+    approved: boolean;
+    startsAt: string | null;
+    endsAt: string | null;
+    week: null | { weekKey: string; currentWeekKey: string; startsAt: string | null; resetsAt: string | null };
+    readiness: { ready: boolean; code: string };
+    stats: {
+      uniquePlayers: number;
+      spinsUsed: number;
+      totalOnix: number;
+      rewards: AdminFortuneWheelRewardCount[];
+    };
+    configuredProbabilities: AdminFortuneWheelProbability[];
+    effectiveProbabilities: AdminFortuneWheelProbability[];
+    inventory: null | {
+      exists: boolean;
+      capacity: number;
+      reserved: number;
+      fulfilled: number;
+      remaining: number;
+      configVersion: string;
+    };
+  };
+  entitlements: AdminFortuneWheelEntitlement[];
+  awaitingColorTotal: number;
+  entitlementPagination: {
+    page: number;
+    limit: number;
+    total: number;
+    totalPages: number;
+    hasNextPage: boolean;
+    hasPrevPage: boolean;
+  };
+  filters: { entitlementStatuses: Array<'reserved' | 'fulfilled' | 'awaiting_color'> };
+};
+
+export type AdminFortuneWheelFilters = {
+  campaignKey: AdminFortuneWheelCampaignKey;
+  weekKey: string;
+  entitlementStatus: AdminFortuneWheelEntitlementStatus;
+  entitlementSearch: string;
+  entitlementPage: number;
+};
+
+export function createAdminFortuneWheelParams(telegramId: string, filters: AdminFortuneWheelFilters) {
+  return {
+    telegramId,
+    campaignKey: filters.campaignKey,
+    weekKey: filters.campaignKey === 'fortune-wheel-weekly-v1' && filters.weekKey.trim()
+      ? filters.weekKey.trim()
+      : undefined,
+    entitlementStatus: filters.entitlementStatus || undefined,
+    entitlementSearch: filters.entitlementSearch.trim() || undefined,
+    entitlementPage: Math.max(1, Math.trunc(filters.entitlementPage || 1)),
+    entitlementLimit: 20,
+  };
+}
+
+export function createAdminPhysicalPrizeListParams(
+  telegramId: string,
+  filters: AdminPhysicalPrizeFilters
+) {
+  return {
+    telegramId,
+    campaignKey: filters.campaignKey,
+    weekKey: filters.campaignKey === 'fortune-wheel-weekly-v1' && filters.weekKey.trim()
+      ? filters.weekKey.trim()
+      : undefined,
+    status: filters.status || undefined,
+    search: filters.search.trim() || undefined,
+    sort: filters.sort,
+    page: Math.max(1, Math.trunc(filters.page || 1)),
+    limit: 20,
+  };
+}
+
+export function createAdminPhysicalPrizeStatusPayload(
+  telegramId: string,
+  request: AdminPhysicalPrizeRequest,
+  nextStatus: AdminPhysicalPrizeStatus,
+  reason: string,
+  reasonCode: string,
+  resolution: string,
+  idempotencyKey: string
+) {
+  return {
+    telegramId,
+    nextStatus,
+    reason,
+    reasonCode,
+    resolution,
+    expectedVersion: request.version,
+    idempotencyKey,
+  };
+}
+
+export function createAdminPhysicalPrizeColorPayload(
+  telegramId: string,
+  request: AdminPhysicalPrizeRequest,
+  color: string,
+  reason: string,
+  idempotencyKey: string
+) {
+  return {
+    telegramId,
+    color,
+    reason,
+    expectedVersion: request.version,
+    idempotencyKey,
+  };
+}
 
 export function getAdminCollectionState(loading: boolean, error: boolean, count: number): AdminCollectionState {
   if (loading) return 'loading';
